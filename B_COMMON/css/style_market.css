@@ -1,0 +1,214 @@
+
+
+#marketpanel .RulePicker {
+    font-size: var(--theme-font-size);
+}
+
+/*--------------------------------------------------------- HEADER MARKET PANEL -----------------------------------------------------------*/
+
+#market_bar {
+    height: 40px;
+    font-size: var(--theme-sfont-size);
+    color: var(--theme-header-color);    
+    z-index: 8;    
+}
+
+
+#market_bar .sb_mbutton {
+    font-size:inherit;
+    width:150px;
+    margin-left: 5px;
+    max-width: 150px;
+    min-width: 150px;
+}
+
+#market_bar #market_markersgroup {
+    font-size: 13px;    
+}
+
+#market_bar #market_indicatorsgroup {
+    font-size: 13px;    
+}
+
+#market_bar #market_searchgroup {
+    min-width:400px;
+    margin-left: 15px;    
+    font-size: 13px;    
+}
+
+#market_bar #search_quote {
+    padding: 5px 5px;
+}
+
+#market_bar .sb_label {
+    font-weight: 400;
+    color: var(--theme-main-color);
+    text-transform: uppercase;
+    padding-right: 10px;    
+}
+
+
+/*----------------------------------------------------------------- NEWS----------------------------------------------------*/
+
+#market_bar #market_newsgroup {
+    margin-left: 15px;    
+    text-align: center;
+    display: flex;    
+    cursor: pointer;
+}
+
+
+#market_bar #newslink {
+    color: var(--theme-main-color) !important;
+    background: transparent;
+    margin-right: 5px;
+    margin-left: 5px;
+    text-align: center;
+    flex: 1;
+    white-space: noWrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;;
+}
+
+/*--------------------------------------------------------- MARKET  PANEL -----------------------------------------------------------*/
+
+#market_bar #market_forexgroup {
+    height: 100%;
+    flex-wrap:wrap;
+    flex:none;
+    align-items: center;    
+}
+
+#market_bar #market_forexgroup .forexcontent {
+    margin-left: auto;    
+}
+
+#market_bar #market_forexgroup .forexcontent .sb_formgroup {
+    padding-bottom: 0;
+}
+
+#market_bar #market_forexgroup .forexcontent .form-control {
+    width: 50px;
+    padding-top: 0px;
+    padding-bottom: 0px;    
+    background: transparent !important;
+    border: none;    
+    text-align: left;    
+}
+
+#market_bar #market_forexgroup .forexcontent label {
+    white-space: nowrap;
+    padding-top: 0px;
+    padding-bottom: 0px;    
+    width:55px;
+    color:var(--theme-color);
+    justify-content:start;
+    min-width: unset;    
+}
+
+.marketschedule {
+    background: transparent !important;   
+    margin-right: 10px;    
+    width: 290px;    
+}
+
+.marketschedule .form-control {
+    padding-top: 0px;
+    padding-bottom: 0px;    
+    background: transparent !important;
+    border: none;    
+    text-align: center;
+    font-weight: 700;      
+}
+
+/* --------------------TICKER PANEL --------------------------------*/
+
+#market_snapshot {
+    display:none;
+    background: var(--theme-bg-color);    
+}
+
+#tickerbuttons {
+    padding-left: 10px;
+    align-items: center;    
+}
+
+#tickerpanel {
+    font-size: var(--theme-sfont-size);   
+    padding: 2px 0px;    
+    height: 55px;      
+}
+
+#tickerpanel a:hover {
+    background: var(--theme-hover-bg-color);
+    color: var(--theme-hover-color) ;       
+	cursor:pointer;
+}
+
+#tickerpanel a {
+    text-decoration: none;
+    padding-left: 20px;
+	color:var(--theme-color);
+    white-space: nowrap;        
+    display:flex;
+    flex-direction: column;
+}
+
+#tickerpanel span {
+    margin: 0px 5px;
+}
+
+#searchhomebtn {
+    right: 0;
+    position: absolute;
+}
+
+.mainsymbollast {
+    color: var(--theme-main-color);
+}
+
+.mainsymbol {
+    color: var(--theme-main-color);
+}
+
+/* --------------------TOOLS PANEL --------------------------------*/
+
+#tools_panel {
+    font-size: var(--theme-sfont-size);
+    position: absolute;
+    width: calc(100% - 100px);
+    height: 200px;
+    inset: 43px 100px auto auto;
+    transition: transform .3s cubic-bezier(0,0,.3,1);
+    transform: translate(50px, -153px);
+    background: var(--theme-main-bg-color);
+    color: var(--theme-color);
+    z-index: 7;
+    border: 1px solid var(--theme-border-color);
+    padding: 10px;
+    border-radius: 0px 0px 10px 10px;
+}
+
+#tools_panel.toggled {
+    display: flex;
+    transition: transform .3s cubic-bezier(0,0,.3,1);
+    transform: translate(50px, 46px);
+}
+
+#tools_panel.pinned {
+    position: static;
+    display: none;
+    overflow: hidden;
+    flex-direction: column;
+    border-radius: unset;
+    border: none;
+    width:100%;
+}
+
+#tools_panel.toggled.pinned {
+    display: flex;
+    transition: none;
+    transform: none;
+}
+

@@ -1,0 +1,115 @@
+true,true,false,false
+true,true,true
+0,#36a845,1,Up
+1,#d1299c,1,Down
+2,#ffd700,1,Sideway
+3,#36a845,1,Above
+4,#d11d17,1,Below
+5,#ffd700,1,Touching
+6,#cc0814,1,Approaching
+7,#00ffff,1,Crossing up
+8,#ff0000,1,Crossing Down
+9,#00ffff,1,Reversing Up
+10,#ff0000,1,Reversing Down
+11,#aaaaaa,1,In Between
+12,#e6d628,1,Changed
+13,#d9ead3,1,Target
+14,#ffffff,1,Distance
+15,#ffffff,1,Current
+16,#ffffff,1,Previous
+17,#00ff22,1,Bull
+18,#f02d8c,1,Bear
+19,#c0c0c0,1,in Range
+20,#33ff00,1,Over Bought
+21,#ff0000,1,Over Sold
+22,#2bff00,1,Extreme Over Bought
+23,#ff0000,1,Extreme Over Sold
+24,#ccfdfd,1,Very Weak
+25,#7efafa,1,Weak
+26,#0aefef,1,Neutral
+27,#329696,1,Strong
+28,#086969,1,Very Strong
+29,#ffffff,1,Angle
+30,#ffffff,1,Previous Angle
+31,#ffffff,1,Number of Bars
+32,#ff00a2,1,Crossed
+33,#36a845,1,is giving a Buy Signal
+34,#d11d17,1,is giving a Sell Signal
+35,#d6bf3d,1,giving an Exit Buy Signal
+36,#d6bf3d,1,giving an Exit Sell Signal
+37,#d6bf3d,1,Doji
+38,#1b5423,1,Price Consolidation
+39,#1b5423,1,Bullish Hammer
+40,#1b5423,1,Bullish Hammer
+41,#1b5423,1,Bullish Hammer
+42,#1b5423,1,Bullish Engulfing
+43,#1b5423,1,Bullish Harami
+44,#1b5423,1,Bullish Inverted Hammer
+45,#1b5423,1,Bullish Inverted Hammer
+46,#1b5423,1,Bullish Inverted Hammer
+47,#1b5423,1,Bullish Piercing Line
+48,#1b5423,1,Bullish Morning Star
+49,#1b5423,1,Bullish Morning Doji Star
+50,#1b5423,1,Bullish Three White Soldiers
+51,#1b5423,1,Bullish Three Inside Up
+52,#1b5423,1,Bullish Three Outside Up
+53,#690f0c,1,Bearish Price Consolidation
+54,#690f0c,1,Bearish Hanging Man
+55,#690f0c,1,Bearish Hanging Man
+56,#690f0c,1,Bearish Hanging Man
+57,#690f0c,1,Bearish Engulfing
+58,#690f0c,1,Bearish Harami
+59,#690f0c,1,Bearish Shooting Star
+60,#690f0c,1,Bearish Shooting Star
+61,#690f0c,1,Bearish Shooting Star
+62,#690f0c,1,Bearish Dark Cloud Cover
+63,#690f0c,1,Bearish Evening Star
+64,#690f0c,1,Bearish Evening Doji Star
+65,#690f0c,1,Bearish Three Black Crows
+66,#690f0c,1,Bearish Three Inside Down
+67,#690f0c,1,Bearish Three Outside Down
+68,#00b3ff,1,Maximum
+69,#00aaff,1,Minimum
+70,#ff0000,1,First bar of the Day
+71,#ff0000,1,First bar of the Week
+72,#ff0000,1,First bar of the Month
+73,#ff0000,1,First bar of the Year
+74,#ff0000,1,undefined
+75,#ff0000,1,undefined
+76,#ff0000,1,undefined
+77,#ff0000,1,undefined
+78,#ff0000,1,undefined
+79,#ff0000,1,undefined
+80,0
+9,0
+9,0
+9,0
+9,0
+9,0
+9,64
+9,0
+9,0
+0,ACCELERATION,
+0,VOLUME_UP,
+0,VOLUME_DOWN,
+0,VOLUME,
+0,ADX_14,
+0,ATR_14,
+-2
+0,VELOCITY,
+0,PROGRESS,
+0,F_TRIX,
+0,S_TRIX,
+-2
+0,MA_200,
+0,MA_50,
+0,BAR,
+0,HEIKEN_ASHI,
+0,RESISTANCE,
+0,SUPPORT,
+0,UPFRACTAL,
+0,DOWNFRACTAL,
+0,MA_12,
+0,PIVOT_SUPPORT2,
+0,RSI_14,
+-4

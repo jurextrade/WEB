@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EXAMPLE 1 &mdash; MT4-Progress v0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="EXAMPLE 2" href="example_2.html" />
+    <link rel="prev" title="STRATEGY" href="strategy.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> MT4-Progress
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">INTRODUCTION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">INSTALLATION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">GETTING STARTED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alerts.html">ALERTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="panel.html">PANEL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="designer.html">DESIGNER</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objects.html">CUSTOM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system_objects.html">SYSTEM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conditions.html">CONDITIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="strategy.html">STRATEGY</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">EXAMPLE 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_2.html">EXAMPLE 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">REFERENCE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">ARCHITECTURE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pl_language.html">PL LANGUAGE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trade_functions.html">TRADE FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="math_functions.html">MATH FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_logics.html">Market Logics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_input.html">MARKET INPUT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session_fields.html">SESSION FIELDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_types.html">DATA TYPES</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recovery_types.html">Recovery Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="discussion_strategy.html">A TRADING STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_start.html">HOW TO START</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">DESIGN</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MT4-Progress</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>EXAMPLE 1</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/example_1.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="example-1">
+<h1>EXAMPLE 1<a class="headerlink" href="#example-1" title="Permalink to this headline"></a></h1>
+<p>PIVOT – CROSS LINE
+Strategy that works on Pivot Lines
+<a href="#id1"><span class="problematic" id="id2">*</span></a>This strategy is simply a part of the examples that explains how to write strategies.</p>
+<p>If the pivot_point of the Day is not crossed and the price is at a distance of 15 pips  above the pivot_point  we start a session and we sell.
+If the pivot_point of the Day is not crossed and the price is at a distance of 15 pips   below the pivot_point  we start a session and we buy.
+if the pivot_High of the Day is not crossed and the price is at a distance of 15 pips  below the Pivot_High we start the session and we buy.
+if the Pivot_Low of the Day is not crossed and the price is at a distance of 15 pips  above the Pivot_Low we start a session and we sell.
+Direction : Forward
+Direction Type : Level
+PipStep : 15  (distance between trades)
+TimeStep : 2 hours (time between trades)
+Recovery Mode : K
+Recovery Value : 10
+Profit : 10 $</p>
+<p>(if the trend goes in the opposite direction  an opposite order is performed  at a distance of 15 pips with a size corresponding to the leverage of all my trades to be neutral at a distance of 10 pips of this trade and this is precised in Recovery Value.</p>
+<blockquote>
+<div><p>2015-05-15 <a href="#id3"><span class="problematic" id="id4">00_25_43-9648493_</span></a> Alpari-ECN-Demo - Demo Account - [EURUSD,M1 (visual)]</p>
+<p>Properties2015-05-09 19_09_38-</p>
+</div></blockquote>
+<p>DOWNLOAD</p>
+<dl>
+<dt>2015-05-09 19_29_40-Strategy</dt><dd><p>Actions</p>
+</dd>
+<dt>2015-05-09 19_27_17-</dt><dd><p>Schedules</p>
+</dd>
+<dt>2015-05-09 19_22_31-</dt><dd><p>Graph</p>
+</dd>
+<dt>2015-05-09 19_54_48-Terminal</dt><dd><p>Editor</p>
+<p>2015-05-09 22_34_12-Strategy</p>
+</dd>
+</dl>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="strategy.html" class="btn btn-neutral float-left" title="STRATEGY" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="example_2.html" class="btn btn-neutral float-right" title="EXAMPLE 2" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Gabriel Jureidini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

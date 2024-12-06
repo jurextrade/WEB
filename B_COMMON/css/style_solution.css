@@ -1,0 +1,309 @@
+#solutionpanel {
+    padding: 15px 10% 0% 10%;
+    overflow: auto;    
+    justify-content: center;
+    align-items: center;    
+}
+
+.solution_configurationpanel {
+    padding: 0% 0% 1% 1%;
+    max-width: 900px;    
+}
+
+.solution_configurationpanel .spinner-border{
+    width:1rem;
+    height: 1rem;
+    vertical-align: middle;
+    
+}
+
+.solution_configurationtable {
+   
+}
+
+.solution_configurationtable tbody tr:hover {
+
+}
+
+.solution_configurationtable tbody tr.active {
+    background-color: unset !important;
+    cursor:unset !important;
+}
+
+
+.solution_configurationtable td:first-child, .solution_configurationtable th:first-child {
+    width: 30%;
+    padding-left: 5%;
+    font-weight: 400;
+    /* padding-right: 2%; */
+    /* border: 1px solid; */
+    max-width: 30%;
+}
+
+.solution_configurationtable td:first-child {
+    color: var(--theme-main-color);
+}
+
+.solution_configurationtable td:not(:first-child), .solution_configurationtable th:not(:first-child) {
+    padding: 0px;
+    text-align: center;
+    width: 11%;
+    max-width: 11%;
+    /* border: 1px solid; */
+}
+
+.solution_configurationtable td:nth-child(5), .solution_configurationtable th:nth-child(5) {
+    /* padding-right:20px !important; */
+    /* padding-left: 11px !important; */
+}
+
+.solution_configurationtable th:nth-child(5) {
+    /* padding-left: 11px !important; */
+}
+
+.solution_configurationtable td:nth-child(6) {
+    color: #8BC34A;
+    /* padding-right:15px !important; */
+    /* padding-left: 15px !important; */
+}
+
+
+/*-------------------------------------------------------------- EAGLE INTRO---------------------------------------------------------*/
+
+.eaglelabel {
+    margin-top:25px;
+    margin-right:-10px;
+    font-size:20px;
+    text-transform:uppercase;
+    text-shadow:0 0 10px #6e9e0b;
+  
+  }
+  
+  .logoimage { 
+      animation-delay: 0s;
+      position:absolute; 
+      width:300px; 
+      height:300px; 
+      margin-top:-308px; 
+      margin-left:-145px; 
+      left:50%; 
+      top:50%; 
+      right:50%; 
+      bottom:50%;
+      z-index:100;
+  }
+  
+  
+  
+  .eagleline {
+      position:absolute;   	    
+      width:440px; 
+      height:440px; 
+      margin-top:-220px; 
+      margin-left:-220px;
+      left:50%; 
+      top:58%; 
+      right:50%; 
+      bottom:50%;
+      border-top: 3px solid #6e9e0b;
+      transform: rotate(-40deg);
+      transform-origin: top right;
+      z-index:100; 
+  }
+  
+  .ringeagle {
+    position:absolute;
+    top:40%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width: 200px;
+    height: 200px;
+    -webkit-transform: scaleX(3);
+    background:transparent;
+    border:3px solid #3c3c3c;
+    border-radius:50%;
+    text-align:center;
+    line-height:150px;
+    font-family:sans-serif;
+    font-size:14px;
+    color:#6e9e0b;
+    letter-spacing:4px;
+    z-index:99;
+  }
+
+  .ringeagle:before  {
+    content:'';
+    position:absolute;
+    top:-3px;
+    left:-3px;
+    width:100%;
+    height:100%;
+    border:3px solid transparent;
+    border-top:3px solid #6e9e0b;
+    border-right:3px solid #6e9e0b;
+    border-radius:50%;
+    animation:eagleanimateC 1s linear infinite;
+    box-sizing: unset;           
+  }
+  .ringeagle span  {
+    display:block;
+    position:absolute;
+    top:calc(50% - 2px);
+    left:50%;
+    width:50%;
+    height:4px;
+    background:transparent;
+    transform-origin:left;
+    animation:eagleanimate 2s linear infinite;
+  }
+  .ringeagle span:before  {
+    content:'';
+    position:absolute;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    background:#6e9e0b;
+    top:-6px;
+    right:-8px;
+    box-shadow:0 0 20px #6e9e0b;
+    box-sizing: unset;           
+  }
+@keyframes eagleanimateC
+{
+  0%
+  {
+    transform:rotate(0deg);
+  }
+  100%
+  {
+    transform:rotate(360deg);
+  }
+}
+@keyframes eagleanimate
+{
+  0%
+  {
+    transform:rotate(45deg);
+  }
+  100%
+  {
+    transform:rotate(405deg);
+  }
+}
+@keyframes eaglemove
+{
+    from {
+        left: 10%;
+        top: 10%;        
+        width: 100px;
+        height: 100px;
+    }
+    to {
+        left: 50%;
+        top: 50%;        
+        width: 300px;
+        height: 300px;
+     }
+}
+
+/*-------------------------------------------------------------- JUREXTRADE INTRO---------------------------------------------------------*/
+
+.ring
+{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:150px;
+  height:150px;
+  background:transparent;
+  border:3px solid #3c3c3c;
+  border-radius:50%;
+  text-align:center;
+  line-height:150px;
+  font-family:sans-serif;
+  font-size:20px;
+  color:#e33192;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  text-shadow:0 0 10px #e33192;
+  box-shadow:0 0 20px rgba(0,0,0,.5);
+  z-index:99;
+}
+.ring:before
+{
+  content:'';
+  position:absolute;
+  top:-3px;
+  left:-3px;
+  width:100%;
+  height:100%;
+  border:3px solid transparent;
+  border-top:3px solid #e33192;
+  border-right:3px solid #e33192;
+  border-radius:50%;
+  animation:animateC 2s linear infinite;
+  box-sizing: unset;           
+}
+.ring span
+{
+  display:block;
+  position:absolute;
+  top:calc(50% - 2px);
+  left:50%;
+  width:50%;
+  height:4px;
+  background:transparent;
+  transform-origin:left;
+  animation:animate 2s linear infinite;
+}
+.ring span:before
+{
+  content:'';
+  position:absolute;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:#e33192;
+  top:-6px;
+  right:-8px;
+  box-shadow:0 0 20px #e33192;
+  box-sizing: unset;           
+}
+@keyframes animateC
+{
+  0%
+  {
+    transform:rotate(0deg);
+  }
+  100%
+  {
+    transform:rotate(360deg);
+  }
+}
+@keyframes animate
+{
+  0%
+  {
+    transform:rotate(45deg);
+  }
+  100%
+  {
+    transform:rotate(405deg);
+  }
+}
+@keyframes move
+{
+    from {
+        left: 10%;
+        top: 10%;        
+        width: 100px;
+        height: 100px;
+    }
+    to {
+        left: 50%;
+        top: 50%;        
+        width: 300px;
+        height: 300px;
+     }
+}

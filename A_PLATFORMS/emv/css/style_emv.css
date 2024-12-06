@@ -1,0 +1,785 @@
+#emv_root {
+    --theme-platform-color: #007aa6;
+    --theme-emv-select: #0299cf;
+    --theme-emv-hover: #ffb684;
+}
+
+#emv_main {
+    font-size: var(--theme-sfont-size); 
+    background: var(--theme-bg-color);    
+}
+
+#emv_main .sb_widget .sb_icon {
+    display: none;
+}
+
+/*------------------------------------------------- SERVER -----------------------------------------------*/
+
+#button_terminal, #button_card, #button_router {
+    background: red;
+}
+
+
+/*------------------------------------------------- AIDS TABLE -----------------------------------------------*/
+
+#emv_aidspanel td {
+    line-height: inherit;    
+    border-top: 1px solid var(--theme-button-border-color);
+    border-left: 1px solid var(--theme-button-border-color);    
+}
+
+
+/*------------------------------------------------- TAGS TABLE -----------------------------------------------*/
+
+#emv_tagspanel td {
+    line-height: inherit;    
+    border-top: 1px solid var(--theme-button-border-color);
+    border-left: 1px solid var(--theme-button-border-color);    
+    white-space: break-spaces;    
+}
+
+/*------------------------------------------------- SW1SW2 TABLE -----------------------------------------------*/
+
+#emv_sw1sw2panel td {
+    text-align: center;
+    line-height: inherit;    
+    border-top: 1px solid var(--theme-button-border-color);
+    border-left: 1px solid var(--theme-button-border-color);    
+}
+
+#emv_sw1sw2panel td:nth-child(4) {
+    text-align: left !important;
+}
+
+/*------------------------------------------------- TRANSACTION TAGS TABLE -----------------------------------------------*/
+
+#emv_transactiontagspanel {
+    height:30px;
+}
+
+#emv_transactiontags_tablepanel {
+    border-top: 1px solid var(--theme-button-border-color);        
+    margin-top: -1px;    
+}
+
+#emv_transactiontagspanel {
+    height:30px;
+}
+
+#emv_transactiontagspanel.toggled {
+    flex:1;
+}
+
+#emv_transactiontagspanel td {
+    line-height: inherit;
+    border-top: 1px solid var(--theme-button-border-color);
+    border-left: 1px solid var(--theme-button-border-color);
+}
+
+#emv_transactiontagspanel td:nth-child(3) {
+    max-width: 300px;
+}
+
+#emv_transactiontags_table_info {
+    display:none;
+}
+
+/*---------------------------------------------------------------- MAIN PAGE -------------------------------------------------------------------------*/
+
+#emv_testerpage {
+    background: var(--theme-bg-color);
+}
+
+#emv_tester_tab .sb_close-tabs {
+    display:none;
+}
+
+/*---------------------------------------------------- TVR TSI RAPDU ----------------------------------------------*/
+
+#emv_apdu {
+    font-size: var(--theme-sfont-size);    
+    font-family: Calibri, sans-serif;    
+    overflow:auto;
+    color:var(--theme-color);
+    margin-top: -1px;    
+}
+
+#emv_apdu_tree {                                         /* root span */
+    display:none;
+}
+
+.emvapdutree label {
+    width: 40px;
+    padding: 0px 0px;
+}
+
+.emvapdutree .sb_widget {
+    width: unset;
+    height: unset;
+}
+
+.emvapdutree .sb_formgroup label {
+    justify-content: center;
+    min-width: 50px;
+} 
+
+.emvapdutree .sb_formgroup div {
+    border: 1px solid var(--theme-border-color);
+} 
+
+.emvapdutree span.tagextension   {
+    height: unset; 
+} 
+
+.emvapdutree span.tagextension input {
+    color:rgb(255, 182, 132) !important  ;
+} 
+
+.emvapdutree .sb_link input:first-child {
+    cursor:pointer;    
+    background: transparent !important;    
+    color: var(--theme-color);    
+}
+
+#emv_apdu_tree_ref  > li > ul >li > span.selected,
+#emv_apdu_tree_ref  > li > ul >li > span.selected div span {
+    border: 1px solid var(--theme-emv-select);
+    color: var(--theme-main-color);
+}
+
+.emvapdutree .rapduerror span  {
+    color: #ff5858 !important; 
+    background: var(--theme-hover-bg-color) !important; 
+    border: 1px solid #5e4037 !important; 
+}
+
+.emvapdutree .searchtag,
+.emvapdutree .searchtag span {
+    border : 1px solid var(--theme-emv-select);
+}
+
+.emvapdutree .searchtag + * {
+    border : 1px solid var(--theme-emv-select);
+}
+
+#emv_apdu_tree_bar {
+    width:100%;
+}
+
+/*--------------------------------------------------------------------------- BYTE PANEL --------------------------------------------------------------*/
+
+.bytepanel .sb_sidebarheadertitle {
+    flex:none;
+}
+
+.emvbyte {
+    width: max-content;
+    font-size: var(--theme-sfont-size);    
+    font-family: Calibri, sans-serif;
+}
+
+.emvbyte td, .emvbyte th  {
+    height: 17px !important;
+    width: 17px !important;
+    text-align:center;
+    line-height: inherit;
+    border: 1px solid var(--theme-button-border-color);
+}
+
+.emvbyte td:nth-child(9){
+    text-align:left;
+}
+
+.emvbyte td:nth-child(9) {
+    width:320px !important;
+}
+
+.emvbyte tr:hover td:nth-child(9), tr:hover td[byte]   {
+    color : var(--theme-hover-color);
+    background: var(--theme-hover-bg-color);
+}
+
+.emvbyte tr.selected td:nth-child(9), tr.selected  td[byte]{
+    color : var(--theme-emv-select);
+    background: var(--theme-select-bg-color);
+}
+
+.emvbyte tr.marked td:nth-child(9), tr.marked  td[byte]{
+    color: black;
+    background: var(--theme-emv-select);
+ }
+ 
+
+/*---------------------------------------------------------------- PROCESS DIAGRAM -----------------------------------------------------------*/
+/* All parameters */
+:root {
+    --linethick: 1px;
+    --linewidth: 1.8em;
+  }
+  
+  .process_diagram .seehowbutton {
+    display: none;
+  }
+  
+  /* connecting lines between nodes */
+  .process_diagram li:before,
+  .process_diagram li:after,
+  .process_diagram ul:before,
+  .process_diagram ul:after,
+  .process_diagram div:before,
+  .process_diagram div:after {border-style:solid; border-color:var(--theme-button-border-color);}
+  
+  /* debug connecting lines * /
+  .process_diagram div:before,
+  .process_diagram div:after {border-color:green;}
+  .process_diagram ul:before,
+  .process_diagram ul:after {border-color:red;}
+  /**/
+  
+  /************************************************************/
+  
+  /* positioning for the diagram */
+  .process_diagram,
+  .process_diagram ol,
+  .process_diagram ul,
+  .process_diagram li {margin:0 auto; padding:0; display:block; list-style:none;vertical-align:middle;}
+  
+  .process_diagram li {position:relative;}
+  
+  .process_diagram,
+  .process_diagram ol {display:table; width:100%; border-collapse:collapse; }
+  
+  .process_diagram > li,
+  .process_diagram ol > li {display:table-cell; }
+  
+  .process_diagram > li,
+  .process_diagram ol > li,
+  .process_diagram ul > li {padding:.2em 0}
+  
+  /* a dash before and behind all uls */
+  .process_diagram ul {position:relative; padding:0 var(--linewidth);}
+  .process_diagram ul:before,
+  .process_diagram ul:after {position:absolute; content:""; top:50%; width: var(--linewidth); display:block; border-width:var(--linethick) 0 0; }
+  .process_diagram ul:before {left:0;}
+  .process_diagram ul:after {right:0;}
+  
+  /* put connecting vertical lines */
+  .process_diagram ul > li:after,
+  .process_diagram ul > li:before {position:absolute; content:""; top:0; bottom:0; width:var(--linewidth); height:100%; display:block;}
+  .process_diagram ul > li:before {left:0; border-width:0 0 0 var(--linethick);}
+  .process_diagram ul > li:after {right:0; border-width:0 var(--linethick) 0 0; background: red;display: none;}
+  
+  /* correct length and position of dashes for first and last li-item in ul */
+  .process_diagram ul > li:first-child:before,
+  .process_diagram ul > li:first-child:after {top:50%; bottom:auto; height:50%; }
+  .process_diagram ul > li:last-child:before,
+  .process_diagram ul > li:last-child:after {top:0; bottom:auto; height:50%;}
+  .process_diagram ul > li:first-child:last-child:before,
+  .process_diagram ul > li:first-child:last-child:after {top:0; bottom:auto; height:50%;display:none;}
+  
+  /* put left and right dashes */
+
+  .process_diagram li > div {position:relative;margin:0 var(--linewidth);padding: 1em;border-width:var(--linethick); width: auto;background-color: var(--theme-bg-color); border-style:solid; border-color:var(--theme-button-border-color); cursor: pointer;}
+  .process_diagram li > div {position:relative;margin:0 var(--linewidth);padding: 1em;border-width:var(--linethick); width: auto;background-color: var(--theme-bg-color); border-style:solid; border-color:var(--theme-button-border-color); cursor: pointer;}
+  .process_diagram li > div:before,
+  .process_diagram li > div:after {content:""; top:50%; width:var(--linewidth); position:absolute; border-width:var(--linethick) 0 0; height:50%;}
+  .process_diagram li > div:after {right: calc(0em - var(--linewidth)); margin-right: calc(0px - var(--linethick));display: none;}
+  .process_diagram li > div:before {left: calc(0em - var(--linewidth)); margin-left: calc(0px - var(--linethick));}
+  .process_diagram li:last-child > div:after,
+  .process_diagram li:last-child > div:before {top:1px; border-width: 0 0 var(--linethick);}
+  
+  /* remove dash for the very first/last nodes keeping margin and padding */
+  .process_diagram > li:first-child > div:before,
+  .process_diagram > li:first-child > ul:before,
+  .process_diagram > li:first-child > ul > li:before,
+  .process_diagram > li:first-child > ul > li > div:first-child:before,
+  .process_diagram > li:first-child > ul > li > ol > li:first-child > div:before,
+  .process_diagram > li:last-child > div:after,
+  .process_diagram > li:last-child > ul:after {border:0;}
+  
+  /* remove double dashes */
+  ol.process_diagram > li > div:after,
+  .process_diagram ol > li > div:after,
+  ol.process_diagram > li > ul:after,
+  .process_diagram ol > li > ul:after {display:none}
+  ol.process_diagram > li > div,
+  .process_diagram ol > li > div {margin-right: 0;}
+  ol.process_diagram > li > ul,
+  .process_diagram ol > li > ul {padding-right: 0;}
+  
+  /* last dashes are not double and need to be recovered */
+  ol.process_diagram > li:last-child > div:after,
+  .process_diagram ol > li:last-child > div:after,
+    ol.process_diagram > li:last-child > ul:after,
+  .process_diagram ol > li:last-child > ul:after {display:none;}
+  
+  ol.process_diagram > li:last-child > div,
+  .process_diagram ol > li:last-child > div {margin-right: 0; width: 40%;/* max-width: 300px; text-align: center;*/}
+  
+  ol.process_diagram > li:last-child > ul,
+  .process_diagram ol > li:last-child > ul {padding-right: 0; }
+  
+  .process_diagram ol > li:last-child > ul li > div {padding: 0.8em;}
+  .process_diagram ol ol > li:last-child > ul li > div {padding: 0.5em;}
+
+  ol.process_diagram > li:first-child {vertical-align: top; padding-top: 120px;}
+  ol.process_diagram > li:nth-child(2) {}
+  ol.process_diagram > li:nth-child(2) > ul:first-child:before {top: 145px;}
+  
+  .process_diagram ul:after {display:none}
+
+
+.process_diagram .EMVStep.active {
+    background: unset;
+    color: unset;
+}
+
+.process_diagram .EMVStep.selected {
+    border-color:  var(--theme-emv-select) !important;
+    border-radius: 0px;    
+    background: var(--theme-select-bg-color) !important;     
+}
+
+.process_diagram .EMVSubStep.selected {
+    border-color:  var(--theme-emv-select) !important;
+    border-radius: 0px;    
+    background: var(--theme-select-bg-color) !important;        
+} 
+
+
+/*--------------------------------------------------------------------------  STEPS & PRESENTATION CLASS STEP PANEL --------------------------------------------------------------------*/
+
+#emv_testerright_panel {
+
+}
+
+#emv_presentation_steps_bar .sb_link {
+    width: 100%;;
+    text-transform: uppercase!important;    
+    border:1px solid var(--theme-button-border-color);
+}
+
+#emv_presentation_steps_bar .sb_link.checked {
+    border-color:var(--theme-platform-color);
+}
+
+#emv_presentation_panel {
+    padding-right: 3px;    
+    border:1px solid var(--theme-border-color);
+}
+
+#emv_presentationpanel .card {
+    border:none;
+}
+
+#emv_presentation_panel .EMVStep.active {
+    background: unset;
+    color: unset;
+}
+
+#emv_presentation_panel .EMVStep.selected {
+  
+}
+
+#emv_presentation_panel .EMVSubStep.selected {
+  
+} 
+
+
+#emv_presentation_panel .content .body {
+    overflow:auto;
+}
+
+#emv_presentation_panel  > .steps .number {
+    display:none;
+}
+
+#emv_presentation_panel .steps {
+    min-height: unset;
+    padding: 5px 0px;
+    background: var(--theme-main-bg-color);
+}
+
+#emv_presentation_panel > .steps > ul  {
+    height: auto;
+}
+
+#emv_presentation_panel > .steps a {
+    padding: 0 !important;
+}
+
+#emv_presentation_panel  > .steps > ul > li {
+   /* border: 1px solid var(--theme-button-border-color);*/
+    margin: 1px;   
+    font-size: 11px; 
+}
+
+#emv_presentation_panel  > .steps .current a,
+#emv_presentation_panel  > .steps .current a:hover,
+#emv_presentation_panel  > .steps .current a:active {
+    border: 0px solid var(--theme-platform-color);
+}
+
+#emv_presentation_panel  > .steps .current  {
+    border: 1px solid var(--theme-platform-color);
+}
+
+#emv_presentation_panel .alert-primary {
+    border-color: var(--theme-button-border-color);
+    border-radius: 0px;
+    color: var(--theme-color);
+    background: var(--theme-bg-color);
+}
+
+#emv_presentation_panel .alert-primary li {
+    list-style-type:square;
+    margin-left: 5%;    
+ }
+
+ #emv_presentation_panel mark {
+    background-color: transparent;
+    color: var(--theme-emv-select);
+}
+
+#emv_presentation_steppanels .related-primary {
+    display:flex;
+    flex-wrap:wrap;
+}
+
+#emv_presentation_steppanels .related-primary label{
+    margin:2px 2px
+}
+
+.emv_button_show {
+    font-size: 0.8rem;
+    padding: 0px 6px 2px 6px;
+    background: var(--theme-select-bg-color);
+    border: 1px solid var(--theme-emv-select);
+    margin: 1px 0px 1px 0px;
+    cursor: pointer;
+}
+
+.emv_button_show:active {
+    background: var(--theme-emv-select);    
+    color: black;    
+}
+
+.EMVSubStep.selected .alert-primary{
+    border-color: var(--theme-emv-select) !important;
+    border-radius: 0px;    
+    background: var(--theme-select-bg-color) !important;  
+    color:unset !important;  
+} 
+
+.EMVStep.selected>.card-body>.card-text>.alert-primary  {
+    border-color: var(--theme-emv-select) !important;
+    border-radius: 0px;    
+    background: var(--theme-select-bg-color) !important;  
+    color:unset !important
+} 
+/*-------------------------------------------------------------------------- EMV STEPS PANEL --------------------------------------------------------------------*/
+
+#emv_tree_steps_panel {
+    width: 420px;
+}
+
+#emv_tree_steps_panel .sb_widget-description {
+    white-space: break-spaces;
+}
+
+#emv_tree_steps {
+    overflow: auto;
+}
+ 
+#emv_tester_stepsbargroup .EMVStep {
+    background: white;
+}
+
+
+#emv_tester_stepsbargroup .EMVStep.selected {
+    background:var(--theme-emv-select);
+}
+
+/*--------------------------------------------------------- BOTTOM PANEL ----------------------------------------------------*/
+
+#emv_bottompanel {
+    flex : none;
+    font-size: var(--theme-sfont-size);
+    height:35px;
+}
+
+#emv_bottompanel .nav-item {
+    flex:none;
+}
+
+#emv_bottomtabs .sb_content {
+    background: var(--theme-bg-color);
+ 
+}
+
+#emv_bottomtabs .sb_controls {
+    margin-left: inherit;
+}
+
+#emv_bottomtabs .sb_controls a {
+    min-width: 20px;
+}
+
+/*----------------------------------------------------------------------------- ADPU  -------------------------------------------------------------------------------*/
+
+#emv_apdu {
+    border-top: 1px solid var(--theme-button-border-color);        
+}
+
+#emv_apdupanel {
+    height:30px;
+}
+
+#emv_apdupanel.toggled {
+    flex:1;
+}
+
+#apdu_table  td {
+    text-align: center;
+    line-height: inherit;
+    border-top: 1px solid var(--theme-button-border-color);
+    border-left: 1px solid var(--theme-button-border-color);
+}
+
+#emv_apdu .sb_formcontainer {
+
+    padding:0px;
+}
+
+/*----------------------------------------------------------------------------- TLV PARSE-------------------------------------------------------------------------------*/
+
+.treetable {
+    border: 1px solid var(--theme-button-border-color);
+    user-select: none;
+}
+
+.treetable .header {
+
+    border-bottom: 1px solid var(--theme-button-border-color);
+    box-sizing: border-box;
+    height: 24px;
+    overflow: hidden
+}
+
+.treetable .header .label {
+    font-weight: 700;
+    height: 100%;
+    line-height: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.treetable .content {
+    overflow: overlay;
+    overflow-x: hidden;
+    scrollbar-width: none
+}
+
+.treetable ul.root {
+    padding-left: 0
+}
+
+.treetable ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 20px
+}
+
+.treetable .rh {
+    height: 24px;
+    line-height: 24px
+}
+
+.treetable .tv {
+    border-right: 1px solid  var(--theme-button-border-color);
+    overflow: hidden;
+    padding-left: 3px;
+    text-overflow: ellipsis;
+    width: auto
+}
+
+.treetable .tv-row {
+    float: right;
+    overflow: hidden;
+    padding-left: 3px
+}
+
+
+.treetable .active {
+    background-color: var(--theme-select-bg-color);
+    cursor: default;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.2)
+}
+
+.treetable .tv-row .tc {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.treetable .ctrl {
+    background: url(https://paymentcardtools.com/resources/line-middle.gif);
+    background-position: 0;
+    background-repeat: no-repeat;
+    float: left;
+    width: 19px
+}
+
+.treetable .trunk {
+    background-image: url(https://paymentcardtools.com/resources/line-trunk.gif);
+    background-repeat: repeat-y;
+    cursor: pointer;
+    display: block
+}
+
+.treetable .end {
+    background-image: url(https://paymentcardtools.com/resources/tv-line-last.gif);
+    background-position: 0;
+    background-repeat: no-repeat;
+    cursor: pointer
+}
+
+.roww {
+    width:30vw
+}
+
+
+#emv_tlvparserpanel  .sb_label {
+    flex: 0.15;
+    font-size: 14px;    
+}
+
+#tlvparsereditor {
+    font-size:var(--theme-sfont-size);
+}
+
+#emv_box_tlvparser .sb_boxbody {
+    max-height: unset;
+}
+
+/*----------------------------------------------------------------------------- TESTER PANEL -------------------------------------------------------------------------------*/
+
+#emv_tester_terminalpanel {
+    height: 30px;    
+}
+
+#emv_tester_terminalpanel.toggled {
+    flex:1;
+}
+
+#emv_tester_cardpanel {
+    height: 30px;    
+}
+
+#emv_tester_cardpanel.toggled {
+    flex:1;
+}
+
+#emv_tester_recordgroup {
+    background-color: var(--theme-main-bg-color);
+}
+
+#emv_terminal_input {
+    border-top: 1px solid var(--theme-button-border-color);
+}
+
+#emv_card_input {
+    border-top: 1px solid var(--theme-button-border-color);
+}
+
+/*----------------------------------------------------------------------------- ACCEPTOR SECTION -------------------------------------------------------------------------------*/
+
+#emv_acceptor_section {
+    flex-wrap: wrap;
+}
+
+/*----------------------------------------------------------------------------- TERMINAL SECTION -------------------------------------------------------------------------------*/
+
+#emv_terminal_section {
+    flex-wrap: wrap;
+}
+
+/*----------------------------------------------------------------------------- TERMINAL TYPE PANEL -------------------------------------------------------------------------------*/
+
+#emv_TTPanel {
+    padding:10px;
+}
+
+#emv_TTPanel .TT_value:hover {
+    color : var(--theme-hover-color);
+}
+
+#emv_TTPanel .TT_value.selected {
+    color : var(--theme-emv-select);
+    background: var(--theme-select-bg-color);
+}
+
+#emv_tt_Panel {
+    /*padding:10px;*/
+}
+
+/*----------------------------------------------------------------------------- TERMINAL COUNTRY CODE PANEL -------------------------------------------------------------------------------*/
+
+#emv_TCCPanel #emv_tccPanel {
+    max-width:300px;
+    padding: .375rem .75rem;
+    font-size: var(--theme-font-size);    
+}
+
+#emv_TCCPanel span {
+    justify-content:left !important;
+    padding:10px;    
+}
+
+/*----------------------------------------------------------------------------- TERMINAL SERIAL PANEL PANEL -------------------------------------------------------------------------------*/
+
+#emv_TSNPanel #emv_tsnPanel {
+    max-width:300px;
+    padding: .375rem .75rem;
+    font-size: var(--theme-font-size);
+}
+
+#emv_TSNPanel span {
+    justify-content:left !important;
+    padding:10px;     
+}
+
+#emv_managersidepanel input {
+    max-width:300px;
+    padding: .375rem .75rem;
+    font-size: var(--theme-font-size);
+}
+
+/*----------------------------------------------------------------------------- APPLICATION PANEL -------------------------------------------------------------------------------*/
+
+#emv_AIDPanel #emv_aidPanel {
+    max-width:300px;
+    padding: .375rem .75rem;
+    font-size: var(--theme-font-size);
+}
+
+/*----------------------------------------------------------------------------------- TAG HEADERS --------------------------------------------------------------------------*/
+
+.tagheader {
+    margin: 0;
+    text-transform: uppercase;
+    font-family: inherit;
+    font-weight: 400;
+    line-height: 1.1;
+    font-size: var(--bs-nav-link-font-size);
+    color: var(--theme-main-color);
+    justify-content: left;
+    height: 35px;    
+    padding-left: 0px !important;
+}
+
+#treenode-emv_projectmanager-0 {
+    display:none;
+}

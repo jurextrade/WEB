@@ -1,0 +1,4 @@
+
+.currencypanel tr td:nth-child(4) {
+    color: var(--theme-main-color);
+}

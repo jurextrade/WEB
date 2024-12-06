@@ -1,0 +1,9 @@
+EXEC= ./Compile/C/Files/output/PG_ExtFunctions.dll
+
+PG_ExtFunctions.dll: $(EXEC)
+
+./Compile/C/Files/output/PG_ExtFunctions.dll: ./Compile/C/Files/output/PG_ExtFunctions.o
+	g++  -shared -o $@ $^
+
+./Compile/C/Files/output/%.o: ./Compile/C/Files/input/%.cpp
+	g++  -o $@ -c $<

@@ -1,0 +1,82 @@
+/*--------------------------------------------------------- SPEECH PANEL -----------------------------------------------------------*/
+
+#speechpanel {
+    overflow: unset;
+    flex: 1;
+}
+
+#speechmain {
+    display: none;    
+}
+
+#speechmain.toggled {
+    flex: 1;
+    display: flex;
+}
+
+#speechmain .speech.toggled {
+    min-width:100px;
+    flex:1;  
+}
+
+#speechmain .speech {
+    min-width:100px;
+    height:30px;
+}
+
+
+#speechbar {
+    margin-right: 10px;
+    background: transparent !important;
+      
+}
+
+#speechbar #sound_voice {
+    width:50px;
+}
+
+#speechbar .speecheval, #translation_swap_button{
+    min-width: 40px;
+}
+
+#model_name {
+
+}
+
+#translation_lang, #recognition_lang, #model_name {
+    white-space: nowrap;
+}
+
+#speechbar #trfromto {
+    width: 80px;
+    margin-left: auto;
+    text-align: end;  
+}
+
+#speechbar #hanzi_writer {
+    flex: 2;
+    margin: 0;
+    margin-left: 30px;       
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#speechbar #hanzi_writer .hanzi_stroke {
+    height:30px !important;
+    width:30px !important;
+}
+
+
+
+#translationlanguagestable thead, #soundvoicestable thead, #recognitionlanguagestable thead {
+    display:none;
+}
+
+.speech_output {
+    border-top:1px solid var(--theme-button-border-color);
+}
+
+#speech_input_recognition, #eval_button_recognition {
+    display:none;
+}

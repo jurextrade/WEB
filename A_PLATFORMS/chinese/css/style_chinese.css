@@ -1,0 +1,43 @@
+.css_chinese {
+     
+ 
+   /*------------------------------------------------------------------------*/
+}
+
+#chinese_main {
+    font-size: var(--theme-sfont-size); 
+    background: var(--theme-bg-color);    
+}
+
+
+#chinese {
+    width:90% !important;
+}
+
+#chinese_hsk_table td {
+    line-height: inherit;    
+    border-top: 1px solid var(--theme-button-border-color);
+    border-left: 1px solid var(--theme-button-border-color);    
+    white-space: break-spaces;    
+}
+
+#chinese_hsk_table td:first-child {
+    background: var(--theme-header-bg-color); 
+    color:var(--theme-header-color);
+    text-align: center;    
+}
+
+#chinese_hanzi_writer .hanzi_stroke {
+    height:30px !important;
+    width:30px !important;
+    cursor:pointer;
+}
+
+#chinese_hanzi_writer {
+    flex: 2;
+    margin: 0;
+    margin-left: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}

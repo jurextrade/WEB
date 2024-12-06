@@ -1,0 +1,17 @@
+YM=F
+4
+72
+true
+false
+false
+false
+false
+true
+"candle"
+[]
+[]
+[]
+[]
+[]
+[]
+[]

@@ -1,0 +1,35 @@
+
+/*--------------------------------------------------------- MAIN HOME PANEL ----------------------------------------------------*/
+
+#home_main {
+    font-size: var(--theme-sfont-size); 
+    background: var(--theme-bg-color);        
+}
+
+#home_main .sb_widget .sb_icon{
+    display:none;
+}     
+
+#home_main .home_section {
+}
+
+/*-----------------------------------ELEMENTARY BUTTON-------------------------------------*/  
+
+.elementor-row { 
+    display: grid;
+    margin-right: -10px;
+    margin-left: -10px;    
+}
+
+/* --------------------   HOME FRONTPAGE PANEL --------------------------------*/
+
+#maintracker {
+    flex: none;
+    height:200px;
+}
+
+#mainpanel_Chart {
+    padding-left:3px;    
+
+}
+

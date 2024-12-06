@@ -1,0 +1,4 @@
+#constructor_main {
+    font-size: var(--theme-sfont-size); 
+    background: var(--theme-bg-color);    
+}

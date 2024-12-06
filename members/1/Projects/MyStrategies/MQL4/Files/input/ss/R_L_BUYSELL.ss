@@ -1,0 +1,7 @@
+(START)
+(IF (AndS Momentum S_UP P_H1)
+ (BUY)
+)
+(IF (AndS Momentum S_DOWN P_H1)
+ (SELL)
+)

@@ -1,0 +1,619 @@
+﻿1 爱/ài,HSK1,爱,ài,To Love,Wǒ ài wǒ de lǎogōng.,I love my husband.,我爱我的老公,v
+2 不客⽓/bùkèqi,HSK1,不客⽓,bùkèqi,You're Welcome,"Dāng biéren shuō xièxie de shíhou, nǐ yào shuō bùkèqi.","You need to say ""you're welcome"" when others say ""thank you"".",当别⼈说谢谢的时候，你要说不客⽓,v
+3 吃/chī,HSK1,吃,chī,To Eat,Nǐ xǐhuan chī shénme?,What do you like to eat?,你喜欢吃什么？,v
+4 打电话/dǎ diànhuà,HSK1,打电话,dǎ diànhuà,To Make a Telphone Call,Wǒ zhèngzài dǎ diànhuà.,I am making a phone call.,我正在打电话,v
+5 读/dú,HSK1,读,dú,To Read,Wǒ yào dú zhè běn shū.,I want to read this book.,我要读这本书,v
+6 对不起/duìbuqǐ,HSK1,对不起,duìbuqǐ,Sorry,"Duìbuqǐ, wǒ lái wǎn le.",Sorry to be late.,对不起，我来晚了,v
+7 ⼯作/gōngzuò,HSK1,⼯作,gōngzuò,To Work,Wǒ měitiān doū yào gōngzuò.,I need to work everyday.,我每天都要⼯作,v
+8 喝/hē,HSK1,喝,hē,To Drink,Nǐ hē lǜchá ma?,Do you drink green tea?,你喝绿茶吗？,v
+9 回/huí,HSK1,回,huí,To Come Back,Wǒ dìdi huílái le.,My brother has come back.,我弟弟回来了,v
+10 会/huì,HSK1,会,huì,Can,Wǒ huì tán jítā.,I can play guitar.,我会弹吉他,v
+11 叫/jiào,HSK1,叫,jiào,To Call,Qǐng jiào wǒ lǎoshī.,Please call me teacher.,请叫我老师,v
+12 开/kāi,HSK1,开,kāi,To Open,Bùyào kāimén.,Don't open the door.,不要开门,v
+13 看/kàn,HSK1,看,kàn,To Look At,Nǐ zài kàn shénme?,What are you looking at?,你在看什么？,v
+14 看见/kànjiàn,HSK1,看见,kànjiàn,To See,Wǒ kànjian le yī gè nánrén.,I saw a man.,我看见了一个男⼈,v
+15 来/lái,HSK1,来,lái,To Come,Nǐ huì lái zhōngguó ma?,Will you come to China?,你会来中国吗？,v
+16 买/mǎi,HSK1,买,mǎi,To Buy,Wǒ juédìng mǎi yī liàng chē.,I decided to buy a car.,我决定买一辆车,v
+17 没关系/méiguānxi,HSK1,没关系,méiguānxi,It Doesn't Matter,Nǐ xǐ bù xǐhuan wǒ doū méiguānxi.,It doesn't matter whether you like me or not.,你喜不喜欢我都没关系,v
+18 能/néng,HSK1,能,néng,To Be Able To/Can,Nǐ néng gěi wǒ yī bēi shuǐ ma?,Can you give me a glass of water?,你能给我一杯⽔吗？,v
+19 请/qǐng,HSK1,请,qǐng,Please,Qǐng gěi wǒ càidān.,Please give me the menu.,请给我菜单,v
+20 去/qù,HSK1,去,qù,To Go,Wǒ xiǎng qù měiguó.,I want to go to America.,我想去美国,v
+21 认识/rènshi,HSK1,认识,rènshi,To Know,Nǐmen rènshi wǒ ma?,Do you guys know me?,你们认识我吗？,v
+22 是/shì,HSK1,是,shì,To Be,Wǒ shì gè nánrén.,I am a man.,我是个男⼈,v
+23 睡觉/shuìjiào,HSK1,睡觉,shuìjiào,To Sleep,"Wǒ kùn le, xiǎng shuìjiào.","I am sleepy, I want to sleep.",我困了，想睡觉,v
+24 说话/shuōhuà,HSK1,说话,shuōhuà,To Say/To Speak/To Talk,Wǒ bù ài shuōhuà.,I don't like talking.,我不爱说话,v
+25 听/tīng,HSK1,听,tīng,To Listen,Wǒ zài tīng gē.,I'm listening to songs.,我在听歌,v
+28 想/xiǎng,HSK1,想,xiǎng,To Think/To Miss,Wǒ huì xiǎng nǐ de.,I will miss you.,我会想你的,v
+27 下雨/xiàyǔ,HSK1,下雨,xiàyǔ,To Rain,Xiànzài zài xiàyǔ.,It is raining now.,现在在下雨,v
+29 写/xiě,HSK1,写,xiě,To Write,Wǒ xiě le yī běn shū.,I have written a book.,我写了一本书,v
+30 谢谢/xièxie,HSK1,谢谢,xièxie,Thanks,Xièxie nǐ jiāo wǒ zhōngwén.,Thanks for teaching me Chinese.,谢谢你教我中⽂,v
+26 喜欢/xǐhuan,HSK1,喜欢,xǐhuan,To Like,Nǐ xǐhuan wǒ ma?,Do you like me?,你喜欢我吗？,v
+31 学习/xuéxí,HSK1,学习,xuéxí,To Study,Wǒ xiǎng xuéxí xībānyá yǔ.,I want to study Spanish.,我想学习西班⽛语,v
+32 有/yǒu,HSK1,有,yǒu,To Have,Wǒ yǒu hěnduō qián.,I have a lot of money.,我有很多钱,v
+33 再见/zàijiàn,HSK1,再见,zàijiàn,Good-bye/See You,Míngtiān zàijiàn.,See you tomorrow.,明天再见,v
+34 住/zhù,HSK1,住,zhù,To Live,Nǐ zhù zài nǎli?,Where do you live?,你住在哪⾥？,v
+35 做/zuò,HSK1,做,zuò,To Do,Wǒ bù zhīdao wǒ zài zuò shénme.,I don't know what I am doing.,我不知道我在做什么,v
+36 坐/zuò,HSK1,坐,zuò,To Sit,Wǒ xiǎng zuò xiàlái.,I want to sit down.,我想坐下来,v
+1 帮助/bāngzhù,HSK2,帮助,bāngzhù,To Help,Zhège yào huì bāngzhù nǐ.,This medicine will help you.,这个药会帮助你,v
+2 唱歌/chànggē,HSK2,唱歌,chànggē,To Sing,Tā bù huì chànggē,She can't sing.,她不会唱歌.,v
+3 出/chū,HSK2,出,chū,To Go Out,Wǒ xiànzài yào chūqù le.,I am going out now.,我现在要出去了,v
+4 穿/chuān,HSK2,穿,chuān,To Wear,Wǒ xǐhuan chuān zhèzhǒng qúnzi.,I like to wear this kind of dress.,我喜欢穿这种裙⼦,v
+5 到/dào,HSK2,到,dào,To Arrive,Tāmen yīnggāi shí diǎn qián huì dào.,They will probably arrive by ten o'clock.,他们应该⼗点前会到,v
+6 等/děng,HSK2,等,děng,To Wait,Tā zài zhèr děng le hěnjiǔ.,He has been waiting here for a long time.,他在这⼉等了很久,v
+7 告诉/gàosu,HSK2,告诉,gàosu,To Tell,Wǒ lái gàosu nǐ wǒ zuówǎn jiàndào le shénme.,Let me tell you what I saw last night.,我来告诉你我昨晚见到了什么,v
+8 给/gěi,HSK2,给,gěi,To Give,Wǒ de jiějie gěi le wǒ yī běn shū.,My sister's gave me a book.,我的姐姐给了我一本书,v
+9 欢迎/huānyíng,HSK2,欢迎,huānyíng,To Welcome,Huānyíng lái dào wǒmen de píndào xuéxí zhōngwén.,Welcome to our channel to learn Mandarin.,欢迎来到我们的频道学习中⽂,v
+10 回答/huídá,HSK2,回答,huídá,To Anwser,Wǒ huídá bùliǎo zhège wèntí.,I can't answer this question.,我回答不了这个问题,v
+11 介绍/jièshào,HSK2,介绍,jièshào,To Introduce,Wǒ xiǎng jièshào nǐ gěi wǒ fùmǔ rènshi.,I'd like to introduce you to my parents.,我想介绍你给我⽗母认识,v
+12 进/jìn,HSK2,进,jìn,To Enter,Wǒ kànjian tā jìn le fángjiān.,I saw her entering the room.,我看见她进了房间,v
+13 觉得/juéde,HSK2,觉得,juéde,To Think,Wǒ juéde tā tài bàng le.,I thought she was fantastic.,我觉得她太棒了,v
+14 开始/kāishǐ,HSK2,开始,kāishǐ,To Begin/To Start,Wǒ xiànzài yào kāishǐ shuōhuà le.,I will start talking now.,我现在要开始说话了,v
+15 可能/kěnéng,HSK2,可能,kěnéng,To Be Possible,Ràng wǒ gěi nǐ qián shì bù kěnéng de.,It is not possible for me to give you money.,让我给你钱是不可能的,v
+16 可以/kěyǐ,HSK2,可以,kěyǐ,Can,Wǒ kěyǐ tán jítā gěi nǐ tīng.,I can play guitar for you.,我可以弹吉他给你听,v
+17 旅游/lǚyóu,HSK2,旅游,lǚyóu,To Travel,Shànggeyuè wǒmen qù lǚyóu le.,I went to travel last month.,上个⽉我们去旅游了,v
+18 跑步/pǎobù,HSK2,跑步,pǎobù,To Run,Wǒ měitiān zǎoshang doū huì qù gōngyuán lǐ pǎobù.,I run in the park every morning.,我每天早上都会去公园⾥跑步,v
+19 起床/qǐchuáng,HSK2,起床,qǐchuáng,To Get Up,Míngtiān wǒ yào zǎodiǎn qǐchuáng.,I need to get up early tomorrow.,明天我要早点起床,v
+20 让/ràng,HSK2,让,ràng,To Let,Wǒ nánpéngyou bù ràng wǒ chī là de shíwù.,My boyfriend doesn't let me eat spicy food.,我男朋友不让我吃辣的⾷物,v
+21 上班/shàngbān,HSK2,上班,shàngbān,To Go to Work,"Jīntiān wǒ gǎnmào le, suǒyǐ bùyòng qù shàngbān.","I don't need to go to work today, because I am having a cold.",今天我感冒了，所以不⽤去上班,v
+22 ⽣病/shēngbìng,HSK2,⽣病,shēngbìng,To Get Sick,Tōngcháng wǒ huì zài dōngtiān de shíhou shēngbìng.,Usually I get sick in winter time.,通常我会在冬天的时候⽣病,v
+23 送/sòng,HSK2,送,sòng,To Give (a present)/To Send,Nǐ kěyǐ sòng wǒ yī gè wáwa ma?,Can you give me a doll?,你可以送我一个娃娃吗？,v
+24 踢⾜球/tī zúqiú,HSK2,踢⾜球,tī zúqiú,To Play Football,Wǒ cónglái bù cuòguò tī zúqiú de jīhuì.,I never miss a chance of playing football.,我从来不错过踢⾜球的机会,v
+25 跳舞/tiàowǔ,HSK2,跳舞,tiàowǔ,To Dance,Wǒ xiànzài jiù xiǎngyào tiàowǔ.,I want to dance now.,我现在就想要跳舞,v
+26 玩/wán,HSK2,玩,wán,To Play,Shuìjiào zhīqián wǒ xǐhuan wán shǒujī.,I like to play with my phone before bed.,睡觉之前我喜欢玩手机,v
+27 完/wán,HSK2,完,wán,To Finish,Wǒ yǐjīng wánchéng zuòyè le.,I have finished my homework.,我已经完成作业了,v
+28 问/wèn,HSK2,问,wèn,To Ask,"Rúguǒ nǐ bù dǒng zhège dāncí, kěyǐ suíshí wèn wǒ.","If you don't understand this word, you can ask me anytime.",如果你不懂这个单词，可以随时问我,v
+30 洗/xǐ,HSK2,洗,xǐ,To Wash,Wǒ měitiān doū xǐ tóufa.,I wash my hair everyday.,我每天都洗头发,v
+31 笑/xiào,HSK2,笑,xiào,To Smile,Wǒ bù xǐhuan xiào.,I don't like to smile.,我不喜欢笑,v
+32 休息/xiūxi,HSK2,休息,xiūxi,To Rest,Wǒmen xiūxi yīhuǐr ba.,Let's rest for a while.,我们休息一会⼉吧,v
+29 希望/xīwàng,HSK2,希望,xīwàng,To Hope,Zhēn xīwàng wǒ néng chéngwéi bǎi wàn fùwēng.,I hope I could be a millionaire.,真希望我能成为百万富翁,v
+33 要/yào,HSK2,要,yào,To Want/Will,Děng yīxià wǒ yào qù chī miàn.,I will go to eat noodles later.,等一下我要去吃⾯,v
+34 游泳/yóuyǒng,HSK2,游泳,yóuyǒng,To Swim,Wǒ xiǎng qù yóuyǒngchí lǐ yóuyǒng.,I want to go swimming in the swimming pool.,我想去游泳池⾥游泳,v
+35 运动/yùndòng,HSK2,运动,yùndòng,To Work Out,Tā měitiān doū huì yùndòng yī xiǎoshí.,She works out for an hour everyday.,她每天都会运动一⼩时,v
+36 找/zhǎo,HSK2,找,zhǎo,To Look For,Nàge nǚhái zhèngzài zhǎo tā de ěrhuán.,That girl is looking for her earrings.,那个⼥孩正在找她的⽿环,v
+37 知道/zhīdào,HSK2,知道,zhīdào,To Know,Wǒ zhīdào nǐ zhù nǎr.,I know where you live.,我知道你住哪⼉.,v
+38 准备/zhǔnbèi,HSK2,准备,zhǔnbèi,To Prepare,Wǒ xūyào zhǔnbèi jǐ gè bēizi.,How many cups do I need to prepare.,我需要准备⼏个杯⼦,v
+39 ⾛/zǒu,HSK2,⾛,zǒu,To Walk/To Leave,"Nǐ zǒu le yǐhòu, wǒmen dōu hěn xiǎng nǐ.","After you left, we all missed you.",你⾛了以后，我们都很想你,v
+1 搬/bān,HSK3,搬,bān,To Move,Guò jǐ tiān wǒ yào bān qù nóngcūn zhù.,I will move to the village in a few days.,过⼏天我要搬去农村住,v
+2 帮忙/bāngmáng,HSK3,帮忙,bāngmáng,To Help,Wǒ xiǎng qǐng nǐ bāngmáng.,I'd like to ask you to help me.,我想请你帮忙,v
+5 表⽰/biǎoshì,HSK3,表⽰,biǎoshì,To Express/To Show,"Tā dàizhe jiéhūn jièzhi, biǎoshì tā yǐ jiéhūn.",She wears a wedding ring to show that she's married.,她戴着结婚戒指，表⽰她已结婚,v
+6 表演/biǎoyǎn,HSK3,表演,biǎoyǎn,To Perform,"Yǔ zài lùyīn péng lǐ lùyīn xiāng bǐ, tā gèng xǐhuan xiànchǎng biǎoyǎn.",She's much happier performing live than in a recording studio.,与在录⾳棚⾥录⾳相⽐，她更喜欢现场表演,v
+3 ⽐较/bǐjiào,HSK3,⽐较,bǐjiào,To Compare,Bǎ nǐ de dá'àn hé lǎoshī de bǐjiào yīxià.,Compare your answers with the teacher's.,把你的答案和老师的⽐较一下,v
+4 必须/bìxū,HSK3,必须,bìxū,Must,Nǐ bìxū zūnshǒu guīzé.,You have to follow the rules.,你必须遵守规则,v
+7 参加/cānjiā,HSK3,参加,cānjiā,To Attend/To Take Part,Wǒmen jiāng cānjiā mǎlāsōng.,We will take part in the marathon.,我们将参加马拉松,v
+8 迟到/chídào,HSK3,迟到,chídào,To Be Late,Qǐng yuánliàng wǒ chídào.,Please forgive me for being late.,请原谅我迟到,v
+9 出现/chūxiàn,HSK3,出现,chūxiàn,To Appear/Show up,Wǒ bù zhīdào tā shénme shíhou huì chūxiàn.,I'm not sure when he will show up.,我不知道他什么时候会出现,v
+11 带/dài,HSK3,带,dài,To Bring,Nǐ dài diànnǎo le ma?,Did you bring your computer?,你带电脑了吗？,v
+12 担⼼/dānxīn,HSK3,担⼼,dānxīn,To Worry,Wǒ hěn dānxīn nǐ.,I worry about you.,我很担⼼你,v
+10 打扫/dǎsǎo,HSK3,打扫,dǎsǎo,To Clean,Nǐ gāi dǎsǎo nǐ de fángjiān.,You should clean up your room.,你该打扫你的房间,v
+13 懂/dǒng,HSK3,懂,dǒng,To Understand,Jīhū méiyǒu xuésheng néng dǒng tā suǒ shuō de huà.,Few students could understand what he said.,⼏乎没有学⽣能懂他所说的话,v
+14 锻炼/duànliàn,HSK3,锻炼,duànliàn,To Work Out,Zhǐyǒu shǎo chī duō duànliàn cáinéng yōngyǒu jiànkāng de shēntǐ.,"Only when you eat less and exercise more, can you have a healthy body.",只有少吃多锻炼才能拥有健康的⾝体,v
+15 饿/è,HSK3,饿,è,To Be Hungry,Tā bù è.,He isn't hungry.,他不饿,v
+17 放/fàng,HSK3,放,fàng,To Put,Bǎ shū fàng zài nàli.,Put the book there.,把书放在那⾥,v
+18 放⼼/fàngxīn,HSK3,放⼼,fàngxīn,To Relax,Fàngxīn ba! Wǒ huì zhàogu wǒ zìjǐ de.,Relax! I can take care of myself.,放⼼吧！我会照顾我⾃⼰的,v
+16 发现/fāxiàn,HSK3,发现,fāxiàn,To Discover/To Find,Bùyào gěi jǐngchá fāxiàn nǐ shēnshang yǒu qiāng.,Don't let the cops find a gun on you.,不要给警察发现你⾝上有枪,v
+19 分/fēn,HSK3,分,fēn,To Divide,Qǐng bǎ pīsà fēn chéng sān fèn.,Please divide the pizza into three parts.,请把披萨分成三份,v
+20 复习/fùxí,HSK3,复习,fùxí,To Review,Wǒmen bǎ shēngcí zài fùxí yī biàn ba.,To Divide,我们把⽣词再复习一遍吧,v
+21 敢/gǎn,HSK3,敢,gǎn,To Dare,Wǒ bù gǎn kàn kǒngbù diànyǐng.,I don't dare watch scary movies.,我不敢看恐怖电影,v
+22 跟/gēn,HSK3,跟,gēn,To Follow,Nǐ bié gēn zhe wǒ!,Don't follow me！,你别跟着我！,v
+23 刮风/guāfēng,HSK3,刮风,guāfēng,To Blow,"Yǒu tiān yèli wǒ xǐng le, tīngjiàn zài guāfēng.",Once I woke up at night and heard the wind blowing.,有天夜⾥我醒了，听见在刮风,v
+24 关/guān,HSK3,关,guān,To Shut / To Close,Bié wàngjì guān chuānghu.,Don't forget to close the windows.,别忘记关窗户,v
+25 关⼼/guānxīn,HSK3,关⼼,guānxīn,To Concern,Tā fēicháng guānxīn tā érzi de jiānglái.,He is very much concerned about the future of his son.,他⾮常关⼼他⼉⼦的将来,v
+26 害怕/hàipà,HSK3,害怕,hàipà,To Be Scared,Tā shífēn hàipà tā.,She was very scared of him.,她⼗分害怕他,v
+27 换/huàn,HSK3,换,huàn,To Change,Néng gěi wǒ huàn gè fángjiān ma?,Can you change the room for me?,能给我换个房间吗？,v
+29 检查/jiǎnchá,HSK3,检查,jiǎnchá,To Examine,Wǒmen ānpái le zuì hǎo de yīshēng gěi tā jiǎnchá.,We arranged for her to be examined by the best doctor.,我们安排了最好的医⽣给他检查,v
+31 讲/jiǎng,HSK3,讲,jiǎng,To Speak,Tā yāoqiú wǒ jiǎng màn yīdiǎn.,He asked me to speak more slowly.,他要求我讲慢一点,v
+30 见⾯/jiànmiàn,HSK3,见⾯,jiànmiàn,To Meet,Wǒ bā diǎn huì gēn nǐ jiànmiàn.,I'll meet you at eight.,我⼋点会跟你见⾯,v
+32 教/jiāo,HSK3,教,jiāo,To Teach,Wǒ de péngyou zài jiāo wǒ xiězuò.,My friend is teaching me how to write.,我的朋友在教我写作,v
+28 记得/jìde,HSK3,记得,jìde,To Remember,Wǒ jìde wǒ jiànguò tā.,I remember seeing him.,我记得我见过他,v
+37 借/jiè,HSK3,借,jiè,To Borrow,Wǒ néng jiè nǐ de chē ma?,Can I borrow your car?,我能借你的车吗？,v
+33 接/jiē,HSK3,接,jiē,To Connect/To Catch,"Tā méiyǒu jiē zhù qiú, bǐsài shū le.",He missed catching the ball and the match was lost.,他没有接住球，⽐赛输了,v
+34 结婚/jiéhūn,HSK3,结婚,jiéhūn,To Marry,Tā juédìng hé tā jiéhūn.,She decided to marry him.,她决定和他结婚,v
+36 解决/jiějué,HSK3,解决,jiějué,To Solve,Méiyǒu rén nénggòu jiějué zhège wèntí.,Nobody can solve this problem.,没有⼈能够解决这个问题,v
+35 结束/jiéshù,HSK3,结束,jiéshù,To Finish/To End,Tāmen juédìng jiéshù bǐcǐ de guānxi.,They decided to end their relationship.,他们决定结束彼此的关系,v
+38 经过/jīngguò,HSK3,经过,jīngguò,To Pass,Wǒ měi cì huí jiā dōu huì jīngguò yī tiáo hé.,"Every time I go home, I pass by a river.",我每次回家都会经过一条河,v
+40 决定/juédìng,HSK3,决定,juédìng,To Decide,Wǒ yǐjīng juédìng le yào mǎi yī bù xīn shǒujī.,I have decided to buy a new cellphone.,我已经决定了要买一部新手机,v
+39 举⾏/jǔxíng,HSK3,举⾏,jǔxíng,To Hold,Hūnlǐ zài nǎr jǔxíng?,Where will the wedding be held at?,婚礼在哪⼉举⾏？,v
+41 刻/kè,HSK3,刻,kè,To Carve,Wǒ zài zhuō shàng kè le yī gè xīn.,I carved a heart on the table.,我在桌上刻了一个⼼,v
+42 哭/kū,HSK3,哭,kū,To Cry,Qǐng nǐ bùyào kū la.,Please stop crying.,请你不要哭啦,v
+44 练习/liànxí,HSK3,练习,liànxí,To Practice,Wǒ dà bùfen shíjiān dōu zài liànxí tīnglì.,I spend most of my time practicing my listening skills.,我⼤部分时间都在练习听⼒,v
+45 了解/liǎojiě,HSK3,了解,liǎojiě,To Know/To Understand,Wǒ duì tā yīdiǎn dōu bù liǎojiě.,I don't understand her at all.,我对她一点都不了解,v
+43 离开/líkāi,HSK3,离开,líkāi,To Leave,Wǒ xiǎng jǐnkuài líkāi zhège chéngshì.,I want to leave this city as soon as possible.,我想尽快离开这个城市,v
+46 卖/mài,HSK3,卖,mài,To Sell,"Tā mài le zìxíngchē, kǎo le jiàzhào, bìng mǎi le liàng qìchē.","She sold her bike, took a driving test and bought a car.",她卖了⾃⾏车，考了驾照，并买了辆汽车,v
+47 难过/nánguò,HSK3,难过,nánguò,To Be Sad,Wǒ wúfǎ quèdìng wǒ shì gāoxìng háishi nánguò.,I can't decide if I'm happy or sad.,我⽆法确定我是⾼兴还是难过,v
+48 努⼒/nǔlì,HSK3,努⼒,nǔlì,To Put Effort In/To Try Hard,Tā xuéxí fēicháng nǔlì.,He studies very hard.,他学习⾮常努⼒,v
+49 爬上/páshàng,HSK3,爬上,páshàng,To Climb Up,Nàge xiǎohái pá shàng le yī kē dà shù.,That kid climbed up a big tree.,那个⼩孩爬上了一棵⼤树,v
+50 骑/qí,HSK3,骑,qí,To Ride,"Tā tài xiǎo le, bùnéng qí jiǎotàchē.",She is too little to ride a bicycle.,她太⼩了，不能骑脚踏车,v
+55 认为/rènwéi,HSK3,认为,rènwéi,To Think,Wǒ rènwéi nǐ shuō de duì.,I think you are right.,我认为你说得对,v
+51 上⽹/shàngwǎng,HSK3,上⽹,shàngwǎng,To Get Online,Nà liǎng gè rén yīnwèi guòyú shàngwǎng ér hūshì le tāmen de háizi.,That couple neglected their child because they spend too much time on the,那两个⼈因为过于上⽹⽽忽视了他们的孩⼦,v
+52 ⽣⽓/shēngqì,HSK3,⽣⽓,shēngqì,To Be Angry,"Wǒ hěn shēngqì, yīnwèi wǒ diào le qián.","I am very angry, because I lost my money.",我很⽣⽓，因为我掉了钱,v
+53 使/shǐ,HSK3,使,shǐ,To Make,Tā mǔqīn shēngbìng de xiāoxi shǐ tā gǎndào bù'ān.,She was disturbed by the news of her mother's illness.,她母亲⽣病的消息使她感到不安,v
+54 刷⽛/shuāyá,HSK3,刷⽛,shuāyá,To Brush Teeth,Shàngchuáng shuìjiào qián yào shuāyá.,Brush your teeth before going to bed.,上床睡觉前要刷⽛,v
+56 提⾼/tígāo,HSK3,提⾼,tígāo,To Improve,Wǒmen bìxū jǐnkuài de tígāo gōngzuò xiàolǜ.,We must improve our efficiency as soon as possible.,我们必须尽快地提⾼⼯作效率,v
+57 完成/wánchéng,HSK3,完成,wánchéng,To Finish/To Complete,Wánchéng zhège gōngchéng huāfèi le tāmen shí yì duō měiyuán.,It took them more than one billion dollars to complete the project.,完成这个⼯程花费了他们⼗亿多美元,v
+58 忘记/wàngjì,HSK3,忘记,wàngjì,To Forget,Wǒ yǒngyuǎn bù huì wàngjì nǐ.,I'll never forget you.,我永远不会忘记你,v
+60 相信/xiāngxìn,HSK3,相信,xiāngxìn,To Believe,Wǒ xiāngxìn nǐ huì chénggōng de.,I believe that you will be successful.,我相信你会成功的,v
+59 洗澡/xǐzǎo,HSK3,洗澡,xǐzǎo,To Take a Shower,Hǎo rè a! Wǒ xiǎng xǐzǎo.,It's so hot! I want to take a shower.,好热啊！我想洗澡,v
+62 选择/xuǎnzé,HSK3,选择,xuǎnzé,To Choose,"Hóngsè hé lán sè, nǐ xuǎnzé nǎ yī gè?","Which one do you choose, red or blue?",红⾊和蓝⾊，你选择哪一个？,v
+61 需要/xūyào,HSK3,需要,xūyào,To Need,Wǒ xūyào qián hé shíjiān lái wánchéng zhège xiàngmù.,I need money and time to complete this project.,我需要钱和时间来完成这个项⽬,v
+63 要求/yāoqiú,HSK3,要求,yāoqiú,To Require/To Ask,Tā yāoqiú wǒ gěi tā mǎi yī méi jièzhi.,She asked me to buy her a ring.,她要求我给她买一枚戒指,v
+64 以为/yǐwéi,HSK3,以为,yǐwéi,To Think (Wrongly),Wǒ yǐwéi wǒ shì duì de.,I thought I was right.,我以为我是对的,v
+65 ⽤/yòng,HSK3,⽤,yòng,To Use,Tā yòng qiānbǐ zuò le jìhao.,He made marks with a pencil.,他⽤铅笔做了记号,v
+66 遇到/yùdào,HSK3,遇到,yùdào,To Meet/To Run Into,Tā zài sēnlín lǐ yùdào le yī zhī lǎohǔ.,She ran into a tiger in the forest.,她在森林⾥遇到了一只老虎,v
+67 越/yuè,HSK3,越,yuè,To Get Over,Bùyào yuè lán.,Do not climb over the fence.,不要越栏,v
+68 站/zhàn,HSK3,站,zhàn,To Stand,Tā hūrán zhàn le qǐlái.,He suddenly stood up.,他忽然站了起来,v
+69 长/zhǎng,HSK3,长,zhǎng,To Grow,"Qùnián chūntiān yǔshuǐ tài duō, shūcài zhǎng de bù hǎo.",There was so much rain last spring that the vegetables did not grow well.,去年春天雨⽔太多，蔬菜长得不好,v
+71 照顾/zhàogu,HSK3,照顾,zhàogu,To Look After,Wǒ xūyào nǐ zhàogu háizi.,I need you to look after the child.,我需要你照顾孩⼦,v
+70 着急/zháojí,HSK3,着急,zháojí,To Worry,"Nǐ bié zháojí, yīshēng mǎshàng jiù lái le.","Don't worry, the doctor is coming soon.",你别着急，医⽣马上就来了,v
+72 祝/zhù,HSK3,祝,zhù,To Wish,Zhù nǐ hǎo yùn!,Wish you luck!,祝你好运！,v
+55 画/huà,HSK3,画,huà,Painting/Picture,Qiáng shàng yǒu yī fú huà.,There is a picture on the wall.,墙上有一幅画,n
+2 爱好/àihào,HSK3,爱好,àihào,Hobby,Wǒ de àihào shì chànggē.,My hobby is singing.,我的爱好是唱歌,n
+1 阿姨/āyí,HSK3,阿姨,āyí,Maid/Auntie,Wǒ de āyí gěi le wǒ yī tái shèyǐngjī.,My aunt gave me a camera.,我的阿姨给了我一台摄影机,n
+3 把/bǎ,HSK3,把,bǎ,Handle/(Used to shift the gramatical object in front of the verb),Qǐng bǎ mén guān yīxià.,Please close the door.,请把门关一下,n
+1 爸爸/bàba,HSK1,爸爸,bàba,Father,Wǒ bàba zài gēn wǒ shuōhuà.,My father is talking to me.,我爸爸在跟我说话,n
+5 半/bàn,HSK3,半,bàn,Half,Wǒ bǎ zhè zhāng zhǐ sī chéng le liǎng bàn.,I tore this piece of paper in half.,我把这张纸撕成了两半,n
+4 班/bān,HSK3,班,bān,Class,Wǒmen bān yǒu sānshí míng xuésheng.,There are 30 students in our class.,我们班有三⼗名学⽣,n
+6 办法/bànfǎ,HSK3,办法,bànfǎ,Method/Way,Zhìliáo bèitòng de wéiyī bànfǎ shì xiūxi.,The only way to cure backache is to rest.,治疗背痛的唯一办法是休息,n
+7 办公室/bàngōngshì,HSK3,办公室,bàngōngshì,Office,Máfan lái yīxià wǒ de bàngōngshì.,Please come to my office.,⿇烦来一下我的办公室,n
+9 饱/bǎo,HSK3,饱,bǎo,Full,Nǐ chī bǎo le ma?,Are you full?,你吃饱了吗？,n
+8 包/bāo,HSK3,包,bāo,Bag,Wǒ zhǎo bùdào wǒ de bāo le.,I can't find my bag.,我找不到我的包了,n
+10 报纸/bàozhǐ,HSK3,报纸,bàozhǐ,Newspaper,Qǐng bǎ bàozhǐ nágěi wǒ.,"Bring me the newspaper, please.",请把报纸拿给我,n
+11 北⽅/běifāng,HSK3,北⽅,běifāng,North,Běifāng de dōngtiān hěn lěng.,The winter in the north is very cold.,北⽅的冬天很冷,n
+3 北京/Běijīng,HSK1,北京,Běijīng,Beijing,Běijīng shì zhōngguó de shǒudū.,Beijing is the capital of China.,北京是中国的⾸都,n
+2 杯⼦/bēizi,HSK1,杯⼦,bēizi,Cup,Wǒ bǎ bēizi dǎpò le.,I broke the cup.,我把杯⼦打破了,n
+2 杯⼦/bēizi,HSK1,杯⼦,bēizi,Cup,Wǒ bǎ bēizi dǎpò le.,I broke the cup.,我把杯⼦打破了,n
+14 变化/biànhuà,HSK3,变化,biànhuà,Change,Zhège chéngshì de biànhuà hěn dà.,This city has gone through a big change.,这个城市的变化很⼤,n
+15 宾馆/bīnguǎn,HSK3,宾馆,bīnguǎn,Hotel,Zhè shì yī jiā wǔxīngjí de bīnguǎn.,This is a five star hotel.,这是一家五星级的宾馆,n
+16 冰箱/bīngxiāng,HSK3,冰箱,bīngxiāng,Refrigerator,Wǒ bǎ suānnǎi cóng bīngxiāng lǐ ná chūlái le.,I took out the yogurt from the refrigerator.,我把酸奶从冰箱⾥拿出来了,n
+13 ⽐赛/bǐsài,HSK3,⽐赛,bǐsài,Match,Wǒmen duì shū le dì yī chǎng bǐsài.,Our team lost the first match.,我们队输了第一场⽐赛,n
+12 ⿐⼦/bízi,HSK3,⿐⼦,bízi,Nose,Tā bùduàn de xǐng bízi.,He kept on blowing his nose.,他不断地擤⿐⼦,n
+4 菜 /cài,HSK1,菜 ,cài,Dish,Wǒ xǐhuan chī zhè dào cài.,I like to eat this dish.,我喜欢吃这道菜,n
+17 菜单/càidān,HSK3,菜单,càidān,Menu,Qǐng bǎ càidān gěi wǒ.,Please show me the menu.,请把菜单给我,n
+18 草/cǎo,HSK3,草,cǎo,Grass,Wǒmen zuò zài cǎodì shàng ba.,Let's sit on the grass.,我们坐在草地上吧,n
+19 层/céng,HSK3,层,céng,Story/Floor (of a building),Wǒ zhù zài 11 céng.,I am living on the 11th floor.,我住在11层,n
+5 茶 /chá,HSK1,茶 ,chá,Tea,Nǐ xiǎng hē kāfēi háishi chá?,Do you want to drink coffee or tea?,你想喝咖啡还是茶？,n
+20 超市/chāoshì,HSK3,超市,chāoshì,Supermarket,"Dǎrǎo yīxià, chāoshì xiànzài yíngyè ma?",Excuse me. Is the supermarket open?,打扰一下，超市现在营业吗？,n
+22 成绩/chéngjì,HSK3,成绩,chéngjì,Score/Grades,Wǒ zhège xuéqī de chéngjì hěn chà.,I got terrible grades this term.,我这个学期的成绩很差,n
+23 城市/chéngshì,HSK3,城市,chéngshì,City,Zhè shì tā chūshēng de chéngshì.,This is the town where he was born.,这是他出⽣的城市,n
+21 衬衫/chènshān,HSK3,衬衫,chènshān,Shirt,Wǒ bìxū yùn wǒ de chènshān.,I have to iron my shirt.,我必须熨我的衬衫,n
+1 船/chuán,HSK2,船,chuán,Boat,Wǒmen zài děng chuán lái dù wǒmen guò hé.,We are waiting for the boat to cross the river.,我们在等船来渡我们过河,n
+24 厨房/chúfáng,HSK3,厨房,chúfáng,Kitchen,Wǒ mā zài chúfáng lǐ zuòfàn.,My mom is cooking in the kitchen.,我妈在厨房⾥做饭,n
+25 春/chūn,HSK3,春,chūn,Spring,"Qiūtiān bù xià hěnduō yǔ, dàn chūntiān xià hěnduō yǔ.","It doesn't rain a lot in fall, but it rains a lot in spring.",秋天不下很多雨，但春天下很多雨,n
+6 出租车/chūzūchē,HSK1,出租车,chūzūchē,Taxi,Zhège chéngshì hěn nán dǎ dào chūzūchē.,It's very hard getting a taxi in this city.,这个城市很难打到出租车,n
+26 词语/cíyǔ,HSK3,词语,cíyǔ,Word (general term including monosyllables through to short phrases),Zhège cíyǔ wǒ bù dǒng.,I don't understand this word.,这个词语我不懂,n
+27 聪明/cōngming,HSK3,聪明,cōngming,Clever,Tā shì gè cōngming de háizi.,He is a clever kid.,他是个聪明的孩⼦,n
+29 蛋糕/dàngāo,HSK3,蛋糕,dàngāo,Cake,Wǒ chī le sān kuài dàngāo.,I ate three pieces of cake.,我吃了三块蛋糕,n
+28 打算/dǎsuàn,HSK3,打算,dǎsuàn,Plan,Nǐ jīntiān de dǎsuàn shì shénme?,What's your plan for today?,你今天的打算是什么？,n
+30 灯/dēng,HSK3,灯,dēng,Light,Bǎ dēng guān le. Wǒ shuì bu zháo.,Turn off the light. I can't sleep.,把灯关了我睡不着,n
+7 点/diǎn,HSK1,点,diǎn,O'clock,Xiànzài yǐjīng 9 diǎn le.,It's already nine o'clock.,现在已经9点了,n
+8 电脑/diànnǎo,HSK1,电脑,diànnǎo,Computer,Wǒ méiyǒu diànnǎo.,I don't have a computer.,我没有电脑,n
+9 电视/diànshì,HSK1,电视,diànshì,Television,Qǐng bǎ diànshì guān diào.,Please turn off the television.,请把电视关掉,n
+33 电梯/diàntī,HSK3,电梯,diàntī,Elevator,Wǒ zài diàntī lǐmiàn wéndào le yānwèi.,I smell smoke in the elevator.,我在电梯⾥⾯闻到了烟味,n
+10 电影/diànyǐng,HSK1,电影,diànyǐng,Movie,Jīnwǎn wǒ yào gēn wǒ nánpéngyou qù kàn diànyǐng.,I am going to see a movie with my boyfriend tonight.,今晚我要跟我男朋友去看电影,n
+34 电⼦邮件/diànzǐ yóujiàn,HSK3,电⼦邮件,diànzǐ yóujiàn,Email,Wǒ xiǎng chá yīxià wǒ de diànzǐ yóujiàn.,I want to check my email.,我想查一下我的电⼦邮件,n
+2 弟弟/dìdi,HSK2,弟弟,dìdi,Younger Brother,Wǒ dìdi zài dú dàxué.,My younger brother is attending a university.,我弟弟在读⼤学,n
+31 地铁/dìtiě,HSK3,地铁,dìtiě,Subway/Metro,Qǐngwèn dìtiě zài nǎr?,Excuse me. Where's the metro?,请问地铁在哪⼉?,n
+32 地图/dìtú,HSK3,地图,dìtú,Map,Zhè zhāng dìtú hěn zhǔn.,This map is very accurate.,这张地图很准,n
+35 东/dōng,HSK3,东,dōng,East,Fēng cóng dōngbian chuī lái.,The wind is blowing from the east.,风从东边吹来,n
+36 冬/dōng,HSK3,冬,dōng,Winter,"Wǒ tǎoyàn dōngtiān, yīnwèi dōngtiān hěn lěng.","I hate winter, because it's very cold.",我讨厌冬天，因为冬天很冷,n
+37 动物/dòngwù,HSK3,动物,dòngwù,Animal,Hǎitún shì shífēn cōngming de dòngwù.,Dolphins are very intelligent animals.,海豚是⼗分聪明的动物,n
+11 东西/dōngxi,HSK1,东西,dōngxi,Thing,Wǒ shénme dōngxi dōu bù xiǎng yào.,I don't want anything.,我什么东西都不想要,n
+38 段/duàn,HSK3,段,duàn,Passage/Paragraph,"Rúguǒ nǐ wúfǎ lǐjiě suíhòu de jǐ duàn, nàme xiān yuèdú xià yī zhāng.",If you do not understand the preceding paragraph then read the next section.,如果你⽆法理解随后的⼏段，那么先阅读下一章,n
+39 ⽿朵/ěrduo,HSK3,⽿朵,ěrduo,Ear,"Tā jì méiyǒu yǎnjing, yě méiyǒu ěrduo.",It has no eyes and no ears.,它既没有眼睛，也没有⽿朵,n
+12 ⼉⼦/érzi,HSK1,⼉⼦,érzi,Son,Zhōngguó rén xǐhuan shēng érzi.,Chinese like having sons.,中国⼈喜欢⽣⼉⼦,n
+13 饭店/fàndiàn,HSK1,饭店,fàndiàn,Restaurant,Zhè jiā fàndiàn cài hěn hǎochī.,The dishes in this restaurant are very delicious.,这家饭店菜很好吃,n
+41 ⽅便/fāngbiàn,HSK3,⽅便,fāngbiàn,Convenience/Convenient,Nín shénme shíhou fāngbiàn?,When would it be convenient for you?,您什么时候⽅便？,n
+3 房间/fángjiān,HSK2,房间,fángjiān,Room,Wǒ de fángjiān hěn gānjìng.,My room is very clean.,我的房间很⼲净,n
+40 发烧/fāshāo,HSK3,发烧,fāshāo,Fever,Wǒ jīntiān yǒu diǎn fāshāo.,I have a slight fever today.,我今天有点发烧,n
+14 飞机/fēijī,HSK1,飞机,fēijī,Airplane,Kàn! Tiānshàng yǒu yī jià fēijī.,Look! There is an airplane in the sky.,看！天上有一架飞机,n
+4 分钟/fēnzhōng,HSK2,分钟,fēnzhōng,Minute,Wǒ xūyào xiūxi 20 fēnzhōng.,I need to rest for 20 minutes.,我需要休息20分钟,n
+42 附近/fùjìn,HSK3,附近,fùjìn,Neighborhood/Nearby,Qǐngwèn zhè fùjìn yǒu méiyǒu xīngbākè?,"Excuse me, is there a starbucks nearby?",请问这附近有没有星巴克？,n
+5 服务员/fúwùyuán,HSK2,服务员,fúwùyuán,Waiter/Waitress,Zhè jiā fàndiàn de fúwùyuán tàidu hěn chà.,The waiters in this restaurant have a bad attitude.,这家饭店的服务员态度很差,n
+43 感冒/gǎnmào,HSK3,感冒,gǎnmào,Cold,Wǒ dé le zhòng gǎnmào.,I have caught a bad cold.,我得了重感冒,n
+6 哥哥/gēge,HSK2,哥哥,gēge,Older Brother,Wǒ gēge huì kāichē.,My older brother can drive.,我哥哥会开车,n
+44 根据/gēnjù,HSK3,根据,gēnjù,Basis/According To,"Gēnjù tā suǒ shuō de, tā shì yǒuzuì de.","According to what she said, he's guilty.","根据她所说的, 他是有罪的",n
+7 公共汽车/gōnggòng qìchē,HSK2,公共汽车,gōnggòng qìchē,Bus,Wǒmen chéng gōnggòng qìchē qù shàngxué.,We go to school by bus.,我们乘公共汽车去上学,n
+8 公司/gōngsī,HSK2,公司,gōngsī,Company,Zhè jiā gōngsī de lǎobǎn shì shuí?,Who is the boss of this company?,这家公司的老板是谁？,n
+45 公园/gōngyuán,HSK3,公园,gōngyuán,Park,Gōngyuán lǐ dōu shì háizi.,The park is filled with children.,公园⾥都是孩⼦,n
+15 狗/gǒu,HSK1,狗,gǒu,Dog,Wǒ fēicháng pà gǒu.,I am very afraid of dogs.,我⾮常怕狗,n
+47 关系/guānxi,HSK3,关系,guānxi,Connection/Relationship,Wǒ gēn wǒ fùmǔ de guānxi bù shì hěn hǎo.,The relationship between me and my parents is not very good.,我跟我⽗母的关系不是很好,n
+48 国家/guójiā,HSK3,国家,guójiā,Nation/Country,Zhōngguó shì gè jùdà de guójiā.,China is a huge country.,中国是个巨⼤的国家,n
+49 果汁/guǒzhī,HSK3,果汁,guǒzhī,Juice/Fruit Juice,Nǐ xǐhuan hē shénme yàng de guǒzhī?,What kind of juice do you like?,你喜欢喝什么样的果汁？,n
+46 故事/gùshi,HSK3,故事,gùshi,Story,Wǒ xiāngxìn nàge gùshi.,I believe that story.,我相信那个故事,n
+9 孩⼦/háizi,HSK2,孩⼦,háizi,Child,Tā bùguò shì gè háizi.,He is just a child.,他不过是个孩⼦,n
+16 汉语/hànyǔ,HSK1,汉语,hànyǔ,Chinese Language,Wǒ bù huì shuō hànyǔ.,I do not speak Chinese.,我不会说汉语,n
+10 号/hào,HSK2,号,hào,Number,Nǐ de shǒujī hào shì duōshǎo?,What's your cellphone number?,你的手机号是多少？,n
+50 河/hé,HSK3,河,hé,River,Wǒmen qù hé lǐ yóuyǒng le.,We went swimming in the river.,我们去河⾥游泳了,n
+51 ⿊板/hēibǎn,HSK3,⿊板,hēibǎn,Blackboard,Lǎoshī zài hēibǎn shàng xiě chū le xīn dāncí.,The teacher wrote down the new words on the blackboard.,老师在⿊板上写出了新单词,n
+17 后⾯/hòumian,HSK1,后⾯,hòumian,Back/Behind,Wǒ dūn zài shāfā hòumian.,I crouched behind the sofa.,我蹲在沙发后⾯,n
+53 花/huā,HSK3,花,huā,Flower,Zhè huā yánsè hěn xiānyàn.,This flower's color is very bright.,这花颜⾊很鲜艳,n
+56 环境/huánjìng,HSK3,环境,huánjìng,Environment,Wǒmen yīnggāi jìnlì bùyào wūrǎn huánjìng.,We ought to do our best not to pollute the environment.,我们应该尽⼒不要污染环境,n
+54 花园/huāyuán,HSK3,花园,huāyuán,Garden,Tā zài huāyuán lǐ zhāi huā.,She is picking flowers in the garden.,她在花园⾥摘花,n
+57 会议/huìyì,HSK3,会议,huìyì,Meeting,Huìyì shénme shíhou kāishǐ?,How soon will the meeting begin?,会议什么时候开始？,n
+18 ⽕车站/huǒchē zhàn,HSK1,⽕车站,huǒchē zhàn,Railway Station,Huǒchē zhàn zài nǎli?,Where is the railway station?,⽕车站在哪⾥?,n
+52 护照/hùzhào,HSK3,护照,hùzhào,Passport,Wǒ de hùzhào mǎshàng yào guòqī le.,My passport will be soon expired.,我的护照马上要过期了,n
+19 家/jiā,HSK1,家,jiā,Home,Huānyíng lái dào wǒmen jiā.,Welcome to our home!,欢迎来到我们家,n
+60 健康/jiànkāng,HSK3,健康,jiànkāng,Health,Wǒ hěn dānxīn nǐ de jiànkāng.,I worry about your health.,我很担⼼你的健康,n
+61 ⾓/jiǎo,HSK3,⾓,jiǎo,Corner,"Tā diēdǎo shí, tóu pèngdào xiāngzi de yī jiǎo.",He fell and hit his head on the corner of a box.,他跌倒时，头碰到箱⼦的一⾓,n
+62 脚/jiǎo,HSK3,脚,jiǎo,Foot,"Dāng tā diēdǎo shí, tā shāng le tā de zuǒjiǎo.",He hurt his left foot when he fell.,当他跌倒时，他伤了他的左脚,n
+13 教室/jiàoshì,HSK2,教室,jiàoshì,Classroom,Zhè jiān jiàoshì hěn gānjìng.,This classroom is very clean.,这间教室很⼲净,n
+11 机场/jīchǎng,HSK2,机场,jīchǎng,Airport,Dào jīchǎng yǒu duō yuǎn?,How far is it to the airport?,到机场有多远？,n
+12 鸡蛋/jīdàn,HSK2,鸡蛋,jīdàn,Egg,Tā zài shìchǎng shàng mǎi le yī dǎ jīdàn.,She bought a dozen eggs at the market.,她在市场上买了一打鸡蛋,n
+63 街道/jiēdào,HSK3,街道,jiēdào,Street,Jiēdào liǎngbiān yǒu xǔduō shāngdiàn.,There are many stores on either side of the street.,街道两边有许多商店,n
+14 姐姐/jiějie,HSK2,姐姐,jiějie,Older Sister,Nǐ jiějie shì zuò shénme gōngzuò de?,What does your older sister do?,你姐姐是做什么⼯作的？,n
+64 节⽬/jiémù,HSK3,节⽬,jiémù,Program,Nǐ xǐhuan kàn shénme yàng de diànshì jiémù?,What kind of TV programs do you like to watch?,你喜欢看什么样的电视节⽬？,n
+65 节⽇/jiérì,HSK3,节⽇,jiérì,Festival/Holiday,Shèngdànjié shì jīdūjiào de jiérì.,Christmas is a Christian holiday.,圣诞节是基督教的节⽇,n
+58 机会/jīhuì,HSK3,机会,jīhuì,Chance/Opportunity,Gěi wǒ yī cì jīhuì ba!,Give me a chance！,给我一次机会吧！,n
+59 季节/jìjié,HSK3,季节,jìjié,Season,Qiūtiān shì wǒ zuì xǐhuan de jìjié.,Autumn is my favorite season.,秋天是我最喜欢的季节,n
+66 经理/jīnglǐ,HSK3,经理,jīnglǐ,Manager,Jīnglǐ pīzhǔn le wǒmen de jìhuà.,The manager approved our plan.,经理批准了我们的计划,n
+20 今天/jīntiān,HSK1,今天,jīntiān,Today,Wǒ jīntiān hěn máng.,I'm very busy today.,我今天很忙,n
+67 句⼦/jùzi,HSK3,句⼦,jùzi,Sentence,Bùyào fānyì zhège jùzi!,Do not translate this sentence!,不要翻译这个句⼦！,n
+15 咖啡/kāfēi,HSK2,咖啡,kāfēi,Coffee,Wǒ diǎn le yī bēi kāfēi.,I ordered a cup of coffee.,我点了一杯咖啡,n
+16 考试/kǎoshì,HSK2,考试,kǎoshì,Exam,Míngtiān wǒ bìxū cānjiā kǎoshì.,I have to take an exam tomorrow.,明天我必须参加考试,n
+17 课/kè,HSK2,课,kè,Lesson/Class,Míngtiān de kè wǒ néng bù lái ma?,May I be excused from tomorrow's class?,明天的课我能不来吗？,n
+68 客⼈/kèrén,HSK3,客⼈,kèrén,Guest,Jīntiān nǐ shì wǒ de kèrén.,Today you are my guest.,今天你是我的客⼈,n
+69 空调/kōngtiáo,HSK3,空调,kōngtiáo,Air Conditioner,Wǒ xiǎng mǎi yī tái kōngtiáo.,I want to buy an air conditioner.,我想买一台空调,n
+70 ⼜/kǒu,HSK3,⼜,kǒu,Mouth,"Kǒu zhōng yǒu mì, xīn zhōng yǒu dú.",Honey in the mouth and poison in the heart..,⼜中有蜜，⼼中有毒,n
+72 块/kuài,HSK3,块,kuài,Piece/Measure Word,Wǒ chī le yī kuài dàngāo.,I ate a piece of cake.,我吃了一块蛋糕,n
+73 筷⼦/kuàizi,HSK3,筷⼦,kuàizi,Chopsticks,"Wǒmen yòng kuàizi, bù yòng dāo chā.",We use chopsticks instead of knives and forks.,我们⽤筷⼦，不⽤⼑叉,n
+71 裤⼦/kùzi,HSK3,裤⼦,kùzi,Trousers/Pants,Wǒ mǎi le liǎng tiáo kùzi.,I bought two pairs of trousers.,我买了两条裤⼦,n
+21 老师/lǎoshī,HSK1,老师,lǎoshī,Teacher,Wǒ yǒu yī wèi hěn piàoliang de lǎoshī.,I have a beautiful teacher.,我有一位很漂亮的老师,n
+22 ⾥/lǐ,HSK1,⾥,lǐ,Inside,Wǒ bǎ shuǐguǒ fàng jìn bīngxiāng lǐ.,I put the fruit inside the refrigerator.,我把⽔果放进冰箱⾥,n
+76 脸/liǎn,HSK3,脸,liǎn,Face,Tā de liǎn hěn yuán.,Her face is very round,她的脸很圆,n
+77 辆/liàng,HSK3,辆,liàng,Measure Word For Cars,Nà liàng jiǎotàchē duì nǐ láishuō tài xiǎo le.,That bicycle is too small for you.,那辆脚踏车对你来说太⼩了,n
+78 邻居/línjū,HSK3,邻居,línjū,Neighbor,Wǒ de línjū shì gè dà měinǚ.,My neighbor is a beautiful woman.,我的邻居是个⼤美⼥,n
+75 历史/lìshǐ,HSK3,历史,lìshǐ,History,Tā xǐhuan dìlǐ hé lìshǐ.,He likes geography and history.,他喜欢地理和历史,n
+74 礼物/lǐwù,HSK3,礼物,lǐwù,Gift,Jīnnián nǐ xiǎng yào shénme shēngrì lǐwù?,What birthday gift do you want this year?,今年你想要什么⽣⽇礼物？,n
+79 楼/lóu,HSK3,楼,lóu,Building,Zhè dòng lóu kuài yào dǎo le.,This building is about to collapse.,这栋楼快要倒了,n
+18 路/lù,HSK2,路,lù,Road,Zhè tiáo lù shì qù jīchǎng de.,This road will lead you to the airport.,这条路是去机场的,n
+80 马/mǎ,HSK3,马,mǎ,Horse,Wǒ xiǎng xuéxí qímǎ.,I want to learn to ride a horse.,我想学习骑马,n
+23 妈妈/māma,HSK1,妈妈,māma,Mother,Wǒ māma shì gè shànliáng de nǚrén.,My mother is a kind woman.,我妈妈是个善良的⼥⼈,n
+24 猫/māo,HSK1,猫,māo,Cat,Māo xǐhuan chī yú.,A cat likes to eat fish.,猫喜欢吃鱼,n
+81 帽⼦/màozi,HSK3,帽⼦,màozi,Hat,Dàishàng nǐ de màozi.,Put your hat on.,戴上你的帽⼦,n
+19 妹妹/mèimei,HSK2,妹妹,mèimei,Younger Sisiter,Wǒ mèimei jīngcháng kū.,My sister often cries.,我妹妹经常哭,n
+82 门/mén,HSK3,门,mén,Door,Suǒyǒu de mén doū cóng wàimian suǒ shàng le.,All the doors had been locked from the outside.,所有的门都从外⾯锁上了,n
+83 ⽶/mǐ,HSK3,⽶,mǐ,Rice,"Miànbāo hé tǔdòu shì xīfāng rén de zhǔshí, ér zhōngguó rén de zhǔshí shì mǐ",⾯包和⼟⾖是西⽅⼈的主⾷，⽽中国⼈的主⾷是⽶和⾯,hé miàn.,n
+84 ⾯包/miànbāo,HSK3,⾯包,miànbāo,Bread,Zhège miànbāo tài tián le.,This bread is too sweet.,这个⾯包太甜了,n
+85 ⾯条/miàntiáo,HSK3,⾯条,miàntiáo,Noodle,Zhè jiā de miàntiáo zhēn měiwèi.,The noodles in this resturant is very tasty.,这家的⾯条真美味,n
+25 ⽶饭/mǐfàn,HSK1,⽶饭,mǐfàn,(Cooked) Rice,Zài nǐmen guójiā chī mǐfàn ma?,Do you eat rice in your country?,在你们国家吃⽶饭吗？,n
+27 明天/míngtiān,HSK1,明天,míngtiān,Tomorrow,Míngtiān shì xīngqīrì.,Tomorrow will be Sunday.,明天是星期⽇,n
+26 名字/míngzi,HSK1,名字,míngzi,Name,Nǐ jiào shénme míngzi?,What's your name?,你叫什么名字？,n
+86 奶奶/nǎinai,HSK3,奶奶,nǎinai,Grandmother (Father's Mother),Zhè tiáo xiàngliàn shì wǒ nǎinai sònggěi wǒ de.,My grandma gave me this necklace.,这条项链是我奶奶送给我的,n
+87 南/nán,HSK3,南,nán,South,"Qiūtiān de shíhou, yànzi huì wǎng nán fēi.","In the autumn, swallows will fly south.",秋天的时候，燕⼦会往南飞,n
+20 男⼈/nánrén,HSK2,男⼈,nánrén,Man,Nánrén yīnggāi gōngzuò.,Men should work.,男⼈应该⼯作,n
+28 年/nián,HSK1,年,nián,Year,Jīnnián shì 2016 nián.,This year is 2016.,今年是2016年,n
+89 年级/niánjí,HSK3,年级,niánjí,Grade,Wǒ érzi shàng xiǎoxué sān niánjí.,My son's in the third grade.,我⼉⼦上⼩学三年级,n
+90 年轻/niánqīng,HSK3,年轻,niánqīng,Youth/Young,Tā kàn qǐlái hěn niánqīng.,She looks very young.,她看起来很年轻,n
+91 鸟/niǎo,HSK3,鸟,niǎo,Bird,Wǒ tīngjiàn yī zhī xiǎo niǎo zài chànggē.,I heard a little bird singing.,我听见一只⼩鸟在唱歌,n
+21 ⽜奶/niúnǎi,HSK2,⽜奶,niúnǎi,Milk,Wǒ xǐhuan zài kāfēi lǐ jiā niúnǎi.,I like to add milk to my coffee.,我喜欢在咖啡⾥加⽜奶,n
+29 ⼥⼉/nǚ'ér,HSK1,⼥⼉,nǚ'ér,Daughter,Wǒ xiǎng yào yī gè nǚ'ér.,I want a daughter.,我想要一个⼥⼉,n
+22 ⼥⼈/nǚrén,HSK2,⼥⼈,nǚrén,Woman,Tā shì gè hěn bàng de nǚrén.,She is a wonderful woman.,她是个很棒的⼥⼈,n
+23 旁边/pángbiān,HSK2,旁边,pángbiān,Side,Zuò zài wǒ pángbiān de shì wǒ de mèimei.,My sister is sitting by my side.,坐在我旁边的是我的妹妹,n
+92 盘⼦/pánzi,HSK3,盘⼦,pánzi,Plate,Tā zài pánzi lǐ duīmǎn le shíwù.,He filled the plate with food.,他在盘⼦⾥堆满了⾷物,n
+30 朋友/péngyou,HSK1,朋友,péngyou,Friend,Nǐmen dōu shì wǒ de péngyou.,You are all my friends.,你们都是我的朋友,n
+24 票/piào,HSK2,票,piào,Ticket,Wǒ yǐjīng mǎi piào le.,I have already bought the ticket.,我已经买票了,n
+93 啤酒/píjiǔ,HSK3,啤酒,píjiǔ,Beer,Wǒ hē le yī píng píjiǔ.,I drank a bottle of beer.,我喝了一瓶啤酒,n
+31 苹果/píngguǒ,HSK1,苹果,píngguǒ,Apple,Zhège píngguǒ hěn hǎochī.,This apple is very tasty.,这个苹果很好吃,n
+94 葡萄/pútao,HSK3,葡萄,pútao,Grape,Zhè pútao tián ma?,Are these grapes sweet?,这葡萄甜吗？,n
+95 普通话/pǔtōnghuà,HSK3,普通话,pǔtōnghuà,Mandarin,Wǒ huì shuō yīdiǎn pǔtōnghuà.,I can speak a little bit Mandarin.,我会说一点普通话,n
+32 钱/qián,HSK1,钱,qián,Money,Nǐ de qián gòu ma?,Do you have enough money?,你的钱够吗？,n
+96 铅笔/qiānbǐ,HSK3,铅笔,qiānbǐ,Pencil,Néng jiè wǒ zhī qiānbǐ ma?,Would you lend me a pencil?,能借我⽀铅笔吗？,n
+33 前⾯/qiánmian,HSK1,前⾯,qiánmian,Front,Wǒ zài xuéxiào qiánmian děng nǐ.,I will wait for you in front of the school.,我在学校前⾯等你,n
+97 秋/qiū,HSK3,秋,qiū,Autumn,Qiūtiān mǎshàng jiù yào lái le.,Autumn is coming soon.,秋天马上就要来了,n
+25 妻⼦/qīzi,HSK2,妻⼦,qīzi,Wife,Wǒ xiǎngniàn wǒ de qīzi.,I miss my wife.,我想念我的妻⼦,n
+26 去年/qùnián,HSK2,去年,qùnián,Last Year,Qùnián wǒ qù kàn wǒ bà mā le.,Last year I visited my parents.,去年我去看我爸妈了,n
+98 裙⼦/qúnzi,HSK3,裙⼦,qúnzi,Skirt,Zhè tiáo qúnzi zěnme yàng?,How is this skirt?,这条裙⼦怎么样？,n
+34 ⼈/rén,HSK1,⼈,rén,People,Zhèlǐ hǎoduō rén a!,There are so many people here.,这⾥好多⼈啊！,n
+99 热情/rèqíng,HSK3,热情,rèqíng,Enthusiasm,Tā de rèqíng gǎndòng le wǒ.,I was moved by his enthusiasm.,他的热情感动了我,n
+35 ⽇/rì,HSK1,⽇,rì,Day/Day Of The Month,Jīntiān shì 10 yuè 18 rì.,Today is October 18th.,今天是10⽉18⽇,n
+100 伞/sǎn,HSK3,伞,sǎn,Umbrella,Wǒ diū le wǒ de sǎn.,I lost my umbrella.,我丢了我的伞,n
+37 上/shàng,HSK1,上,shàng,Above/On Top,Bīngxiāng shàng yǒu yī píng hóngjiǔ.,There is a bottle of wine on the top of the refrigerator.,冰箱上有一瓶红酒,n
+36 商店/shāngdiàn,HSK1,商店,shāngdiàn,Shop/Store,Wǒ yào qù shāngdiàn mǎi shuǐ.,I need to go to the store and buy some water.,我要去商店买⽔,n
+101 上⽹/shàngwǎng,HSK3,上⽹,shàngwǎng,To Get Online,Tā chéngtiān duǒ zài bàngōngshì lǐ shàngwǎng liáotiān.,She spent the whole day avoiding other people in the office so she could chat,她成天躲在办公室⾥上⽹聊天,n
+38 上午/shàngwǔ,HSK1,上午,shàngwǔ,Morning,Tā zhěnggè shàngwǔ dōu zài kànshū.,He spent the morning reading a book.,他整个上午都在看书,n
+28 ⽣⽇/shēngrì,HSK2,⽣⽇,shēngrì,Birthday,Wǒ gěi mǔqīn mǎi le yī fèn shēngrì lǐwù.,I bought a birthday present for my mother.,我给母亲买了一份⽣⽇礼物,n
+102 声⾳/shēngyīn,HSK3,声⾳,shēngyīn,Voice,Nǐ de shēngyīn hěn hǎotīng.,Your voice is very pleasant to hear.,你的声⾳很好听,n
+27 ⾝体/shēntǐ,HSK2,⾝体,shēntǐ,Body/Health,Zhèxiē yǐnshí tígōng le nǐ shēntǐ xūyào de suǒyǒu yíngyǎng.,These diets provide everything your body needs.,这些饮⾷提供了你⾝体需要的所有营养,n
+39 时候/shíhou,HSK1,时候,shíhou,Time,Yǐjīng shì shíhou huíqù le.,It's already time to go home.,已经是时候回去了,n
+29 时间/shíjiān,HSK2,时间,shíjiān,Time,Shíjiān jiùshì jīnqián.,Time is money.,时间就是⾦钱,n
+103 世界/shìjiè,HSK3,世界,shìjiè,World,Wǒ yào gǎibiàn shìjiè.,I want to change the world.,我要改变世界,n
+30 事情/shìqing,HSK2,事情,shìqing,Matter/Thing,Ānquán shì zuì zhòngyào de shìqing.,Safety is the most important thing.,安全是最重要的事情,n
+31 手表/shǒubiǎo,HSK2,手表,shǒubiǎo,Watch,Wǒ de shǒubiǎo kuài le.,My watch is fast.,我的手表快了,n
+104 手机/shǒujī,HSK3,手机,shǒujī,Mobile Phone/Cellphone,Tā de shǒujī guānjī le.,His cellphone is turned off now.,他的手机关机了,n
+106 树/shù,HSK3,树,shù,Tree,Lù liǎngbiān yǒu xǔduō shù.,There are lots of trees on both sides of the road.,路两边有许多树,n
+40 书/shū,HSK1,书,shū,Book,Wǒ xǐhuan kàn shū.,I like reading books.,我喜欢看书,n
+108 双/shuāng,HSK3,双,shuāng,Pair,Wǒ mǎi le yī shuāng gāogēnxié.,I bought a pair of high heels.,我买了一双⾼跟鞋,n
+41 ⽔/shuǐ,HSK1,⽔,shuǐ,Water,Wǒ yào hē shuǐ.,I want to drink water.,我要喝⽔,n
+42 ⽔果/shuǐguǒ,HSK1,⽔果,shuǐguǒ,Fruit,Nǐ yīnggāi duō chī diǎn shuǐguǒ.,You should eat more fruit.,你应该多吃点⽔果,n
+109 ⽔平/shuǐpíng,HSK3,⽔平,shuǐpíng,Level,Nǐ de yīngyǔ shuǐpíng rúhé?,How is your English level?,你的英语⽔平如何？,n
+105 叔叔/shūshu,HSK3,叔叔,shūshu,Uncle,Wǒ shūshu ǒu'ěr huì lái kàn wǒ.,My uncle comes to see me from time to time.,我叔叔偶尔会来看我,n
+107 数学/shùxué,HSK3,数学,shùxué,Math,Wǒ hěn shàncháng shùxué.,I am very good at math.,我很擅长数学,n
+110 司机/sījī,HSK3,司机,sījī,Driver,"Sījī méi néng shùnlì guǎiwān, zhuàng dào le shù shàng.",The driver failed to negotiate a turn and ran into a tree.,司机没能顺利拐弯，撞到了树上,n
+111 太阳/tàiyáng,HSK3,太阳,tàiyáng,Sun,Jīntiān de tàiyáng hào dà a!,The sun is so hot today！,今天的太阳好⼤啊！,n
+112 糖/táng,HSK3,糖,táng,Sugar,"Wǒ líbukāi táng, tiánpǐn hé qiǎokèlì.",I can't live without sugar，sweets and chocolate.,我离不开糖、甜品和巧克⼒,n
+113 疼/téng,HSK3,疼,téng,Pain,Wǒ shòubuliǎo zhèzhǒng téng.,I can't stand the pain.,我受不了这种疼,n
+32 题/tí,HSK2,题,tí,Question/Problem,"Zhè dào shùxué tí tài nán, wǒ suàn bù chūlái.","This math problem is too difficult, I can't solve it out.",这道数学题太难，我算不出来,n
+43 天⽓/tiānqì,HSK1,天⽓,tiānqì,Weather,Jīntiān tiānqì hěn rè.,The weather is hot today.,今天天⽓很热,n
+114 体育/tǐyù,HSK3,体育,tǐyù,Physical Education/Sports,Tā bù xiàng wǒ duì tǐyù nàme chīmí.,She is not as crazy about sport as I am.,她不像我对体育那么痴迷,n
+115 同事/tóngshì,HSK3,同事,tóngshì,Colleague,Wǒ de tóngshì men yīzhí dōu duì wǒ hěn hǎo.,My colleagues are always nice to me.,我的同事们一直都对我很好,n
+44 同学/tóngxué,HSK1,同学,tóngxué,Classmate,Tā shì wǒ de dàxué tóngxué.,He is my classmate at the university.,他是我的⼤学同学,n
+116 头发/tóufa,HSK3,头发,tóufa,Hair (on the head),Nǐ de tóufa tài cháng le.,Your hair is too long.,你的头发太长了,n
+118 腿/tuǐ,HSK3,腿,tuǐ,Leg,Wǒ de tuǐ bèi nà zhī gǒu yǎo le.,My leg was bitten by that dog.,我的腿被那只狗咬了,n
+117 图书馆/túshūguǎn,HSK3,图书馆,túshūguǎn,Library,Wǒ cóng túshūguǎn jiè le liǎng běn shū.,I borrowed two books from the library.,我从图书馆借了两本书,n
+33 外/wài,HSK2,外,wài,Outside,Mén wàimian shì shuí?,Who is it outside of the door?,门外⾯是谁?,n
+120 万/wàn,HSK3,万,wàn,Ten Thousand,Tā zuò zìyóu zhíyè měi nián kě zhuàn 2 wàn yuán.,His freelance work brings him in about 20000 Yuan a year.,他做⾃由职业每年可赚2万元,n
+119 碗/wǎn,HSK3,碗,wǎn,Bowl,Wǒ bǎ wǎn gěi shuāipò le.,I broke the bowl.,我把碗给摔破了,n
+34 晚上/wǎnshang,HSK2,晚上,wǎnshang,Evening,Nǐ jīntiān wǎnshang yǒu kòng ma?,Are you free this evening?,你今天晚上有空吗?,n
+121 位/wèi,HSK3,位,wèi,Measure Word For People,Tā yīnwèi duì yī wèi tóngshì dòngcū ér bèi kāichú le.,He was fired from his job after roughing up a colleague.,他因为对一位同事动粗⽽被开除了,n
+122 ⽂化/wénhuà,HSK3,⽂化,wénhuà,Culture,"Zài wǒmen de wénhuà zhōng, wèn tārén zhèng duōshao qián shì bù lǐmào",在我们的⽂化中，问他⼈挣多少钱是不礼貌的,de.,n
+35 问题/wèntí,HSK2,问题,wèntí,Question,Wǒ yǒu gè wèntí.,I have a question.,我有个问题,n
+123 西/xī,HSK3,西,xī,West,Lí zhèr zuìjìn de gōnggòng cèsuǒ zài xī jiē.,The nearest public toilets are on West street.,离这⼉最近的公共厕所在西街,n
+45 下/xià,HSK1,下,xià,Below/Under,Yī zhī māo zài zhuō xià.,A cat is under the table.,一只猫在桌下,n
+126 夏/xià,HSK3,夏,xià,Summer,"Wǒ xiǎng zhīdào, nǐ zhège xiàtiān gān le xiē shénme?",I want to know what you did this summer.,我想知道，你这个夏天⼲了些什么？,n
+127 ⾹蕉/xiāngjiāo,HSK3,⾹蕉,xiāngjiāo,Banana,Nǐ xǐhuan chī xiāngjiāo ma?,Do you like to eat bananas?,你喜欢吃⾹蕉吗？,n
+128 相同/xiāngtóng,HSK3,相同,xiāngtóng,Same,Tāmen liǎng gè rén yǒu xiāngtóng de àihào.,They both have the same hobby.,他们两个⼈有相同的爱好,n
+47 先⽣/xiānsheng,HSK1,先⽣,xiānsheng,Mister/Husband,Wǒ de xiānsheng hěn ài wǒ.,My husband loves me very much.,我的先⽣很爱我,n
+48 现在/xiànzài,HSK1,现在,xiànzài,Now,Xiànzài jǐ diǎn le?,What time is it now?,现在⼏点了？,n
+49 ⼩姐/xiǎojie,HSK1,⼩姐,xiǎojie,Miss/Young Lady,Wǒ kànjian le yī gè měilì de xiǎojie.,I saw a beautiful young lady.,我看见了一个美丽的⼩姐,n
+37 ⼩时/xiǎoshí,HSK2,⼩时,xiǎoshí,Hour,Yī gè xiǎoshí hòu jiàn.,See you in an hour.,一个⼩时后见,n
+129 校长/xiàozhǎng,HSK3,校长,xiàozhǎng,Headmaster,Tā shì wǒmen xuéxiào de xiàozhǎng.,He is the headmaster in my school.,他是我们学校的校长,n
+46 下午/xiàwǔ,HSK1,下午,xiàwǔ,Afternoon,Wǒ míngtiān xiàwǔ yǒu kòng.,I will be free tomorrow afternoon.,我明天下午有空,n
+130 鞋/xié,HSK3,鞋,xié,Shoe,Wǒ de xié tuōjiāo le.,My shoe came apart.,我的鞋脱胶了,n
+36 西⽠/xīguā,HSK2,西⽠,xīguā,Watermelon,Zhège xīguā hěn tián.,This watermelon is very sweet.,这个西⽠很甜,n
+124 习惯/xíguàn,HSK3,习惯,xíguàn,Custom,Wǒ kànbuguàn zhèxiē jiù xíguàn.,I hate to see these old customs.,我看不惯这些旧习惯,n
+132 信/xìn,HSK3,信,xìn,Letter,Wǒ xiě le yī fēng xìn.,I wrote a letter.,我写了一封信,n
+38 姓/xìng,HSK2,姓,xìng,Family Name,Nǐ xìng shénme?,What is your family name?,你姓什么？,n
+133 ⾏李箱/xínglǐxiāng,HSK3,⾏李箱,xínglǐxiāng,Suitcase,Nǐ néng bāng wǒ ná zhège xínglǐxiāng ma?,Can you please help me carry this suitcase?,你能帮我拿这个⾏李箱吗？,n
+50 星期/xīngqī,HSK1,星期,xīngqī,Week,Zhè xīngqī tā hěn máng.,He is very busy this week.,这星期他很忙,n
+134 兴趣/xìngqù,HSK3,兴趣,xìngqù,Interest,Wǒ duì lìshǐ méiyǒu shéme xìngqù.,I have little interest in history.,我对历史没有什么兴趣,n
+131 新闻/xīnwén,HSK3,新闻,xīnwén,News,Wǒ měitiān zǎoshang doū huì kàn xīnwén.,I read the news every morning.,我每天早上都会看新闻,n
+135 熊猫/xióngmāo,HSK3,熊猫,xióngmāo,Panda,Xióngmāo shì zhōngguó de guóbǎo.,The panda is China’s national treasure.,熊猫是中国的国宝,n
+125 洗手间/xǐshǒujiān,HSK3,洗手间,xǐshǒujiān,Washroom,Qǐngwèn xǐshǒujiān zài nǎr?,"Excuse me, where is the washroom?",请问洗手间在哪⼉？,n
+39 雪/xuě,HSK2,雪,xuě,Snow,Shāndǐng bèi xuě fùgài le.,The top of the mountain is covered in snow.,⼭顶被雪覆盖了,n
+51 学⽣/xuésheng,HSK1,学⽣,xuésheng,Student,Wǒ bù shì xuésheng.,I am not a student.,我不是学⽣,n
+52 学校/xuéxiào,HSK1,学校,xuéxiào,School,Nǐ de xuéxiào zài nǎr?,Where is your school?,你的学校在哪⼉？,n
+42 ⽺⾁/yángròu,HSK2,⽺⾁,yángròu,Lamb,Wǒ bù xǐhuan chī yángròu.,I don't like to eat lamb.,我不喜欢吃⽺⾁,n
+41 眼睛/yǎnjing,HSK2,眼睛,yǎnjing,Eye,Wǒ de yǎnjing jìn le xiē shā.,I got some sand in my eye.,我的眼睛进了些沙,n
+136 眼镜/yǎnjìng,HSK3,眼镜,yǎnjìng,Glasses,Wǒ de yǎnjìng bùjiàn le.,I can't find my glasses.,我的眼镜不见了,n
+40 颜⾊/yánsè,HSK2,颜⾊,yánsè,Color,Wǒ yě xǐhuan zhège yánsè.,I also like this color.,我也喜欢这个颜⾊,n
+43 药/yào,HSK2,药,yào,Medicine,Zhè yào méiyǒu fùzuòyòng.,This medicine does not have side effects.,这药没有副作⽤,n
+137 爷爷/yéye,HSK3,爷爷,yéye,Grandfather (Father's father),Wǒ yéye zài wǒ hěn xiǎo de shíhou jiù qùshì le.,My grandfather passed away when I was little.,我爷爷在我很⼩的时候就去世了,n
+53 ⾐服/yīfu,HSK1,⾐服,yīfu,Clothing,Bǎ yīfu tuō diào!,Take off your clothes!,把⾐服脱掉！,n
+138 一会⼉/yīhuǐr,HSK3,一会⼉,yīhuǐr,A Short Period of Time/A While,Wǒ xūyào xiūxi yīhuǐr.,I need to rest for a while.,我需要休息一会⼉,n
+140 影响/yǐngxiǎng,HSK3,影响,yǐngxiǎng,Affect/Influence,Fùmǔ gēn háizi de qīnmì chéngdù duì háizi de xìnggé yǒuzhe qiángliè de,⽗母跟孩⼦的亲密程度对孩⼦的性格有着强烈的影响,yǐngxiǎng.,n
+139 银⾏/yínháng,HSK3,银⾏,yínháng,Bank,Zhèlǐ lí yínháng yuǎn ma?,Is the bank far from here?,这⾥离银⾏远吗？,n
+88 ⾳乐/yīnyuè,HSK3,⾳乐,yīnyuè,Music,Nǐ xǐhuan shénme yàng de yīnyuè?,What kind of music do you like?,你喜欢什么样的⾳乐？,n
+54 医⽣/yīshēng,HSK1,医⽣,yīshēng,Doctor,Wǒ xiǎng zuò yīshēng.,I want to be a doctor.,我想做医⽣,n
+44 意思/yìsi,HSK2,意思,yìsi,Meaning,Zhège dāncí shì shénme yìsi?,What is the meaning of this word?,这个单词是什么意思？,n
+55 医院/yīyuàn,HSK1,医院,yīyuàn,Hospital,Zhè fùjìn yǒu yīyuàn ma?,Is there a hospital near here?,这附近有医院吗？,n
+56 椅⼦/yǐzi,HSK1,椅⼦,yǐzi,Chair,Zhè bǎ yǐzi hěn shūfu.,This chair is very comfortable.,这把椅⼦很舒服,n
+45 右边/yòubiān,HSK2,右边,yòubiān,Right Side,Cèsuǒ zài nǐ de yòubiān.,The toilet is on your right side.,厕所在你的右边,n
+141 游戏/yóuxì,HSK3,游戏,yóuxì,Game,Tā zhěngtiān doū zài wán yóuxì.,He is playing games all the time.,他整天都在玩游戏,n
+46 鱼/yú,HSK2,鱼,yú,Fish,Zuótiān wǒ chī le yú.,I ate fish yesterday.,昨天我吃了鱼,n
+57 ⽉/yuè,HSK1,⽉,yuè,Month,Nǐ yī gè yuè dú jǐ běn shū?,How many books do you read per month?,你一个⽉读⼏本书？,n
+142 ⽉亮/yuèliang,HSK3,⽉亮,yuèliang,Moon,Jīnwǎn yuèliang bù huì chūlái le.,The moon won't come out tonight .,今晚⽉亮不会出来了,n
+143 云/yún,HSK3,云,yún,Cloud,"Zhèngdāng wǒmen yào pāizhào shí, tàiyáng bèi yún zhēzhù le.","Just as soon we were ready to take photos, the sun got covered by clouds.",正当我们要拍照时，太阳被云遮住了,n
+47 早上/zǎoshang,HSK2,早上,zǎoshang,Morning/Early Morning,Zǎoshang de fēngjǐng hěn měi.,The scenery in the morning is very beautiful.,早上的风景很美,n
+48 丈夫/zhàngfu,HSK2,丈夫,zhàngfu,Husband,Wǒ de zhàngfu shì lǜshī.,My husband is a lawyer.,我的丈夫是律师,n
+144 照⽚/zhàopiàn,HSK3,照⽚,zhàopiàn,Photo,Wǒ pāi le hěnduō zhàopiàn.,I have taken a lot of photos.,我拍了很多照⽚,n
+145 照相机/zhàoxiàngjī,HSK3,照相机,zhàoxiàngjī,Camera,Nǐ zài nǎr xiū de zhàoxiàngjī?,Where did you get your camera repaired?,你在哪⼉修的照相机？,n
+147 种/zhǒng,HSK3,种,zhǒng,Kind,Jīngyàn gàosu wǒmen zhèzhǒng cáiliào de zhìliàng hěn hǎo.,Experience has told us that this kind of material is of good quality.,经验告诉我们这种材料的质量很好,n
+58 中国/zhōngguó,HSK1,中国,zhōngguó,China,Wǒ míngnián qù zhōngguó.,I will go to China next year.,我明年去中国,n
+146 中间/zhōngjiān,HSK3,中间,zhōngjiān,Middle,Tā zǒu lái zuò zài le qián pái de zhōngjiān.,She walked in and sat down in the middle of the front row.,她⾛来坐在了前排的中间,n
+59 中午/zhōngwǔ,HSK1,中午,zhōngwǔ,Noon,Nǐ zhōngwǔ yǐqián huì zài jiā ma?,Will you be at home before noon?,你中午以前会在家吗？,n
+148 周末/zhōumò,HSK3,周末,zhōumò,Weekend,Nǐ zhōumò guò de zěnme yàng?,How was your weekend?,你周末过得怎么样？,n
+60 桌⼦/zhuōzi,HSK1,桌⼦,zhuōzi,Table,Wǒ de shǒujī zài zhuōzi shàng.,My cellphone is on the table.,我的手机在桌⼦上,n
+149 注意/zhùyì,HSK3,注意,zhùyì,Attention/To Pay Attention To,Nǐ děi zhùyì tā shuō de huà.,You need to pay attention to what he says.,你得注意他说的话,n
+61 字/zì,HSK1,字,zì,Chinese Character,Wǒ yǒu hěnduō zì bù rènshi.,There are many Chinese characters I don't recognize.,我有很多字不认识,n
+150 字典/zìdiǎn,HSK3,字典,zìdiǎn,Dictionary,"Wǒ bùtài dǒng zhège dāncí, xūyào chá yīxià zìdiǎn.","I don't understand this word, I need to look it up in the dictionary.",我不太懂这个单词，需要查一下字典,n
+151 ⾃⼰/zìjǐ,HSK3,⾃⼰,zìjǐ,Oneself/One's Own,Měi gè rén yǒu zìjǐ de tècháng.,Everybody has his own strong points.,每个⼈有⾃⼰的特长,n
+49 ⾃⾏车/zìxíngchē,HSK2,⾃⾏车,zìxíngchē,Bicycle,Zhè liàng zìxíngchē shì wǒ de.,This bicycle is mine.,这辆⾃⾏车是我的,n
+50 左边/zuǒbiān,HSK2,左边,zuǒbiān,Left Side,Wǒ de fángjiān zài lóu shàng de zuǒbiān.,My room is upstairs on the left.,我的房间在楼上的左边,n
+62 昨天/zuótiān,HSK1,昨天,zuótiān,Yesterday,Zuótiān xià yǔ le.,It rained yesterday.,昨天下雨了,n
+152 作业/zuòyè,HSK3,作业,zuòyè,Homework,Wǒ yǒu hěnduō zuòyè yào zuò.,I have a lot of homework to do.,我有很多作业要做,n
+153 作⽤/zuòyòng,HSK3,作⽤,zuòyòng,Action/Affect,Zhèzhǒng yào yǒu shéme zuòyòng?,What is the affect of this medicine?,这种药有什么作⽤？,n
+1 ⽩/bái,HSK2,⽩,bái,White,Wǒ yǒu yī shuāng bái xiézi.,I have a pair of white shoes.,我有一双⽩鞋⼦,adj
+2 长/cháng,HSK2,长,cháng,Long,Tā de tóufa hěn cháng.,Her hair is very long.,她的头发很长,adj
+3 错/cuò,HSK2,错,cuò,Wrong,Nǐ de huídá shì cuò de.,Your answer is wrong.,你的回答是错的,adj
+4 对/duì,HSK2,对,duì,Right,Nà jué bù kěnéng shì duì de.,That can't possibly be right.,那绝不可能是对的,adj
+5 ⾼/gāo,HSK2,⾼,gāo,Tall,Zhè dòng fángzi fēicháng gāo.,This building is very tall.,这栋房⼦⾮常⾼,adj
+6 贵/guì,HSK2,贵,guì,Expensive,Zhè fù yǎnjìng hěn guì.,These glasses are very expensive.,这副眼镜很贵,adj
+7 好吃/hǎochī,HSK2,好吃,hǎochī,Delicious,Zhège bīngqílín zhēn de hěn hǎochī.,This ice cream is very delicious.,这个冰淇淋真的很好吃,adj
+8 ⿊/hēi,HSK2,⿊,hēi,Black,Tā zǒng chuānzhe hēi yīfu.,She always wears black.,她总穿着⿊⾐服,adj
+9 红/hóng,HSK2,红,hóng,Red,Tā de liǎn tūrán hóng le.,Her face suddenly turned red.,她的脸突然红了,adj
+10 近/jìn,HSK2,近,jìn,Close,Wǒmen xuéxiào lí gōngyuán fēicháng jìn.,Our school is very close to the park.,我们学校离公园⾮常近,adj
+11 快/kuài,HSK2,快,kuài,Quick/Fast,Wǒ kěyǐ pǎo de hěn kuài.,I can run very fast.,我可以跑得很快,adj
+12 快乐/kuàilè,HSK2,快乐,kuàilè,Happy,Jīntiān wǒ hěn kuàilè.,I am very happy today.,今天我很快乐,adj
+13 累/lèi,HSK2,累,lèi,Tired,Wǒ yīdiǎnr yě bù lèi.,I am not tired at all.,我一点⼉也不累,adj
+14 慢/màn,HSK2,慢,màn,Slow,Nǐ zěnme zhème màn!,How come you're so slow?!,你怎么这么慢！,adj
+15 忙/máng,HSK2,忙,máng,Busy,Nǐ jīntiān máng ma?,Are you busy today?,你今天忙吗？,adj
+16 便宜/piányi,HSK2,便宜,piányi,Cheap,Zhè méi jièzhi zhēn de hěn piányi.,This ring is really cheap.,这枚戒指真的很便宜,adj
+17 漂亮/piàoliang,HSK2,漂亮,piàoliang,Beautiful,Wǒ de yǎnjing piàoliang ma?,Are my eyes beautiful?,我的眼睛漂亮吗？,adj
+18 晴/qíng,HSK2,晴,qíng,Sunny,Wǒ xǐhuan qíngtiān.,I like sunny days.,我喜欢晴天,adj
+19 新/xīn,HSK2,新,xīn,New,Wǒ dǎsuan mǎi yī bǎ xīn yǔsǎn.,I plan on buying a new umbrella.,我打算买一把新雨伞,adj
+20 阴/yīn,HSK2,阴,yīn,Cloudy,Jīntiān shì yīn tiān.,Today is a cloudy day.,今天是阴天,adj
+21 远/yuǎn,HSK2,远,yuǎn,Far,Tā jiā lí zhèr bù yuǎn.,His house is not far from here.,他家离这⼉不远,adj
+1 矮/ǎi,HSK3,矮,ǎi,Short,Wǒ bǐ wǒ dìdi ǎi hěnduō.,I am much shorter than my younger brother.,,adj
+2 安静/ānjìng,HSK3,安静,ānjìng,Quiet,Wǒ de línjū yīdiǎn dōu bù ānjìng!,My neighbour is not quiet at all!,,adj
+3 饱/bǎo,HSK3,饱,bǎo,Full,"Wǒ yǐjīng sān tiān méi chī dōngxi le, kě wǒ dùzi háishi hěn bǎo.","I haven't eaten for 3 days, but I am still full.",,adj
+4 差/chà,HSK3,差,chà,Bad (Quality),Zhège zhàoxiàngjī de zhìliàng zhēn de hěn chà.,This camera is really bad.,,adj
+5 低/dī,HSK3,低,dī,Low,Tā bàoyuàn wǒ de xīnshuǐ hěn dī.,She complained that my salary was low.,,adj
+6 地⽅/dìfāng,HSK3,地⽅,dìfāng,Local/Place,Zhè dìfang jiāotōng bù fāngbiàn.,This place public transportation is not very convenient.,,adj
+7 短/duǎn,HSK3,短,duǎn,Short,Tā de suǒyǒu jùzi dōu hěn duǎn.,All his sentences are short.,,adj
+8 ⼲净/gānjìng,HSK3,⼲净,gānjìng,Clean,Nǐ de fángjiān zhēn gānjìng.,Your room is really clean.,,adj
+9 过去/guòqù,HSK3,过去,guòqù,Past,Wǒmen wúfǎ gǎibiàn guòqù.,We cannot change the past.,,adj
+10 还是/háishi,HSK3,还是,háishi,Still,"Zài wǒ de xīnmù zhōng, tā háishi gè háizi.","In my mind, he is still a child.",,adj
+11 坏/huài,HSK3,坏,huài,Bad,Nǐ shì gè huài xiǎohái.,You are a bad child.,,adj
+12 黄/huáng,HSK3,黄,huáng,Yellow,Wǒ xǐhuan chī huáng yánsè de mángguǒ.,I like to eat yellow mangoes.,,adj
+13 极/jí,HSK3,极,jí,Badly/Extremely,Tā juéde zhège jùhuì wúliáo jí le.,She thinks this party is extremely boring.,,adj
+14 简单/jiǎndān,HSK3,简单,jiǎndān,Simple,Zhège xiǎngfa tài jiǎndān le.,This idea is too simple.,,adj
+15 久/jiǔ,HSK3,久,jiǔ,Long (Time),Wǒ zài zhè jiā gōngsī gōngzuò le hěnjiǔ.,I have been working in this company for a long time.,,adj
+16 旧/jiù,HSK3,旧,jiù,Old,Tā de fángzi yòu xiǎo yòu jiù.,His house is small and old.,,adj
+17 渴/kě,HSK3,渴,kě,Thirsty,Wǒ hē shuǐ shì yīnwèi wǒ kě le.,I drink water because I am thirsty.,,adj
+18 可爱/kě'ài,HSK3,可爱,kě'ài,Lovely/Cute,Tā yǒu yī gè piàoliang de qīzi hé yī gè kě'ài de nǚ'ér.,He has a beautiful wife and a lovely daughter.,,adj
+19 蓝/lán,HSK3,蓝,lán,Blue,Wǒ nánpéngyou yǒu yī shuāng lán yǎnjing.,My boyfriend has a pair of blue eyes.,,adj
+20 老/lǎo,HSK3,老,lǎo,Old,Wǒ xīwàng wǒ yǒngyuǎn yě bù huì lǎo.,I wish I will never get old.,,adj
+21 绿/lǜ,HSK3,绿,lǜ,Green,Wǒ tīngshuō yīngguó de cǎo zài dōngtiān yě háishi lǜ de.,I hear the grass in England is green even in the winter.,,adj
+22 满意/mǎnyì,HSK3,满意,mǎnyì,Satisfied,Tāmen duì hétóng hěn mǎnyì.,They are satisfied with the contract.,,adj
+23 明⽩/míngbai,HSK3,明⽩,míngbai,Clear/To Understand,Zǒng yǒu yītiān nǐ huì míngbai de.,You will understand it with time.,,adj
+24 难/nán,HSK3,难,nán,Difficult,"Duì wǒ lái shuō, xuéxí xībānyá yǔ zhēn de hěn nán.",Spanish is very difficult for me to learn.,,adj
+25 胖/pàng,HSK3,胖,pàng,Fat,Nǐmen juéde wǒ pàng ma?,Do you think I am fat?,,adj
+26 奇怪/qíguài,HSK3,奇怪,qíguài,Strange,Wǒ dì yī cì yùdào zhème qíguài de rén.,This is the first time that I have met such a strange person.,,adj
+27 清楚/qīngchǔ,HSK3,清楚,qīngchǔ,Clear,Zhège shìpín de zìmù bù qīngchǔ.,The subtitle in this video is not clear.,,adj
+28 认真/rènzhēn,HSK3,认真,rènzhēn,Serious,"Wǒ bù shì zài gēn nǐ kāi wánxiào, wǒ shì rènzhēn de.","I am not joking with you, I am serious.",,adj
+29 容易/róngyì,HSK3,容易,róngyì,Easy,Wǒ juéde zhuànqián yīdiǎn yě bù róngyì.,I don't think it's easy to make money.,,adj
+30 瘦/shòu,HSK3,瘦,shòu,Thin/Skinny,"Rénmen dōu shuō wǒ hěn shòu, kě wǒ juéde wǒ pàng le.","People say that I am skinny, but I think I am getting fat.",,adj
+31 舒服/shūfu,HSK3,舒服,shūfu,Comfortable,Tǎng xiàlái ràng zìjǐ shūfu yīdiǎn.,Lie down and make yourself comfortable.,,adj
+32 特别/tèbié,HSK3,特别,tèbié,Special,Zhè tiáo qúnzi hěn tèbié.,This dress is very special.,,adj
+33 相同/xiāngtóng,HSK3,相同,xiāngtóng,Same,Tā fàn le liǎng cì xiāngtóng de cuòwù.,He has made the same mistake twice.,,adj
+34 ⼩⼼/xiǎoxīn,HSK3,⼩⼼,xiǎoxīn,Careful,Nǐ yīnggāi yào gèng xiǎoxīn.,You should be more careful.,,adj
+35 新鲜/xīnxiān,HSK3,新鲜,xīnxiān,Fresh,Zhèxiē píngguǒ kàn qǐlái hěn xīnxiān.,These apples look very fresh.,,adj
+36 一般/yībān,HSK3,一般,yībān,General/Ordinary,Zhèlǐ de fēngjǐng hěn yībān.,The scenery here is very ordinary.,,adj
+37 一样/yīyàng,HSK3,一样,yīyàng,Same,Wǒ hé wǒ bàba de xìnggé shì yīyàng de.,My father and I have the same character.,,adj
+38 有名/yǒumíng,HSK3,有名,yǒumíng,Famous,Wǒ tīngshuō tā shì gè yǒumíng de yǎnyuán.,I hear that she is a famous actress.,,adj
+39 重要/zhòngyào,HSK3,重要,zhòngyào,Important,Qián duì wǒ lái shuō hěn zhòngyào.,Money is very important to me.,,adj
+1 才/cái,HSK3,才,cái,Just,Wǒ cái zuò wán zuòyè.,I just finished my homework.,我才做完作业,adv
+2 当然/dāngrán,HSK3,当然,dāngrán,Surely/Certainly,Wǒ dāngrán jìde nǐ le.,I certainly remember you.,我当然记得你了,adv
+3 多么/duōme,HSK3,多么,duōme,"How (wonderful, etc.)",Duōme měi de dìfang a!,How beautiful this place is!,多么美的地⽅啊！,adv
+4 刚才/gāngcái,HSK3,刚才,gāngcái,Just Now/A Moment Ago,Wǒ gāngcái zài hē niúnǎi.,I was drinking milk a moment ago.,我刚才在喝⽜奶,adv
+5 更/gèng,HSK3,更,gèng,More,Wǒ juéde zhège gèng yǒuyòng.,I think this is more useful.,我觉得这个更有⽤,adv
+6 还/huán,HSK3,还,huán,To Return,Wǒ yī yǒu qián mǎshàng jiù huán nǐ.,I'll pay you back as soon as I have money.,我一有钱马上就还你,adv
+7 或者/huòzhě,HSK3,或者,huòzhě,Or,Nǐ kěyǐ qù yóuyǒng huòzhě diàoyú.,You may go swimming or fishing.,你可以去游泳或者钓鱼,adv
+8 ⼏乎/jīhū,HSK3,⼏乎,jīhū,Nearly/Almost,Zhè jīhū shì bù kěnéng wánchéng de.,It is almost impossible to finish.,这⼏乎是不可能完成的,adv
+9 经常/jīngcháng,HSK3,经常,jīngcháng,Often,Wǒ jīngcháng qù gōngyuán sànbù.,I often walk to the park.,我经常去公园散步,adv
+10 马上/mǎshàng,HSK3,马上,mǎshàng,At Once,Nǐ zuì hǎo mǎshàng zǒu.,You had better go at once.,你最好马上⾛,adv
+11 其实/qíshí,HSK3,其实,qíshí,Actually,Qíshí wǒ xiànzài hěn máng.,I am actually very busy now.,其实我现在很忙,adv
+12 其他/qítā,HSK3,其他,qítā,Else/Other,"Chúle nǐ, qítā rén dōu hěn è.",Everybody else is hungry but you.,除了你，其他⼈都很饿,adv
+13 突然/tūrán,HSK3,突然,tūrán,All of a Sudden,Tā tūrán xiào le qǐlái.,"All of a sudden, she began to laugh.",她突然笑了起来,adv
+14 先/xiān,HSK3,先,xiān,First,Qǐng xiān tiánxiě zhè zhāng biǎogé.,Please fill out this form first.,请先填写这张表格,adv
+15 一边/yībiān,HSK3,一边,yībiān,At The Same Time,Wǒ yībiān xiào yībiān chīfàn.,I eat and laugh at the same time.,我一边笑一边吃饭,adv
+16 一定/yīdìng,HSK3,一定,yīdìng,Definitely,Nǐ yīdìng shì zuì bàng de!,You are definitely the best!,你一定是最棒的！,adv
+17 一共/yīgòng,HSK3,一共,yīgòng,Altogether,Tā yīgòng xiě le liù běn shū.,He wrote six books altogether.,他一共写了六本书,adv
+18 一直/yīzhí,HSK3,一直,yīzhí,Constantly/Always,Wǒ yīzhí dōu hěn měi.,I am always beautiful.,我一直都很美,adv
+19 以后/yǐhòu,HSK3,以后,yǐhòu,After,Chī wán wǎnfàn yǐhòu wǒ jiù qù shuìjiào.,I will go to sleep after dinner.,吃完晚饭以后我就去睡觉,adv
+20 以前/yǐqián,HSK3,以前,yǐqián,Before,Wǒ jìde yǐqián jiàn guò nǐ.,I remember meeting you before.,我记得以前见过你,adv
+21 只/zhǐ,HSK3,只,zhǐ,Only,Wǒ zhǐ chī yī zhǒng shuǐguǒ.,I only eat one kind of fruit.,我只吃一种⽔果,adv
+22 终于/zhōngyú,HSK3,终于,zhōngyú,Finally,Wǒ zhōngyú kěyǐ shuìjiào le.,I finally can sleep.,我终于可以睡觉了,adv
+23 主要/zhǔyào,HSK3,主要,zhǔyào,Mainly/Main,Wǒ de zhǔyào gōngzuò shì jiāo hànyǔ.,My main job is teaching Mandarin.,我的主要⼯作是教汉语,adv
+24 总是/zǒngshì,HSK3,总是,zǒngshì,Always,Wǒ zǒngshì chídào.,I am always late.,我总是迟到,adv
+25 最近/zuìjìn,HSK3,最近,zuìjìn,Recently,Zuìjìn wǒ hěn bù kāixīn.,I have been unhappy recently.,最近我很不开⼼,adv
+1 别/bié,HSK2,别,bié,Do Not,Xū! Bié shuōhuà!,Shush！Don't speak!,嘘！别说话！,adv
+2 ⾮常/fēicháng,HSK2,⾮常,fēicháng,Very,Wǒ gāng zuò le gè fēicháng kěpà de mèng.,I just had a very awful dream.,我刚做了个⾮常可怕的梦,adv
+3 还/hái,HSK2,还,hái,Still,Nǐ zěnme hái zài zhè?,Why are you still here?,你怎么还在这？,adv
+4 就/jiù,HSK2,就,jiù,Only/Just,Wǒ jiù xiǎng shuìjiào.,I just want to sleep.,我就想睡觉,adv
+5 也/yě,HSK2,也,yě,Also,Tā yě shì zhōngguó rén.,He is also Chinese.,他也是中国⼈,adv
+6 已经/yǐjīng,HSK2,已经,yǐjīng,Already,Xiànzài yǐjīng hěn wǎn le.,It's already late.,现在已经很晚了,adv
+7 一起/yīqǐ,HSK2,一起,yīqǐ,Together,Wǒmen xǐhuan yīqǐ chànggē.,We enjoyed singing songs together.,我们喜欢一起唱歌,adv
+8 再/zài,HSK2,再,zài,Again,Wǒ qīdài zài jiàn dào nǐ.,I am looking forward to seeing you again.,我期待再见到你,adv
+9 真/zhēn,HSK2,真,zhēn,Really,Nǐ zhēn bàng!,You are really good！,你真棒！,adv
+10 正在/zhèngzài,HSK2,正在,zhèngzài,Currently,Wǒ zhèngzài gōngzuò.,I am currently working .,我正在⼯作,adv
+11 最/zuì,HSK2,最,zuì,Most,Zhège fāngfǎ zuì yǒuyòng le.,This is the most useful method.,这个⽅法最有⽤了,adv
+12 但是/dànshì,HSK2,但是,dànshì,But,"Wǒ xiǎng mǎi chē, dànshì wǒ méi qián.","I want to buy a car, but I don't have money.",我想买车，但是我没钱,adv
+13 所以/suǒyǐ,HSK2,所以,suǒyǐ,So,"Tā duì wǒ hěn hǎo, suǒyǐ wǒ hěn xǐhuan tā.","He is very good to me, so I like him very much.",他对我很好，所以我很喜欢他,adv
+14 因为/yīnwèi,HSK2,因为,yīnwèi,Because,Bùyào yīnwèi tā qióng jiù kànbuqǐ tā.,Don't look down on him merely because he is poor.,不要因为他穷就看不起他,adv
+15 ⽐/bǐ,HSK2,⽐,bǐ,To Compare With,Wǒ juéde nǐ bǐ wǒ piàoliang.,I think you are more beautiful than me.,我觉得你⽐我漂亮,adv
+16 从/cóng,HSK2,从,cóng,From,Wǒ cóng yǐzi shàng shuāi le xiàlái.,I fell down from the chair.,我从椅⼦上摔了下来,adv
+17 对/duì,HSK2,对,duì,Towards,Tā duì wǒ tàidu hěn chà.,His attitude towards me is very bad.,他对我态度很差,adv
+18 离/lí,HSK2,离,lí,From/Be Away From,Wǒ jiā lí xuéxiào hěn yuǎn.,My home is far away from my school.,我家离学校很远,adv
+19 向/xiàng,HSK2,向,xiàng,Towards,Yī liàng chē zhèng kāi xiàng wǒ.,There is a car coming towards me.,一辆车正开向我,adv
+20 百/bǎi,HSK2,百,bǎi,Hundred,Wǒ yǐjīng xué le yī bǎi gè dāncí le.,I already learned a hundred words.,我已经学了一百个单词了,adv
+21 第一/dìyī,HSK2,第一,dìyī,First,Wǒmen duì shū le dì yī chǎng bǐsài.,Our team lost the first match.,我们队输了第一场⽐赛,adv
+22 两/liǎng,HSK2,两,liǎng,Two,Wǒ yǒu liǎng gè érzi.,I have two boys.,我有两个⼉⼦,adv
+23 千/qiān,HSK2,千,qiān,Thousand,Wǒ xūyào jiè yī qiān kuài qián.,I need to borrow one thousand Yuan.,我需要借一千块钱,adv
+24 喂/wèi,HSK2,喂,wèi,Hey,Wèi! Nǐ shì shuí?,Hey！Who are you?,喂！你是谁？,adv
+25 ⼤家/dàjiā,HSK2,⼤家,dàjiā,Everyone,Dàjiā néng tīngjiàn wǒ shuōhuà ma?,Can everyone hear me?,⼤家能听见我说话吗？,adv
+26 每/měi,HSK2,每,měi,Every,Wǒ měitiān doū hěn kāixīn.,I am happy everyday.,我每天都很开⼼,adv
+27 您/nín,HSK2,您,nín,"You (courteous, as opposed to informal)",Wǒ xiǎng yāoqǐng nín yīqǐ chī wǎnfàn.,I would like to invite you for dinner.,我想邀请您一起吃晚饭,adv
+28 它/tā,HSK2,它,tā,It,Tā zhǐshì yī zhī māo éryǐ.,"It is just a cat, that's all.",它只是一只猫⽽已,adv
+29 为什么/wèishéme,HSK2,为什么,wèishéme,Why,Nǐ wèishéme bù xǐhuan wǒ?,Why do you dislike me?,你为什么不喜欢我？,adv
+30 吧/ba,HSK2,吧,ba,(Suggestion),Wǒ péi nǐ qù jīchǎng ba.,Let me accompany you to the airport.,我陪你去机场吧,adv
+31 地/de,HSK2,地,de,(Adverbial Particle),"Tā jìngjìng de kànzhe tā, bùzhī gāi shuō shénme.","She stared at him in silence, not knowing what to say.",她静静地看着他，不知该说什么,adv
+32 得/de,HSK2,得,c,(Adverbial Particle),Nà zhī gǒu pǎo de hěn kuài.,That dog runs fast.,那只狗跑得很快,adv
+33 过/guò,HSK2,过,guò,(Perfect Tense),Wǒ méi kàn guò zhège diànyǐng.,I haven't watched this movie.,我没看过这个电影,adv
+34 着/zhe,HSK2,着,zhe,(Continuing Tense),Tā zài kàn zhe shū.,He is reading a book.,他在看着书,adv
+35 打篮球/dǎ lánqiú,HSK2,打篮球,dǎ lánqiú,To Play Basketball,Dǎ lánqiú hěn yǒuqù.,Basketball is fun to play.,打篮球很有趣,adv
+36 次/cì,HSK2,次,cì,Time,Wǒ měitiān pǎo liǎng cì bù.,I run two times a day.,我每天跑两次步,adv
+37 公⽄/gōngjīn,HSK2,公⽄,gōngjīn,Kilogram,Wǒ suíshēn kěyǐ dài duōshao gōngjīn xínglǐ?,How many kilograms of luggage can I bring with me?,我随⾝可以带多少公⽄⾏李？,adv
+38 件/jiàn,HSK2,件,jiàn,Measure Word For Clothing or Matters,Zhè jiàn yīfu hěn tèbié.,This cloth is very special.,这件⾐服很特别,adv
+39 元/yuán,HSK2,元,yuán,Yuan,Zhè shǒubiǎo huā le wǒ wǔqiān yuán.,This watch cost me 5000 Yuan.,这手表花了我五千元,adv
+40 张/zhāng,HSK2,张,zhāng,Piece (Measure Word),Qǐng gěi wǒ yī zhāng zhǐ,Please give me a piece of paper.,请给我一张纸,adv
+14 啊/a,HSK3,啊,a,Ah,Zhè shì duōme gǔwǔ rénxīn de xiāoxi a!,What an inspiring news this is!,这是多么⿎舞⼈⼼的消息啊！,rw
+30 吧/ba,HSK2,吧,ba,(Suggestion),Wǒ péi nǐ qù jīchǎng ba.,Let me accompany you to the airport.,我陪你去机场吧,rw
+20 百/bǎi,HSK2,百,bǎi,Hundred,Wǒ yǐjīng xué le yī bǎi gè dāncí le.,I already learned a hundred words.,我已经学了一百个单词了,rw
+7 被/bèi,HSK3,被,bèi,By,Wǒ bèi zhège gùshi gěi xià dào le.,I was scared by this story.,我被这个故事给吓到了,rw
+15 本/běn,HSK1,本,běn,Volume/Measure Word,Wǒ mǎi le liǎng běn shū.,I bought two books.,我买了两本书,rw
+15 ⽐/bǐ,HSK2,⽐,bǐ,To Compare With,Wǒ juéde nǐ bǐ wǒ piàoliang.,I think you are more beautiful than me.,我觉得你⽐我漂亮,rw
+1 别/bié,HSK2,别,bié,Do Not,Xū! Bié shuōhuà!,Shush！Don't speak!,嘘！别说话！,rw
+15 别⼈/biéren,HSK3,别⼈,biéren,Others,Tā bù zàihu biéren duì tā de pīpíng.,He doesn't care about other people's criticism.,他不在乎别⼈对他的批评,rw
+1 不/bù,HSK1,不,bù,No,Wǒ bù xǐhuan kàn diànshì.,I don't like watching TV.,我不喜欢看电视,rw
+8 除了/chúle,HSK3,除了,chúle,Except For,Chúle tā měi gè rén dōu zài zhèlǐ.,Everyone is here except for him.,除了他每个⼈都在这⾥,rw
+36 次/cì,HSK2,次,cì,Time,Wǒ měitiān pǎo liǎng cì bù.,I run two times a day.,我每天跑两次步,rw
+16 从/cóng,HSK2,从,cóng,From,Wǒ cóng yǐzi shàng shuāi le xiàlái.,I fell down from the chair.,我从椅⼦上摔了下来,rw
+6 ⼤/dà,HSK1,⼤,dà,Big,Nǐ de fángjiān zhēn dà.,Your room is really big.,你的房间真⼤,rw
+35 打篮球/dǎ lánqiú,HSK2,打篮球,dǎ lánqiú,To Play Basketball,Dǎ lánqiú hěn yǒuqù.,Basketball is fun to play.,打篮球很有趣,rw
+25 ⼤家/dàjiā,HSK2,⼤家,dàjiā,Everyone,Dàjiā néng tīngjiàn wǒ shuōhuà ma?,Can everyone hear me?,⼤家能听见我说话吗？,rw
+12 但是/dànshì,HSK2,但是,dànshì,But,"Wǒ xiǎng mǎi chē, dànshì wǒ méi qián.","I want to buy a car, but I don't have money.",我想买车，但是我没钱,rw
+21 的/de,HSK1,的,de,"Subordinating Particle/Of,~'s(Possessive Particle)",Nàge shǒujī shì shuí de?,Whose cellphone is that?,那个手机是谁的？,rw
+31 地/de,HSK2,地,de,(Adverbial Particle),"Tā jìngjìng de kànzhe tā, bùzhī gāi shuō shénme.","She stared at him in silence, not knowing what to say.",她静静地看着他，不知该说什么,rw
+32 得/de,HSK2,得,de,(Adverbial Particle),Nà zhī gǒu pǎo de hěn kuài.,That dog runs fast.,那只狗跑得很快,rw
+21 第一/dìyī,HSK2,第一,dìyī,First,Wǒmen duì shū le dì yī chǎng bǐsài.,Our team lost the first match.,我们队输了第一场⽐赛,rw
+2 都/dōu,HSK1,都,dōu,All,Wǒmen dōu shì xuésheng.,We are all students.,我们都是学⽣,rw
+17 对/duì,HSK2,对,duì,Towards,Tā duì wǒ tàidu hěn chà.,His attitude towards me is very bad.,他对我态度很差,rw
+7 多/duō,HSK1,多,duō,Many/Much,Zhèlǐ yǒu hěn duō rén.,There are many people here.,这⾥有很多⼈,rw
+1 ⽽且/érqiě,HSK3,⽽且,érqiě,Moreover/But Also,"Tā bùjǐn piàoliang, érqiě duì měi gè rén dōu hěn hǎo.",She is not only beautiful but also kind to everybody.,她不仅漂亮，⽽且对每个⼈都很好,rw
+2 ⾮常/fēicháng,HSK2,⾮常,fēicháng,Very,Wǒ gāng zuò le gè fēicháng kěpà de mèng.,I just had a very awful dream.,我刚做了个⾮常可怕的梦,rw
+8 ⾼兴/gāoxìng,HSK1,⾼兴,gāoxìng,Happy,Jīntiān wǒ hěn gāoxìng.,I am very happy today.,今天我很⾼兴,rw
+16 个/gè,HSK1,个,gè,Measure Word,Wǒ yǒu yī gè dìdi.,I have a brother.,我有一个弟弟,rw
+37 公⽄/gōngjīn,HSK2,公⽄,gōngjīn,Kilogram,Wǒ suíshēn kěyǐ dài duōshao gōngjīn xínglǐ?,How many kilograms of luggage can I bring with me?,我随⾝可以带多少公⽄⾏李？,rw
+9 关于/guānyú,HSK3,关于,guānyú,Regarding/About,Wǒ xiǎng gēn nǐ tǎolùn yīxià guānyú qián de wèntí.,I want to talk to you about money.,我想跟你讨论一下关于钱的问题,rw
+33 过/guò,HSK2,过,guò,(Perfect Tense),Wǒ méi kàn guò zhège diànyǐng.,I haven't watched this movie.,我没看过这个电影,rw
+3 还/hái,HSK2,还,hái,Still,Nǐ zěnme hái zài zhè?,Why are you still here?,你怎么还在这？,rw
+9 好/hǎo,HSK1,好,hǎo,Good/Nice,Nǐ shì yī gè hǎo rén.,You are a good person.,你是一个好⼈,rw
+14 和/hé,HSK1,和,hé,And,Tā hé wǒ shì hǎo péngyou.,She and I are good friends.,她和我是好朋友,rw
+3 很/hěn,HSK1,很,hěn,Very,Wǒ hěn máng.,I am very busy.,我很忙,rw
+38 件/jiàn,HSK2,件,jiàn,Measure Word For Clothing or Matters,Zhè jiàn yīfu hěn tèbié.,This cloth is very special.,这件⾐服很特别,rw
+4 就/jiù,HSK2,就,jiù,Only/Just,Wǒ jiù xiǎng shuìjiào.,I just want to sleep.,我就想睡觉,rw
+18 块/kuài,HSK1,块,kuài,Piece,Wǒ yǒu yī kuài dì.,I have a piece of land.,我有一块地,rw
+22 了/le,HSK1,了,le,(Past Tense),Wǒ xǐ le zǎo.,I took a shower.,我洗了澡,rw
+10 冷/lěng,HSK1,冷,lěng,Cold,Jīntiān hěn lěng.,It's cold today.,今天很冷,rw
+18 离/lí,HSK2,离,lí,From/Be Away From,Wǒ jiā lí xuéxiào hěn yuǎn.,My home is far away from my school.,我家离学校很远,rw
+5 辆/liàng,HSK3,辆,liàng,Measure Word,Nǐ zhè liàng xīnchē huā le duōshao qián?,How much did you pay for your new car?,你这辆新车花了多少钱？,rw
+22 两/liǎng,HSK2,两,liǎng,Two,Wǒ yǒu liǎng gè érzi.,I have two boys.,我有两个⼉⼦,rw
+23 吗/ma,HSK1,吗,ma,Represents a Question Marker,Nǐ kùn ma?,Are you sleepy?,你困吗？,rw
+4 没/méi,HSK1,没,méi,Not,Wǒ méi hē shuǐ.,I didn't drink water.,我没喝⽔,rw
+26 每/měi,HSK2,每,měi,Every,Wǒ měitiān doū hěn kāixīn.,I am happy everyday.,我每天都很开⼼,rw
+24 呢/ne,HSK1,呢,ne,Indicates a Suggestion,Shuí huì xìn ne?,Who's going to believe that?,谁会信呢？,rw
+27 您/nín,HSK2,您,nín,"You (courteous, as opposed to informal)",Wǒ xiǎng yāoqǐng nín yīqǐ chī wǎnfàn.,I would like to invite you for dinner.,我想邀请您一起吃晚饭,rw
+23 千/qiān,HSK2,千,qiān,Thousand,Wǒ xūyào jiè yī qiān kuài qián.,I need to borrow one thousand Yuan.,我需要借一千块钱,rw
+2 然后/ránhòu,HSK3,然后,ránhòu,Afterwards,"Tā shàngxià dǎliang le wǒ yī fān, ránhòu wèn le wǒ jǐ gè wèntí.",He looked me up and down and then asked me a few questions.,他上下打量了我一番，然后问了我⼏个问题,rw
+11 热/rè,HSK1,热,rè,Hot,Wǒ juéde hěn rè.,I feel very hot.,我觉得很热,rw
+3 如果/rúguǒ,HSK3,如果,rúguǒ,If,"Rúguǒ wǒ shì nǐ, wǒ yě huì zhème zuò.","If I were you, I would do the same thing.",如果我是你，我也会这么做,rw
+12 少/shǎo,HSK1,少,shǎo,Few/Little,Shātān shàng de rén fēicháng shǎo.,There were few people on the beach.,沙滩上的⼈⾮常少,rw
+17 岁/suì,HSK1,岁,suì,Years/Age,Wǒ èr shí sì suì.,I am 24 years old.,我⼆⼗四岁,rw
+10 虽然/suīrán,HSK3,虽然,suīrán,Despite/Even Though,"Tā suīrán qióng, dàn shēnghuó què guò de hěn kuàilè.","Even though he was poor, he was happy.",他虽然穷，但⽣活却过得很快乐,rw
+13 所以/suǒyǐ,HSK2,所以,suǒyǐ,So,"Tā duì wǒ hěn hǎo, suǒyǐ wǒ hěn xǐhuan tā.","He is very good to me, so I like him very much.",他对我很好，所以我很喜欢他,rw
+28 它/tā,HSK2,它,tā,It,Tā zhǐshì yī zhī māo éryǐ.,"It is just a cat, that's all.",它只是一只猫⽽已,rw
+5 太/tài,HSK1,太,tài,Too/Very,Zhè dào cài tài měiwèi le!,This dish is very delicious.,这道菜太美味了！,rw
+24 喂/wèi,HSK2,喂,wèi,Hey,Wèi! Nǐ shì shuí?,Hey！Who are you?,喂！你是谁？,rw
+6 位/wèi,HSK3,位,wèi,Measure Word,Wǒ yīzhí mèngxiǎng chéngwéi yī wèi yǎnyuán.,I have always dreamed about being an actress.,我一直梦想成为一位演员,rw
+11 为/wèi,HSK3,为,wèi,For,Wǒ suǒ zuò de yīqiè dōu shì wèile nǐ.,Everything I do is for you.,我所做的一切都是为了你,rw
+12 为了/wèile,HSK3,为了,wèile,For,Tā zuò zhège shì wèile qián.,He is doing it for money.,他做这个是为了钱,rw
+29 为什么/wèishéme,HSK2,为什么,wèishéme,Why,Nǐ wèishéme bù xǐhuan wǒ?,Why do you dislike me?,你为什么不喜欢我？,rw
+19 向/xiàng,HSK2,向,xiàng,Towards,Yī liàng chē zhèng kāi xiàng wǒ.,There is a car coming towards me.,一辆车正开向我,rw
+13 ⼩/xiǎo,HSK1,⼩,xiǎo,Small,Nàge chuáng fēicháng xiǎo.,That bed is very small.,那个床⾮常⼩,rw
+19 些/xiē,HSK1,些,xiē,A Few,Wǒ mǎi le xiē xiāngjiāo.,I bought a few bananas.,我买了些⾹蕉,rw
+13 像/xiŕng,HSK3,像,xiŕng,As/To Be Like,Tā xiàng zìjǐ de mǔqīn.,He's like his mum.,他像⾃⼰的母亲,rw
+5 也/yě,HSK2,也,yě,Also,Tā yě shì zhōngguó rén.,He is also Chinese.,他也是中国⼈,rw
+6 已经/yǐjīng,HSK2,已经,yǐjīng,Already,Xiànzài yǐjīng hěn wǎn le.,It's already late.,现在已经很晚了,rw
+16 应该/yīnggāi,HSK3,应该,yīnggāi,Should,Nǐ yīnggāi duō hē diǎn shuǐ.,You should drink more water.,你应该多喝点⽔,rw
+14 因为/yīnwèi,HSK2,因为,yīnwèi,Because,Bùyào yīnwèi tā qióng jiù kànbuqǐ tā.,Don't look down on him merely because he is poor.,不要因为他穷就看不起他,rw
+7 一起/yīqǐ,HSK2,一起,yīqǐ,Together,Wǒmen xǐhuan yīqǐ chànggē.,We enjoyed singing songs together.,我们喜欢一起唱歌,rw
+4 又/yòu,HSK3,又,yòu,Again,Tā bǎ tóngyàng de huà yòu shuō le yī biàn.,She said the same thing all over again.,她把同样的话又说了一遍,rw
+39 元/yuán,HSK2,元,yuán,Yuan,Zhè shǒubiǎo huā le wǒ wǔqiān yuán.,This watch cost me 5000 Yuan.,这手表花了我五千元,rw
+17 愿意/yuànyì,HSK3,愿意,yuànyì,Would Like To/Willing (To Do Something),Tā bù yuànyì wèi qián gōngzuò.,He is not willing to work for money.,他不愿意为钱⼯作,rw
+20 在/zài,HSK1,在,zài,At/(to be) In,Wǒ xiànzài zài bàngōngshì.,I am in the office now.,我现在在办公室,rw
+8 再/zài,HSK2,再,zài,Again,Wǒ qīdài zài jiàn dào nǐ.,I am looking forward to seeing you again.,我期待再见到你,rw
+40 张/zhāng,HSK2,张,zhāng,Piece (Measure Word),Qǐng gěi wǒ yī zhāng zhǐ,Please give me a piece of paper.,请给我一张纸,rw
+34 着/zhe,HSK2,着,zhe,(Continuing Tense),Tā zài kàn zhe shū.,He is reading a book.,他在看着书,rw
+9 真/zhēn,HSK2,真,zhēn,Really,Nǐ zhēn bàng!,You are really good！,你真棒！,rw
+10 正在/zhèngzài,HSK2,正在,zhèngzài,Currently,Wǒ zhèngzài gōngzuò.,I am currently working .,我正在⼯作,rw
+11 最/zuì,HSK2,最,zuì,Most,Zhège fāngfǎ zuì yǒuyòng le.,This is the most useful method.,这个⽅法最有⽤了,rw

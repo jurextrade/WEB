@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DESIGNER &mdash; MT4-Progress v0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="CUSTOM OBJECTS" href="custom_objects.html" />
+    <link rel="prev" title="PANEL" href="panel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> MT4-Progress
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">INTRODUCTION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">INSTALLATION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">GETTING STARTED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alerts.html">ALERTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="panel.html">PANEL</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">DESIGNER</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objects.html">CUSTOM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system_objects.html">SYSTEM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conditions.html">CONDITIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="strategy.html">STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_1.html">EXAMPLE 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_2.html">EXAMPLE 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">REFERENCE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">ARCHITECTURE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pl_language.html">PL LANGUAGE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trade_functions.html">TRADE FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="math_functions.html">MATH FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_logics.html">Market Logics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_input.html">MARKET INPUT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session_fields.html">SESSION FIELDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_types.html">DATA TYPES</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recovery_types.html">Recovery Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="discussion_strategy.html">A TRADING STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_start.html">HOW TO START</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">DESIGN</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MT4-Progress</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>DESIGNER</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/designer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="designer">
+<h1>DESIGNER<a class="headerlink" href="#designer" title="Permalink to this headline"></a></h1>
+<p>Until now we have worked on empty project with only the predefined objects. In this section we will show how to create custom objects, system objects, conditions and strategies in our TestProject example.</p>
+<p>Click on the button designer and you should see a window like the figure below with TestProject as a Root
+node.</p>
+<p>2014-10-22 22_00_59-Designer</p>
+<p>The tree represents the  project on which you are working.</p>
+<p>Predefined Objects. These Objects are explained in the section Objects.</p>
+<p>Custom Objects represents common indicators existing in MT4 : MA, ADX,  CCI, ICHIMOKU, BOLLINGER, SAR,RSI, MACD, STOCHASTIC, WPR, ATR, CUSTOM</p>
+<p>System Objects are a logical combination of predefined and custom objects defined by the user, allowing him to define  a Buy, Sell,
+Exit_Buy, Exit_Sell, Bull and Bear signals. We will explain how to create a System Object in the System Object Section.</p>
+<p>Conditions allows to create logical combination of Objects that will be used in its strategy creation.</p>
+<p>Strategies is the section containing strategies that we created.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="panel.html" class="btn btn-neutral float-left" title="PANEL" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="custom_objects.html" class="btn btn-neutral float-right" title="CUSTOM OBJECTS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Gabriel Jureidini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

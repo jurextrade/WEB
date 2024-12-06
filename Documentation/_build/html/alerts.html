@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ALERTS &mdash; MT4-Progress v0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PANEL" href="panel.html" />
+    <link rel="prev" title="GETTING STARTED" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> MT4-Progress
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">INTRODUCTION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">INSTALLATION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">GETTING STARTED</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ALERTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="panel.html">PANEL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="designer.html">DESIGNER</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objects.html">CUSTOM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system_objects.html">SYSTEM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conditions.html">CONDITIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="strategy.html">STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_1.html">EXAMPLE 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_2.html">EXAMPLE 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">REFERENCE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">ARCHITECTURE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pl_language.html">PL LANGUAGE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trade_functions.html">TRADE FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="math_functions.html">MATH FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_logics.html">Market Logics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_input.html">MARKET INPUT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session_fields.html">SESSION FIELDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_types.html">DATA TYPES</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recovery_types.html">Recovery Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="discussion_strategy.html">A TRADING STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_start.html">HOW TO START</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">DESIGN</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MT4-Progress</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>ALERTS</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/alerts.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="alerts">
+<h1>ALERTS<a class="headerlink" href="#alerts" title="Permalink to this headline"></a></h1>
+<p>Alerts are defined by clicking on the Alerts Menu.</p>
+<p>Alerts allows to trigger a signal when a pattern occurs for the current currency. Every currency has a its  list of alerts.
+On each alert we can associate a sound, a mail, an MT4 window alert or a graphic symbol on the window chart of that currency.
+When you choose the object, the signal and the period the button Add is enabled. By clicking on Add Button it you add the line corresponding to your alert.</p>
+<p>In our example we add the two alerts related to the BAR Object. A BAR is BULL whenever the close price is above the Open value of the bar, and BEAR in the opposite case. Here we take a simple example on the predefined object BAR.  In our case we defined two alerts. One alert whenever we have a Bull value for the period D1 and the other one whenever we have a Bear Value for the period D1.</p>
+<p>2014-10-22 21_54_25-Progress Trading Station [MT4 Provided by MCG] Strategy Tester</p>
+<p>Once the line is added you can modify it by double-clicking on every field.</p>
+<p>By double-clicking on the Object Field a menu appears with all objects created in the current project. In ou example as we didn’t create objects yet we can see only the predefined objects.</p>
+<p>By double clicking on the Signal Field we have a signal menu that shows the associated signals of the object.</p>
+<p>The fields Not, Prev, Type and Op are very important to understand once for all.  Here is an explanation.
+Let’s try to understand the BAR BULL D1 alert. (first line)</p>
+<p>Not : When X is displayed it means Not signal (the opposite). In our case the BAR is not BULL.  2014-10-23 17_43_24-Alerts      2014-10-23 <a href="#id1"><span class="problematic" id="id2">17_45_08-2088819239_</span></a> MT4 Provided by MCG - [EURUSD,M1 (visual)]
+Prev : When X is displayed it means that the signal is valid for the previous bar for the corresponding periods. In our case the previous bar is BULL for the period D1.        2014-10-23 17_44_47-Alerts      2014-10-23 <a href="#id3"><span class="problematic" id="id4">17_43_46-2088819239_</span></a> MT4 Provided by MCG - [EURUSD,M1 (visual)]
+Type : It can be T, B or nothing.  This field is activated only for the current signal. If Prev is activated the T or B Type are desactivated.
+T Type means that the alert is triggered when the signal is valid on a tick while the previous tick was not. This assure an alert only on the start of the signal. In our example that means that we receive an alert when BAR becomes BULL on the first tick while it was BEAR.</p>
+<p>2014-10-23 17_28_03-Alerts      2014-10-23 <a href="#id5"><span class="problematic" id="id6">17_34_16-2088819239_</span></a> MT4 Provided by MCG - [EURUSD,M1 (visual)]
+B Type means that the alert is triggered during the current bar while its preceding BAR the signal was not valid. In our example this means that we receive alerts on the current BULL BAR while the bar just before was BEAR.  2014-10-23 17_29_15-Alerts      2014-10-23 <a href="#id7"><span class="problematic" id="id8">17_26_10-2088819239_</span></a> MT4 Provided by MCG - [EURUSD,M1 (visual)]
+Empty Type means we receive alerts all the time (on every tick) a BAR is BULL. Not to have a large quantity of sound signals a 20 seconds interval between alerts.      2014-10-23 17_35_30-Alerts      2014-10-23 <a href="#id9"><span class="problematic" id="id10">17_35_51-2088819239_</span></a> MT4 Provided by MCG - [EURUSD,M1 (visual)]</p>
+<p>Op : The Op Field represents the logical operator of the periods M1, M5,…. The value is And or Or. (see explanation on periods fields below)</p>
+<p>VOp: Some signals like CURRENT, PREVIOUS, DISTANCE, NBR_BARS returns a value. The VOp represents the operator that is used for the Value to check. VOp can be &gt;,&lt;,=,&gt;=,&lt;=.</p>
+<p>Value : The value of the signal to check.</p>
+<p>The periods fields (M1, M5, M15, M30, H1, H4, D1, W1, MN) can be combined by selecting/deselecting. The Or/And is represented in the Op Field.</p>
+<p>By double clicking on the periods fields you have the period displayed When it is displayed it means the period is defined for the alert.</p>
+<p>Periods can be combined with Or Operator or And Operator depending of the value of Op field. In our example Op Field is Or, so we receive alerts whenever we have the BAR BULL for the period D1 or H1. If the Op field was And, we receive an alert when we have a BULL BAR for the periods D1 and H1.
+Let’s associate the signal CROSS_UP for the period D1. This means the bar is crossing the well known Daily Pivot Line. Here what we have :</p>
+<p>2014-10-22 21_54_46-Alerts 2014-10-22 21_55_07-Alerts</p>
+<p>For the moment no signals are triggered as we didn’t associate the type of signal for these alerts.</p>
+<p>For every Alert you can define the signals you want to trigger by clicking on the Property Button . A window on the right side is expanded as you see below.</p>
+<p>SIGNAL TYPE SELECTION
+The property window is a four tabs window. The first Tab Activate indicates what kind of signal we want to associate for the alert. By double-clicking on the field we activate/desactivate the signal by On/Off. Let’s start by activating the Graphic Signal for our three alerts. For every row we have three tabs : Sound that determines the sound of the alert. MT4 where you indicate the graphic and the alert text for your signal and a Mail window.
+2014-10-22 21_55_28-2014-10-22 21_57_24-Alerts</p>
+<p>GRAPHIC
+2014-10-22 21_55_47- 2014-10-22 21_56_26-Alerts</p>
+<p>MAIL</p>
+<p>2014-10-22 21_56_44-Alerts</p>
+<p>SOUND</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="GETTING STARTED" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="panel.html" class="btn btn-neutral float-right" title="PANEL" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Gabriel Jureidini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

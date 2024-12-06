@@ -1,0 +1,295 @@
+
+/*--------------------------------------------------------- MAIN OPTION PANEL ----------------------------------------------------*/
+
+#option_main {
+    font-size: var(--theme-sfont-size); 
+    background: var(--theme-bg-color);            
+}
+
+#optiontitle {
+    width: 260px;
+}
+
+#optioncontracttab .nav-item {
+    flex: none;
+}
+
+#option_terminalsbar {
+    flex:1;
+}
+
+/*--------------------------------------------------------- ORDER PANEL ----------------------------------------------------*/
+
+#optionordertab .nav-item {
+    flex:none;
+}
+
+/*--------------------------------------------------------- TOP OPTION PANEL ----------------------------------------------------*/
+
+#contractspanel  {
+
+}
+
+/*--------------------------------------------------------- BOTTOM OPTION PANEL ----------------------------------------------------*/
+
+#option_bottompanel {
+    flex : none;
+    height: 35px;
+    font-size: var(--theme-sfont-size);
+}
+
+#righttabs .nav-item {
+    flex-grow:1;
+}
+
+#option_bottomtabs .sb_controls {
+    margin-left : inherit;
+}
+
+#option_bottomtabs .sb_controls a{
+    min-width:20px;
+}
+
+/*------------------------------------------------------------ ORDERS PANEL --------------------------------------------------------*/
+
+#optionorderstable td:not(:first-child) {
+    text-align: center;
+}
+#optionorderstable th:not(:first-child) {
+    text-align: center;
+}
+
+#optionorderstable td:nth-child(1) {    /* option symbol*/
+    width: 120px;
+}
+
+#optionorderstable td:nth-child(2) {    /* symbol*/
+    width: 100px;
+}
+
+#optionorderstable td:nth-child(3) {    /* right*/
+    width: 50px;
+}
+
+#optionorderstable td:nth-child(4) {    /* strike*/
+    width: 80px;
+}
+
+#optionorderstable td:nth-child(5) {    /* expiry*/
+    width: 100px;
+}
+
+#optionorderstable td:nth-child(6) {    /* size*/
+    width: 100px;
+}
+
+#optionorderstable td:nth-child(7) {    /* open date*/
+    width: 200px;
+}
+
+#optionorderstable td:nth-child(8) {    /* open price*/
+    width: 100px;
+}
+
+#optionorderstable td:nth-child(9) {    /* price*/
+    width: 100px;
+}
+
+#optionorderstable td:nth-child(10) {   /* profit*/
+    width: 120px;
+}
+/*--------------------------------------------------------- CONTRACTS PANEL ---------------------------------------------------*/
+
+#optioncontractspanel {
+    overflow: auto;       
+}
+#optiongreekstable {
+    display: none;
+}
+
+#optioncontractstable tbody td:nth-child(1),
+#optioncontractstable thead th:nth-child(1), 
+#optiongreekstable tbody td:nth-child(1),
+#optiongreekstable thead th:nth-child(1) {
+    display:none;
+}
+
+#optioncontractstable tbody td:nth-child(20), 
+#optioncontractstable thead th:nth-child(20),
+#optiongreekstable tbody td:nth-child(18), 
+#optiongreekstable thead th:nth-child(18){
+    display:none; 
+}
+
+#optioncontractstable td:nth-child(2), 
+#optioncontractstable td:nth-child(19),
+#optiongreekstable td:nth-child(2), 
+#optiongreekstable td:nth-child(17) {
+    color: var(--theme-platform-color);
+}
+    
+#optioncontractstable td, #optioncontractstable th, 
+#optiongreekstable td, #optiongreekstable th {
+    text-align:center;
+    max-width:100px;
+}
+
+#optioncontractstable td:nth-child(9),
+#optioncontractstable td:nth-child(12),
+#optiongreekstable td:nth-child(8),
+#optiongreekstable td:nth-child(11) {
+    color:var(--theme-main-color); 
+}
+
+
+#optioncontractstable td:nth-child(10), 
+#optiongreekstable td:nth-child(9) {
+    background:var(--theme-bar-bg-color);
+    border-left: 1px solid var(--theme-border-color);      
+/*    color:var(--theme-main-color); */
+}
+
+#optioncontractstable td:nth-child(11),
+#optiongreekstable td:nth-child(10) {
+    background:var(--theme-bar-bg-color);    
+    border-right: 1px solid var(--theme-border-color);    
+}
+
+/*------------------------------------------------------------------- STRUIKE EXPIRY BARS------------------------------------------------*/
+
+
+#optionstrikebar, #optionexpirybar {
+    overflow-y: auto;
+}
+
+#optiontoolbarspanel {
+    width:100%;
+    flex:0;
+}
+
+#optionstrikegroup  button, #optionexpirygroup  button{
+   
+}
+
+#optionexpirygroup .sb_button.checked, #optionexpirygroup .sb_mbutton.checked, #optionexpirygroup .sb_sbutton.checked{
+
+}
+
+#optionexpirygroup .sb_button.checked:hover, 
+#optionexpirygroup .sb_mbutton.checked:hover,
+#optionexpirygroup .sb_sbutton.checked:hover{
+
+}
+
+
+
+#optionstrikegroup .sb_button.checked, #optionstrikegroup .sb_mbutton.checked, #optionstrikegroup .sb_sbutton.checked{
+      
+}
+
+#optionstrikegroup .sb_button.checked:hover, 
+#optionstrikegroup .sb_mbutton.checked:hover,
+#optionstrikegroup .sb_sbutton.checked:hover{
+
+}
+
+#optionmenubar {
+    display:none;
+}
+
+#strikeselect{
+    width:100px;
+}
+
+#setfrom {
+    width:100px;
+}
+
+#expiryselect{
+    width:100px;
+}
+#upmoney, #downmoney {
+    min-width: 60px;
+}
+
+/*--------------------------------------------------------- CURRENCY PANEL ----------------------------------------------------*/
+#option_currencypanel {
+    border-bottom: 1px solid var(--theme-border-color);
+}
+
+#option_currencytable {
+    font-weight: 600;
+    color: var(--theme-main-color);    
+}
+
+#option_currencytable th:nth-child(2){
+    width: 100px;    
+}
+
+.FUTURE >:first-child, .FUTURE > :nth-child(2){
+
+    color:#ff6347;
+}
+
+.INDEX >:first-child, .INDEX > :nth-child(2){
+
+
+    color:cornflowerblue;
+}
+
+.EQUITY >:first-child, .EQUITY > :nth-child(2){
+
+    color:chocolate;
+}
+
+.ETF >:first-child, .ETF > :nth-child(2){
+
+
+    color:brown;
+}
+
+/*--------------------------------------------------------- SUMMARY PANEL ----------------------------------------------------*/
+
+#option_summarypanel {
+    flex: none;
+    height: 300px;
+}
+
+#summarypanel thead {
+    display: none;
+  
+}
+
+#summarypanel #summarytable td:nth-child(1) {
+    width: 250px;
+    max-width: 250px;
+    color :var(--theme-main-color)
+}
+
+#summarypanel #summarytable td:nth-child(2), #summarypanel #summarytable th:nth-child(2){
+    max-width: 250px;
+}
+
+#summarypanel .bookValue {
+    background:var(--theme-bar-bg-color);
+    color: red;
+}
+
+#summarypanel .averageAnalystRating {
+    background:var(--theme-bar-bg-color);
+    color: red;
+}
+
+
+#summarypanel .priceToBook {
+    background:var(--theme-bar-bg-color);
+    color: red
+}
+
+/*--------------------------------------------------------- TREE PANELS ------------------------------------------------------*/
+
+
+#option_tree_terminals > li:first-child > span:first-child{
+    display:none;
+}
+

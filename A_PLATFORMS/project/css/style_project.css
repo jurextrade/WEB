@@ -1,0 +1,625 @@
+
+
+/*--------------------------------------------------------- MAIN PROJECT PANEL ----------------------------------------------------*/
+
+#project_mainpanel {
+    font-size: var(--theme-sfont-size); 
+    background: var(--theme-bg-color);            
+}
+
+/*------------------------------------------------- SERVER -----------------------------------------------*/
+
+#project_projects_headerpanel #button_server  {
+    background: red;
+}
+
+/*---------------------------------------------------------    SIDEBAR MENU -------------------------------------------------------*/
+
+#project_projectsbar {
+    flex: 1;     
+}
+
+#project_strategiesbar {
+    flex: 1;     
+}
+
+#indicatorbar {
+    flex: 1;     
+}
+
+#project_conditionsbar {
+    flex: 1;     
+}
+
+#projectselectpanel label {
+    color: var(--theme-color);  
+    margin-right: 10px;;  
+}
+
+#project_projectselect {
+    color: var(--theme-select-color);
+    width: auto;  
+    min-width: 160px;
+}
+
+#project_boxstrategiespanel .sb_boxbody  {
+    display: flex;
+    flex-direction: column;
+    overflow:hidden;
+}
+
+#project_strategiessidepanel {
+    height: 100%;
+    overflow: auto;    
+}
+
+
+ /*--------------------------------------------------------- STRATEGY FILE  PANEL ----------------------------------------------------*/
+
+ #strategyfiletab .sb_tabcontainer .nav-item {
+    flex: none;
+ }
+
+#strategy_classicviewpanel .nav-item {
+    flex: none !important;
+}
+
+#strategyfilebar {
+    margin-bottom: 1px;
+    border-bottom: 1px solid var(--theme-border-color);
+}
+
+#strategypropertiespanel {
+    overflow:auto;
+    padding: 10px;    
+}
+
+#strategypropertiestable td {
+    width:300px;
+}
+
+#strategychedulepanel {
+    overflow:auto;
+}
+
+#strategyotherpanel {
+    width: 25%;
+    padding: 1px;    
+}
+
+#strategychedulepanel .sb_link, #strategypropertiespanel .sb_link{
+    margin:0px;
+}
+
+
+
+/*--------------------------------------------------------- STRATEGY PROPERTIES PANEL ----------------------------------------------------*/
+
+#projectpanel_Properties{
+    padding:20px;
+}
+
+#projectpanel_Properties .sb_table {
+
+}
+#strategypropertiestable thead {
+    display:none;   
+}
+
+#strategypropertiestable tbody tr:hover {
+    background-color: transparent;
+ }
+ 
+/*--------------------------------------------------------- STRATEGY SCHEDULE PANEL ----------------------------------------------------*/
+
+#projectpanel_Schedule{
+    padding:20px;
+}
+
+#projectpanel_Schedule  .sb_table{
+
+}
+
+#strategyscheduletable thead tr  {
+    text-align: center;
+} 
+
+#strategyscheduletable thead tr > *:nth-child(1) {
+    visibility: hidden;
+}
+
+#strategyschedulepropertytable {
+    margin-top : 20px;
+}
+
+#strategyschedulepropertytable thead {
+    display:none
+}
+
+/*--------------------------------------------------------- STRATEGY DESCRIPTION PANEL ----------------------------------------------------*/
+
+
+#role_tab_strategydescription {
+    overflow:hidden;
+}
+
+/*--------------------------------------------------------- TOP PANEL ----------------------------------------------------*/
+
+#project_toppanel {
+    font-size: var(--theme-sfont-size);
+}
+
+
+/*--------------------------------------------------------- BOTTOM PANEL ----------------------------------------------------*/
+
+#project_bottompanel {
+    flex : none;
+    font-size: var(--theme-sfont-size);
+    height:35px;
+}
+
+
+#project_bottompanel .nav-item {
+    flex:none;
+}
+
+#project_bottomtabs .sb_controls {
+    margin-left: inherit;
+}
+
+#project_bottomtabs .sb_controls a {
+    min-width: 20px;
+}
+
+
+ /*--------------------------------------------------------- TESTER PANEL ----------------------------------------------------*/
+
+ #projectselectstrategypanel {
+    margin-top: 10px;
+    padding: 10px;    
+
+}
+#testerbar {
+    background: var(--theme-bg-color);
+    padding:10px;    
+}
+
+
+#testergroup {
+ /*   flex:1;
+    border: 1px solid var(--theme-special-border)!important;    
+*/    
+    padding: 10px;    
+}
+
+#testergroup .sb_link {
+    flex:1;
+}
+
+
+#strategy_tester {
+    width: 25%;
+    flex: none;
+}
+
+#strategy_stop {
+    width: 25%;
+    flex: none;
+    display:none;    
+}
+
+#strategy_velocity {
+    height: auto;    
+    flex: 1;
+    display:none;
+}    
+
+/*--------------------------------------------------------- DISTRIBUTE PANEL ------------------------------------------------------*/
+
+#distributepanel {
+
+}
+
+#distributeselect {
+    flex:none;
+    width: 70%;    
+}
+
+#distributepanel .terminalname {
+    margin-left: 5px;
+}
+
+#distributetable  th, #distributetable td {
+    font-size: var(--theme-font-size);
+}
+
+#distributetable {
+    width:100%;
+}
+
+
+.terminalcheck {
+    margin: 0 auto;
+    width: 20px !important;
+}
+
+/*--------------------------------------------------------- TREE PANELS ------------------------------------------------------*/
+
+
+#project_tree_projects > li:first-child > span:first-child{
+    display:none;
+}
+
+#project_tree_strategies > li:first-child > span:first-child{
+    display:none;
+}
+
+#tree_indicators_ref {
+    padding-left: 0px;
+}
+
+
+#project_tree_conditions > li:first-child > span:first-child{
+    display:none;
+}
+
+#project_tree_experts > li:first-child > span:first-child{
+    display:none;
+}
+
+/*--------------------------------------------------------- ACE EDITORS ------------------------------------------------------*/
+
+#error_comment {
+    border-top: 1px solid var(--theme-border-color);
+}
+
+#error_comment .ace_marker-layer .ace_active-line {
+	display:none !important;
+}
+
+#error_comment .ace_cursor-layer .ace_cursor {
+	display:none !important;
+}
+
+/*--------------------------------------------------------- TREE ------------------------------------------------------*/
+
+#project_tree_strategies, #tree_indicators, #project_tree_conditions, #project_tree_experts {
+    display:none;
+}
+
+
+/*-----------------------------------------------------------GSE -------------------------------------------------------*/
+
+#strategymainpanel .gsepanel {
+    width: 50%;
+    display:none;    
+} 
+
+
+/*--------------------------------- FORM -----------------------------------*/  
+
+#assistantviewbox {
+    display: none;
+}
+
+#assistantbar {
+    font-size: 14px;
+}
+
+#strategy_assistant {
+    background-repeat: no-repeat;
+    width: 130px;  
+    flex:none; 
+	color:white;    
+} 
+
+#strategy_assistant.checked  {
+    background-repeat: no-repeat;
+    width: 130px;   
+}
+
+#strategy_assistant_panel {
+    line-height: 1.1;
+}
+
+#strategy_assistant_panel .sb_widget {
+    width: unset;
+    height: unset;
+    font-size:unset;
+} 
+
+#strategy_assistant_panel .sb_widget-title {
+    padding-top: 10px;
+    padding-bottom: 5px;
+}
+
+#strategy_assistant_panel #assistantclose {
+    position: absolute;
+    z-index: 10000;
+    cursor: pointer;
+    right: 6px;
+}
+
+#strategy_assistant_panel .form-control:disabled, #strategy_assistant_panel .form-control[readonly] ,
+.strategypropertiespanel .form-control:disabled, .strategypropertiespanel .form-control[readonly] {
+    background-color: var(--theme-button-bg-color);
+    opacity: 0.6;
+    color: var(--theme-button-bg-color);
+    border-color: var(--theme-button-bg-color);
+}
+
+#strategy_assistant_panel  .content .body {
+    padding: 0px 55px; 
+}
+
+/*STEP 1--------------------------------------------------------------------*/  
+
+#projectpanelcontainer {
+    height:200px;
+}
+
+#popupnewstrategy {
+    display:none;
+}
+
+#popupnewstrategy label {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;    
+}
+
+#popupnewproject, #popupnewstrategy {
+    height: 100%;
+    min-height: 200px;
+}
+
+#popupnewproject .form-control {
+    font-size: var(--theme-font-size);
+}
+
+#popupnewproject label {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;    
+}
+
+#strategy_assistant_video_panel {
+    display: block;
+    height: 400px;
+    overflow: hidden;
+}
+
+#strategyassistantrulepanel {
+    height:45%;
+}
+
+.popup_buttons .sb_widget {
+    text-align: center;
+}
+
+#popupvideo_button {
+    display:none;
+}
+
+.popup_buttons {
+    display:none;
+}
+
+/*STEP 2--------------------------------------------------------------------*/  
+
+#strategy_assistant_addedindicators{
+    list-style-type: square !important;
+    background: var(--theme-main-bg-color) !important;
+    color: var(--theme-color) !important;
+    display: block;
+    width: auto;
+    height: 100px;
+    margin: 5px;
+    padding: 2px 20px;
+    overflow: auto;
+}
+
+#strategy_assistant_addedindicators a {
+    text-decoration: none;
+    width: 100%;
+    border-bottom: 0px;
+    font-size: var(--theme-font-size);
+    display: flex;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+    margin-bottom:1px;    
+}
+
+#strategy_assistant_addedindicators a title{
+    display: inline-block;
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden !important;
+    cursor:pointer;
+    font-size: 11px;
+    margin-right:1px;       
+}
+
+#strategy_assistant_addedindicators a span {
+    font-size: 10px;
+    padding: 4px 6px;
+    line-height: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 3px;
+    color: var(--theme-button-color);
+    background: var(--theme-button-bg-color); 
+}
+
+#strategy_assistant_addedindicators title:hover {
+    background-color: var(--theme-hover-bg-color) !important;
+    color: var(--theme-hover-color) !important;   
+}
+
+#strategy_assistant_generaldescripion {
+    padding-bottom:3px;
+}
+
+
+#strategy_assistant_generaldescripion .sb_formgroup label {
+    justify-content: start;
+}
+
+#strategy_assistant_descripion {
+    padding: 0px 0px 0px 0px;
+}
+
+#strategy_assistant_quill {
+
+}
+/*STEP 3--------------------------------------------------------------------*/  
+
+#strategy_assistant_recoverymode {
+    background: var(--theme-bar-bg-color) !important;
+    color: var(--theme-bar-color) !important;
+    border-radius: 0px;    
+    padding: 10px;    
+}
+
+#strategy_assistant_timeframe, #strategy_assistant_initialbalance, #strategy_assistant_name{
+    min-width:100px;
+}
+
+/*-----------------------------------RECOVERY BUTTONS-------------------------------------*/
+
+.strategy_assistant_recoverybuttons {
+    width: 160px;
+    height: auto;
+    align-items: vertical;
+    padding: 2px;
+    margin: 2px;
+    margin-bottom: 5px;
+}
+
+.strategy_assistant_recoverybuttons:focus {
+    box-shadow: 0 0 0 0.0rem rgb(47 164 231 / 25%)!important;	    
+}
+
+/*-----------------------------------ACTIONS BUTTONS-------------------------------------*/
+
+.strategy_assistant_actionsbuttons {
+    width: 150px;
+    height: auto;
+    padding: 2px;
+    margin: 2px;
+    margin-bottom: 5px;
+    color:      var(--theme-IsActionTColor) !important;    
+}
+
+.strategy_assistant_actionsbuttons:focus {
+    box-shadow: 0 0 0 0.0rem rgb(47 164 231 / 25%)!important;	    
+}
+
+#strategy_assistant_panel .contents1 {
+    float: right;
+    width: 50%;
+    height: 540px;
+    border: 0px solid var(--theme-border-color);
+    display: inline-block;
+    padding: 30px 15px 25px 0px;
+    background-color: var(--theme-main-bg-color);
+}
+
+#strategy_assistant_addindicator {
+    font-size: var(--theme-font-size);
+	background: var(--theme-bg-color);
+	color:var(--theme-button-color);	
+	border: 1px solid var(--theme-special-border);
+	cursor:pointer;
+}
+#strategy_assistant_addindicator:hover {
+	background: var(--theme-hover-bg-color);
+	color:var(--theme-hover-color);	
+}
+
+#strategy_assistant_addindicator:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.0rem rgba(47,164,231,0.25);       
+}
+
+
+#strategy_assistant_panel .card-header {
+    /*background-color: #2184be;*/
+    color: white;
+    font-size: 18px;
+    background-color: var(--theme-button-bg-color); 
+    color: var(--theme-color);
+    height:30px;
+    border-radius: 0;    
+    border-bottom: 1px solid var(--theme-border-color);    
+}
+
+#strategy_text_header {
+    margin-top: -10px;
+}
+
+#strategy_assistant_panel .list-inline {
+    background-color: inherit;
+    position: absolute;
+    top: 15px;
+    right: 21px;
+}
+
+
+#strategy_assistant_editor { 
+    height: 500px;
+    border: 1px solid var(--theme-special-border) !important;
+    padding: 0.5rem !important;
+    padding-left: 1.5rem!important;
+}    
+
+#strategy_assistant_model {
+    height: 400px;
+    width: 100%;
+}
+
+#strategy_assistant_editor_card {
+   background-color: transparent;    
+   border:0;
+   color: var(--theme-button-color);
+     
+}
+
+#strategy_assistant_editor_card-body {
+    padding:0;    
+}
+
+#strategy_assistant_panel-p-1 #row_chart {
+    height: 100%;
+}
+
+#strategy_assistant_panel-p-2 #row_chart {
+    height: 100%;
+}
+
+.createtassistantelement {
+    background: var(--theme-bg-color);
+    text-align: center;
+    color: var(--theme-color);
+    padding: 40px;
+      
+}
+
+.assistant_panel .content .body .sb_formgroup label {
+    width: 100px;
+}
+
+.assistant_panel .content .body .sb_formgroup span {
+    flex: 1;
+}
+
+.assistant_panel .content .body .col-8{
+    overflow: auto;
+    border: 0px solid var(--theme-special-border);
+    padding: 0.5rem 1.5rem
+}
+
+.assistant_panel .content .body .col-4{
+    overflow: auto;
+    padding: 0.5rem 1.5rem
+}

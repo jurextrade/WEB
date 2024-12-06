@@ -1,0 +1,3 @@
+(IF (= 0 T_SELLNBRTRADE)
+ (EXIT_SELL)
+)

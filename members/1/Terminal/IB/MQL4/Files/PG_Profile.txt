@@ -1,0 +1,14 @@
+72
+false
+false
+false
+false
+false
+"cursor"
+"candle"
+[]
+[]
+[]
+[]
+[]
+[]

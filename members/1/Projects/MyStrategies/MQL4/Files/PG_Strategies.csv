@@ -1,0 +1,39 @@
+MyStrategies
+Follow##undefined
+<p><br></p>
+BuySell##undefined
+
+Pivot_High_Cross##undefined
+<p><br></p><p>COMBINED Buy Sell Session</p><p><br></p><p>Stop loss are 10 Profit are 10 pipstepsI</p><p><br></p><p>If HEIKEN_ASHI for the hour is BULL and price is below the Pivot of the day and price didn't cross the pivot in the day, at a distance of 15 pipsteps we START the session and BUY</p><p><br></p><p><br></p><p>If HEIKEN_ASHI for the hour is BEAR and price is above the Pivot of the day and price didn't cross the pivot in the day, at a distance of 15 pipsteps we START the session and BUY</p><p><br></p><p><br></p><p>Session exit whenever no more trades in the session</p>
+Pivot_Low_Cross##undefined
+<p>COMBINED Buy Sell Session==================Stop loss are 10 Profit are 10 pipstepsIf HEIKEN_ASHI for the hour is BULL and price is below the Pivot of the day and price didn't cross the pivot in the day, at a distance of 15 pipsteps we START the session and BUYIf HEIKEN_ASHI for the hour is BEAR and price is above the Pivot of the day and price didn't cross the pivot in the day, at a distance of 15 pipsteps we START the session and BUYSession exit whenever no more trades in the session</p>
+Pivot_Point_Cross##undefined
+<h3>PIVOT RESURECTION</h3><p><br></p><p><br></p><p>COMBINED Buy Sell Session</p><p><br></p><p><br></p><p>Stop loss are 10 Profit are 10 pipstepsIf HEIKEN_ASHI for the hour is BULL and price is below the Pivot of the day and price didn't cross the pivot in the day, at a distance of 15 pipsteps we START the session and BUYIf HEIKEN_ASHI for the hour is BEAR and price is above the Pivot of the day and price didn't cross the pivot in the day, at a distance of 15 pipsteps we START the session and BUYSession exit whenever no more trades in the session</p>
+Martingale ##undefined
+<p><br></p>
+ENGULFING_D1##undefined
+
+FRACTAL_CHANGED##undefined
+<p><br></p>
+ENGULFING_H4##undefined
+<p><br></p>
+ANGLE_EMA##undefined
+<p><br></p>
+CROSS_CLOSE_D1##undefined
+
+Alambex##undefined
+
+Pivot_Cross ##undefined
+<p>COMBINED Buy Sell Session==================If open price of the day is above the pivot point line andthe price touches the middle between the pivot line and pivot high we START the sessionif the open price is below the middle between the pivot line and the pivot high we  SELL if not we BUYIf open price of the day is below the pivot point line andthe price touches the middle between the pivot line and pivot low we START the sessionif the open price is below the middle between the pivot line and the pivot low we  BUY if not we SELLSession exit whenever prices is at alert distance from Pivot point or Pivot High or Pivot Sell</p>
+Momentum##undefined
+<p><br></p>
+RSI_CANDLE##undefined
+
+RSI8_CCI14##undefined
+<p>COMBINED Buy Sell Session</p><p><br></p><p><br></p><p>If open price of the day is above the pivot point line and</p><p>the price touches the middle between the pivot line and pivot high we START the session</p><p><br></p><p>if the open price is below the middle between the pivot line and the pivot high we  SELL  if not we BUY</p><p><br></p><p>If open price of the day is below the pivot point line and</p><p><br></p><p>the price touches the middle between the pivot line and pivot low we START the session</p><p><br></p><p>if the open price is below the middle between the pivot line and the pivot low we  BUY if not we SELL</p><p><br></p><p>Session exit whenever prices is at alert distance from Pivot point or Pivot High or Pivot Sell</p>
+RSI_CANDLE1##undefined
+<p><br></p>
+ProgressSimple##undefined
+
+strategy_Q_0##undefined
+<h3>DESCRIPTION</h3><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><h3 id="desc_indicators">INDICATORS</h3><p><br></p><h3><br></h3><h3 id="desc_periods">PERIOD</h3><p><br></p><h3><br></h3><h3 id="desc_buy">BUY</h3><p><br></p><h3 id="desc_sell">SELL</h3><p><br></p><p><br></p><h3 id="desc_stoploss">STOP LOSS</h3><p><br></p><p><br></p><h3 id="desc_takeprofit">TAKE PROFIT</h3><p><br></p><p><br></p><h3 id="desc_exit">EXIT</h3><p><br></p><p><br></p>

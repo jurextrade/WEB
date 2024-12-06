@@ -1,0 +1,8 @@
+(IF (AndS STO_SAR S_SELL P_M15)
+ (START)
+ (SELL)
+)
+(IF (AndS STO_SAR S_BUY P_M15 )
+ (START)
+ (BUY)
+)

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYSTEM OBJECTS &mdash; MT4-Progress v0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="CONDITIONS" href="conditions.html" />
+    <link rel="prev" title="CUSTOM OBJECTS" href="custom_objects.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> MT4-Progress
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">INTRODUCTION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">INSTALLATION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">GETTING STARTED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alerts.html">ALERTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="panel.html">PANEL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="designer.html">DESIGNER</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objects.html">CUSTOM OBJECTS</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SYSTEM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conditions.html">CONDITIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="strategy.html">STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_1.html">EXAMPLE 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_2.html">EXAMPLE 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">REFERENCE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">ARCHITECTURE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pl_language.html">PL LANGUAGE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trade_functions.html">TRADE FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="math_functions.html">MATH FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_logics.html">Market Logics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_input.html">MARKET INPUT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session_fields.html">SESSION FIELDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_types.html">DATA TYPES</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recovery_types.html">Recovery Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="discussion_strategy.html">A TRADING STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_start.html">HOW TO START</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">DESIGN</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MT4-Progress</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>SYSTEM OBJECTS</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/system_objects.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="system-objects">
+<h1>SYSTEM OBJECTS<a class="headerlink" href="#system-objects" title="Permalink to this headline"></a></h1>
+<p>A System Object is a logical combination of other objects. Signals that are associated to system objects are BUY, SELL, EXIT_BUY, EXIT_SELL, BULL and BEAR.</p>
+<p>Here is an example of how to create a system object. In our previous example we define CUSTOM Objects : FTRIX, STRIX and CORAL. Let’s define our new system object  with the combination of these three objects.The system that we will define here is very simple, suppose we want to have :</p>
+<p>2014-10-25 <a href="#id1"><span class="problematic" id="id2">06_55_46-2088819239_</span></a> MT4 Provided by MCG - [EURUSD,Daily]
+BUY     SELL    EXIT_BUY        EXIT_SELL
+STRIX is Up
+FTRIX is Up
+Price is above the CORAL trendLine      STRIX is Down
+FTRIX is Down
+Price is below the CORAL trendLine      FTRIX is Down   FTRIX is Up
+To do this we have to create a system object that we will call for instance THV that supports the conditions enumerated above. Here how we do it :</p>
+<p>Right-Click on the Node System Objects. A menu appears with New System Object item.  Select the item.</p>
+<p>2014-10-25 06_20_14-Designer</p>
+<p>An empty system Object window appears. This window contains six Tab windows. Each window corresponds to the configuration of the signal named in the Tab.</p>
+<p>2014-10-25 07_08_24-System Object</p>
+<p>In the Buy Tab Window, Double-Click on the field Object, a menu appears containing all the objects of the project TestProject.
+Let’s select the FTRIX Object.Double-Click on the field Signal, a menu appears containing all the signals associated to the FTRIX Object.
+We select the UP Signal.The next fields Not, Op, Type, OpVal and Val are the same as the one described in the Alert Dialog above.Log, Log1 and Log2 represents the logical operators.</p>
+<p>Double-Click in the field Log, AND/OR appears sequentially and a new line is displayed.</p>
+<p>2014-10-25 14_26_26-Progress Trading Station [MT4 Provided by MCG] Strategy Tester</p>
+<p>We set the AND value.
+In the second line, we Double-Click again in the Field Object to select the STRIX Object. In the Signal Field we select the UP Value and we Double-Click again in the Log Field to set the AND Value. A new line is Displayed.</p>
+<p>2014-10-25 14_32_49-Progress Trading Station [MT4 Provided by MCG] Strategy Tester</p>
+<p>In this third line we select the CORAL Object and the ABOVE Signal. Finally we give a name to our Object in the Name Field, let’s call it THV and we press on the Apply Button. The Object THV is created and displayed in the System Objects Tree Node.</p>
+<p>2014-10-25 14_39_02-System Object</p>
+<p>We still need to fill the Sell, Exit Buy and Exit Sell windows. An easy way to fill the Sell Window is to have a way to generate the opposite of the Buy Logical combination. We press on the Generate Sell Button. We go to the Sell Tab Window and we can see the list has been correctly filled.</p>
+<p>2014-10-25 14_58_58-System Object</p>
+<p>We still need to define the Exit Buy Signal for THV Object. Go to the Exit Buy Window and select FTRIX in the menu of the Object Field and select DOWN in the Signal Field. Our window is in the figure below.</p>
+<p>2014-10-25 14_59_38-System Object</p>
+<p>By Pressing on the Generate Exit Sell Button, we fill the Tab Window Exit Sell with the opposite declaration. see figure</p>
+<p>2014-10-25 15_00_02-System Object</p>
+<p>Our THV Object has been completely defined.</p>
+<p>We press on the Apply Button to save it.</p>
+<p>The Delete Selected Button delete the selected lines in the list of the current Tab Window.</p>
+<p>The Code Button opens a window in which we can visualize the code generated. We will explain this later in the document in the Strategy
+creation section.</p>
+<p>The Reset Button reset the list for the current Tab Window.If we look at the Designer, our project looks like the figure beside.</p>
+<p>2014-10-25 15_30_59-Designer</p>
+<p>Double-Click on the THV Object in the Tree Designer.
+Let’s change our BUY Signal, instead of having STRIX UP we want that the fast trix crosses the Slow Trix.
+In the System Object Window, Double-Click in the Object Field on STRIX then in the Menu that appears select the FTRIX Object. Double-Click in the Signal Field on UP and we select the RCROSSED Signal.We Press the Generat Sell Button to correctly fill the Sell Window. Finally press the Apply Button to save it.Our THV Object has been modified.
+2014-10-25 15_46_44-System Object</p>
+<p>The fields Log1, Log2, Log3 represents the logical fields of our combination. We can have three levels.
+Log represents the first logical level.
+Log1 is the second level and
+Log2 the third.</p>
+<p>That means that when we choose Log1 as an operator the logical combination will join the next line to form a result.</p>
+<p>In the figure here we have STRIX is up AND FTRIX is up OR CORAL is above. The result of the statement here is not clear because the result is true if we only have CORAL above.In this figure the statement means that we have STRIX is up AND (FTRIX is up OR CORAL is above).The result of our statement here is clear. We should have STRIX up and either FTRIX is up or CORAL is above.</p>
+<p>2014-10-29 09_13_42-</p>
+<p>2014-10-29 09_16_08-</p>
+<p>Edit</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="custom_objects.html" class="btn btn-neutral float-left" title="CUSTOM OBJECTS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="conditions.html" class="btn btn-neutral float-right" title="CONDITIONS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Gabriel Jureidini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

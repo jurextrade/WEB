@@ -1,0 +1,48 @@
+/*--------------------------------------------------------- CALCULATOR PANEL ----------------------------------------------------*/
+
+#boxoptioncalculatorpanel .sb_boxbody {
+    max-height:450px;
+}
+
+
+#calculatorpanel{
+    height: 100%;	
+    padding: 10px;    
+	overflow: hidden;	
+    border: 0px solid var(--theme-border-color);    
+    display: flex;
+    flex-direction: column;
+
+}
+
+#calculatorpanel .box-footer{
+    margin-left:10px;
+    margin-right:10px;
+    padding:10px;
+}
+
+
+#calculatorpanel .form-control {
+    text-align: center;
+}
+
+#calculatorpanel #call_price, #calculatorpanel #put_price {
+    color: var(--theme-main-color) !important;    
+}
+
+#calculatorpanel .calcBkgd .sb_formgroup label {
+    width: 110px;
+}
+
+
+#calculatorpanel .CallTitle, #calculatorpanel .PutTitle {
+    text-align: center;
+    background-color: var(--theme-bg-color);
+    margin: 0px 0 20px 0;
+    font-size: 14px;
+    color: var(--theme-color);
+}
+
+#inp_time {
+    text-align:center;
+}

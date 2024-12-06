@@ -1,0 +1,4 @@
+LIBRARY PG_ExtFunctions.dll
+EXPORTS
+MT4_TSetSystemObjects
+MT4_TSetEntryRules

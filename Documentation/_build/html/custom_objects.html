@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CUSTOM OBJECTS &mdash; MT4-Progress v0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SYSTEM OBJECTS" href="system_objects.html" />
+    <link rel="prev" title="DESIGNER" href="designer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> MT4-Progress
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">INTRODUCTION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">INSTALLATION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">GETTING STARTED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alerts.html">ALERTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="panel.html">PANEL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="designer.html">DESIGNER</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">CUSTOM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system_objects.html">SYSTEM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conditions.html">CONDITIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="strategy.html">STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_1.html">EXAMPLE 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_2.html">EXAMPLE 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">REFERENCE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">ARCHITECTURE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pl_language.html">PL LANGUAGE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trade_functions.html">TRADE FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="math_functions.html">MATH FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_logics.html">Market Logics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_input.html">MARKET INPUT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session_fields.html">SESSION FIELDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_types.html">DATA TYPES</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recovery_types.html">Recovery Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="discussion_strategy.html">A TRADING STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_start.html">HOW TO START</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">DESIGN</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MT4-Progress</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>CUSTOM OBJECTS</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/custom_objects.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="custom-objects">
+<h1>CUSTOM OBJECTS<a class="headerlink" href="#custom-objects" title="Permalink to this headline"></a></h1>
+<p>A custom Object represents any Indicator other than the predefined Indicators. One of the main strength of custom indicators is that you can integrate any custom indicator of MT4 that you can find on the net in your expert system without coding , these are the custon objects of type custom,  we will discuss this in the end of this section. In the first part we will explain how to integrate the known indicators like , Bollinger, Macd, Rsi. etc… .</p>
+<p>When you Right-Click on the node Custom object, a menu appears with New Object Item.
+Let’s select New Object.  A window as shown in the figure below appears, it represents the object to create.
+Depending of the Type of the object, properties are displayed.</p>
+<p>2014-10-24 10_26_52-Designer</p>
+<p>Name is the name you give to your object.
+Cross defines the crossing object for which you want a signal to be triggered. In this combo box only objects that are displayed in the same window with the same trendline type are enumerated.The other fields are the same as in MT4.
+Let’s create an MACD  Main Mode Object. We will name it M_MACD and we press on the button Apply.
+A node appears in the designer under custom objects.</p>
+<p>2014-10-24 10_55_42-Object</p>
+<p>Now let’s select again New Object by Right-Clicking again on the node Custom Objects, and choose Type MACD to create the MACD with the Mode Signal. You will notice that in the Cross Combo you will have the M_MACD Object that appears.
+Set the Cross field to M_MACD and Name the object S_MACD.</p>
+<p>By selecting the Cross Object, to M_MACD , this implies that whenever the signal trendline S_MACD crosses the Main M_MACD trendline, the signal RCROSS will be triggered.</p>
+<p>Let’s name it S_MACD and we press on the button Apply.</p>
+<p>2014-10-24 11_04_39-Object</p>
+<p>In the designer Two Nodes appear that represents the two objects. By Double-clicking on the object node the Window display the
+corresponding object properties. You can dispatch from an object to another in this way.</p>
+<p>2014-10-24 11_19_06-Designer</p>
+<p>Let’s define the levels of our MACD Object,
+Select the Tab Levels Window.The figure beside is the Levels window. In the Levels Window, a list with predefined levels is shown. A value can be defined for every period. These levels represents the reference for some signals of this object.
+Level Type represents the type of the level. It can be OverBought/OverSold or Strong/Weak. By defining the Level Type you precise the signals you want to trigger.</p>
+<p>2014-10-24 11_16_36-Object</p>
+<p>The table below shows the signals that are triggered whenever the value is bigger or lesser than the value given depending on Level Type, For the MEDIUM Level same signals are triggered which, if above the Medium Level, ABOVE Signal is triggered and if below the the Medium Level, BELOW Signal is triggered.</p>
+<p>Level Type      OverBought/OverSold     Strong/Weak
+UPPER
+EXT_OVERBOUGHT</p>
+<p>VERY_STRONG,</p>
+<p>UP
+OVERBOUGTH</p>
+<p>STRONG</p>
+<p>MEDIUM
+ABOVE/BELOW
+CROSS_UP/CROSS_DOWN</p>
+<p>ABOVE/BELOW
+CROSS_UP/CROSS_DOWN</p>
+<p>LOW
+OVERSOLD</p>
+<p>WEAK</p>
+<p>LOWER
+EXT_OVERSOLD</p>
+<p>VERY_WEAK</p>
+<p>The signals CROSS_UP and CROSS_DOWN mean that trendline is crossing the MEDIUM level up or down.In our example, we don’t precise any level Value for our MACD Objects except for the MEDIUM Level with the 0 value.
+Double-Click on the field MEDIUM/M1 and type 0 then check All Same Value as M1 to fill the rest of the line in the list which means 0 level for all periods and press the Apply Button.</p>
+<p>We do this for the two objects M_MADD and S_MACD.We keep Level Type to OverBougth/OverSold and we press the Apply Button.</p>
+<p>Let’s create now an RSI Object again by selecting New Object in the designer again by a Right-Click on the Custom Objects</p>
+<p>Node, in the window we select for Type RSI and we keep the Period value to 14 and finally Name it RSI_14.
+Click on Levels Tab Window to fill the levels.</p>
+<p>2014-10-24 12_03_42-Object</p>
+<p>Double-Click on the UPPER/M1 field and type 100 value.Double-Click on the UP/M1 field and type 70 value.Double-Click on the MEDIUM/M1 field and type 50 value.Double-Click on the LOW/M1 field and type 30 value.Double-Click on the LOWER/M1 field and type 0 value.</p>
+<p>As for RSI levels are the same for all periods,we check the All Same Value as M1 to fill the rest of the list as shown in the figure..</p>
+<p>2014-10-24 <a href="#id1"><span class="problematic" id="id2">12_31_11-2088819239_</span></a> MT4 Provided by MCG - [EURUSD,M1]</p>
+<p>2014-10-24 12_03_58-Object</p>
+<p>2014-10-24 12_38_57-Designer</p>
+<p>In this part of this section, we will create Custom Objects with Custom Type. It is very important to understand the custom type. The purpose of creating Custom Type Objects is to link external indicators which are usually in binary format without having to go in the source code.
+In our example we will choose two type of objects. One that displays in the main window (in the Chart Window of your MT4 platform) and the other in a secondary window which is displayed in a separate window like the RSI indicator.
+Right-Click again on the Custom Objects in the designer to create a new Custom Object. When the Object Dialog Window appears, choose the Type CUSTOM to display the Parameters properties. The window should appear as in the figure.</p>
+<p>2014-10-24 13_03_50-Object</p>
+<p>Display Field represents the location of the indicator. It may be in the Main Window or in a Separate Window.</p>
+<p>Type Field can be Trendline, Histogram or Bull/Bear.</p>
+<p>Browse button to select the external indicator File. Usually you downloaded it and you may already test it so you should know the location of this
+file.</p>
+<p>Cross Field which is the same as in the other objects. (see MACD example above).In our example we choose an indicator that you may already know the THV Trix.</p>
+<p>We suppose in this example that you stored it somewhere on your computer in its binary format .ex4. The appearance of this indicator on the MT4 platform looks like the figure down.</p>
+<p>2014-10-24 <a href="#id3"><span class="problematic" id="id4">13_30_27-2088819239_</span></a> MT4 Provided by MCG - [EURUSD,M1]</p>
+<p>The thick line is called Slow Trix and the thin line Fast Trix.
+Click on the Browse Button and select this file from the folder where you store it.
+In our example the file is called PG_THV_Trix.ex4, so in Prog Name Field we get the file name without the extension.
+As we see the indicator runs in a separate window so we choose Display field as Separate, and as it is a trendline, we choose the Type Field as Trendline.</p>
+<p>Now we need to tell the system which and how values are set. Usually custom indicators are documented with an explanation for the different values.</p>
+<p>In MT4 custom indicators we can have a maximum of 8 values.</p>
+<p>Let’s suppose we don’t have the corresponding values, so let’s see how we can find out the corresponding values for this indicator.</p>
+<p>In the MT4 platform Right-Click on the line of PG_THV_Trix indicator to get its properties.</p>
+<p>2014-10-24 <a href="#id5"><span class="problematic" id="id6">20_31_08-2088819239_</span></a> MT4 Provided by MCG - [EURUSD,M1]</p>
+<p>The window indicator properties appears.
+We select the Colors Tab.
+You can see that the value 0 and 1 corresponds to the thick trendline which is the Slow trix.</p>
+<p>2014-10-24 20_36_01-Custom Indicator - PG_THV_Trix</p>
+<p>The value 0 with the Green color corresponds to the up values of this trend line and the value 1 with the Crimson color corresponds to the down values.</p>
+<p>The value 2 and 3 correspond to the Up and Down Value for the Fast Trix trend line.</p>
+<p>Now let’s fill the values of our window object.
+Double-Click in the Value Field of the 0 line and select in the menu the Up Value item, then in the 1 index line, select the Down Value item.</p>
+<p>2014-10-24 13_18_12-Object</p>
+<p>Finally let’s call this object STRIX and press the Apply Button.</p>
+<p>The Object STRIX is created and corresponds to Slow Trix.</p>
+<p>2014-10-24 20_40_04-Object</p>
+<p>Now let’s create a New Object again by Right-Clicking on the Custom Objects Node in the designer window. We do exactly the same steps as in the STRIX Object except that the field values are set to Up Value for the index 2 and Down Value for the
+index 3 and in the Cross Field we select the object STRIX to have the signal RCROSSED triggered which means that the Fast Trix is crossing the Slow Trix.
+Finally we name it FTRIX and we press the Apply Button.</p>
+<p>2014-10-24 21_14_50-Object</p>
+<p>Our designer tree should look like this.</p>
+<p>2014-10-24 21_25_58-Designer</p>
+<p>In the next example we choose an external indicator that is displayed in the Main window.
+From the THV System we have the Coral indicator that is delivered in an .ex4 file. The appearance of this indicator is shown in the figure below.</p>
+<p>2014-10-24 <a href="#id7"><span class="problematic" id="id8">21_46_09-2088819239_</span></a> MT4 Provided by MCG - [EURUSD,M1]</p>
+<p>Red Line means we have a down trend, Green line represents an up trend and the yellow line a sideway trend.</p>
+<p>Again to guess the values for this indicator we display its properties and then we select the Colors Tab Window. As you can see the sideway trend corresponds to the index 0, the up trend to the index 1 and the down trend to the index 2.</p>
+<p>2014-10-24 21_45_50-Custom Indicator - PG_THV_Coral</p>
+<p>Now let’s create the object CORAL.
+Display Field is set to Main that means the main window,
+Type is set to TrendLine. Now we fill the corresponding value fields with the appropriate Values.</p>
+<p>Press on the Apply Button to valid this new Object.</p>
+<p>In Cross Menu we have all objects of type Trendline that are displayed in the Main Window like MA (Moving average) Type. In our case we didn’t define any as this is the first one so the Menu is empty.</p>
+<p>2014-10-24 21_41_38-Object</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="designer.html" class="btn btn-neutral float-left" title="DESIGNER" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="system_objects.html" class="btn btn-neutral float-right" title="SYSTEM OBJECTS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Gabriel Jureidini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

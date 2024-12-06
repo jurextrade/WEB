@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PANEL &mdash; MT4-Progress v0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DESIGNER" href="designer.html" />
+    <link rel="prev" title="ALERTS" href="alerts.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> MT4-Progress
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">INTRODUCTION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">INSTALLATION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">GETTING STARTED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alerts.html">ALERTS</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PANEL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="designer.html">DESIGNER</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objects.html">CUSTOM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system_objects.html">SYSTEM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conditions.html">CONDITIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="strategy.html">STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_1.html">EXAMPLE 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_2.html">EXAMPLE 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">REFERENCE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">ARCHITECTURE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pl_language.html">PL LANGUAGE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trade_functions.html">TRADE FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="math_functions.html">MATH FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_logics.html">Market Logics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_input.html">MARKET INPUT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session_fields.html">SESSION FIELDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_types.html">DATA TYPES</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recovery_types.html">Recovery Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="discussion_strategy.html">A TRADING STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_start.html">HOW TO START</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">DESIGN</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MT4-Progress</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>PANEL</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/panel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="panel">
+<h1>PANEL<a class="headerlink" href="#panel" title="Permalink to this headline"></a></h1>
+<p>Click on the Panel Menu. A window appears with three Tabs : Platform, Main Panel and Colors. On the bottom we can see the current currency.
+In this window we define the graphical appearance of the current currency chart.  Every Currency have its graphic representation:</p>
+<p>Platform
+In the Platform Tab we have a list where we see a column of predefined entities and columns of periods. These entities are :</p>
+<p>Up Fractals
+Down Fractals
+Up Fractals Target
+Down Fractals Target
+Resistance
+Support
+Pivots Line
+Fibo Line
+Patterns
+When a period is selected for an entity, we display the  corresponding representation.</p>
+<p>2015-05-09 <a href="#id1"><span class="problematic" id="id2">11_36_13-9645672_</span></a> Alpari-ECN-Demo - Demo Account - [EURUSD,M1 (visual)]</p>
+<p>Main Panel
+This is the representation of the Main Panel on the MT4 EURUSD Currency Chart. On the right side we have all objects
+of the project plus three lines that are PERIODS,SEPERATOR and LINE FEED (see figure).
+On the left side the objects of the Main Panel populated by the Add Button. We select the PROGRESS Object and we click on Add Button. We do the same thing for HEIKEN_ASHI Object and finally we add a period line. These actions insert the PROGRESS Object, the HEIKEN_ASHI Object and a period labels. We Click on Move Up and Move Dn to order our objects. The figure shows the result of our actions. Now we click on the Apply Button. If we are in connected Mode the Main Panel is instantly modified, the figure shows the appearance of your EURUSD Currency Chart. If Progress EA is not running, the next time you associate Progress EA to you EURUSD Currency, this main Panel will appears. If Progress EA is running but not connected to the Progress Station, Press F5 in your MT4 Terminal to establich a connection and the Main Panel will appears as in the figure.</p>
+<p>2015-05-09 11_37_58-Progress Trading Station [Alpari Limited MT4] Strategy Tester</p>
+<p>Colors
+The Chart on your MT4 platform should look like the figure beside. The colors of signals associated to these objects will be defined in the Colors Tab Window.
+If the Platform is not connected to the Progress Interface, the next time you associate Progress EA to the MT4 EURUSD currency chart window you will see it. You can add as many objects as you want in the Main Panel.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="alerts.html" class="btn btn-neutral float-left" title="ALERTS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="designer.html" class="btn btn-neutral float-right" title="DESIGNER" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Gabriel Jureidini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

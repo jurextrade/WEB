@@ -1,0 +1,38 @@
+#newspanel {
+    height: 100%;    
+    overflow:hidden;
+}
+
+#news_calendarbox .sb_boxbody, #mainforexnews .sb_boxbody {
+    height:300px;
+}
+
+.newsclass th, .newsclass td {
+	text-align:center;
+}
+
+.newsclass th:nth-child(1) {
+    min-width: 60px;
+}
+.newsclass th:nth-child(2) {
+    min-width: 60px;
+}
+
+.newsclass th:nth-child(3) {
+    min-width: 30px;
+}
+
+#news_forextable thead {
+    display:none;
+}
+
+#news_forextable a {
+    color: var(--theme-color);
+	text-decoration:none;    
+}
+
+#news_forextable td:nth-child(1), 
+#news_forextable th:nth-child(1) {
+	padding-left:10px;
+	border: 1px solid var(--theme-border-color)
+}

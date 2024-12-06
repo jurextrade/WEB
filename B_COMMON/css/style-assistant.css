@@ -1,0 +1,151 @@
+.assistant_panel {
+    height: 100%;    
+    display: flex;
+    flex-direction: column;    
+    border: 0px solid var(--theme-button-border-color);    
+}
+
+.assistant_panel.vertical {
+    flex-direction: row;
+}
+
+
+.assistant_panel .content {
+    position:relative;
+    flex: 1;    
+}
+
+.assistant_panel .content .body{
+    width: 100%;   
+    height:100%;    
+    position: absolute;     
+    overflow:hidden;
+}
+
+.assistant_panel > .content > .title
+{
+    position: absolute;
+    left: -999em;
+}
+
+.assistant_panel .steps {
+    color: var(--theme-color);  
+    border-bottom: 0px solid var(--theme-platform-color);
+    margin-top: 0px;    
+    margin-bottom: 2px;    
+}
+
+.assistant_panel > .steps .current-info
+{
+    position: absolute;
+    left: -999em;
+
+}
+
+.assistant_panel > .steps .number {
+    font-size: inherit;
+}
+
+.assistant_panel > .steps > ul  {
+    padding: 0;
+    display: flex;
+    text-transform: uppercase!important;
+    color: var(--theme-color) !important;
+    align-items: center;
+    margin: 0;
+}
+
+.assistant_panel.vertical > .steps > ul {
+  flex-direction: column;
+}
+
+
+.assistant_panel > .steps > ul > li {
+    flex: 1;
+    text-align: center;
+    /* flex-grow: 1; */
+    padding-right: 1px;
+    white-space: nowrap;
+}
+
+.assistant_panel > .steps a,
+.assistant_panel > .steps a:hover,
+.assistant_panel > .steps a:active {
+    display: block;
+    text-decoration: none;
+    background: var(--theme-bg-color);
+    color: var(--theme-color);
+    padding: 8px 1em;
+    border: 1px solid var(--theme-button-border-color);
+}
+
+.assistant_panel > .steps .disabled a,
+.assistant_panel > .steps .disabled a:hover,
+.assistant_panel > .steps .disabled a:active
+{
+    background-color: var(--theme-bg-color);   
+    color: var(--theme-button-color);   
+    cursor: default;
+    overflow: hidden !important;
+    text-overflow: ellipsis;    
+}
+
+.assistant_panel > .steps .current a,
+.assistant_panel > .steps .current a:hover,
+.assistant_panel > .steps .current a:active {
+    background: var(--theme-select-bg-color);
+    color: var(--theme-select-color) !important;
+    border-bottom: 1px solid var(--theme-platform-color);
+    overflow: hidden !important;
+    text-overflow: ellipsis;    
+    outline: unset;    
+}
+
+.assistant_panel > .steps .done a,
+.assistant_panel > .steps .done a:hover,
+.assistant_panel > .steps .done a:active {
+    overflow: hidden !important;
+    text-overflow: ellipsis;    
+    background: var(--theme-bg-color);
+    color: var(--theme-color);
+}
+
+.assistant_panel > .steps .error a,
+.assistant_panel > .steps .error a:hover,
+.assistant_panel > .steps .error a:active {
+
+}
+
+.assistant_buttons {
+    justify-content: end;
+}
+
+.assistant_buttons a {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;        
+}
+
+.assistant_buttons a:hover {
+    background-color: var(--theme-hover-bg-color);
+}
+
+.assistant_panel .actions {
+    background-color: #051b05; 
+    margin-top: 0px;
+    padding-top: 8px;    
+    width: fit-content;
+}
+
+.assistant_panel .installcheckmark {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: var(--theme-select-color);
+    stroke-miterlimit: 10;
+    margin: 10% auto;
+    box-shadow: inset 0px 0px 0px var(--theme-platform-color);
+    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+}

@@ -1,0 +1,71 @@
+{
+  "Applications": [],
+  "Terminals": [
+    {
+      "IFDSerialNumber": "12345678",
+      "TerminalCountryCode": [
+        2,
+        80
+      ],
+      "TerminalType": 34,
+      "TerminalCapabilities": [
+        96,
+        184,
+        200
+      ],
+      "AdditionalTerminalCapabilities": [
+        193,
+        0,
+        240,
+        160,
+        1
+      ],
+      "TTQ": [
+        38,
+        64,
+        64,
+        0
+      ],
+      "props": [
+        {
+          "type": "text"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "text"
+        }
+      ]
+    }
+  ],
+  "Clients": [],
+  "Acquirer": {
+    "AcquirerIdentifier": "45334814806"
+  },
+  "Acceptor": {
+    "MerchantCategoryCode": "8050",
+    "MerchantIdentifier": "10549223015         ",
+    "MerchantNameAndLocation": "SALON CARTES RANG 1 75016               PARIS               ",
+    "TerminalIdentification": "01                  ",
+    "MerchantContractNumber": "500549223             ",
+    "MerchantBillMode": "",
+    "MerchantActivationCode":"",
+    "SystemAcceptationIdentification": "********",
+    "SIRET": "10610602410627"
+  },
+  "ApplicationsCount": 0,
+  "TerminalsCount": 1,
+  "ExceptionCardList": [],
+  "RangBinList": [],
+  "ApplicationCurrencyCode": ""
+}

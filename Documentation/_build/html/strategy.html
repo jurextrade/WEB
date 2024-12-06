@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STRATEGY &mdash; MT4-Progress v0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="EXAMPLE 1" href="example_1.html" />
+    <link rel="prev" title="CONDITIONS" href="conditions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> MT4-Progress
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">INTRODUCTION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">INSTALLATION</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">GETTING STARTED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alerts.html">ALERTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="panel.html">PANEL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="designer.html">DESIGNER</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objects.html">CUSTOM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system_objects.html">SYSTEM OBJECTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conditions.html">CONDITIONS</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_1.html">EXAMPLE 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_2.html">EXAMPLE 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">REFERENCE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">ARCHITECTURE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pl_language.html">PL LANGUAGE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trade_functions.html">TRADE FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="math_functions.html">MATH FUNCTIONS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_logics.html">Market Logics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="market_input.html">MARKET INPUT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session_fields.html">SESSION FIELDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_types.html">DATA TYPES</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recovery_types.html">Recovery Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="discussion_strategy.html">A TRADING STRATEGY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_start.html">HOW TO START</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">DESIGN</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MT4-Progress</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>STRATEGY</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/strategy.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="strategy">
+<h1>STRATEGY<a class="headerlink" href="#strategy" title="Permalink to this headline"></a></h1>
+<p>Here is the most important part of the project. In the process of designing a strategy, the model must be very clear in your head. This helps to go fast and without hesitation. That means you should be able to explain it precisely when to buy when to exit and how to buy or sell…. etc
+A strategy is something you run on your Platform that has a start point and an end point. The result is a profit which may be positif or negative.  Once a strategy finishes from running the result is not considered when you run it again at another time.</p>
+<p>Between the start point and the end point , Orders are performed, and here we must define what type of orders (Buy or Sell) , how and when orders are performed, relations between the orders, etc….</p>
+<p>Let’s start with an example . My strategy that I want to create is that one :  It works on Pivot Lines.</p>
+<p>If open price of the day is above the pivot point line and the price touches the middle between the pivot line and pivot high,
+Here I check if the open price is below the middle  I SELL , if not I BUY.
+If open price of the day is below the pivot point line and the price touches the middle between the pivot line and pivot low, here I check if the open price is below the middle  I BUY if not I SELL
+I exit whenever price is at alert distance from Pivot point or Pivot High or Pivot Sell.
+My Lot Size will be 1. I can do a Maximum of one Buy Order and a one Sell Order. Now as this strategy is designed, we can’t have a at the same tine a buy and a sell order.</p>
+<p>Let’s create it.</p>
+<p>In the window designer click the right button of the mouse in the strategies section</p>
+<p>s1</p>
+<p>The strategy window appears.</p>
+<p>s2</p>
+<p>Briefly :
+On the left side we have the properties of the Strategy.
+In the top main we have actions with conditions
+In the middle the graphic window where we will create our strategy.
+On the top we have</p>
+<p>s3</p>
+<p>Name is the name of strategy.
+Operation can be BUY or SELL or BUYSELL .</p>
+<p>BUY or SELL means that our strategy is divided in 2 Engines. One Performs buy orders and the other only Sell orders.
+BUYSELL means that our strategy is a one engine that can perform combined Buy/Sell Orders.
+In our Example we will choose BUYSELL.
+Let’s check the properties window .  I will not explain the fields here but later in the tutorial.
+I choose Initial Lot as 1.
+Recovery Mode is C that means constant (all lots have the same size)., but here the field has no impact  on our strategy because Max Count is 1 that means I can do only one Buy Order and One Sell Order.
+I set Max Count to 1.
+Order Type Mono that means orders are not hedged.</p>
+<p>The other fields are left as it is as it has no impact on our strategy again because I perform only one order.</p>
+<p>s4</p>
+<p>Now click on the Editor Tab to start creating it. The figure below shows a kind of Tree Menu that represents the entities we wil drag ans drop in the Main window.</p>
+<p>s5</p>
+<p>Let’s start .
+I put again the text I wrote that describes my strategy.
+If open price of the day is above the pivot point line and the price touches the middle between the pivot line, and I check if the open price is below the middle  I SELL , if not I BUY.</p>
+<p>I put in Bold the entities that we will drag and drop in the main window.</p>
+<p>First I drop If entity from the Statement Menu on the Main Window.
+In the Math Menu I drop on If the AND entity.
+Again in the Math menu I drop on AND the &gt; entity.</p>
+<p>As the open price is a value and the pivot line is a value and we want to compare these entities. We go to Market Input Menu.</p>
+<p>s6</p>
+<p>SValue returns the value of an object.
+We drag and drop on &gt; the SValue</p>
+<p>The figure below show the result of our main window.</p>
+<p>s7</p>
+<p>The Box SValue is Editable this is where I will define my Open Day Value of the Day.
+Double Click on it.</p>
+<p>s8</p>
+<p>A bigger Box Appears showing the Fields Object (which is the indicator) Signal (the signal) the Operator (SValue) and in the down part the Period for the value.</p>
+<p>Choose the OPEN  Field in the Objects box.
+Choose the CURRENT Field in the Signals box.
+Double Click on the D1 Period.</p>
+<p>Your window should look like this</p>
+<p>s9</p>
+<p>Now let’s drag and drop another AndS Entity on &gt; and we fill it in the same way by choosing the object PIVOT_POINT which represents the pivot line.</p>
+<p>s10</p>
+<p>The Middle between the Pivot High and the Pivot line is returned by the signal MIDDLE for Pivot High, the signal returns true or false. In the Market Logic Menu,  we drog and Drop on AND the AndS Entity</p>
+<p>s11</p>
+<p>We choose PIVOT_HIGH as Object , the Signal MIDDLE and the operator AndS which returns a Boolean.</p>
+<p>Market Input Menu returns values. Market Logic menu returns boolean. The AndS Operator is explained in annexe.</p>
+<p>We double click on the period which in our case is D1. Notice in this case we can combine periods for the And operator. In our example we choose only D1.</p>
+<p>s12</p>
+<p>Let’s  write again our strategy to let you more understand :
+If open price of the day is above the pivot point line and the price touches the middle between the pivot line,
+I check if the open price is below the middle  I SELL , if not I BUY.</p>
+<p>What is underlined is what we have done till now.
+Now let’s add the if the open price is below the middle :
+I Drag and Drop again the If Entity on the If Node
+I Drop the &lt; on the If Entity
+I Drop the SValue on the &lt; and I fill the box
+Another SValue on the &lt; and I fill the box</p>
+<p>The result is :</p>
+<p>s13</p>
+<p>If open price of the day is above the pivot point line and the price touches the middle between the pivot line, I check if the open price is below the middle  I SELL , if not I BUY.</p>
+<p>Now I need to say to SELL in this case , otherwise I Buy
+In the Menu Market Actions we have all Actions related to orders.
+We Drop the Buy Entity on If Node.</p>
+<p>s14</p>
+<p>And we finish with the else statement;
+Drag and Drop the else Entity from the Statement Menu on If Node</p>
+<p>s15</p>
+<p>s16</p>
+<p>And We Drag and Drop the Sell Entity on Else Node.</p>
+<p>s17</p>
+<p>If open price of the day is above the pivot point line and the price touches the middle between the pivot line, I check if the open price is below the middle  I SELL , if not I BUY.</p>
+<p>First Part of my strategy is created. Press On the Apply Button to save. The second part is the same as the first one except PIVOT_HIGH is replaced by PIVOT_LOW. The result is shown in the figure below.</p>
+<p>s18</p>
+<p>Let’s do the last part.
+I exit whenever price is at alert distance from Pivot point or Pivot High or Pivot Sell.</p>
+<p>2 ways of writing it . In condition Section of the tutorial we created the Alert_On_Pivot Condition. Either we choose it or we do it again.</p>
+<p>We Drag an If Statement in the Main Window  then In the Menu Conditions Section, we select the Alerts_On_Pivots and we Drop it on If</p>
+<p>s19</p>
+<p>By double-clicking on the if Statement I graphically close the node. I do it just to let you see la suite.</p>
+<p>s20</p>
+<p>In this case I Exit. So I go again in Market Action and I drop the Exit Entity on the If Node.</p>
+<p>The Final Result is :</p>
+<p>s21</p>
+<p>We finished. Press On the Apply Button to save.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="conditions.html" class="btn btn-neutral float-left" title="CONDITIONS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="example_1.html" class="btn btn-neutral float-right" title="EXAMPLE 1" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Gabriel Jureidini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

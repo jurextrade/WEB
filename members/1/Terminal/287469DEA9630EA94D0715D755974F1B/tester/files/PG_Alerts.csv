@@ -1,0 +1,16 @@
+100#PROGRESS#EXIT_SELL#1#0#0#0#0#5#0#0#0#0#0#233##FFD700#0#20#0#giving an Exit Sell Signal#giving an Exit Sell Signal#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+101#PROGRESS#EXIT_BUY#1#0#0#0#0#5#0#0#0#0#0#233##FFD700#0#20#0#giving an Exit Buy Signal#giving an Exit Buy Signal#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+102#PROGRESS#SELL#1#0#0#0#0#5#0#0#0#0#0#233##ea0070#0#20#0#is giving a Sell Signal#is giving a Sell Signal#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+103#PROGRESS#BUY#1#0#0#0#0#5#0#0#0#0#0#233##00c087#0#20#0#is giving a Buy Signal#is giving a Buy Signal#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+104#VELOCITY#OVERSOLD#0#0#0#0#0#5#0#0#0#0#0#233##CC0814#0#20#0#Over Sold#Over Sold#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+105#VELOCITY#OVERBOUGHT#0#0#0#0#0#5#0#0#0#0#0#233##33FF00#0#20#0#Over Bought#Over Bought#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+106#BAR#BULL_HAMMER2#464#0#0#0#0#5#0#0#0#0#0#233##93C47D#0#20#0#Bullish Hammer#Bullish Hammer#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+107#BAR#BULL_HAMMER1#464#0#0#0#0#5#0#0#0#0#0#233##B6D7A8#0#20#0#Bullish Hammer#Bullish Hammer#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+108#BAR#BULL_HAMMER#208#0#0#0#0#5#0#0#0#0#0#233##B6D7A8#0#20#0#Bullish Hammer#Bullish Hammer#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+109#BAR#BULL_ENGULFING#448#0#0#0#0#5#0#0#0#0#0#233##3D85C6#0#20#0#Bullish Engulfing#Bullish Engulfing#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+110#DOWNFRACTAL#BELOW#32#0#0#0#0#5#0#0#0#0#0#233##E06666#0#20#0#Below#Below#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+111#BAR#BEAR_SHOOTING_STAR2#464#0#0#0#0#5#0#0#0#0#0#233##FF0000#0#20#0#Bearish Shooting Star#Bearish Shooting Star#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+112#BAR#BEAR_SHOOTING_STAR1#464#0#0#0#0#5#0#0#0#0#0#233##FF0000#0#20#0#Bearish Shooting Star#Bearish Shooting Star#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+113#BAR#BEAR_SHOOTING_STAR#464#0#0#0#0#5#0#0#0#0#0#233##FF0000#0#20#0#Bearish Shooting Star#Bearish Shooting Star#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+114#BAR#BEAR_ENGULFING#448#0#0#0#0#5#0#0#0#0#0#233##E06666#0#20#0#Bearish Engulfing#Bearish Engulfing#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#
+115#UPFRACTAL#ABOVE#32#0#0#0#0#5#0#0#0#0#0#233##93C47D#0#20#0#Above#Above#PROGRESS SIGNAL#administrator@jurextrade.com###* PIVOT_HIGH   CROSS_UP *#

@@ -1,0 +1,6 @@
+(IF (AND (Candle_Hammer_H1)
+     (OR (AndS  )
+      (AndS)
+     )
+    )
+)

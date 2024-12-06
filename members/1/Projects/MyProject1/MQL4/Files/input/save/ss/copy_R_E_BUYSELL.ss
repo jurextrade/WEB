@@ -1,0 +1,8 @@
+(SET T_BUYLOT (* T_RECOVERYVALUE (Max T_ILOT (Max T_LASTBUYLOT T_LASTSELLLOT)
+                                 )
+              )
+)
+(SET T_SELLLOT (* T_RECOVERYVALUE (Max T_ILOT (Max T_LASTBUYLOT T_LASTSELLLOT)
+                                  )
+               )
+)

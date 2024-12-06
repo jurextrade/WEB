@@ -1,0 +1,80 @@
+#netprog_root {
+    --theme-platform-color:             #6e9e0b; 
+}
+
+#netprog_main {
+    font-size: var(--theme-sfont-size); 
+    background: var(--theme-bg-color);        
+}
+
+#netprog_filemanager .alert-warning {
+    height: 300px;
+    align-items: center;
+    text-align: center;
+    display: flex;
+}
+
+#netprog_jseditor_output .ace_cursor-layer, #netprog_server_output .ace_cursor-layer {
+    visibility:hidden; 
+}
+
+#netprog_jseditor_output .ace_marker-layer,  #netprog_server_output .ace_cursor- {
+    visibility:hidden; 
+}
+
+#netprog_siteview_topbarmenu {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    min-height: auto;    
+}
+
+#netprog_siteview_topbarmenu .sb_button {
+    min-width:120px;
+}
+
+/*--------------------------------------------------------- BOTTOM PANEL ----------------------------------------------------*/
+
+#netprog_bottompanel{
+    flex : none;
+    font-size: var(--theme-sfont-size);
+    height:35px;
+}
+
+
+#sidebarpanel_netprogsettings span {
+    border:0;
+}
+
+.treepanel.selected {
+    border: 1px solid #ff5858;
+}
+
+
+
+#netprog_main .sb_widget .sb_icon {
+    display: none;
+}
+
+#sidebarpanel_netprogfilemanager .sb_tree {
+    overflow:auto;
+}
+
+.netprog_jseditor_input {
+    flex: 0.7;
+}
+
+.netprog_jseditor_output {
+    flex: 0.3;
+    border-top: 1px solid var(--theme-border-color);
+    margin-top: 2px;    
+}
+
+.netprog_server_input {
+    flex: 0.7;
+}
+
+.netprog_server_output {
+    flex: 0.3;
+    border-top: 1px solid var(--theme-border-color);
+    margin-top: 2px;    
+}

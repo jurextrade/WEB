@@ -1,0 +1,12 @@
+#datepanel .sb_link {
+    cursor:none;
+    white-space: nowrap;        
+}
+
+#datepanel {
+    /*background: var(--theme-bg-color);    */
+}
+
+#datepanel #gmttime, #datepanel #dayname {
+    color: var(--theme-main-color);
+}

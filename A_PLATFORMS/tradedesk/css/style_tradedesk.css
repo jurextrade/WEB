@@ -1,0 +1,624 @@
+/*--------------------------------------------------------- MAIN TRADEDESK PANEL ----------------------------------------------------*/
+
+#tradedesk_main {
+    font-size: var(--theme-sfont-size); 
+    background: var(--theme-bg-color);            
+}
+
+/*------------------------------------------------- SERVER -----------------------------------------------*/
+
+#tradedesk_terminals_headerpanel #button_server  {
+    background: red;
+}
+
+/*--------------------------------------------------------- SIDEBAR MENU ----------------------------------------------------*/
+
+#tradedesk_terminalsbar {
+    flex: 1;    
+}
+
+/*--------------------------------------------------------- SESSION PANEL ----------------------------------------------------*/
+
+#sessionorderspanel {
+    flex:1;
+}
+
+/*------------------------------------------------------------ CURRENCIES PANEL ------------------------------------------------------*/
+
+#tradedeskcurrenciestable td:not(:first-child) {
+    padding: 0px;
+    text-align: center;
+}
+#tradedeskcurrenciestable th:not(:first-child) {
+    text-align: center;
+}
+
+#tradedeskcurrenciestable td:nth-child(6), #tradedeskcurrenciestable td:nth-child(7) {
+    color:var(--theme-main-color);
+}
+
+#tradedeskcurrenciestable td:nth-child(4) {
+    color: var(--theme-bear);
+}
+
+/*--------------------------------------------------------- CHART PANEL ------------------------------------------------------*/
+
+#tradedesk_maintabs {
+
+}
+
+#tradedesk_maintabs .nav-item {
+    flex:none;
+}
+
+/*--------------------------------------------------------- TSIGNALS PANEL ------------------------------------------------------*/
+
+#tradedesksignalstab .nav-item {
+    flex:none;
+}
+
+#tradedesksyssignalselect {
+    color: var(--theme-indicator-color);
+    min-width: 150px;    
+}
+
+/*--------------------------------------------------------- ORDERS PANEL ------------------------------------------------------*/
+
+#tradedeskordertabcontent {
+    overflow:hidden;
+}
+
+/*--------------------------------------------------------- SERVERS PANEL ------------------------------------------------------*/
+
+#serverpanel_tradedesk  th, #serverpanel_tradedesk td { 
+    font-size: var(--theme-font-size);
+}
+
+
+#serverpanel_tradedesk .form-control {
+    font-size: var(--theme-font-size);
+    text-align:center;  
+}
+
+#serverpanel_tradedesk .terminalname {
+    margin-left: 5px;
+}
+
+#serverstable {
+    align-items: center;    
+    width:100%;
+    margin-top: 20px;    
+}
+
+/*--------------------------------------------------------- SACCOUNT  PANEL -----------------------------------------------------------*/
+
+#saccountpanel .form-control {
+    text-align: center;
+}
+
+#accounttotalprofit {
+    display: flex;
+    padding-right: 10px !important;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+}
+
+#closepositions {
+    padding:0px;
+}
+
+#menutotalprofit {
+    border:none;
+}
+
+/*--------------------------------------------------------- TERMINAL SELECT -----------------------------------------------------------*/
+
+#tradedesk_terminalselect {
+    color: var(--theme-select-color);
+    width: auto;    
+    min-width: 160px;    
+}
+
+/*--------------------------------------------------------- TERMINAL TYPE PANEL ------------------------------------------------------*/
+
+#tradedesktypepanel {
+    color: var(--theme-color);
+    display: flex;
+}
+
+#tradedesktypepanel .form-check-inline {
+    margin-right: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;    
+}
+
+/*--------------------------------------------------------- ENGINE LOOK PANEL ------------------------------------------------------*/
+
+#enginelookpanel  {
+    padding: 25px;
+}
+
+#tradedeskprojectnamepanel {
+    max-width: 300px;
+}
+
+#tradedeskprojectname {
+    cursor: pointer;
+}
+
+#tradedeskselectstrategypanel {
+    max-width: 300px;
+}
+
+/*------------------------------------------------------------ INFO PANEL ----------------------------------------------------------*/
+
+#terminalinfopanel .sb_formgroup .form-control {
+    text-align: center;
+}
+
+
+/*------------------------------------------------------------ ACCOUNT PANEL ----------------------------------------------------------*/
+
+#accountpanel .sb_formgroup .form-control{
+    text-align: center;
+}
+
+
+
+#ask, #bid, #bidask {
+    flex: auto;
+    text-align: center;
+    color: var(--theme-color);    
+    margin: auto;    
+    font-size:large;
+}
+
+#tradedeskordertab .nav-item {
+    flex:none;
+}
+
+#accountelapsed {
+    color:brown
+}
+
+/*-------------------------------------------------------- TARGET PANEL ------------------------------------------------------*/
+
+#terminaltargetpanel {
+    padding-top:20px;        
+}
+
+#terminaltargetpanel .labelexplain {
+    margin-top: 20px;    
+}
+
+
+
+#terminaltargetpanel .sb_formgroup  label {
+    width: 150px;
+}
+
+#terminaltargetpanel .sb_formgroup  label.right-inline {
+    width: 150px;
+   
+}
+
+/*-------------------------------------------------------- TARGETS TABLES ------------------------------------------------------*/
+
+#dailytargetstable td:not(:first-child) {
+    padding: 0px;
+    text-align: center;
+}
+
+#dailytargetstable th:not(:first-child) {
+    text-align: center;
+}
+
+#weeklytargetstable td:not(:first-child) {
+    padding: 0px;
+    text-align: center;
+}
+
+#weeklytargetstable th:not(:first-child) {
+    text-align: center;
+}
+
+/*------------------------------------------------------------HISTORY PANEL------------------------------------------------------*/
+
+#historytable th:not(:first-child) {
+    text-align: center;
+}
+#historytable td:not(:first-child) {
+    text-align: center;
+}
+#historytable td, #historytable th {
+    border-right: 1px solid var(--theme-border-color);
+}
+
+#statementtable th:not(:first-child) {
+    text-align: center;
+}
+#statementtable td:not(:first-child) {
+    text-align: center;
+}
+#statementtable td, #statementtable th {
+    border-right: 1px solid var(--theme-border-color);
+}
+
+
+/*------------------------------------------------------------SESSION PANEL------------------------------------------------------*/
+
+/*--------------------------------------------------------- SESSION PROPERTIES PANEL ----------------------------------------------------*/
+
+#tradedeskpanel_Properties{
+    padding:20px;
+}
+
+#tradedeskpanel_Properties .sb_table {
+    color: var(--theme-main-color);
+    margin-bottom: 0px;
+}
+
+/*--------------------------------------------------------- SESSION SCHEDULE PANEL ----------------------------------------------------*/
+
+#tradedeskpanel_Schedule{
+    padding:20px;
+}
+
+#tradedeskpanel_Schedule  .sb_table{
+    color: var(--theme-main-color);
+    margin-bottom: 0px;
+}
+
+#sessionschedulepropertytable thead {
+    display:none;
+}
+
+#sessionscheduletable th:first-child{
+    visibility: hidden;
+}
+
+/*--------------------------------------------------------- SESSION DESCRIPTION PANEL ----------------------------------------------------*/
+
+#tradedesk_Description {
+    background: transparent;
+}
+
+/*------------------------------------------------------------NEWS PANEL------------------------------------------------------*/
+
+#news_forexpanel {
+    overflow:auto;
+}
+
+/*------------------------------------------------------------AUTOMATION PANEL------------------------------------------------------*/
+
+#boxautomationpanel .sb_boxbody {
+    overflow: auto;
+    height: 300px;
+}
+
+#automationtable  {
+    background:var(--theme-bg-color)
+}
+
+#automationtable td, #automationtable th {
+    border-right: 1px solid var(--theme-border-color);
+}
+
+#automationtable td:not(:first-child) {
+    padding: 0px;
+    text-align: center;
+}
+
+#automationtable th:not(:first-child) {
+    text-align: center;
+}
+
+.enginecontrol_button {
+    background-color: var(--theme-main-bg-color);
+    color: var(--theme-main-color);
+    background-clip: padding-box;
+    border: 1px solid var(--theme-border-color);        
+}
+
+.enginecontrol_button:hover {
+    background-color: var(--theme-select-bg-color) !important;
+    color: var(--theme-select-color); 
+}
+
+/*------------------------------------------------------------ TSIGNALS PANEL ------------------------------------------------------*/
+
+#tsignalstable td:not(:first-child) {
+    text-align: center;
+    
+}
+
+#tsignalstable th:not(:first-child) {
+    text-align: center;
+    cursor:pointer;
+}
+
+#tsignalstable td:first-child{
+    color:var(--theme-indicator-color);
+    max-width: 13px;
+    min-width: 13px;
+    width: 13px;
+}
+
+#tsignalstable td , #tsignalstable th {
+    max-width: 10px;
+    min-width: 10px;
+    width: 10px;
+    border-right: 1px solid var(--theme-border-color);
+    
+}
+
+#tsyssignalstable td:not(:first-child) {
+    text-align: center;
+}
+
+#tsyssignalstable th:not(:first-child) {
+    text-align: center;
+}
+
+#tsyssignalstable td:first-child{
+    max-width: 10px;
+    min-width: 10px;
+    width: 10px;
+}
+
+#tsyssignalstable td , #tsyssignalstable th {
+    max-width: 10px;
+    min-width: 10px;
+    width: 10px;
+    border-right: 1px solid var(--theme-border-color);
+    
+}
+
+/*------------------------------------------------------------ PERCENTCHANGE  PANEL ------------------------------------------------------*/
+
+#percentchangetable td:not(:first-child) {
+    text-align: center;
+}
+
+#percentchangetable th:not(:first-child) {
+    text-align: center;
+}
+
+#percentchangetable td:first-child{
+    max-width: 10px;
+    min-width: 10px;
+    width: 10px;
+}
+
+#percentchangetable td , #percentchangetable th {
+    max-width: 10px;
+    min-width: 10px;
+    width: 10px;
+    border-right: 1px solid var(--theme-border-color);
+    
+}
+
+/*--------------------------------------------------------- BOTTOM TRADEDESK PANEL ----------------------------------------------------*/
+
+
+
+#tradedesk_bottompanel {
+    flex : none;
+    font-size: var(--theme-sfont-size);
+    height:35px;    
+}
+
+#tradedesk_bottomtabs .nav-item {
+    flex:none;
+}
+
+#tradedesk_bottomtabs .sb_controls {
+    margin-left : inherit;
+}
+
+#tradedesk_bottomtabs .sb_controls a{
+    min-width:20px;
+}
+
+/*------------------------------------------------------------ SESSIONS PANEL --------------------------------------------------------*/
+
+#sessionstable td:not(:first-child) {
+    padding: 0px;
+    text-align: center;
+}
+#sessionstable th:not(:first-child) {
+    text-align: center;
+}
+
+#sessionstable td:nth-child(5),    /* Profits*/
+#sessionstable td:nth-child(6), 
+#sessionstable td:nth-child(7),
+#sessionstable td:nth-child(8),
+#sessionstable td:nth-child(13),
+#sessionstable td:nth-child(14),
+#sessionstable td:nth-child(18) {
+    width: 80px;
+}
+
+/*------------------------------------------------------------ ORDERS PANEL --------------------------------------------------------*/
+
+#orderstable td:not(:first-child) {
+    padding: 0px;
+    text-align: center;
+}
+#orderstable th:not(:first-child) {
+    text-align: center;
+}
+
+#orderstable  td:nth-child(4) {
+    color:var(--theme-main-color);
+}
+/*------------------------------------------------------------ ALERTS PANEL --------------------------------------------------------*/
+
+#boxalertspanel .sb_boxbody  {
+}
+
+#alertstable  td, #alertstable  th {
+    border-right: 1px solid var(--theme-border-color);     
+   
+}
+
+#alertstable  td:first-child {
+    max-width:50px !important;
+    min-width:50px !important;
+        width:50px !important;
+}
+
+#alertstable  td:nth-child(2){
+    max-width: 100px !important;
+    min-width: 100px !important;
+        width: 100px !important;
+}
+
+#alertstable td:not(:first-child) {
+    padding: 0px;
+    text-align: center;
+}
+
+#alertstable th:not(:first-child) {
+    text-align: center;
+}
+
+#alertstable  td:nth-child(3){
+    color:Var(--theme-indicator-color);
+}
+
+#alertstable  td:nth-child(4){
+    color:Var(--theme-signal-color);
+}
+
+/*------------------------------------------------------------ ALERTS SETTINGS PANEL --------------------------------------------------------*/
+
+#alertssettingspanel {
+    height:100%;
+    overflow:auto;
+}
+
+#alertssettingstable  td:nth-child(1),#alertssettingstable  th:nth-child(1) {
+    display:none;
+}
+
+/*------------------------------------------------------------ STRATEGIES PANEL ------------------------------------------------------*/
+
+#strategiestable td:not(:first-child) {
+    padding: 0px;
+    text-align: center;
+}
+
+#strategiestable td, #strategiestable th {
+ border-right: 1px solid var(--theme-border-color); 
+}
+
+#strategiestable th:not(:first-child) {
+    text-align: center;
+}
+
+#strategiestable td:nth-child(3), #strategiestable td:nth-child(4) {
+    color:var(--theme-main-color);
+}
+
+#strategiestable  th:nth-child(n + 1) {
+    --bs-gutter-x: 0.5rem;
+    max-width: calc(3.5 * var(--bs-gutter-x));
+    width: calc(3.5 * var(--bs-gutter-x));
+    min-width: calc(3.5 * var(--bs-gutter-x));
+}
+
+/*------------------------------------------------------------TRADEDESK SETTINGS PANEL------------------------------------------------------*/
+
+#mt4panel {
+    padding: 20px;
+    border-top: 1px solid var(--theme-border-color);    
+}
+
+#mt4panel .sb_check {
+    margin-left:20px;
+}
+
+#visibilitypanel, #soundspanel {
+    flex:1;
+}
+
+#tradedesksettingspanel {
+    height:100%;
+}
+
+#tradedesksettingsindicatorspanel {
+    padding: 10px;
+    border: 1px solid var(--theme-border-color);    
+}
+
+#tradedesksettingsindicatortable {
+    padding: 20px;
+    margin-bottom: auto;
+}
+
+#tradedesksettingsindicatortable  td:first-child {
+    color:var(--theme-indicator-color) !important;
+    text-align:left;
+}
+
+#tradedesksettingsindicatortable  th:nth-child(n + 2){
+    text-align:center;
+}
+
+#tradedesksettingsindicatortable  td:nth-child(n + 2){
+    max-width: 28px !important;
+    min-width: 25px !important;
+    width: 28px !important;
+}
+
+#tradedesksettingsdisplaypanel {
+    padding:20px;
+}
+
+#tradedesksettingsdisplaypanel .sb_column{
+    overflow-y: auto;
+    padding: 10; 
+    border: 1px solid var(--theme-border-color);       
+}
+
+#tradedesksettingsdisplayfromtable thead,
+#tradedesksettingsdisplaytotable thead {
+    display:none;
+
+}
+#tradedesksettingsdisplaytotable {
+    margin-left: 10px;
+    color:var(--theme-bar_color);
+}
+
+#tradedesksettingsdisplaybuttonsbar,#tradedesksettingsdisplaybuttonsupbar {
+    justify-content: center;
+}
+
+#tradedesksettingssignalspanel {
+    height:400px;
+    padding:10px;
+}
+
+/*--------------------------------------------------------- TREE PANELS ------------------------------------------------------*/
+
+
+#tree_terminals > li:first-child > span:first-child{
+    display:none;
+}
+/*--------------------------------------------------------- MEDIA PANEL ------------------------------------------------------*/
+
+#mediavideopanel {
+
+}
+
+/*-----------------------------------------------------------GSE -------------------------------------------------------*/
+
+#sessionmainpanel .gsepanel {
+    width: 50%;
+    display:none;
+} 
+

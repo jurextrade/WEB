@@ -1,0 +1,158 @@
+Tutorial
+RSI_20_HEIKEN#BUYSELL::EXIT~Trade_no#
+LONG TERM ORIENTATION
+
+=================
+
+
+
+
+
+
+
+BUY 
+
+
+
+HEIKEN_ASHI BULL FOR D1 AND W1
+
+RSI Period 20 ABOVE
+
+
+
+SELL
+
+
+
+HEIKEN_ASHI BEAR FOR D1 AND W1
+
+RSI Period 20 BELOW
+
+
+
+
+ENGULFING_D1#BUYSELL::EXIT~Trade_no#
+ENGULFING D1
+
+==========
+
+
+
+BUY or SELL on tick only
+
+
+
+
+
+Set Stop Loss on  Previous Bar Low or High 
+
+PIVOT#BUYSELL::EXIT~Trade_no#
+
+RSI_2P_H1#BUYSELL::EXIT~Trade_no#
+
+FRACTAL_CHANGED#BUYSELL::EXIT~Trade_no#
+
+ProgressSimple#BUYSELL::EXIT~Always#
+
+CROSS_FRACTALS#
+
+CANDLE_H4#BUYSELL::EXIT~Always#
+
+BAR_CHANGED#BUYSELL::EXIT~Trade_no#
+
+CANDLE_H1#BUYSELL::EXIT~Trade_no#
+
+CANDLE_D1#BUYSELL::EXIT~Always#
+
+test#
+
+Gap#BUYSELL::EXIT~Trade_no#
+
+10_Pips_Per_Day#BUYSELL::EXIT~Trade_no#
+Name : 10 Pips Per Day Scalping Strategy
+Time Frame : 5 to 15 Minute Charts
+Indicators : Bollinger Bands (20, 0, 2) and Stochastic Oscillator (5, 3, 3)
+Strategy By : Analyst Navin Prithyani (urbanforex.com)
+
+How to make 10 pips per day in Forex
+
+First you want to setup your charts as the image above. If you want the Stochastic indicator like mine, you can find it in the forums. Now the key is not to earn 10 pips in one shot or in one trade. If the trade skyrockets and gives you 10 pips, so be it. Otherwise, take what you can get. I will post a video tutorial on this also to make it easier to understand. The risk to reward ratio on this strategy is bad but has a higher accuracy rate. So please trade at your own discretion.
+
+Steps to look for to scalp your 10 pips
+
+- Look only on the major pairs. (EURUSD, USDJPY, GBPUSD, USDCHF)
+- A close must happen outside the Bollinger Band indicator
+- Stochastic Oscillator indicator must be in a oversold (below 20) or overbought area (above 80).
+- If market is in a uptrend, look for a red candle. If market is in a downtrend look for a green candle.
+- We will call these the “Signal Candles”
+- Once you see your signal candle, enter in that same direction and scalp your pips.
+- Stops are hard kept at 20 pips.
+Tags: 10 pips per day scalping strategy, forex strategies, forex trading system, scalping
+Mumbai#BUYSELL::EXIT~Trade_no#
+Name : The Mumbai Forex Scalper Strategy
+Time Frame : 15 minutes and above
+Indicators : Parabolic SAR (0.02, 0.2) , Stochastic Oscillator (5, 3, 3)
+Strategy by : Analyst Navin Prithyani on UrbanForex.com
+The Mumbai Scalper
+During my travel to India, I got a chance to visit Mumbai and experience the hustle and bustle of this financial juggernaut of India. 
+The pace is very fast and everyone is trying to make a quick buck - very similar to our scalpers in the Forex industry. 
+This is the reason why I've called this strategy The Mumbai Forex Scalper Strategy.
+Using this scalping strategy
+We can start off by opening a 15 minute chart on your desired pair, preferably forex pair with low spreads. 
+Attach the Parabolic SAR with the settings mentioned above The Parabolic SAR can be used by giving us a sense of direction similar to a moving average. 
+Once we find a trend in the market, we want to keep an look out for a cross in the Stochastic Oscillator to confirm the entry.
+Sell Scenario
+If the Parabolic SAR is in a downtrend we need to wait for a confirmation of the Stochastic Oscillator to cross above the 70 level.
+Once these two criterias are confirmed, we would enter at the opening of the next candle. The stops can be kept on the high of the previous candle or can be adjusted/tweeked as per your risk appetite.
+
+Buy Scenario
+If the Parabolic SAR is in a uptrend we need to wait for a confirmation of the Stochastic Oscillator to cross below the 30 level. 
+Once these two criterias are confirmed, we would enter at the opening of the next candle. The stops can be kept on the low of the previous candle or can be adjusted/tweeked as per your risk appetite.
+
+Exit Strategies
+
+Option 1
+1:1 Risk to reward. If your stop is -12 pips your limit should be +12 pips.
+
+Option 2
+Open 2 lots. If your stop is at -10 pips, once your trades goes in your favor and you’re at +10 pips, close 1 lot and let the other one run. Exit at Support and Resistance levels.
+
+Option 3
+Exit at the nearest 50 or 00 level. These are psychological levels. (make sure your exit is at least the same number of pips as your stop, otherwise dont enter the trade)
+
+Option 4 
+Trailing Stop. Once in a trade, at the close of each candle, place your stop 1 pip below the low (if in a buy trade). Vise versa for sell trade.
+
+Singapore_Swing#BUYSELL::EXIT~Always#
+Name : Singapore Swing Forex Trading Strategy
+Time Frame : 15 Minutes
+Indicators : RSI (14), Forex Trend (20,20)
+Strategy by : Analyst Navin Prithyani (UrbanForex.com)
+Singapore Swing Trading
+Singapore has grown over the years with its ability to make the right decisions at the right time. Looking at this conservative giant, I created this strategy that allows a trader to wait for the right time and capture a trend reversal.
+Using this swing trading strategy
+Load up any currency pair that has a low spread, preferably any of the majors, and set the trading time frame to 15 minutes. 
+Then proceed to attached the Trendline file which you have downloaded and the Relative Strength Index with the settings mentioned above. Place 70 and 30 levels onto your RSI settings.
+
+Buy Scenario
+Once the market is trending down / short, we need the RSI to cross below level 30.
+Wait for the close of a candle above the 2 Red Lines.
+Then confirm that the RSI went from below level 30 to above 30 as showed in the image. 
+At the opening of the next candle, a Long / Buy trade is opened. The stops can be kept at the swing low of the previous candle or at any level based on your risk appetite.
+
+Sell Scenario
+Once the market is trending up / long, we need the RSI to cross above level 70. Wait for the close of a candle below the 2 Blue Lines.  Then confirm that the RSI went from above level 70 to below 70 as showed in the image. At the opening of the next candle, a Short / Sell trade is opened. The stops can be kept at the swing high of the previous candle or at any level based on your risk appetite.
+
+Exit Strategies
+
+Option 1
+1:1 Risk to reward. If your stop is -12 pips your limit should be +12 pips.
+
+Option 2
+Open 2 lots. If your stop is at -10 pips, once your trades goes in your favor and you’re at +10 pips, close 1 lot and let the other one run. Exit at Support and Resistance levels.
+
+Option 3
+Exit at the nearest 50 or 00 level. These are psychological levels. (make sure your exit is at least the same number of pips as your stop, otherwise dont enter the trade)
+
+Option 4 
+Trailing Stop. Once in a trade, at the close of each candle, place your stop 1 pip below the low (if in a buy trade). Vise versa for sell trade.

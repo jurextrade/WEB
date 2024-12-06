@@ -1,0 +1,28 @@
+/*--------------------------------------------------------- MARKER PANEL ---------------------------------------------------------------------*/
+.markerpanel   {
+    width:600px;
+    border: 1px solid var(--theme-border-color);
+}
+
+#eval_marker {
+    min-width: 40px;
+}
+
+#name_marker {
+    min-width: 150px;
+}
+
+
+.markereditor {
+
+}
+
+.markereditor .markereditor_input {
+    flex: 1;
+}
+
+.markereditor .markereditor_output {
+    border-top: 1px solid var(--theme-border-color);
+    flex: none;
+    height: 25px;
+}
