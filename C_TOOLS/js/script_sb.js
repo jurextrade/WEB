@@ -22,7 +22,7 @@ const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
     
 
 $(document).ready(function(){
-    $(document).on('mousedown', function(event){
+    $(document).on('click', function(event){
         var overlays = $('.sb_overlay');
         $.each(overlays, function (index, overlay) {
             var overlay_options = $(overlay).data('options');  
@@ -115,7 +115,7 @@ function onchange_default_sb_item(elt){
 
     var default_value;    
     var element_value;
-
+    console.log ('changed here')
     if (elt.tagName.toLowerCase() == 'select') {
         default_value =  $('#' + elt.id + ' [selected="selected"]').val();  
         element_value = $(elt).val();
@@ -191,7 +191,6 @@ function onclick_default_tab (elt, event) {
 }
 
 function onclick_default_tree (elt, event) {
-
     $(elt).find('> .tree-arrow-right').toggleClass('rotate-90');
     var treeelt = $(elt).closest('.sb_tree');
     
@@ -249,6 +248,12 @@ function onmousedown_default_widget (elt, event) {
 
 function sb_widget_create (id, onclickcallback, icon, title, description, seehowcallback, seehowtitle) {
 
+    var seehowbuttons = '';
+    if (defined(seehowcallback)) {
+        for (var i = 0; i < seehowcallback.length; i++) {
+            seehowbuttons += '<button id="' + id + '_seehow" class="sb_sbutton seehowbutton" onclick="event.preventDefault();' + seehowcallback[i] + '">' + seehowtitle[i] + '</button>';  
+        }
+    }
     var content = 
 '       <div id="' + id + '" class="sb_widget" onmousedown="onmousedown_default_widget (this,event);" onclick="' + onclickcallback + '">' +
 '           <div class="sb_widget-icon">' +
@@ -259,7 +264,9 @@ function sb_widget_create (id, onclickcallback, icon, title, description, seehow
 '                   <span>' + title + '</span>' +
 '               </div>' +
 '               <div class="sb_widget-description">' + description + '</div>' +
-                (defined(seehowcallback) ? '<button id="' + id + '_seehow" class="sb_sbutton seehowbutton" onclick="event.preventDefault();' + seehowcallback + '">' + seehowtitle + '</button>' : '') +
+'               <div class="sb_widget-buttons">'  +
+                    seehowbuttons +
+'               </div>' +
 '           </div>' +
 '       </div>';
     return content;
@@ -785,9 +792,10 @@ class SB {
 
     '   <div id="' +  tabs.id + '" class="sb_tabs sb_column ' + 
                             (defined(tabs.class) ? tabs.class : '') + '"' +    
-                            (defined(tabs.attributes) ?  this.stringify(tabs.attributes) : '') + '>' +
+                            (defined(tabs.attributes) ?  this.stringify(tabs.attributes) : '')  +
+                            (defined(tabs.events) ?  ' ' + this.stringify(tabs.events) : '') + '>' +                              
     '       <div class="sb_transform sb_tabcontainer"' +    
-                (defined(tabs.events) ?  ' ' + this.stringify(tabs.events) : '') + '>' +  
+                (defined(tabs.tabevents) ?  ' ' + this.stringify(tabs.tabevents) : '') + '>' +  
     '           <ul class="sb_tab nav nav-tabs">' +
                     scontent +
     '           </ul>' +
@@ -1651,6 +1659,7 @@ class SB {
         togglefunction = defined(togglefunction) ?  (defined(events.onclick) ? events.onclick += ';' + togglefunction :  events.onclick = togglefunction) : '';
 
         events.onchange   = "onchange_default_sb_item(this);" + (defined(events.onchange) ? events.onchange : '');
+        events.oninput    = events.onchange + (defined(events.oninput) ? ';' + events.oninput : '');
 
         events     = this.stringify(events);
         attributes = this.stringify(attributes);
@@ -1725,7 +1734,7 @@ class SB {
 
                 case 'switch' :      //input   type='check'
                     content += 
-                    '<span class="form-switch' + itemclass + '"' + 
+                    '<span class="form-switch ' + itemclass + '"' + 
                         (defined(item.style) ?     ' style= "' + item.style + '"' : '')  + 
                         (defined(item.title) ?     ' title= "' + item.title + '"' : '') + '>'  + 
                         '<input id="' + item.id + '"  type="checkbox"  class="form-check-input"' + 
@@ -1870,7 +1879,7 @@ class SB {
                         (defined(item.icon) ?      ' <i class="' + item.icon + '"></i>' : '') + 
                         (defined(item.iconfile) ?  ' <img class="sb_iconfile" src="' + item.iconfile + '" ></img>' : '') +                     
                         (defined(item.item) ?      ' <label class="sb_label">' + item.item +'</label>' : '') +
-                        '<input id="' + item.id + '"   type="' + (item.step ? 'number' : 'text') + '" class="form-control"' +
+                        '<input id="' + item.id + '"   type="' + (item.step  || item.type == 'int' || item.type == 'float' ? 'number' : 'text') + '" class="form-control"' +
                         attributes +                
                         events +                
                         (defined(item.style) ?    ' style= "' + item.style + '"' : '')  +                         
@@ -2146,7 +2155,9 @@ class SB {
     }
 
     tree_add_item = function (tree, item) {
-        tree.items.push(item)
+        tree.items.push(item)        
+        this.tree_additem(tree.id, item)        
+
     }
 
     tree_additems = function (id, elements) {

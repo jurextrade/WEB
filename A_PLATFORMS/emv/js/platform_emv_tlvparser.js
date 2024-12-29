@@ -1,3 +1,295 @@
+//---------------------------------------------------------- BYTE PANEL  -----------------------------------------------------------------
+
+function onclick_emv_byte(elt, event) {
+    let binarystr = '';
+    //let bitcell   =  $('#' + elt.id + ' td[byte]');
+    let bitcell   = $(elt).children('[byte]')
+    let bytepanel = $(elt).closest ('.bytepanel');
+    let nbrbytes  = bytepanel.find('.emvbyte').length;
+
+    console.log ('click')
+    if (bytepanel.hasClass('editable')) {
+         if ($(elt).children().last().html() != 'RFU' ) {
+            if ($(elt).hasClass('selected')) {
+                $(elt).removeClass('selected')
+                bitcell.html('0')
+            } else {
+                $(elt).addClass('selected')
+                bitcell.html('1')
+            }
+            bytepanel.find('[byte]').each(function() {
+                binarystr += $(this).html();
+            })
+            bytepanel.attr ("value", binary_to_hexa(binarystr, nbrbytes))   
+            bytepanel.trigger ('change')     
+        }
+    }
+}
+
+function emv_byte_init (panel) {
+    for (var i = 0; i < panel.struct.length; i++) {
+        for (var j = 0; j < panel.struct[i].length; j++) {
+//            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + j).removeClass('selected')                
+            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + j).attr('byte', panel.struct[i][j].id);      
+            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + j).html('0');          
+            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_8').html(panel.struct[i][j].item)
+            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j).removeClass('selected')      
+              
+        }
+    }
+    return panel;
+}
+
+function emv_byte_update (panel, bytes, scroll, shift) {
+    emv_byte_init (panel)    
+
+    let binarystr = '';    
+    let Shift = defined(shift) ? shift : 0;    
+    let Byte  = Shift;
+
+    let bytesint = bytes; //parseInt(bytes);
+    for (var i = panel.struct.length - 1; i >= 0; i--) {
+        let byte = (bytesint >> BigInt(i * 8));
+        for (var j = 0; j < panel.struct[i].length; j++) {
+            let id = parseInt(byte & BigInt(BIT[j]));
+            if (id == 0) {
+                binarystr += '0';                
+                continue;
+            }
+            binarystr += '1';
+            emv_byte_select(panel, (Byte << 8) |id, scroll);
+        }
+        Byte++;
+    }
+    $('#' +  panel.id).attr ("value", binary_to_hexa(binarystr, panel.struct.length))     
+}
+
+function emv_byte_select (panel, id, scroll) {
+    let elt =  $('#' + panel.id + ' [byte="' + id + '"]');
+    if (scroll) {
+        let ui       = solution.get('ui') 
+        let platform = ui.platform_get ('pname', EMV_PLATFORM_PNAME);     
+    
+        BottomPanel_Flat (platform, false ,true);        
+        
+        let paneid = elt.closest('.bytepanel').closest('[role="tabpanel"]').attr('id')
+        sb.tab_select(emv_bottomtabs, $('[data-bs-target="#' + paneid + '"]').attr('id'));
+        
+        let bytepanelid = elt.closest('[role="tabpanel"]').attr('id')
+        let bytetabid   = elt.closest('.sb_tabs' ).attr('id')
+        let sbelt = sb.get(emv_bottomtabs, 'id', bytetabid)
+        sb.tab_select(sbelt[0], $('[data-bs-target="#' + bytepanelid + '"]').attr('id'));
+
+        elt.closest ('.emvbyte')[0].scrollIntoView();  
+
+    }    
+    
+    elt.html('1');    
+    elt.parent().addClass('selected')
+} 
+
+function emv_byte_show (panel, id, show) { 
+    let scroll = true;
+
+    let elt     = $('#' + panel.id + ' [byte="' + id + '"]');
+
+    if (scroll) {
+        let ui       = solution.get('ui') 
+        let platform = ui.platform_get ('pname', EMV_PLATFORM_PNAME);     
+    
+        BottomPanel_Flat (platform, false ,true);        
+        
+        let paneid = elt.closest('.bytepanel').closest('[role="tabpanel"]').attr('id')
+        sb.tab_select(emv_bottomtabs, $('[data-bs-target="#' + paneid + '"]').attr('id'));
+
+        let bytepanelid = elt.closest('[role="tabpanel"]').attr('id')        
+        let bytetabid   = elt.closest('.sb_tabs' ).attr('id')
+        let sbelt = sb.get(emv_bottomtabs, 'id', bytetabid)
+        sb.tab_select(sbelt[0], $('[data-bs-target="#' + bytepanelid + '"]').attr('id'));
+
+        elt.closest ('.emvbyte')[0].scrollIntoView();  
+    }    
+
+ //   let eltdesc = $('#' + panel.id + ' #' + elt.attr('id').slice(0, -1) + '8');     
+    if (show) {    
+        elt.parent().addClass('marked')
+    } else {
+        elt.parent().removeClass('marked')
+    }
+} 
+ 
+function onclick_byteflatpanel (elt, event) {
+    let checked = $('#' + elt.id).prop('checked');
+    let parent = $('#' + elt.id).closest('.bytepanel');
+    if (checked) {
+        parent.find('.sb_tabcontainer').css('display', 'none')
+        parent.find('[role="tabpanel"]').removeClass('sb_pane')             
+        parent.find ('.sb_pane').css('display', 'flex')
+        parent.find ('.sb_tabs .tagheader').css('display', 'block')
+      
+        parent.find ('.sb_content').addClass('sb_column').css('flex-wrap', 'wrap');
+    } else {
+        parent.find('[role="tabpanel"]').addClass('sb_pane')        
+        parent.find('.sb_tabcontainer').css('display', '')
+        parent.find ('.sb_pane').css('display', '')
+        parent.find ('.sb_tabs .tagheader').css('display', 'none')
+  
+        parent.find ('.sb_content').removeClass('sb_column').css('flex-wrap', '');
+    }
+}
+
+//---------------------------------------------------------- TERMINAL TYPE PANEL -----------------------------------------------------------------
+
+function onclick_emv_tt(elt, event) {
+    let binarystr = '';
+    let ttpanel = $(elt).closest ('.ttpanel');
+    let ttpanelid = ttpanel.attr('id');
+
+    console.log ('click TT')
+
+    if ( ttpanel.hasClass('editable')) {
+
+        let elts =  $('#' + ttpanelid + ' .TT_value');
+        elts.removeClass('selected')
+
+        $('#' + ttpanelid +  ' #' + elt.id).addClass('selected')
+        let content =  $(elt).html();
+        let col = content.substring(0,1);
+        let row = content.substring(1);
+        $('#' + ttpanelid  + ' #' + col + '0'). addClass ('selected')
+        $('#' + ttpanelid  + ' #' + '0' + row). addClass ('selected')
+
+        ttpanel.attr ("value", content)   
+        ttpanel.trigger ('change')           
+    }
+}
+
+function onmouseover_emv_tt(elt, event) {
+    let content =  $(elt).html();
+    let col = content.substring(0,1);
+    let row = content.substring(1);
+    let ttpanel = $(elt).closest ('.ttpanel')    
+    let ttpanelid = ttpanel.attr('id');
+
+
+    $('#' + ttpanelid  + ' #' + col + '0'). css ('background', 'var(--theme-hover-bg-color)')
+    $('#' + ttpanelid  + ' #' + col + '0'). css ('color', 'var(--theme-hover-color)')
+    $('#' + ttpanelid  + ' #' + '0' + row). css ('background', 'var(--theme-hover-bg-color)')
+    $('#' + ttpanelid  + ' #' + '0' + row). css ('color', 'var(--theme-hover-color)')
+}
+
+function onmouseout_emv_tt(elt, event) {
+    let content =  $(elt).html();
+    let col = content.substring(0,1);
+    let row = content.substring(1);
+    let ttpanel = $(elt).closest ('.ttpanel')  
+    let ttpanelid = ttpanel.attr('id');        
+
+    $('#' + ttpanelid  + '#' + col + '0'). css ('background', '')
+    $('#' + ttpanelid  + '#' + col + '0'). css ('color', '')
+    $('#' + ttpanelid  + '#' + '0' + row). css ('background', '')
+    $('#' + ttpanelid  + '#' + '0' + row). css ('color', '')
+}
+
+function emv_tt_init (panel) {
+    let elts =  $('#' + panel.id + ' .TT_value');
+    elts.removeClass('selected')
+}
+
+function emv_tt_update (panel, byte, scroll) {
+    emv_tt_init (panel)
+
+    let byteint = parseInt(byte);
+    emv_tt_select (panel, byteint, scroll)    
+    $('#' +  panel.id).attr ("value", byteint)     
+}
+
+function emv_tt_select (panel, id, scroll) {
+    let elt =  $('#' + panel.id + ' #' + id);
+    let elts =  $('#' + panel.id + ' .TT_value');
+    elts.removeClass('selected')
+
+    if (scroll) {
+        let ui       = solution.get('ui') 
+        let platform = ui.platform_get ('pname',EMV_PLATFORM_PNAME);     
+    
+        BottomPanel_Flat (platform, false ,true);        
+        elt[0].scrollIntoView();  
+
+    }    
+    elt.addClass('selected')
+    let content =  elt.html();
+    let col = content.substring(0,1);
+    let row = content.substring(1);
+    $('#' + panel.id + ' #' + col + '0'). addClass ('selected')
+    $('#' + panel.id + ' #' + '0' + row). addClass ('selected')    
+} 
+
+//---------------------------------------------------------- TERMINAL COUNTRY CODE PANEL -----------------------------------------------------------------
+
+function onchange_emv_cc (elt, event) {
+    let ccpanel = $(elt).closest ('.ccpanel');    
+
+    ccpanel.attr ("value", $('#' + elt.id + ' option:selected').val())         
+    ccpanel.trigger ('change') 
+}
+
+function emv_cc_update (panel, val) {
+    $('#emv_' + panel.id + '_container').val(val);    
+
+    $('#' +  panel.id).attr ("value", val)       
+}
+//---------------------------------------------------------- TERMINAL SERIAL NUMBER PANEL -----------------------------------------------------------------
+
+function onchange_emv_sn (elt, event) {
+    let snpanel = $(elt).closest ('.snpanel');    
+
+    snpanel.attr ("value", $(elt).val())     
+    snpanel.trigger ('change') 
+}
+
+function emv_sn_update (panel, val) {
+    $('#emv_' + panel.id + '_container').val(val);  
+
+    $('#' +  panel.id).attr ("value", val)   
+
+}
+
+
+//---------------------------------------------------------- AID PANEL -----------------------------------------------------------------------------------------
+
+function onchange_emv_aid (elt, event) {
+    let aidpanel = $(elt).closest ('.aidpanel');   
+    
+    aidpanel.attr ("value", $('#' + elt.id + ' option:selected').val())    
+    aidpanel.trigger ('change') 
+}
+
+function emv_aid_update (panel, val) {
+    $('#emv_' + panel.id + '_container').val(val);    
+
+    $('#' +  panel.id).attr ("value", val)       
+}
+
+
+//---------------------------------------------------------- APPLICATION VERSION PANEL -----------------------------------------------------------------------------------------
+
+function onchange_emv_avn (elt, event) {
+    let avnpanel = $(elt).closest ('.avnpanel');    
+
+    avnpanel.attr ("value", parseInt($(elt).val()).toString (16).toUpperCase().padStart(4, '0'))      
+    avnpanel.trigger ('change') 
+}
+
+function emv_avn_update (panel, val) {
+    $('#emv_' + panel.id + '_container').val(val);    
+    
+    $('#' +  panel.id).attr ("value", val.toString (16).toUpperCase().padStart(4, '0'))       
+
+}
+
+//---------------------------------------------------------- OUTSIDE -----------------------------------------------------------------
+
 function o(e) {
     return {
         tag: e.children().siblings(".tv").text(),
@@ -9,7 +301,12 @@ function C(e) {
     return `<input class="form-control" value="${e}" readonly style="font-family: unset;"></input>`
 }
 
-function g(e) {
+function g(tag) {
+    if (!tag.value ) {
+        console.log ('rapdu return error sw1: ' + tag.sw1 + ', sw2: ' + tag.sw2)
+        return;
+    }
+    let e = tag.value;
     if (4 <= e.length) {
         e = e.match(/.{1,2}/g).map(function(e) {
             return String.fromCharCode(parseInt(e, 16))
@@ -823,7 +1120,7 @@ function gettagvalue_text(e) {
             "4F": "84",
             "5F28": "9F1A",
             "9F42": "5F2A"
-        }[e.tag]) || e.tag] && r[tag][e.value] ? C(r[tag][e.value]) : null !== (i = g(e.value)) ? C(i) : null;
+        }[e.tag]) || e.tag] && r[tag][e.value] ? C(r[tag][e.value]) : null !== (i = g(e)) ? C(i) : null;
     for (var s = e.value, c = "", d = TLVGenerator(s); ; )
         try {
             if (void 0 === (tag = TLVTag(d)))
@@ -887,10 +1184,10 @@ function GetTVRControl(t, tag) {
     let hexaarray = hexa_to_array(t)    
     let hexaint   = array_to_int(hexaarray)
 
-    let panel = emv_bytepanel((tag ? tag + '_TVR' : 'TVR'), (tag ? tag : '9F07'), emv_TVR, 1, 0, 1)
+    let panel = emv_bytepanel((tag ? tag + '_TVR' : 'TVR'), (tag ? tag : '9F07'), emv_TVR, {withbar: false, editable:false})
     let content = sb.render(panel)
 
-    emv_byte_init(panel)
+
     emv_byte_update(panel, hexaint) 
     return content;    
 /*    
@@ -939,10 +1236,9 @@ function GetAUCControl(t) {
     let hexaarray = hexa_to_array(t)    
     let haxaint   = array_to_int(hexaarray)
 
-    let panel = emv_bytepanel('R_AUC', '9F07', emv_AUC, 1, 0, 1)
+    let panel = emv_bytepanel('R_AUC', '9F07', emv_AUC, {withbar:false, editable:false})
     let content = sb.render(panel)
 
-    emv_byte_init(panel)
     emv_byte_update(panel, haxaint) 
     return content;
 /*        

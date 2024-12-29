@@ -750,7 +750,6 @@ var tradedesk_terminals_sidepanel = {
     type: 'panel',
     class: 'sb_sidepanel sb_panel sb_column',
     items:[
-        tradedesk_terminals_headerpanel,        
         boxtradedeskpanel,
         boxaccountpanel,
         currenciespanel,
@@ -851,8 +850,8 @@ var boxalertspanel  = {
     items: [alertspanel]    
 }
 
-var signals_header_panel = {
-    id: 'signals_header_panel',
+var tradedesk_signals_headerpanel = {
+    id: 'tradedesk_signals_headerpanel',
     type: 'bar',
     class: 'sb_sidebarheader ',    
     items : 
@@ -868,7 +867,6 @@ var tradedesk_signals_sidepanel = {
     type: 'panel',
     class: 'sb_sidepanel sb_panel sb_column',
     items:[
-        signals_header_panel,        
         boxsignalsspanel,
         boxalertspanel,
     ]    
@@ -968,8 +966,8 @@ var enginelookpanel = {
 //--------------------------
 
 
-var enginelook_header_panel = {
-    id: 'enginelook_header_panel',
+var tradedesk_enginelook_headerpanel = {
+    id: 'tradedesk_enginelook_headerpanel',
     type: 'bar',
     class: 'sb_sidebarheader ',    
     items : 
@@ -986,7 +984,6 @@ var tradedesk_enginelook_sidepanel = {
     type: 'panel',
     class: 'sb_sidepanel sb_panel sb_column',
     items:[
-        enginelook_header_panel,        
         enginelookpanel,
         tradedeskstrategypanel,        
     ]    
@@ -1076,8 +1073,8 @@ var statementpanel = {
     ]
 }
 
-var history_header_panel = {
-    id: 'history_header_panel',
+var tradedesk_history_headerpanel = {
+    id: 'tradedesk_history_headerpanel',
     type: 'bar',
     class: 'sb_sidebarheader ',    
     items : 
@@ -1093,7 +1090,6 @@ var tradedesk_history_sidepanel = {
     type: 'panel',
     class: 'sb_sidepanel sb_panel',
     items: [
-        history_header_panel,
         historyorderpanel,
         historypanel,
         statementpanel,
@@ -1125,7 +1121,7 @@ var tradedesk_mainbar = {
 var tradedesk_bottomtabs = {
     id:'tradedesk_bottomtabs',
     type: 'tabs',       
-    events: {ondblclick: "ondblclick_tradedesktabs(this, event)"},         
+    tabevents: {ondblclick: "ondblclick_tradedesktabs(this, event)"},         
     items :
         [ 
             {id: 'tab_sessions',      item: 'Sessions',   type: 'link', icon: icon_file,         events: {onclick: "onclick_tradedesktabs(event)"}, items : [sessionpanel],        title: ''},           
@@ -1214,14 +1210,14 @@ var tradedesk_sidebarpanel  = {
     class: 'sb_panel sb_sidebarpanel sb_right',     
     items :  
         [
-            {id: 'sidebarpanel_terminals',         type: 'panel',    class: 'sb_panel', items: [tradedesk_terminals_sidepanel]},
-            {id: 'sidebarpanel_signals',           type: 'panel',    class: 'sb_panel', items: [tradedesk_signals_sidepanel]},
-            {id: 'sidebarpanel_enginelook',        type: 'panel',    class: 'sb_panel', items: [tradedesk_enginelook_sidepanel]},
-            {id: 'sidebarpanel_history',           type: 'panel',    class: 'sb_panel', items: [tradedesk_history_sidepanel]},
+            {id: 'sidebarpanel_terminals',         type: 'panel',    class: 'sb_panel',                 items: [tradedesk_terminals_headerpanel, tradedesk_terminals_sidepanel]},
+            {id: 'sidebarpanel_signals',           type: 'panel',    class: 'sb_panel',                 items: [tradedesk_signals_headerpanel, tradedesk_signals_sidepanel]},
+            {id: 'sidebarpanel_enginelook',        type: 'panel',    class: 'sb_panel',                 items: [tradedesk_enginelook_headerpanel, tradedesk_enginelook_sidepanel]},
+            {id: 'sidebarpanel_history',           type: 'panel',    class: 'sb_panel',                 items: [tradedesk_history_headerpanel, tradedesk_history_sidepanel]},
         //    {id: 'sidebarpanel_news',              type: 'panel',    class: 'sb_panel', items: [newssidebarpanel]},
-            {id: 'sidebarpanel_video',             type: 'panel',    class: 'sb_panel', items: [tradedesk_media_sidepanel]},
-            {id: 'sidebarpanel_tradedeskcharttools',  type: 'panel', class: 'sb_panel', items: [charttoolspanel('tradedesk')]},                        
-            {id: 'sidebarpanel_tradedesksettings',    type: 'panel', class: 'sb_panel', items: [settingspanel('tradedesk')]},                  
+            {id: 'sidebarpanel_video',             type: 'panel',    class: 'sb_panel',                 items: [tradedesk_media_sidepanel]},
+            {id: 'sidebarpanel_tradedeskcharttools',  type: 'panel', class: 'sb_panel',                 items: [charttools_header_panel, charttoolspanel('tradedesk')]},                        
+            {id: 'sidebarpanel_tradedesksettings',    type: 'panel', class: 'sb_panel',                 items: [settingspanel('tradedesk')]},                  
         ],
         catchresize: true,
         resizefunction: '{if (TradedeskSCEditor) TradedeskSCEditor.resize(); if (CurrentTContainer) CurrentTContainer.Refresh()}',        

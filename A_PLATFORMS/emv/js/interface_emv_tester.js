@@ -185,7 +185,7 @@ var emv_apdu_bargroup = (hidden => {return {
     type: 'group',      
     items:
         [
-            {id: 'inspect_button',  type:'link', icon: icon_eye,  style: (hidden ? 'display:none' : 'display:block'), events: {onclick: "onclick_apdu_tree_inspect (this, event)"},  title: 'Inspect'},      
+            {id: 'inspect_button',  type:'link', icon: icon_eye,  style: (hidden ? 'display:none' : 'display:flex'), events: {onclick: "onclick_apdu_tree_inspect (this, event)"},  title: 'Inspect'},      
         ]
 }})
 
@@ -260,32 +260,48 @@ var emv_apdupanel  = ((toggled) =>  {return {
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
 
-var emv_tester_recordbargroup = {
-    id: 'emv_tester_recordbargroup',  
+var emv_tester_commandgroup = {
+    id: 'emv_tester_commandgroup',  
     class: 'sb_transform',
     type: 'group',
-    position: 'sb_end',
     items:
-        [
-            {id: 'ignore_apdu',    type: 'checkbox', item: 'APDU',     events: {onclick:'onclick_emv_tester_recordbargroup(this, event)'}}, 
-            {id: 'ignore_step',    type: 'checkbox', item: 'Step',     events: {onclick:'onclick_emv_tester_recordbargroup(this, event)'}}, 
-            {id: 'ignore_trace',   type: 'checkbox', item: 'Trace',    events: {onclick:'onclick_emv_tester_recordbargroup(this, event)'}}, 
-            {id: 'ignore_tag',     type: 'checkbox', item: 'Tag',      events: {onclick:'onclick_emv_tester_recordbargroup(this, event)'}}, 
-        ]
+        [    
+            {id: 'emv_tester_play_button' ,    /*item: 'Run',*/       icon: icon_play,      type:'button',  class: 'sb_sbutton', title: 'replay',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
+            {id: 'emv_tester_start_button' ,   /*item: 'Start',*/     icon: icon_backward,    type:'button',  class: 'sb_sbutton', title: 'go to start',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
+            {id: 'emv_tester_forward_button' , /*item: 'Forward',*/ icon: icon_forwardstep,   type:'button',  class: 'sb_sbutton', title: 'step Forward',   events: {onclick:'onclick_emv_tester_button(this, event)'}},            
+
+//         {id: 'emv_tester_stop_button' ,    item: 'Stop',    icon: icon_stop,      type:'button',  class: 'sb_sbutton', title: 'stop',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
+//         {id: 'emv_tester_back_button' ,    item: 'Back',    icon: icon_backwardstep,  type:'button',  class: 'sb_sbutton', title: 'step backward',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
+//         {id: 'emv_tester_pause_button' ,   item: 'Pause',   icon: icon_pause,     type:'button',  class: 'sb_sbutton', title: 'pause',  events: {onclick:'onclick_emv_tester_button(this, event)'}},                        
+    ]    
 }
 
-var emv_tester_stepsbargroup = (emv_Steps => {
+var emv_tester_stepsgroup = (steps => {
     let items = [];
-    for (var i = 0; i < emv_Steps.length; i++) {
-        items.push ({id: i,   type: 'button', class: 'sb_roundbutton EMVStep',   events: {onclick: "onclick_emv_tester_stepsbargroup (this, event)"}, title: 'Step ' + i})
+    for (var i = 0; i < steps.length; i++) {
+        items.push ({id: i,   type: 'button', class: 'sb_roundbutton EMVStep',   events: {onclick: "onclick_emv_tester_stepsgroup (this, event)"}, title: 'Step ' + i})
     }
     return {
-    id:   'emv_tester_stepsbargroup',  
-    position: 'sb_end',
+    id:   'emv_tester_stepsgroup',  
+    position: 'sb_distance',
     type: 'group',
     items: items
 
 }})
+
+var emv_tester_filtergroup = {
+    id: 'emv_tester_filtergroup',  
+    class: 'sb_transform',
+    type: 'group',
+ //   position: 'sb_end',
+    items:
+        [
+            {id: 'ignore_apdu',    type: 'checkbox', item: 'APDU',     events: {onclick:'onclick_emv_tester_filtergroup(this, event)'}}, 
+            {id: 'ignore_step',    type: 'checkbox', item: 'Step',     events: {onclick:'onclick_emv_tester_filtergroup(this, event)'}}, 
+            {id: 'ignore_trace',   type: 'checkbox', item: 'Trace',    events: {onclick:'onclick_emv_tester_filtergroup(this, event)'}}, 
+            {id: 'ignore_tag',     type: 'checkbox', item: 'Tag',      events: {onclick:'onclick_emv_tester_filtergroup(this, event)'}}, 
+        ]
+}
 
 var emv_tester_recordgroup  = {
     id: 'emv_tester_recordgroup',
@@ -294,14 +310,9 @@ var emv_tester_recordgroup  = {
     class: 'sb_transform',    
     items:
         [ 
-            {id: 'emv_tester_play_button' ,    item: 'Run',       icon: icon_play,      type:'button',  class: 'sb_button', title: 'replay',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
-            {id: 'emv_tester_start_button' ,   item: 'Start',     icon: icon_backward,    type:'button',  class: 'sb_button', title: 'go to start',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
-   //         {id: 'emv_tester_stop_button' ,    item: 'Stop',    icon: icon_stop,      type:'button',  class: 'sb_sbutton', title: 'stop',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
-   //         {id: 'emv_tester_back_button' ,    item: 'Back',    icon: icon_backwardstep,  type:'button',  class: 'sb_sbutton', title: 'step backward',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
-            {id: 'emv_tester_forward_button' , item: 'Forward', icon: icon_forwardstep,   type:'button',  class: 'sb_button', title: 'step Forward',   events: {onclick:'onclick_emv_tester_button(this, event)'}},            
-  //         {id: 'emv_tester_pause_button' ,   item: 'Pause',   icon: icon_pause,     type:'button',  class: 'sb_sbutton', title: 'pause',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
-            emv_tester_stepsbargroup(emv_Steps),
-            emv_tester_recordbargroup,  
+            emv_tester_commandgroup,
+            emv_tester_stepsgroup(emv_Steps),
+            emv_tester_filtergroup,  
         ]    
 }
 
@@ -322,6 +333,7 @@ var emv_tester_cardbuttonbar = {
     id: 'emv_tester_cardbuttonbar',
     type: 'group',         
     class: '',
+    events: {onclick: 'onclick_emv_tester_reader(this, event)'},    
     items : [
         {id: 'label_card',  item: 'Card Reader', type: 'link',  icon: icon_creditcard, title: 'Card Reader'},
         {id: 'button_card',   type: 'button', class: 'sb_roundbutton',   events: {onclick: "onclick_button_card (this, event)"}, title: 'Card Reader'},
@@ -377,6 +389,7 @@ var emv_tester_terminalbuttonbar = {
     id: 'emv_tester_terminalbuttonbar',
     type: 'group',         
     class: '',
+    events: {onclick: 'onclick_emv_tester_terminal(this, event)'},
     items : [
         {id: 'label_terminal',  item: 'EMV Terminal', type: 'link',  icon: icon_terminal, title: 'EMV Terminal'},
         {id: 'button_terminal',   type: 'button', class: 'sb_roundbutton',   events: {onclick: "onclick_terminal_card (this, event)"}, title: 'EMV Terminal'},
@@ -431,8 +444,6 @@ var emv_testerleft_panel = {
     class: 'sb_panel sb_main sb_column',
     items: [
         emv_presentation_panel,        
-        emv_tester_recordgroup,          
-
     ],
 }
 
@@ -455,7 +466,7 @@ var emv_tester_sidepanel = {
     type: 'panel',
     class: 'sb_sidepanel sb_panel sb_main sb_column',
     items:[
-        emv_tester_headerpanel,         
+        emv_tester_recordgroup,                 
         emv_tester_cardpanel(true),
 //        {id: '',  type:'drag', direction:'horizontal', dragid: 'emv_tester_cardpanel'},            
         emv_tester_terminalpanel(true),   

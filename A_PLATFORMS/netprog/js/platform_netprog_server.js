@@ -190,7 +190,7 @@ function onclick_netprog_server_group (elt, event) {
 
     switch (elt.id) {
         case 'connect_serverjscript':
-            let netprogserver = interface_GetEntity (netprog_manager, 'Applications', 'Name', 'NetProgServer');
+            let netprogserver = interface_GetEntity (netprog_manager, 'Applications', 'Name', 'local_NetProgServer');
             let servermachine = interface_GetEntity (netprog_manager, 'Machines', 'Name', netprogserver.Machine);
             let conclass      = interface_GetEntity (netprog_manager, 'ConnectionClasses', 'Name', 'Class:NetProgConnection');
             let port          = website.protocol == 'http:' ? 4080 : 4443; //netprogserver.Ports[0];

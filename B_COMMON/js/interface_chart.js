@@ -283,7 +283,6 @@ var charttoolspanel = (id =>  {return {
     type: 'panel',
     class: 'sb_sidepanel sb_panel',
     items: [
-            charttools_header_panel,
             boxindicatorspanel(id),
 //            boxtrackerpanel(id),
     ]

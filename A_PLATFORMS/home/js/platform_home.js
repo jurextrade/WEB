@@ -302,9 +302,9 @@ function GetStartedSection_Panel () {
     var content = 
        '<label class="sb_f_size12">Get Started - Project Templates</label>' +
        '<div class="sb_row sb_widget-container">' +
-            sb_widget_create ('strategytutorial',  'onclick_strategytutorial(this, event)',   icon_strategy, 'Algo Trading', 'Create Trading Strategies', 'onclick_projectseehow(event)', 'see demo project') +
-            sb_widget_create ('tradedeskconnect',  'onclick_connectMT4Terminal(this, event)', icon_terminal, 'MT4 Terminal', 'Connect your MT4 Terminal', 'onclick_tradedeskseehow(event)', 'see demo terminal') +
-            sb_widget_create ('optionstutorial',   'onclick_optionstutorial(this, event)',    icon_strategy, 'Yahoo Market', 'Inspect Stocks and options','onclick_optionsseehow(event)', 'see yahoo terminal') +                
+            sb_widget_create ('strategytutorial',  'onclick_strategytutorial(this, event)',   icon_strategy, 'Algo Trading', 'Create Trading Strategies', ['onclick_projectseehow(event)'], ['see demo project']) +
+            sb_widget_create ('tradedeskconnect',  'onclick_connectMT4Terminal(this, event)', icon_terminal, 'MT4 Terminal', 'Connect your MT4 Terminal', ['onclick_tradedeskseehow(event)'], ['see demo terminal']) +
+            sb_widget_create ('optionstutorial',   'onclick_optionstutorial(this, event)',    icon_strategy, 'Yahoo Market', 'Inspect Stocks and options',['onclick_optionsseehow(event)'], ['see yahoo terminal']) +                
        '</div>' 
     return content;
 }
@@ -676,42 +676,6 @@ function netprog_MainCarouselPanel () {
 '           </div>' +
 '  </div>';
 return content;
-}
-
-//----------------------------------------------------   NETPROG WIDGETS PANEL    ------------------------------------------------   
-
-function onclick_connectMT4Terminal (elt, event) { 
-    event.preventDefault();
-    if ($('#mt4assistantpanel').is(':hidden')) {
-        MT4AssistantPanel_Open ();    
-    } else {
-        MT4AssistantPanel_Close ();    
-    }
-}
-
-function onclick_downloadnetprog(elt, event) {
-  
-}
-function netprog_GetStartedSection_Panel () {
-    var content = 
-       '<label class="sb_f_size12">Get Started - Project Templates</label>' +
-       '<div class="sb_row sb_widget-container">' +
-            sb_widget_create ('downloadnetprog',  ' onclick_downloadnetprog(this, event)',    icon_download, 'Download ', 'Download NetProg Library') +
-            sb_widget_create ('tradedeskconnect',  'onclick_connectMT4Terminal(this, event)', icon_terminal, 'MT4 Terminal',    'Connect your MT4 Terminal') +
-            sb_widget_create ('optionstutorial',   'onclick_optionstutorial(this, event)',    icon_strategy, 'Options',         'Yahoo Options') +                
-       '</div>' 
-    return content;
-}
-
-function netprog_ToolsSection_Panel () {
-    var content = 
-       '<label class="sb_f_size12">Chart Tools</label>' +
-       '<div class="sb_row sb_widget-container">' +
-            sb_widget_create ('signalstutorial',   'onclick_signalstutorial(this, event)',  icon_strategy,  'Signals', "Indicators and Signals") +                
-            sb_widget_create ('trackersstutorial', 'onclick_trackerstutorial(this, event)', icon_strategy,  'Trackers',"Track your signals") +                
-            sb_widget_create ('markerstutorial',   'onclick_markerstutorial(this, event)',  icon_strategy,  'Markers', "Mark composed signals") +
-       '</div>' 
-    return content;
 }
 
 

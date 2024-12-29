@@ -674,7 +674,7 @@ function onclick_recognitionrow (elt, event) {
     let rowindex        = rows[rows.length -1];
     let recognitionlang = elt.innerText.substring(0,2)
 
-   
+    console.log ('sssssssssssssssssssssssssssssssssssss')
 
     grecognition.set_lang (recognitionlang);
     recognition_lang = recognitionlang;  

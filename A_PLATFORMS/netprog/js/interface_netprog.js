@@ -358,22 +358,22 @@ var netprog_projectsbar = {
                 items: 
                     [ 
                         {id: 'netprog_projectselect',    type: 'select',   title: 'Select Project',      value: '--Select Project--', menu: [{text: '--Select Project--'}], events: {onchange: 'onchange_netprog_projectselect (this, event)'}}, 
-                        {id: 'netprog_projectcreate',    type:'link',       icon: icon_new,              events: {onclick: "onclick_netprog_projectcreate()"},  title: 'Create New Project'},      
-                        {id: 'netprog_projectrename',    type:'link',       icon: icon_rename,           events: {onclick: "onclick_netprog_projectrename()"},  title: 'Rename Current Project'},  
-                        {id: 'netprog_projectremove',    type:'link',       icon: icon_remove,           events: {onclick: "onclick_netprog_projectremove()"},  title: 'Delete Current Project'}              
+//                        {id: 'netprog_projectcreate',    type:'link',       icon: icon_new,              events: {onclick: "onclick_netprog_projectcreate()"},  title: 'Create New Project'},      
+//                        {id: 'netprog_projectrename',    type:'link',       icon: icon_rename,           events: {onclick: "onclick_netprog_projectrename()"},  title: 'Rename Current Project'},  
+//                        {id: 'netprog_projectremove',    type:'link',       icon: icon_remove,           events: {onclick: "onclick_netprog_projectremove()"},  title: 'Delete Current Project'}              
                     ]
             },
-            { 
-                position: 'sb_distance',
-                class: 'sb_transform',                
-                id:'',             
-                type: 'group',                           
-                items:
-                    [ 
-                        {id: 'netprog_projectcompile',   type:'link',  icon: 'far fa-file',               events: {onclick: "onclick_netprog_projectcompile()"},    title: 'Compile Current Project in C'},                 
-                        {id: 'netprog_projectdistribute',type:'link',  icon: 'fas fa-cloud-download-alt', events: {onclick: "onclick_netprog_projectdistribute()"}, title: 'Distribute Current Project on MT4 Terminal'},
-                    ]
-            },
+//            { 
+//                position: 'sb_distance',
+//                class: 'sb_transform',                
+//                id:'',             
+//                type: 'group',                           
+//                items:
+//                    [ 
+//                        {id: 'netprog_projectcompile',   type:'link',  icon: 'far fa-file',               events: {onclick: "onclick_netprog_projectcompile()"},    title: 'Compile Current Project in C'},                 
+//                        {id: 'netprog_projectdistribute',type:'link',  icon: 'fas fa-cloud-download-alt', events: {onclick: "onclick_netprog_projectdistribute()"}, title: 'Distribute Current Project on MT4 Terminal'},
+//                    ]
+//            },
             { 
                 position: 'sb_end',
                 class: 'sb_transform',                
@@ -381,6 +381,9 @@ var netprog_projectsbar = {
                 type: 'group',                        
                 items:
                     [ 
+                        {id: 'netprog_projectrename',    type:'link',       icon: icon_rename,           events: {onclick: "onclick_netprog_projectrename()"},  title: 'Rename Current Project'},  
+                        {id: 'netprog_projectremove',    type:'link',       icon: icon_remove,           events: {onclick: "onclick_netprog_projectremove()"},  title: 'Delete Current Project'},              
+                        {id: 'netprog_projectcreate',    type:'link',       icon: icon_new,              events: {onclick: "onclick_netprog_projectcreate()"},  title: 'Create New Project'},      
                         {id: 'netprog_projectclose',     type:'link', icon: icon_close,    class:'sb_close',  events: {onclick: "onclick_netprog_projectclose()"}, title: 'Close Current Project'}
                     ]
             }
@@ -435,10 +438,10 @@ var netprog_managerbar = {
                 type: 'group',                        
                 items:
                     [ 
-                        {id: 'netprog_siteCreate',     type:'link',  icon: icon_new,      events: {onclick: "onclick_netprog_siteCreate()"},  title: ''},      
-                        {id: 'netprog_siteRename',     type:'link',  icon: icon_rename,   events: {onclick: "onclick_netprog_siteRename()"},  title: ''},  
-                        {id: 'netprog_siteDelete',     type:'link',  icon: icon_remove,   events: {onclick: "onclick_netprog_siteDelete()"},  title: ''}              
-                    ]
+           //            {id: 'netprog_siteCreate',     type:'link',  icon: icon_new,      events: {onclick: "onclick_netprog_siteCreate()"},  title: ''},      
+           //            {id: 'netprog_siteRename',     type:'link',  icon: icon_rename,   events: {onclick: "onclick_netprog_siteRename()"},  title: ''},  
+           //            {id: 'netprog_siteDelete',     type:'link',  icon: icon_remove,   events: {onclick: "onclick_netprog_siteDelete()"},  title: ''}              
+                   ]
             },
             { 
                 position: 'sb_end',
@@ -447,7 +450,7 @@ var netprog_managerbar = {
                 type: 'group',                        
                 items:
                     [ 
-                        {id: 'netprog_siteCompile',    type:'link',  icon: icon_mt4expert,     events: {onclick: "onclick_netprog_siteCompile()"},  title: ''},      
+           //             {id: 'netprog_siteCompile',    type:'link',  icon: icon_mt4expert,     events: {onclick: "onclick_netprog_siteCompile()"},  title: ''},      
                     ]
             }
         ]
@@ -486,7 +489,6 @@ var netprog_project_sidepanel = {
     type: 'panel',
     class: 'sb_sidepanel sb_panel sb_main sb_column',
     items: [
-        netprog_projects_headerpanel,      
         netprog_boxprojectspanel, 
         netprog_boxmanagerpanel,                 
     ]
@@ -527,7 +529,7 @@ var netprog_maintabs = {
 var netprog_bottomtabs = {
     id:'netprog_bottomtabs',
     type: 'tabs',    
-    events: {ondblclick: "ondblclick_netprogtabs(this, event)"},   
+    tabevents: {ondblclick: "ondblclick_netprogtabs(this, event)"},   
     items :
         [ 
             {id: 'tab_javasript',     item: 'JS Console',     type:'link', icon: icon_file,      events: {onclick: "onclick_netprogtabs(event)"}, items: [netprog_jseditor], title: ''},           
@@ -603,7 +605,7 @@ var netprog_sidebarpanel  = {
     class: 'sb_panel sb_sidebarpanel sb_right',     
     items : 
     [
-        {id: 'sidebarpanel_netprogsiteview',    class: 'sb_panel sb_main sb_pane',   type: 'panel',  items: [netprog_project_sidepanel]},      
+        {id: 'sidebarpanel_netprogsiteview',    class: 'sb_panel sb_main sb_pane',  type: 'panel',  items: [netprog_projects_headerpanel,  netprog_project_sidepanel]},      
         {id: 'sidebarpanel_netprogmanager',     class: 'sb_panel sb_main',   type: 'panel',  items: [netprog_box_manager, netprog_program]},             
         {id: 'sidebarpanel_netprogfilemanager', class: 'sb_panel sb_main',   type: 'panel',  items: [netprog_file_headerpanel, netprog_filemanager]},             
         {id: 'sidebarpanel_netprogsettings',    class: 'sb_panel sb_pane',   type: 'panel',  items: [settingspanel('netprog')]},             

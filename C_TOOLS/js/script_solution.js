@@ -1670,11 +1670,12 @@ function onclick_rightsidebarmenu (id, show) {
     }
     if (show == 1) {
         rightsidebarpanel_select(id.replace("sidebar", "sidebarpanel"));    
-    }    
+    } else    
     if (show == 0) {
         rightsidebarpanel_hide();            
     }
 }
+
 
 function rightsidebarpanel_hide () {
     let psidebarmenu    = $('#right_sidebarmenu'); 

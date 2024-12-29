@@ -1,68 +1,4 @@
 
-class emvproject {
-    constructor (pname, name, path) {
-        this.pname                   = pname; 
-        this.Folder                  = path;    
-        this.Name                    = name;
-        this.Path                    = path;
-        this.EMV                     = new emv()   
-        this.Loaded                  = 0; 
-        this.Server                 = solution.EMVRouter_Address;
-        this.Port                   = solution.EMVRouter_Port;   
-    
-    }
-
-    Create = function () {
-        return SubmitProjectRequest(this.Folder, this.Name, '', 'php/create_project.php', SYNCHRONE);
-    }
-
-    Remove = function () {
-        if (solution.UserId == "0") return;        
-        return SubmitProjectRequest(this.Folder, this.Name, '', 'php/remove_project.php', SYNCHRONE);
-    }
-
-    Rename = function (newname) {
-        if (solution.UserId == "0") return;        
-   
-        let content = JSON.stringify({name: newname, path: this.path}, null, 2)
-        let user = solution.get('user')
-        let rootproject = user.fileexplorer.Root + user.path + '/EMV/' + this.path + "/config/";        
-       
-        user.send ({Name: 'savefile', Values: [rootproject + 'emv.ini', content]}, true, 
-                    function (content, values) {
-                        DisplayOperation("Project Succesfully Renamed", true, 'operationpanel');                             
-                    }, 
-                    [this]);  
-    }
-    
-    Save = function () {
-        let cuser = solution.get('user')
-        if (!cuser.is_registered()) {
-            return;
-        }
-            
-        let rootproject     = cuser.fileexplorer.Root + cuser.path + '/EMV/' + this.Folder + "/Files/";
-
-        this.EMV.Save (rootproject + 'emvsolution.json');
-        
-    }
-    Load = function () {
-        let  site           = solution.get('site');        
-        let  user           = solution.get('user')               
-        
-        let rootproject = site.address + user.path + '/EMV/' + this.Folder + "/Files/";
-
-        this.EMV.Load (rootproject + 'emvsolution.json', ASYNCHRONE,  this.UpdateEMV, this);
-       
-    }
-
-    UpdateEMV = function (response, par) {
-        let project = par[0];
-        project.EMV = JSON.parse(response)
-        emv_update(project);
-        project.Loaded = 1;    
-    }
-}
 
 class emv_Settings {
     constructor () {
@@ -104,27 +40,26 @@ class emv_Settings {
 //1		N1	Précise si le système d’acceptation peut fonctionner en mode appelé : Désactivé, Activé
 
 //EPV_D787;BYTE ParOpen CHAR[10] RID CHAR[22] PIX CHAR[4] ApplicationVersionNumber CHAR[2] Priority BYTE ForceTransaction BYTE ParClose BYTE[2] CR;Liste des donn้es sp้cifiques EMV par AID
-class emv_Aid {
-    constructor () {
-        this.AID;							                    // BYTE Ex. {0xA0, 0x00, 0x00, 0x00, 0x00, 0x10, 0x10} [16] //9F06     
-        this.ApplicationVersionNumber = ''; 		            // BYTE Ex. {0x00, 0x8C}                                    //9F09   
-	    this.Length;							                // int	 Length in bytes, Ex. 7
-	    this.Priority;                                          //int	 
-
-	    this.applicationSelectionIndicator = '';	            // char Application Selection Indicator, 0 - if application must match AID exactly, 1 - if allow partial
-	    this.ForceTransaction = '';					            // BYTE Indicates if a transaction can be forced to accept by acceptor if refused by terminal
-	    this.TerminalActionCodeDenial;      	                // BYTE Terminal Action Code - Denial [5];	
-	    this.TerminalActionCodeOnline;      	                // BYTE Terminal Action Code - Online [5];	
-	    this.TerminalActionCodeDefault;     	                // BYTE Terminal Action Code - Defaul [5];	
-    }
+class EMVAid {
+    constructor (aid, avn, priority, ft,  tacdenial, taconline, tacdefault) {
+        this.ClassName = "EMVAid";                       
+        this.AID  = aid;							            // BYTE Ex. {0xA0, 0x00, 0x00, 0x00, 0x00, 0x10, 0x10} [16] //9F06     
+        this.ApplicationVersionNumber = avn; 		            // BYTE Ex. {0x00, 0x8C}                                    //9F09   
+	    this.Priority = priority;                               // int	less then 16 
+	    this.applicationSelectionIndicator = 1;	                // char Application Selection Indicator, 0 - if application must match AID exactly, 1 - if allow partial
+	    this.ForceTransaction = 1;					            // BYTE Indicates if a transaction can be forced to accept by acceptor if refused by terminal
+	    this.TerminalActionCodeDenial = tacdenial;      	    // BYTE Terminal Action Code - Denial [5];	
+	    this.TerminalActionCodeOnline = taconline;      	    // BYTE Terminal Action Code - Online [5];	
+	    this.TerminalActionCodeDefault = tacdefault;     	    // BYTE Terminal Action Code - Defaul [5];	
+    }        
 } 
 
-class emv_Application {
-    constructor () {    
-        this.AIDCount;								            // int		Count of AIDs in this configuration
+class EMVApplication {
+    constructor (rid) {    
+        this.ClassName = "EMVApplication";               
+        this.RID = rid								            // BYTE	Registered Application Provider Identifier, Ex. {0xA0, 0x00, 0x00, 0x00, 0x03}
         this.AID = [];								            // EMVAid	EMVAID of current configuration
-        this.RID = ""								            // BYTE	Registered Application Provider Identifier, Ex. {0xA0, 0x00, 0x00, 0x00, 0x03}
-        this.IndexAIDSelected;                                  //int		
+        this.IndexAIDSelected;                                  // int		
         this.defaultDDOLSize;						            // int		Size in bytes of next element. 0 - if default DDOL is empty
         this.defaultDDOL = new Array(64);						// BYTE	data of default DDOL with size defaultDDOLSize
         this.defaultTDOLSize;						            // int		Size in bytes of next element. 0 - if default TDOL is empty
@@ -143,8 +78,9 @@ class emv_Application {
     }
 } 
 
-class emv_PointOfSale  {
+class EMVPointOfSale  {
     constructor () { 
+    this.ClassName = "EMVPointOfSale";           
 	this.pCom;
 	this.PointAcceptationIdentification = '';		            // NEW TAG DF5C [9]
 	this.SystemAcceptationIdentification = '';	                // NEW TAG DF5E [9]
@@ -153,8 +89,9 @@ class emv_PointOfSale  {
     }
 }
 
-class emv_Acquirer {
+class EMVAcquirer {
     constructor () {     
+        this.ClassName = "EMVAcquirer";        
         this.AcquirerIdentifier;                                //9F01 n6..11 [6];
     }
 }
@@ -167,9 +104,9 @@ class emv_Acquirer {
 //Enveloppe 41 : valeur à utiliser dans le champ 41 ansc 8    Terminal Identification 9F1C
 //Enveloppe 42 : valeur à utiliser dans le champ 42 ansc 15   Merchant Identifier 9F16
 
-class emv_Acceptor {
-    constructor () {    
-
+class EMVAcceptor {
+    constructor (cc,mi,mn, ti, cn, ) {    
+        this.ClassName = "EMVAcceptor";
         this.MerchantCategoryCode;				                // MerchantCategoryCode[2];				//9F15 n4 Merchant Category Code, Ex. {0x30, 0x01}    
         this.MerchantIdentifier;				                // MerchantIdentifier[16];				//9F16  ans15 Merchant Identifier  Ex. "000000000018003"  When concatenated with the Acquirer Identifier; uniquely identifies a given merchant   
         this.MerchantNameAndLocation;			                // MerchantNameAndLocation[41];			//9F4E ans Merchant Name and Location,Null terminated C string, Ex. "202B,
@@ -183,34 +120,28 @@ class emv_Acceptor {
         
     }
 }
-class emv_Terminal {
-    constructor (serialnumber, countrycode, tt, tc, atc, ttq) {            
+class EMVTerminal {
+    constructor (serialnumber, countrycode, tt, tc, atc, ttq) {       
+        this.ClassName = "EMVTerminal";             
 		this.IFDSerialNumber = serialnumber;              	            // 9F1E char Ex. "12345678" [9];
 		this.TerminalCountryCode = countrycode;				            // BYTE Ex. {0x08, 0x40} [2];
 		this.TerminalType = tt;						                    // BYTE Ex. 0x22
         this.TerminalCapabilities  = tc;			                    // BYTE Ex. {0xE0, 0xF8, 0xE8} [3];
         this.AdditionalTerminalCapabilities = atc;                      // BYTE Ex. {0xC1, 0x00, 0xF0, 0xA0, 0x01} [5];
         this.TTQ = ttq;                                                 // BYTE Ex. {0x26, 0x40, 0x40, 0x00} [4]
-        this.props = [
-            {type: 'text'},
-            {type: 'text'},
-            {type: 'text'},
-            {type: 'text'},
-            {type: 'text'},
-            {type: 'text'},            
-        ];
     }
 } 
 
-class emv {
+
+class EMVManager {
     constructor () {        
-      
+        this.ClassName = "EMVManager";
         this.Applications = [];	
         this.Terminals    = [];	
         this.Clients      = [];	
         
-        this.Acquirer     = new emv_Acquirer();
-        this.Acceptor     = new emv_Acceptor();
+        this.Acquirer     = new EMVAcquirer();
+        this.Acceptor     = new EMVAcceptor();
 
         this.ApplicationsCount = 0;
         this.TerminalsCount    = 0;
@@ -253,7 +184,12 @@ class emv {
         let terminal = new emv_Terminal("12345678", [0x02, 0x50], 0x22, [0x60, 0xB8, 0xC8], [0xC1, 0x00, 0xF0, 0xA0, 0x01], [0x26, 0x40, 0x40, 0x00]);
         this.AddTerminal(terminal)
     }
-    LoadApplications() {			//EPV_D787.wp
+    LoadApplications() {			//EPV_D787.wp  a000000333010103
+        let aid = new emv_aid ( " a000000333010103",
+            //[0xA0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x03, 0x03, 0x00, 0x01, 0x00, 0x01, 0x00, 0x03], 
+                                                [0x00, 0x8C], 8, 1,  
+                                                [0xC1, 0x00, 0xF0, 0xA0, 0x01],[0xC1, 0x00, 0xF0, 0xA0, 0x01],[0xC1, 0x00, 0xF0, 0xA0, 0x01])
+        this.AddApplication(aid)                                                
     }
         
     LoadTacs() {					//EPT_D778.wp  
@@ -263,6 +199,9 @@ class emv {
    
         this.Terminals.push(terminal);
         this.TerminalsCount++;
+    }
+    AddApplication (aid) {
+        this.Applications.push(aid);
     }
 
 }

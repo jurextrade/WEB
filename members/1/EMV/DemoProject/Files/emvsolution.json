@@ -1,5 +1,55 @@
 {
-  "Applications": [],
+  "Applications": [
+    {
+        "RID": "a000000333",
+        "AID": [
+            {
+                "AID":"a000000333010103",    
+                "ApplicationVersionNumber": [0, 8],
+                "Priority": 8,
+                "applicationSelectionIndicator": 0,
+                "ForceTransaction": 1,
+                "TerminalActionCodeDenial":  [ 0,
+                0,
+                240,
+                160,
+                1],
+                "TerminalActionCodeOnline": [ 193,
+                0,
+                240,
+                160,
+                1],
+                "TerminalActionCodeDefault":[ 193,
+                0,
+                240,
+                160,
+                1]
+            },
+            {
+                "AID":"a000000333010102",    
+                "ApplicationVersionNumber": [0, 8],
+                "Priority": 8,
+                "applicationSelectionIndicator": 0,
+                "ForceTransaction": 1,
+                "TerminalActionCodeDenial":  [ 0,
+                0,
+                240,
+                160,
+                30],
+                "TerminalActionCodeOnline": [ 193,
+                0,
+                240,
+                160,
+                55],
+                "TerminalActionCodeDefault":[ 193,
+                0,
+                240,
+                160,
+                60]
+            }
+        ]
+    }
+  ],
   "Terminals": [
     {
       "IFDSerialNumber": "12345678",
@@ -25,26 +75,6 @@
         64,
         64,
         0
-      ],
-      "props": [
-        {
-          "type": "text"
-        },
-        {
-          "type": "text"
-        },
-        {
-          "type": "text"
-        },
-        {
-          "type": "text"
-        },
-        {
-          "type": "text"
-        },
-        {
-          "type": "text"
-        }
       ]
     }
   ],
@@ -55,7 +85,7 @@
   "Acceptor": {
     "MerchantCategoryCode": "8050",
     "MerchantIdentifier": "10549223015         ",
-    "MerchantNameAndLocation": "SALON CARTES RANG 1 75016               PARIS               ",
+    "MerchantNameAndLocation": "THIS IS A TEST SHOP BANGKOK THAILAND",
     "TerminalIdentification": "01                  ",
     "MerchantContractNumber": "500549223             ",
     "MerchantBillMode": "",

@@ -19,6 +19,13 @@ function tradedesk_init() {
 
 function tradedesk_end () {
     tradedesk_closeterminal(solution.CurrentTerminal)    
+    console.log ('sssssssssssssssssssss')
+    for (var i = 0; i < solution.Terminals.length; i++) {
+        let terminal = solution.Terminals[i];    
+        if (terminal.Type == 'Terminal' || terminal.Type == 'Tester') {
+            terminal.Com.Socket.close();     
+        }   
+    }
 }
 
 //---------------------------------------------------------------------MODULE END -----------------------------------------------------------------------------//

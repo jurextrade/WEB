@@ -22,7 +22,10 @@ function emv_init () {
 }
 
 function emv_end () {
-
+    for (var i = 0; i < solution.emv_Projects.length; i++) {
+        let project = solution.emv_Projects[i];    
+        project.Com.Socket.close();     
+    }   
 }
 
 //---------------------------------------------------------------------MODULE END -----------------------------------------------------------------------------//
@@ -137,17 +140,6 @@ function emv_timer () {
     }
 }
 
-function emv_update (project) {
-    emv_project_initterminal();          
-    emv_project_updateterminal();     
-
-    emv_project_initacceptor();          
-    emv_project_updateacceptor();     
-
-    emv_project_initacquirer();          
-    emv_project_updateacquirer();         
-}
-
 function emv_loadedproject (project) {
     if (project.Loaded) {
         clearInterval(Interval_emv_loadproject);
@@ -258,28 +250,6 @@ function onchange_emv_projectselect (elt, event) {
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-function onclick_byteflatpanel (elt, event) {
-    let checked = $('#' + elt.id).prop('checked');
-    let parent = $('#' + elt.id).closest('.emvflattablepanel');
-    if (checked) {
-        parent.find('.sb_tabcontainer').css('display', 'none')
-        parent.find('[role="tabpanel"]').removeClass('sb_pane')             
-        parent.find ('.sb_pane').css('display', 'flex')
-        parent.find ('.sb_tabs .tagheader').css('display', 'block')
-      
-        parent.find ('.sb_content').addClass('sb_column').css('flex-wrap', 'wrap');
-    } else {
-        parent.find('[role="tabpanel"]').addClass('sb_pane')        
-        parent.find('.sb_tabcontainer').css('display', '')
-        parent.find ('.sb_pane').css('display', '')
-        parent.find ('.sb_tabs .tagheader').css('display', 'none')
-  
-        parent.find ('.sb_content').removeClass('sb_column').css('flex-wrap', '');
-    }
-}
-
 function onclick_emv_tab(elt, event) {
 
 }
@@ -292,279 +262,13 @@ function onclick_emv_tab_close (elt, event) {
     sb.tab_delete (emv_maintabs, tabname);    
 }
 
-
-//---------------------------------------------------------- TERMINAL TYPE PANEL -----------------------------------------------------------------
-
-function emv_tt_panel (editable) {
-    var content;
-    content =
-    `<table class="sb_table emvbyte ${editable}" width="523">
-        <colgroup>
-            <col style="mso-width-source:userset;mso-width-alt:1280;width:26pt">
-            <col style="mso-width-source:userset;mso-width-alt:9508;width:128pt">
-            <col style="mso-width-source:userset;mso-width-alt:4973;width:60pt">
-            <col style="mso-width-source:userset;mso-width-alt:5266;width:60pt">
-            <col style="mso-width-source:userset;mso-width-alt:5412;width:60pt">
-        </colgroup>
-        <tbody>
-            <tr >
-                <td colspan="2" rowspan="2" style="background-color: var(--theme-header-bg-color);color: var(--theme-header-color);">Environment</td>
-                <td colspan="3" style="background-color: var(--theme-header-bg-color);color: var(--theme-header-color);">Operational Control Provided By:</td>
-            </tr>
-            <tr >
-                <td id="10" class= "TT_value" >Financial Institution</td>
-                <td id="20" class= "TT_value" >Merchant</td>
-                <td id="30" class= "TT_value" >Cardholder</td>
-            </tr>
-            <tr >
-                <td colspan="2" style="text-align:left;border-bottom:none;">Attended</td>
-                <td style="border-bottom:none;"></td>
-                <td style="border-bottom:none;"></td>
-                <td style="border-bottom:none;"></td>
-            </tr>
-            <tr >
-                <td style="border-right:none;border-top:none;"></td>
-                <td  id="01" class= "TT_value" style="text-align:left;border-left:none;border-top:none;">Online only</td>
-                <td  id="11" class= "TT_value" onclick="onclick_emv_tt(this, event)"  onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)">11</td>
-                <td  id="21" class= "TT_value" onclick="onclick_emv_tt(this, event)"  onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)">21</td>
-                <td style="">----</td>
-            </tr>
-            <tr >
-                <td style="border-right:none"></td>
-                <td id="02" class= "TT_value" style="text-align:left;border-left:none">Offline with online capability</td>
-                <td id="12" class= "TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" >12</td>
-                <td id="22" class= "TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" >22</td>
-                <td>----</td>
-            </tr>
-            <tr >
-                <td style="border-right:none"></td>
-                <td id="03" class= "TT_value" style="text-align:left;border-left:none">Offline only</td>
-                <td id="13" class= "TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" >13</td>
-                <td id="23" class= "TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" >23</td>
-                <td>----</td>
-            </tr>
-            <tr >
-                <td colspan="2" style="text-align:left;border-bottom:none;">Unattended</td>
-                <td style="border-bottom:none;"></td>
-                <td style="border-bottom:none;"></td>
-                <td style="border-bottom:none;"></td>
-            </tr>
-            <tr >
-                <td style="border-right:none;border-top:none;"></td>
-                <td id="04" class= "TT_value" style="text-align:left;border-left:none;border-top:none;">Online only</td>
-                <td id="14" class= "TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" style="">14</td>
-                <td id="24" class= "TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" style="">24</td>
-                <td id="34" class= "TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" style="">34</td>
-            </tr>
-            <tr >
-                <td style="border-right:none"></td>
-                <td id="05" class= "TT_value" style="text-align:left;border-left:none">Offline with online capability</td>
-                <td id="15" class="TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" >15</td>
-                <td id="25" class= "TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" >25</td>
-                <td id="35" class= "TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" >35</td>
-            </tr>
-            <tr >
-                <td style="border-right:none"></td>
-                <td id="06" class= "TT_value" style="text-align:left;border-left:none">Offline only</td>
-                <td id="16" class= "TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" >16</td>
-                <td id="26" class= "TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" >26</td>
-                <td id="36" class= "TT_value" onclick="onclick_emv_tt(this, event)" onmouseover="onmouseover_emv_tt(this, event)" onmouseout="onmouseout_emv_tt(this, event)" >36</td>
-            </tr>
-            </tbody>
-        </table>`
-    return content;
-}    
-
-function onclick_emv_tt(elt, event) {
-    
-  
-    if ( $('#emv_TTPanel .emvbyte').hasClass('editable')) {
-
-        let elts =  $('#emv_tt_Panel .TT_value');
-        elts.removeClass('selected')
-
-        $('#emv_tt_Panel' + ' #' + elt.id).addClass('selected')
-        let content =  $(elt).html();
-        let col = content.substring(0,1);
-        let row = content.substring(1);
-        $('#emv_tt_Panel ' + '#' + col + '0'). addClass ('selected')
-        $('#emv_tt_Panel ' + '#' + '0' + row). addClass ('selected')
-    }
-}
-
-function onmouseover_emv_tt(elt, event) {
-
-    let content =  $(elt).html();
-    let col = content.substring(0,1);
-    let row = content.substring(1);
-
-    $('#emv_tt_Panel ' + '#' + col + '0'). css ('background', 'var(--theme-hover-bg-color)')
-    $('#emv_tt_Panel ' + '#' + col + '0'). css ('color', 'var(--theme-hover-color)')
-
-    $('#emv_tt_Panel ' + '#' + '0' + row). css ('background', 'var(--theme-hover-bg-color)')
-    $('#emv_tt_Panel ' + '#' + '0' + row). css ('color', 'var(--theme-hover-color)')
-}
-
-function onmouseout_emv_tt(elt, event) {
-    
-    let content =  $(elt).html();
-    let col = content.substring(0,1);
-    let row = content.substring(1);
-
-    $('#emv_tt_Panel ' + '#' + col + '0'). css ('background', '')
-    $('#emv_tt_Panel ' + '#' + col + '0'). css ('color', '')
-
-    $('#emv_tt_Panel ' + '#' + '0' + row). css ('background', '')
-    $('#emv_tt_Panel ' + '#' + '0' + row). css ('color', '')
-}
-
-function emv_tt_init (panel) {
-    let elts =  $('#' + panel.id + ' .TT_value');
-    elts.removeClass('selected')
-}
-
-function emv_tt_update (panel, byte, scroll) {
-    let byteint = parseInt(byte);
-    emv_tt_select (panel, byteint, scroll)    
-}
-
-function emv_tt_select (panel, id, scroll) {
-    let elt =  $('#' + panel.id + ' #' + id);
-    let elts =  $('#' + panel.id + ' .TT_value');
-    elts.removeClass('selected')
-
-    if (scroll) {
-        let ui       = solution.get('ui') 
-        let platform = ui.platform_get ('pname',EMV_PLATFORM_PNAME);     
-    
-        BottomPanel_Flat (platform, false ,true);        
-        elt[0].scrollIntoView();  
-
-    }    
-    elt.addClass('selected')
-    let content =  elt.html();
-    let col = content.substring(0,1);
-    let row = content.substring(1);
-    $('#emv_tt_Panel ' + '#' + col + '0'). addClass ('selected')
-    $('#emv_tt_Panel ' + '#' + '0' + row). addClass ('selected')    
-} 
-
 //---------------------------------------------------------- APDU PANEL -----------------------------------------------------------------
+
 function emv_apdu_panel () {
     var content;
     content = `<div></div>`;
     return content;
 }
-
-//---------------------------------------------------------- BYTE PANEL  -----------------------------------------------------------------
-//elt.css ('background', '#273853');   
-//elt.css ('border', '0px solid #2b476b');   
-//elt.css ('color', '#ffb684');  
-
-function onclick_emv_byte(elt, event) {
-    let target    = elt;
-    //let bitcell   =  $('#' + elt.id + ' td[byte]');
-    let bitcell   = $(elt).children('[byte]')
-    let bytepanel = $(target).closest ('.bytepanel');
-    console.log ('click')
-    if (bytepanel.hasClass('editable') && $(target).children().last().html() != 'RFU' ) {
-        if ($(target).hasClass('selected')) {
-            $(target).removeClass('selected')
-            bitcell.html('0')
-            
-        } else {
-            $(target).addClass('selected')
-              bitcell.html('1')
-        }
-    }
-}
-
-function emv_byte_init (panel) {
-    for (var i = 0; i < panel.struct.length; i++) {
-        for (var j = 0; j < panel.struct[i].length; j++) {
-//            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + j).removeClass('selected')                
-            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + j).attr('byte', panel.struct[i][j].id);      
-            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + j).html('0');          
-            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_8').html(panel.struct[i][j].item)
-            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j).removeClass('selected')      
-              
-        }
-    }
-    return panel;
-}
-
-function emv_byte_update (panel, bytes, scroll, shift) {
-    let Shift = defined(shift) ? shift : 0;    
-    let Byte  = Shift;
-
-    let bytesint = parseInt(bytes);
-    for (var i = panel.struct.length - 1; i >= 0; i--) {
-        let byte = bytesint >> (i * 8);
-        for (var j = 0; j < panel.struct[i].length; j++) {
-            let id = byte & BIT[j];
-            if (id == 0) continue;
-            emv_byte_select(panel, (Byte << 8) | id, scroll);
-        }
-        Byte++;
-    }
-}
-
-function emv_byte_select (panel, id, scroll) {
-    let elt =  $('#' + panel.id + ' [byte="' + id + '"]');
-    if (scroll) {
-        let ui       = solution.get('ui') 
-        let platform = ui.platform_get ('pname', EMV_PLATFORM_PNAME);     
-    
-        BottomPanel_Flat (platform, false ,true);        
-        
-        let paneid = elt.closest('.emvflattablepanel').closest('[role="tabpanel"]').attr('id')
-        sb.tab_select(emv_bottomtabs, $('[data-bs-target="#' + paneid + '"]').attr('id'));
-        
-        let bytepanelid = elt.closest('[role="tabpanel"]').attr('id')
-        let bytetabid   = elt.closest('.sb_tabs' ).attr('id')
-        let sbelt = sb.get(emv_bottomtabs, 'id', bytetabid)
-        sb.tab_select(sbelt[0], $('[data-bs-target="#' + bytepanelid + '"]').attr('id'));
-
-        elt.closest ('.emvbyte')[0].scrollIntoView();  
-
-    }    
-    
-    elt.html('1');    
-    elt.parent().addClass('selected')
-} 
-
-function emv_byte_show (panel, id, show) { 
-    let scroll = true;
-
-    let elt     = $('#' + panel.id + ' [byte="' + id + '"]');
-
-    if (scroll) {
-        let ui       = solution.get('ui') 
-        let platform = ui.platform_get ('pname', EMV_PLATFORM_PNAME);     
-    
-        BottomPanel_Flat (platform, false ,true);        
-        
-        let paneid = elt.closest('.emvflattablepanel').closest('[role="tabpanel"]').attr('id')
-        sb.tab_select(emv_bottomtabs, $('[data-bs-target="#' + paneid + '"]').attr('id'));
-
-        let bytepanelid = elt.closest('[role="tabpanel"]').attr('id')        
-        let bytetabid   = elt.closest('.sb_tabs' ).attr('id')
-        let sbelt = sb.get(emv_bottomtabs, 'id', bytetabid)
-        sb.tab_select(sbelt[0], $('[data-bs-target="#' + bytepanelid + '"]').attr('id'));
-
-        elt.closest ('.emvbyte')[0].scrollIntoView();  
-    }    
-
- //   let eltdesc = $('#' + panel.id + ' #' + elt.attr('id').slice(0, -1) + '8');     
-    if (show) {    
-        elt.parent().addClass('marked')
-    } else {
-        elt.parent().removeClass('marked')
-    }
-} 
- 
-
-//---------------------------------------------------------- APDU PANEL -----------------------------------------------------------------
 
 function onkeydown_emv_search_tag (event, elt) {
     resetStatus($(elt))    
@@ -603,7 +307,7 @@ function onclick_emv_search_tag (elt) {
 }
 
 function emv_table_searchtag (tag, event) {
-    console.log ('ldfldkfldkkkkkkkkkkkkkkkkkkkkkkkkkk')
+
     if ($('#zoom_tag_' + tag).length != 0) {
         event.stopPropagation();
         return;
@@ -650,8 +354,17 @@ function emv_table_searchtag (tag, event) {
 
 }
 
-function emv_apdu_searchtag (name, event) {
 
+
+
+function emv_apdu_searchtag (name, event) {
+    $('.emv_button_show').on('click', function(event){
+        $('#overlay_tag').remove();        
+        console.log ('click on button show')
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+    })
     emv_table_searchtag (name, event)
 
     let tags = [];
@@ -684,6 +397,9 @@ function emv_apdu_searchtag (name, event) {
         }
         $('#' + tags[0].attr('id'))[0].scrollIntoView(); 
     }
+    event.preventDefault();    
+    event.stopPropagation();   
+    return false;   
 }
 
 function onclick_apdu_treenode (elt, event) {
@@ -693,7 +409,7 @@ function onclick_apdu_treenode (elt, event) {
         let closed      = $('#' + elt.id + '_ref').hasClass("closed") ? true : false;
         let group    = $(elt).find('#emv_apdu_bargroup');      
         if (closed) {
-            group.find('#inspect_button').css ('display', 'block')        
+            group.find('#inspect_button').css ('display', 'flex')        
         } else {
             group.find('#inspect_button').css ('display', 'none') 
         }            
@@ -911,21 +627,21 @@ function emv_selectstep (step, scroll) {
     
     emv_tree_step_selectsubstep(step, scroll);   
     emv_presentation_selectsubstep(step, true);  
-    emv_tester_recordbargroup_selectstep(mainstep_id)    
+    emv_tester_stepsgroup_selectstep(mainstep_id)    
 }
 
 //--------------------------------------------------- TESTER BARGROUP --------------------------------------------------------
 
-function onclick_emv_tester_stepsbargroup(elt, event) {
+function onclick_emv_tester_stepsgroup(elt, event) {
     let step = elt.id;
     emv_selectstep(step, true);
 }
 
-function emv_tester_recordbargroup_selectstep (step) {
+function emv_tester_stepsgroup_selectstep (step) {
 
-    $('#emv_tester_stepsbargroup .EMVStep').removeClass ('selected');    
+    $('#emv_tester_stepsgroup .EMVStep').removeClass ('selected');    
 
-    let selected_element =  $('#emv_tester_stepsbargroup .EMVStep').filter('#' +step)  
+    let selected_element =  $('#emv_tester_stepsgroup .EMVStep').filter('#' +step)  
     if (selected_element.length != 0) {    
         selected_element.addClass ('selected')
     }
@@ -1154,12 +870,12 @@ function onclick_emvtabs(event) {
 } 
 
 function ondblclick_emvtabs(elt, event) {
-    event.stopPropagation();    
+    event.stopPropagation();
+    event.preventDefault();        
     let ui       = solution.get('ui') 
     let platform = ui.currentplatform;
     if (!platform) {
         return;
     }
-
     BottomPanel_Flat (platform, undefined, true);
 } 

@@ -78,3 +78,7 @@
     border-top: 1px solid var(--theme-border-color);
     margin-top: 2px;    
 }
+
+#netprog_home_rightsection #frontbar {
+    height: 0px;
+}

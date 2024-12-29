@@ -386,8 +386,8 @@ const emv_TVR = {
             {id: PIN_entry_required_and_PIN_pad_not_present_or_not_working	, item: "PIN entry required, but no PIN pad present or not working"},
             {id: PIN_entry_required_PIN_pad_present_but_PIN_was_not_entered, item: "PIN entry required, PIN pad present, but PIN was not entered"},
             {id: Online_PIN_entered										, item: "On-line PIN entered"},
-            {id: 0x0202, item: "RFU"},
-            {id: 0x0201, item: "RFU"},
+            {id: 0x0202                                                 , item: "RFU"},
+            {id: 0x0201                                                 , item: "RFU"},
         ],
         [
             {id: Transaction_exceeds_floor_limit						, item: "Transaction exceeds floor limit"},
@@ -2696,5 +2696,9 @@ const emv_AID = {
     A0000006723020: "TROY chip debit card",
     A0000007705850: "Indian Oil Corporation Limited - XTRAPOWER Fleet Card Program",
     A0000007790000: "Zimswitch Zimbabwe",
-    D27600002547410100: "Girocard ATM"
+    D27600002547410100: "Girocard ATM",
+    A000000333010101: "UnionPay Debit China",	
+    A000000333010102: "UnionPay Credit China",	
+    A000000333010103: "UnionPay Quasi Credit China",	
+    A000000333010106: "UnionPay Electronic Cash" 
 }

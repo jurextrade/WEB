@@ -124,7 +124,7 @@
 } 
 
 .emvapdutree .sb_formgroup div {
-    border: 1px solid var(--theme-border-color);
+  /*  border: 1px solid var(--theme-border-color);*/
 } 
 
 .emvapdutree span.tagextension   {
@@ -176,6 +176,7 @@
     width: max-content;
     font-size: var(--theme-sfont-size);    
     font-family: Calibri, sans-serif;
+    text-transform: none;    
 }
 
 .emvbyte td, .emvbyte th  {
@@ -209,6 +210,10 @@
     background: var(--theme-emv-select);
  }
  
+ .emvbyte tr.active {
+    background-color: unset;
+    color: unset;
+ }
 
 /*---------------------------------------------------------------- PROCESS DIAGRAM -----------------------------------------------------------*/
 /* All parameters */
@@ -491,12 +496,12 @@
     overflow: auto;
 }
  
-#emv_tester_stepsbargroup .EMVStep {
+#emv_tester_stepsgroup .EMVStep {
     background: white;
 }
 
 
-#emv_tester_stepsbargroup .EMVStep.selected {
+#emv_tester_stepsgroup .EMVStep.selected {
     background:var(--theme-emv-select);
 }
 
@@ -547,8 +552,8 @@
 }
 
 #emv_apdu .sb_formcontainer {
-
-    padding:0px;
+    padding: 7px;
+    border: 1px solid var(--theme-border-color);
 }
 
 /*----------------------------------------------------------------------------- TLV PARSE-------------------------------------------------------------------------------*/
@@ -664,6 +669,22 @@
     max-height: unset;
 }
 
+/*----------------------------------------------------------------------------- APPLICATION PANEL -------------------------------------------------------------------------------*/
+
+#emv_AIDPanel #emv_aidPanel {
+    max-width:300px;
+    padding: .375rem .75rem;
+    font-size: var(--theme-font-size);
+}
+
+/*----------------------------------------------------------------------------- MANAGER PANEL -------------------------------------------------------------------------------*/
+
+#emv_managersidepanel .formcontrol {
+    max-width:300px;
+    padding: .375rem .75rem;
+    font-size: var(--theme-font-size);
+}
+
 /*----------------------------------------------------------------------------- TESTER PANEL -------------------------------------------------------------------------------*/
 
 #emv_tester_terminalpanel {
@@ -702,23 +723,23 @@
 
 /*----------------------------------------------------------------------------- TERMINAL SECTION -------------------------------------------------------------------------------*/
 
-#emv_terminal_section {
+#emv_terminals_section {
     flex-wrap: wrap;
 }
 
 /*----------------------------------------------------------------------------- TERMINAL TYPE PANEL -------------------------------------------------------------------------------*/
 
-#emv_TTPanel {
+.ttpanel {
     padding:10px;
 }
 
-#emv_TTPanel .TT_value:hover {
-    color : var(--theme-hover-color);
+.ttpanel .TT_value:hover {
+    color : var(--theme-hover-color) !important;
 }
 
-#emv_TTPanel .TT_value.selected {
-    color : var(--theme-emv-select);
-    background: var(--theme-select-bg-color);
+.ttpanel .TT_value.selected {
+    color : var(--theme-emv-select) !important;
+    background: var(--theme-select-bg-color) !important;
 }
 
 #emv_tt_Panel {
@@ -751,20 +772,6 @@
     padding:10px;     
 }
 
-#emv_managersidepanel input {
-    max-width:300px;
-    padding: .375rem .75rem;
-    font-size: var(--theme-font-size);
-}
-
-/*----------------------------------------------------------------------------- APPLICATION PANEL -------------------------------------------------------------------------------*/
-
-#emv_AIDPanel #emv_aidPanel {
-    max-width:300px;
-    padding: .375rem .75rem;
-    font-size: var(--theme-font-size);
-}
-
 /*----------------------------------------------------------------------------------- TAG HEADERS --------------------------------------------------------------------------*/
 
 .tagheader {
@@ -777,9 +784,14 @@
     color: var(--theme-main-color);
     justify-content: left;
     height: 35px;    
-    padding-left: 0px !important;
+    padding: 15px 0px 15px 5px !important;
 }
 
 #treenode-emv_projectmanager-0 {
     display:none;
+}
+
+#emv_root .treenode {
+    text-transform: uppercase;
+    color: var(--theme-main-color);
 }

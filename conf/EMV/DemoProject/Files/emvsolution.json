@@ -2,7 +2,7 @@
   "Applications": [],
   "Terminals": [
     {
-      "IFDSerialNumber": "12345678",
+      "IFDSerialNumber": "12345679",
       "TerminalCountryCode": [
         2,
         80
@@ -55,7 +55,7 @@
   "Acceptor": {
     "MerchantCategoryCode": "8050",
     "MerchantIdentifier": "10549223015         ",
-    "MerchantNameAndLocation": "SALON CARTES RANG 1 75016               PARIS               ",
+    "MerchantNameAndLocation": "THIS IS A TEST SHOP BANGKOK THAILAND",
     "TerminalIdentification": "01                  ",
     "MerchantContractNumber": "500549223             ",
     "MerchantBillMode": "",

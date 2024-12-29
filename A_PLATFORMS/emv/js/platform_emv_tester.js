@@ -333,7 +333,7 @@ function terminalinputresize() {
     if (Tester) Tester.TerminalInput.resize()
 }
 
-function onclick_emv_tester_recordbargroup(elt, event) {
+function onclick_emv_tester_filtergroup(elt, event) {
     var checked = $(elt).prop('checked');    
     $(elt).prop('checked', checked);    
     
@@ -352,6 +352,16 @@ function onclick_emv_tester_recordbargroup(elt, event) {
             break;                
     }
 }
+
+
+function onclick_emv_tester_reader(elt, event) {
+
+}
+
+function onclick_emv_tester_terminal(elt, event) {
+
+}
+
 
 
 function emv_command_container(id) {

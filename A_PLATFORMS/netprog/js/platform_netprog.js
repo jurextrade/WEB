@@ -781,7 +781,7 @@ function netprog_adjustbargroup (elt, open) {
         let nodetype  = node.nodetype;     
         if (open) {
             if (netprog_type_leaf.includes (nodetype)) {
-                fatherspan.find('#tree_delete_entity').css ('display', 'block')   
+                fatherspan.find('#tree_delete_entity').css ('display', 'flex')   
             } else {
                 fatherspan.find('#netprog_tree_update').css ('display', '')  
             }          
@@ -848,7 +848,7 @@ function netprog_showtreepanel (nodename) {
 
     if (netprog_type_leaf.includes (nodetype)) {
         if (closed) {
-            group.find('#tree_delete_entity').css ('display', 'block')   
+            group.find('#tree_delete_entity').css ('display', 'flex')   
             sb.tree_open(elt.attr('id'))                 
         } else {
             return;
@@ -865,7 +865,7 @@ function netprog_showtreepanel (nodename) {
         let hidden      =  $('#' + panelid).css ('display') == 'none' ? true : false;          
         if (hidden) {
             $('#' + panelid).css ('display', 'block')
-            $(group).find('#tree_delete_entity').css ('display', 'block')        
+            $(group).find('#tree_delete_entity').css ('display', 'flex')        
         } else {
             return;
             $('#' + panelid).css ('display', 'none')
@@ -875,7 +875,6 @@ function netprog_showtreepanel (nodename) {
 }
 
 function onclick_netprog_treenode (elt, event) {
-
     let nodename = $(elt).attr("nodename");  
     let eltname = $(elt).find('.sb_label').html();
     
@@ -896,8 +895,9 @@ function onclick_netprog_treenode (elt, event) {
     let closed = $('#' + elt.id + '_ref').hasClass("closed") ? true : false;
 
     if (netprog_type_leaf.includes (nodetype)) {
+   
         if (closed) {
-            group.find('#tree_delete_entity').css ('display', 'block')        
+            group.find('#tree_delete_entity').css ('display', 'flex')        
         } else {
             group.find('#tree_delete_entity').css ('display', 'none') 
         }
@@ -907,6 +907,7 @@ function onclick_netprog_treenode (elt, event) {
 
     netprog_jsoneditor_update(entity);
 }
+    
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1032,6 +1033,7 @@ function netprog_siteview_update (manager) {
     sb.tree_additems ('treenode-applications-3', menu);    
     */
 }
+/*
 function Application_Launch (name){     
 
     console.log ('Launch application')
@@ -1044,16 +1046,41 @@ function Application_Launch (name){
     let execrepertory = netprogappli.ExecRepertory;
     let execcommand   = netprogappli.ExecCommand;
     let execparameters= netprogappli.ExecParameters;
-    
+    let repertory     = netprogappli.Repertory;
  
     let command = 
-    `process.chdir('${execrepertory}')
-    require('child_process').exec('start cmd.exe /K ${execcommand} ${execparameters}')`
+    `process.chdir('${repertory}')
+    require('child_process').exec('start cmd.exe /K ${execrepertory + '/' + execcommand} ${execparameters}')`
     
     server.sendmessage (command)
 }
+*/
 
+function Application_Launch (name){     
 
+    console.log ('Launch application')
+    let netprogappli  = interface_GetEntity (netprog_manager, 'Applications', 'Name', name);
+    let servermachine = interface_GetEntity (netprog_manager, 'Machines',     'Name', netprogappli.Machine);       
+    let port          = netprogappli.Ports[0];
+    let address       = servermachine.IPAddress;
+    let server        = solution.GetServerFromMachine(netprogappli.Machine);
+    
+    let execrepertory = netprogappli.ExecRepertory;
+    let execcommand   = netprogappli.ExecCommand;
+    let execparameters= netprogappli.ExecParameters;
+    let repertory     = netprogappli.Repertory;
+    let language      = netprogappli.Language;
+    let command       =``;
+
+    if (language == 'Javascript') {
+        command =  `process.chdir('${execrepertory}') 
+        require('child_process').exec('start cmd.exe /K ${execcommand} ${execparameters}')`
+    } else {
+        command =  `process.chdir('${repertory}') 
+        require('child_process').exec('start cmd.exe /K ${execrepertory + '/' + execcommand} ${execparameters}')`
+    }    
+    server.sendmessage (command)
+}
 
 //---------------------------------------------------- NETPROG TABS AND  MENU  --------------------------------------------------------   
 
@@ -1194,10 +1221,12 @@ function onclick_treenode_modify (elt, event) {
         let group    = $(elt).closest('#netprog_tree_update');
 
         if (hidden) {
-            $('#' + panelid).css ('display', 'block')
-            $(group).find('#tree_delete_entity').css ('display', 'block')        
+       //     $('#' + panelid).css ('display', 'block')
+            $('#' + panelid).slideToggle()
+            $(group).find('#tree_delete_entity').css ('display', 'flex')        
         } else {
-            $('#' + panelid).css ('display', 'none')
+//            $('#' + panelid).css ('display', 'none')
+            $('#' + panelid).slideToggle()            
             $(group).find('#tree_delete_entity').css ('display', 'none') 
         }
         event.stopPropagation();  
@@ -1294,43 +1323,6 @@ function onclick_treenode_delete(elt, event){
        }).no(function () {})    
 }
 
-function onclick_treenode_update(elt, event){
-    event.preventDefault();    
-    event.stopPropagation();  
-
-    var nodeid    = $(elt.parentElement).closest('.sb_link').attr('id');
-    var panelid   = nodeid.replace ('treenode', 'treepanel');
-    var nodename  = $('#' + nodeid).attr('nodename');
-
-    netprog_update_platform(nodename);
-    
-    $('#' + panelid + ' [changed="true"]').removeAttr('changed');
-    $('[nodename=\'' + nodename + '\']').find('#tree_update_entity').css('display', 'none')
-    $('[nodename=\'' + nodename + '\']').find('#tree_cancel_entity').css('display', 'none')    
-   
-
-   
-    solution.netprog_CurrentProject.Save();
-    console.log ('I ENTER HERE')
-    
-}
-
-function onclick_treenode_cancel(elt, event){
-    event.preventDefault();    
-    event.stopPropagation();  
-    
-    var nodeid    = $(elt.parentElement).closest('.sb_link').attr('id');
-    var panelid   = nodeid.replace ('treenode', 'treepanel');
-    var nodename  = $('#' + nodeid).attr('nodename');
-
-    netprog_update_object(nodename);
-    
-    $('#' + panelid + ' [changed="true"]').removeAttr('changed');
-    $('[nodename=\'' + nodename + '\']').find('#tree_update_entity').css('display', 'none')
-    $('[nodename=\'' + nodename + '\']').find('#tree_cancel_entity').css('display', 'none')        
-}
-
-
 function onchange_treenode_input (elt) {
     let nodename = $(elt).attr('nodename');
     let node = netprog_entityfromnodename(nodename);
@@ -1361,6 +1353,48 @@ function onchange_treenode_input (elt) {
         }
     } 
 }
+
+
+function onclick_treenode_update(elt, event){
+    event.preventDefault();    
+    event.stopPropagation();  
+
+    var nodeid    = $(elt.parentElement).closest('.sb_link').attr('id');
+    var panelid   = nodeid.replace ('treenode', 'treepanel');
+    var nodename  = $('#' + nodeid).attr('nodename');
+
+    netprog_update_platform(nodename);
+    
+    $('#' + panelid + ' [changed="true"]').removeAttr('changed');
+
+
+    $('[nodename=\'' + nodename + '\']').find('#tree_update_entity').css('display', 'none')
+    $('[nodename=\'' + nodename + '\']').find('#tree_cancel_entity').css('display', 'none')    
+   
+
+   
+    solution.netprog_CurrentProject.Save();
+    console.log ('I ENTER HERE')
+    
+}
+
+function onclick_treenode_cancel(elt, event){
+    event.preventDefault();    
+    event.stopPropagation();  
+    
+    var nodeid    = $(elt.parentElement).closest('.sb_link').attr('id');
+    var panelid   = nodeid.replace ('treenode', 'treepanel');
+    var nodename  = $('#' + nodeid).attr('nodename');
+
+    netprog_update_object(nodename);
+    
+    $('#' + panelid + ' [changed="true"]').removeAttr('changed');
+    $('[nodename=\'' + nodename + '\']').find('#tree_update_entity').css('display', 'none')
+    $('[nodename=\'' + nodename + '\']').find('#tree_cancel_entity').css('display', 'none')        
+}
+
+
+
 //---------------------------------------------------- NETPROG TABS AND  MENU  --------------------------------------------------------   
 
 const MENU_FILE_CLOSEALL_ID   = 1;
@@ -1590,6 +1624,16 @@ function netprog_update_platform (nodename) {
 
         if (defined(elt) && elt.length != 0) {
             entity[key] = elt.val();
+            if (elt.is('select')) {
+                $('#' + elt.attr('id') + ' [selected="selected"]').removeAttr('selected');               
+                $('#' + elt.attr('id') + ' option').each(function() {
+                    if ($(this).prop("selected") == true) {
+                        $(this).attr('selected',"selected");
+                    }
+                })
+            } else {
+                elt.prop("defaultValue", elt.val())
+            }
         }
     }    
     let elt       = $('[nodename=\'' + nodename + '\'].sb_link');     
@@ -2066,7 +2110,7 @@ function netprog_GetStartedSection_Panel () {
     var content = 
        '<label class="sb_f_size12">Get Started - Project Templates</label>' +
        '<div class="sb_row sb_widget-container">' +
-            sb_widget_create ('downloadnetprog',  ' onclick_downloadnetprog(this, event)',    icon_download, 'Download ', 'Download NetProg Library', 'onclick_netprogdownload(event)', 'GitHub') +
+            sb_widget_create ('downloadnetprog',  'onclick_downloadnetprog(this, event)',    icon_download, 'Download ', 'Download NetProg Library', ['onclick_netprogdownload(event)'], ['GitHub']) +
      //       sb_widget_create ('tradedeskconnect',  'onclick_connectMT4Terminal(this, event)', icon_terminal, 'MT4 Terminal',    'Connect your MT4 Terminal') +
      //       sb_widget_create ('optionstutorial',   'onclick_optionstutorial(this, event)',    icon_strategy, 'Options',         'Yahoo Options') +                
        '</div>' 

@@ -147,9 +147,34 @@ function onclick_emvtester(elt, event) {
     $('#emv_maincarousel').carousel(2);   
 }
 
-function onclick_emvdownload(elt, event) {
+function onclick_emvclientdownload(elt, event) {
     SaveURIInFile('/EMV/Client/Client.zip', '')
 }
+
+function onclick_emvclientgithub(elt, event) {
+    var win = window.open("https://github.com/jurextrade/EMV/tree/main/Client", '_blank');
+    win.focus();
+}
+
+function onclick_emvserverdownload(elt, event) {
+    SaveURIInFile('/EMV/Client/Client.zip', '')
+}
+
+function onclick_emvservergithub(elt, event) {
+    var win = window.open("https://github.com/jurextrade/EMV/tree/main/Server", '_blank');
+    win.focus();
+}
+
+
+function onclick_emvrouterdownload(elt, event) {
+    SaveURIInFile('/EMV/Servers/EMVRouter.js', '')
+}
+
+function onclick_emvroutergithub(elt, event) {
+    var win = window.open("https://github.com/jurextrade/Servers/blob/main/EMVRouter.js", '_blank');
+    win.focus();
+}
+
 
 function onclick_emvconnectseehow (event) {
     event.stopPropagation();    
@@ -181,9 +206,10 @@ function emv_GetStartedSection_Panel () {
     var content = 
        '<label class="sb_f_size12">Get Started - Project Templates</label>' +
        '<div class="sb_row sb_widget-container">' +
-            sb_widget_create ('downloadncardreader',  'onclick_downloadcardreader(this, event)', icon_download, 'Download ', 'Download Card Reader','onclick_emvdownload(event)', 'download') +
-            sb_widget_create ('emvconnect',           'onclick_emvconnect(this, event)', icon_terminal, 'EMV Terminal','Configure your EMV Terminal','onclick_emvconnectseehow(event)', 'see demo terminal') +
-            sb_widget_create ('emvtester',            'onclick_emvtester(this, event)', icon_terminal, 'EMV Tester','Test your card','onclick_emvtesterseehow(event)', 'see tester') +
+            sb_widget_create ('downloadncardreader',  'onclick_downloadcardreader(this, event)', icon_download, 'EMV Client ', 'Card Reader',['onclick_emvclientdownload(event)', 'onclick_emvclientgithub(event)'], ['download', 'github']) +
+            sb_widget_create ('emvconnect',           'onclick_emvconnect(this, event)', icon_terminal, 'EMV Terminal','Configure your EMV Terminal',['onclick_emvserverdownload(event)', 'onclick_emvservergithub(event)', 'onclick_emvconnectseehow(event)'], ['download', 'github', 'see demo terminal']) +
+            sb_widget_create ('emvrouter',            'onclick_emvrouter(this, event)', icon_terminal, 'EMV Router','Controls Communication for internet Testing',['onclick_emvrouterdownload(event)', 'onclick_emvroutergithub(event)'], ['download', 'github']) +
+            sb_widget_create ('emvtester',            'onclick_emvtester(this, event)', icon_terminal, 'EMV Tester','Test your card',['onclick_emvtesterseehow(event)'], ['see tester']) +
        '</div>' 
     return content;
 }
@@ -247,8 +273,8 @@ function emv_AssistantPanel () {
 '                       <div class="card-body">' +
 '                           <div class="card-title"></div>' +
 '                           <div class= "mb-3">' +    
-'                               <li class="card-text">You need to Register to be able to connect the Card Reader</li>' +
-'                               <li class="card-text">Memorize the name and the password, these will be used in Card Reader Program</li>' +
+'                               <li class="card-text">You need to Register to be able to connect the Card Reader to EMV Terminal via the EMV Router.</li>' +
+'                               <li class="card-text">Memorize the name and the password, these will be used as first step in Card Reader Program</li>' +
 '                               <div class="sb_formgroup card-text">' +
 '                                   <button class="assistant_button sb_button noactivate" title="" type="button" onclick="emv_assistant_register()"><i class="icon_mt4expert"></i>Login or Register</button>' +
 '                               </div>' +

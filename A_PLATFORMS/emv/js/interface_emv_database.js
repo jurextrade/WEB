@@ -70,9 +70,9 @@ var emv_database_sidepanel = {
     type: 'panel',
     class: 'sb_sidepanel sb_panel sb_main sb_column',
     items:
-         [emv_database_headerpanel,
+         [
           emv_database_root
-    ]
+        ]
 }
 
 //---------------------------------------------------------------------------- TAGS PANEL -----------------------------------------------------------------------------------

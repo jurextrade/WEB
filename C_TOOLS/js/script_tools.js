@@ -99,7 +99,7 @@ function ascii_to_hexa (data, datasize) {
 }
 
 // shift more than 32 bits , input array of char , output big int
-
+binary_to_hexa = (BinaryStr, nbrbytes) => parseInt(BinaryStr , 2).toString(16).padStart(nbrbytes*2, '0').toUpperCase()                   // input binary string -- output hexa string
 array_to_int = Uint8Array => [...Uint8Array].reverse().reduce((prev, curr, index) => BigInt(prev) | (BigInt(curr) << BigInt(index * 8))) // input array of hexa -- ouput int with shift
 hexa_to_array = HexaString => HexaString.split(/(..)/g).filter(s => s).map(elt => parseInt(elt, 16))                                     // input hexa string -- ouput array of hexa
 hexa_to_int  = HexaString => array_to_int(hexa_to_array(HexaString))                                                                     // input hexa string -- ouput int with shift

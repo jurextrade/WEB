@@ -322,8 +322,8 @@ var option_boxterminalspanel = {
 }
 
 
-var project_terminals_headerpanel = {
-    id: 'project_terminals_headerpanel',
+var option_terminal_headerpanel = {
+    id: 'option_terminal_headerpanel',
     type: 'bar',
     class: 'sb_sidebarheader ',    
     items : 
@@ -379,7 +379,6 @@ var option_terminal_sidepanel = {
     type: 'panel',
     class: 'sb_panel sb_main sb_column',
     items: [
-        project_terminals_headerpanel,        
         option_boxterminalspanel,        
         {
             id: 'option_symbolspanel',
@@ -400,7 +399,7 @@ var option_terminal_sidepanel = {
 var option_bottomtabs = {
     id:'option_bottomtabs',
     type: 'tabs',    
-    events: {ondblclick: "ondblclick_optiontabs(this, event)"},     
+    tabevents: {ondblclick: "ondblclick_optiontabs(this, event)"},     
     items:
         [ 
             {id: 'tab_optionorders',    item: 'Orders',   type: 'link', icon: icon_file,    events: {onclick: "onclick_optiontabs(event)"}, items: [optionorderspanel],  title: ''},           
@@ -478,11 +477,11 @@ var option_sidebarpanel  = {
     class: 'sb_panel sb_sidebarpanel sb_right',   
     items : 
     [
-        {id: 'sidebarpanel_optionterminals',type: 'panel',  class: 'sb_panel',  items: [option_terminal_sidepanel]},           
-        {id: 'sidebarpanel_optionsummary',  type: 'panel',  class: 'sb_panel',  items: []},           
-        {id: 'sidebarpanel_site',           type: 'panel',  class: 'sb_panel',  items: [sitespanel]},     
-        {id: 'sidebarpanel_optioncharttools',  type: 'panel',class: 'sb_panel',    items: [charttoolspanel('option'), boxoptioncalculatorpanel,]},                           
-        {id: 'sidebarpanel_optionsettings', type: 'panel',  class: 'sb_panel',  items: [settingspanel('option')]},                     
+        {id: 'sidebarpanel_optionterminals',    type: 'panel',      class: 'sb_panel',      items: [option_terminal_headerpanel, option_terminal_sidepanel]},           
+        {id: 'sidebarpanel_optionsummary',      type: 'panel',      class: 'sb_panel',      items: []},           
+        {id: 'sidebarpanel_site',               type: 'panel',      class: 'sb_panel',      items: [sitespanel]},     
+        {id: 'sidebarpanel_optioncharttools',   type: 'panel',      class: 'sb_panel',      items: [charttools_header_panel, charttoolspanel('option'), boxoptioncalculatorpanel,]},                           
+        {id: 'sidebarpanel_optionsettings',     type: 'panel',      class: 'sb_panel',      items: [settingspanel('option')]},                     
     ]
 }
 

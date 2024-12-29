@@ -381,8 +381,8 @@ var testerbar  = {
         ]   
 }
   
-var testerheader = {
-    id: 'testerheader',
+var project_tester_headerpanel = {
+    id: 'project_tester_headerpanel',
     type: 'bar',
     class: 'sb_sidebarheader ',    
     items : 
@@ -624,11 +624,11 @@ var project_projectsbar = {
                 items: 
                     [ 
                         {id: 'project_projectselect',    type: 'select',   title: 'Select Project',      value: '--Select Project--', menu: [{text: '--Select Project--'}], events: {onchange: 'onchange_project_projectselect (this, event)'}},  
-                        {id: 'project_projectcreate',    type:'link',       icon: icon_new,              events: {onclick: "onclick_project_projectcreate(this)"},   title: 'Create New Project'},      
-                        {id: 'project_projectrename',    type:'link',       icon: icon_rename,           events: {onclick: "onclick_project_projectrename(this)"},  title: 'Rename Current Project'},  
-                        {id: 'project_projectremove',    type:'link',       icon: icon_remove,           events: {onclick: "onclick_project_projectremove(this)"},  title: 'Delete Current Project'}              
+          //              {id: 'project_projectcreate',    type:'link',       icon: icon_new,              events: {onclick: "onclick_project_projectcreate(this)"},   title: 'Create New Project'},      
+          //              {id: 'project_projectrename',    type:'link',       icon: icon_rename,           events: {onclick: "onclick_project_projectrename(this)"},  title: 'Rename Current Project'},  
+          //              {id: 'project_projectremove',    type:'link',       icon: icon_remove,           events: {onclick: "onclick_project_projectremove(this)"},  title: 'Delete Current Project'}              
                     ]
-            },
+            }, 
             { 
                 position: 'sb_distance',
                 class: 'sb_transform',                
@@ -647,7 +647,10 @@ var project_projectsbar = {
                 type: 'group',                        
                 items:
                     [ 
-                        {id: 'project_projectclose',     type:'link', icon: icon_close,    class:'sb_close',  events: {onclick: "onclick_project_projectclose()"}, title: 'Close Current Project'}
+                        {id: 'project_projectrename',    type:'link',       icon: icon_rename,           events: {onclick: "onclick_project_projectrename(this)"},  title: 'Rename Current Project'},  
+                        {id: 'project_projectremove',    type:'link',       icon: icon_remove,           events: {onclick: "onclick_project_projectremove(this)"},  title: 'Delete Current Project'},              
+                        {id: 'project_projectcreate',    type:'link',       icon: icon_new,              events: {onclick: "onclick_project_projectcreate(this)"},   title: 'Create New Project'},      
+                        {id: 'project_projectclose',     type:'link',       icon: icon_close,    class:'sb_close',  events: {onclick: "onclick_project_projectclose()"}, title: 'Close Current Project'}
                     ]
             }
             
@@ -746,7 +749,6 @@ var project_project_sidepanel = {
     type: 'panel',
     class: 'sb_sidepanel sb_panel sb_main sb_column',
     items:[
-        project_projects_headerpanel,      
         project_boxprojectspanel,
         project_boxstrategiespanel,
         project_boxconditionspanel,
@@ -762,7 +764,7 @@ var project_bottomtabs = {
     id:'project_bottomtabs',
     type: 'tabs',    
     label: 'project_bottomtabs',   
-    events: {ondblclick: "ondblclick_projecttabs(this, event)"}, 
+    tabevents: {ondblclick: "ondblclick_projecttabs(this, event)"}, 
     items:
         [ 
             {id: 'tab-chart',            item: 'Chart',   type: 'link',  icon: icon_chart,        events: {onclick: "onclick_projecttabs(this, event)"}, items: [chartpanel('project')],  title: ''},           
@@ -842,11 +844,11 @@ var project_sidebarpanel  = {
     class: 'sb_panel sb_sidebarpanel sb_right',   
     items: 
         [
-            {id: 'sidebarpanel_files',           type: 'panel',     class: 'sb_panel', items: [project_project_sidepanel]},        
-            {id: 'sidebarpanel_tester',          type: 'panel',     class: 'sb_panel sb_main',     items: [testerheader, testerpanel]},                     
+            {id: 'sidebarpanel_files',           type: 'panel',     class: 'sb_panel',             items: [project_projects_headerpanel, project_project_sidepanel]},        
+            {id: 'sidebarpanel_tester',          type: 'panel',     class: 'sb_panel sb_main',     items: [project_tester_headerpanel, testerpanel]},                     
             {id: 'sidebarpanel_deploy',          type: 'html',      class: 'sb_panel', content: "DeployPanel('deploypanel', 'sb_main sb_column')"},
-            {id: 'sidebarpanel_projectcharttools',  type: 'panel',class: 'sb_panel',    items: [charttoolspanel('project')]},                  
-            {id: 'sidebarpanel_projectsettings',    type: 'panel', class: 'sb_panel', items: [settingspanel('project')]},                    
+            {id: 'sidebarpanel_projectcharttools',  type: 'panel',class: 'sb_panel',               items: [charttools_header_panel, charttoolspanel('project')]},                  
+            {id: 'sidebarpanel_projectsettings',    type: 'panel', class: 'sb_panel',              items: [settingspanel('project')]},                    
         ]
 }
 

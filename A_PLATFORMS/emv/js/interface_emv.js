@@ -4,18 +4,18 @@ var EMV_PLATFORM_NAME   = "EMV";
 
 //--------------------------------------------------------------------- TVR TSI ... PANEL  --------------------------------------------------------------------
 
-var emv_TSIPanel = emv_bytepanel('TSI', '9B',   emv_TSI, 1)
-var emv_TVRPanel = emv_bytepanel('TVR', '95',   emv_TVR, 1)
+var emv_TSIPanel = emv_bytepanel('TSI', '9B',   emv_TSI, {editable:false})
+var emv_TVRPanel = emv_bytepanel('TVR', '95',   emv_TVR, {editable:false})
 
-var emv_AUCPanel = emv_bytepanel('AUC', '9F07', emv_AUC, 1)
-var emv_AIPPanel = emv_bytepanel('AIP', '82',   emv_AIP, 1)
+var emv_AUCPanel = emv_bytepanel('AUC', '9F07', emv_AUC, {editable:false})
+var emv_AIPPanel = emv_bytepanel('AIP', '82',   emv_AIP, {editable:false})
 
-var emv_IACDenialPanel = emv_bytepanel('IAC_Denial', '9F0E',   emv_TVR, 1)
-var emv_IACOnlinePanel = emv_bytepanel('IAC_Online', '9F0F',   emv_TVR, 1)
-var emv_IACDefaultPanel = emv_bytepanel('IAC_Default', '9F0D', emv_TVR, 1)
+var emv_IACDenialPanel = emv_bytepanel('IAC_Denial', '9F0E',   emv_TVR, {editable:false})
+var emv_IACOnlinePanel = emv_bytepanel('IAC_Online', '9F0F',   emv_TVR, {editable:false})
+var emv_IACDefaultPanel = emv_bytepanel('IAC_Default', '9F0D', emv_TVR, {editable:false})
 
-var emv_CTQPanel = emv_bytepanel('CTQ', '9F6C', emv_CTQ, 1)
-var emv_CIDPanel = emv_bytepanel('CID', '9F27', emv_CID, 1)
+var emv_CTQPanel = emv_bytepanel('CTQ', '9F6C', emv_CTQ, {editable:false})
+var emv_CIDPanel = emv_bytepanel('CID', '9F27', emv_CID, {editable:false})
 
 
 
@@ -74,7 +74,7 @@ var emv_bottomtabs = {
     id:'emv_bottomtabs',
     type: 'tabs',    
     label: 'emvtabs',   
-    events: {ondblclick: "ondblclick_emvtabs(this, event)"}, 
+    tabevents: {ondblclick: "ondblclick_emvtabs(this, event)"}, 
     items:
         [ 
             {id: 'tab-terminal',       item: 'Terminal',   type: 'link',  icon: icon_chart,        events: {onclick: "onclick_emvtabs(this, event)"}, items: [emv_terminalpage],  title: ''},           
@@ -153,11 +153,11 @@ var emv_sidebarpanel  = {
     items : 
     [
        
-        {id: 'sidebarpanel_emvprojectmanager',class: 'sb_panel sb_main',   type: 'panel',  items: [emv_projects_sidepanel]},             
-        {id: 'sidebarpanel_emvtestermanager', class: 'sb_panel sb_main',   type: 'panel',  items: [emv_tester_sidepanel]},             
+        {id: 'sidebarpanel_emvprojectmanager',class: 'sb_panel sb_main',   type: 'panel',  items: [emv_projects_headerpanel, emv_projects_sidepanel]},             
+        {id: 'sidebarpanel_emvtestermanager', class: 'sb_panel sb_main',   type: 'panel',  items: [emv_tester_headerpanel,   emv_tester_sidepanel]},             
         {id: 'sidebarpanel_emvsettings',      class: 'sb_panel sb_pane',   type: 'panel',  items: [settingspanel('emv')]},                 
-        {id: 'sidebarpanel_emvdatabase',      class: 'sb_panel sb_pane',   type: 'panel',  items: [emv_database_sidepanel]},                 
-        {id: 'sidebarpanel_emvtools',         class: 'sb_panel sb_pane',   type: 'panel',  items: [emv_tools_sidepanel]},                 
+        {id: 'sidebarpanel_emvdatabase',      class: 'sb_panel sb_pane',   type: 'panel',  items: [emv_database_headerpanel, emv_database_sidepanel]},                 
+        {id: 'sidebarpanel_emvtools',         class: 'sb_panel sb_pane',   type: 'panel',  items: [ emv_tools_headerpanel,   emv_tools_sidepanel]},                 
 
     ]
 }

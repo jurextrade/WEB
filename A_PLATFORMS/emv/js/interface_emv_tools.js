@@ -35,7 +35,7 @@ var emv_tools_sidepanel = {
     type: 'panel',
     class: 'sb_sidepanel sb_panel sb_main sb_column',
     items:[
-        emv_tools_headerpanel,         
+        
         emv_box_tlvparser  
-    ],
+     ],
 }

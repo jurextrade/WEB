@@ -61,6 +61,7 @@ const process = require('process');
 
 function exec_command (socket, message) {
     var nodemessage = JSON.parse (message);
+    console.log (nodemessage);
     try {
         nodemessage.return =  'ok: ' +  eval(nodemessage.command)
     } catch (error) {

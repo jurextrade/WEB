@@ -217,7 +217,7 @@ function emv_TreatTAG(origin, reader, values) {
 
                 let tagname = gettagname (tags[i].tag);
                 if (tagname == "") {
-                    console.log ('NAME : not found');
+                    console.log ('NAME : not found ' + tags[i].tag);
                 } else {
                //     console.log ('NAME : ' + gettagname (tags[i].tag))
                 }
@@ -295,7 +295,7 @@ function emv_TreatTC(origin, reader, values) {             //terminal capabiliti
         case CARD:
         break;
         case TERMINAL:
-            let b = values[2];            
+            let b = BigInt(values[2]);            
             emv_byte_update(emv_TCPanel, b, 1);
         break;
     }    
@@ -307,7 +307,7 @@ function emv_TreatATC(origin, reader, values) {              //additional termin
         case CARD:
         break;
         case TERMINAL:
-            let b = values[2];            
+            let b = BigInt(values[2]);             
             emv_byte_update(emv_ATCPanel, b, 1, 3);
         break;
     }    
@@ -318,7 +318,8 @@ function emv_TreatAUC(origin, reader, values) {
         case CARD:
         break;
         case TERMINAL:
-            let b = values[2];            
+            let b = BigInt(values[2]);    
+            console.log('AUC')        
             emv_byte_update(emv_AUCPanel, b, 1);
         break;
     }    
@@ -330,7 +331,7 @@ function emv_TreatTVR(origin, reader, values) {
         break;
         case TERMINAL:
             let type = values[0]
-            let b = values[2];      
+            let b = BigInt(values[2]);      
             switch (type) {
                 case "IAC_Denial":
                     emv_byte_update(emv_IACDenialPanel, b, 1);                    
@@ -361,7 +362,7 @@ function emv_TreatAUC(origin, reader, values) {
         case CARD:
         break;
         case TERMINAL:
-            let b = values[2];            
+            let b = BigInt(values[2]);              
             emv_byte_update(emv_AUCPanel, b, 1);
         break;
     }    
@@ -372,7 +373,7 @@ function emv_TreatAIP(origin, reader, values) {
         case CARD:
         break;
         case TERMINAL:
-            let b = values[2];            
+            let b = BigInt(values[2]);            
             emv_byte_update(emv_AIPPanel, b, 1);
         break;
     }    
@@ -383,7 +384,7 @@ function emv_TreatCTQ(origin, reader, values) {
         case CARD:
         break;
         case TERMINAL:
-            let b = values[2];            
+            let b = BigInt(values[2]);           
             emv_byte_update(emv_CTQPanel, b, 1);
         break;
     }    
