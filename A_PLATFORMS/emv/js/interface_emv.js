@@ -2,20 +2,7 @@ var EMV_ID              = "emv_root";
 var EMV_PLATFORM_PNAME  = "emv";
 var EMV_PLATFORM_NAME   = "EMV";
 
-//--------------------------------------------------------------------- TVR TSI ... PANEL  --------------------------------------------------------------------
 
-var emv_TSIPanel = emv_bytepanel('TSI', '9B',   emv_TSI, {editable:false})
-var emv_TVRPanel = emv_bytepanel('TVR', '95',   emv_TVR, {editable:false})
-
-var emv_AUCPanel = emv_bytepanel('AUC', '9F07', emv_AUC, {editable:false})
-var emv_AIPPanel = emv_bytepanel('AIP', '82',   emv_AIP, {editable:false})
-
-var emv_IACDenialPanel = emv_bytepanel('IAC_Denial', '9F0E',   emv_TVR, {editable:false})
-var emv_IACOnlinePanel = emv_bytepanel('IAC_Online', '9F0F',   emv_TVR, {editable:false})
-var emv_IACDefaultPanel = emv_bytepanel('IAC_Default', '9F0D', emv_TVR, {editable:false})
-
-var emv_CTQPanel = emv_bytepanel('CTQ', '9F6C', emv_CTQ, {editable:false})
-var emv_CIDPanel = emv_bytepanel('CID', '9F27', emv_CID, {editable:false})
 
 
 
@@ -26,8 +13,8 @@ var emv_terminalpage = {
     type: "panel",
     class: "sb_row",
     items: [
-        emv_TSIPanel, 
-        emv_TVRPanel,
+   //     emv_TSIPanel, 
+   //     emv_TVRPanel,
     ]
 }
 
@@ -36,22 +23,13 @@ var emv_cardpage = {
     type: "panel",
     class: "sb_row",
     items: [
-        emv_AIPPanel, 
-        emv_AUCPanel, 
-        emv_IACDenialPanel,
-        emv_IACOnlinePanel,
-        emv_IACDefaultPanel,           
+      //  emv_AIPPanel, 
+      //  emv_AUCPanel, 
+      //  emv_IACDenialPanel,
+      //  emv_IACOnlinePanel,
+      //  emv_IACDefaultPanel,           
     ]
 }
-
-var emv_mainbar = {
-    id: 'emv_mainbar',    
-    type: 'bar',
-    class: 'sb_mainbar',
-    items:
-        [          
-        ]
-}    
 
 
 //----------------------------------------------------------------<<< MAIN >>>-----------------------------------------------------------------------
@@ -97,13 +75,33 @@ var emv_bottomtabs = {
 
 } 
 
-var emv_toppanel = {
-    id : 'emv_toppanel',
+var emv_topleftpanel = {
+    id : 'emv_topleftpanel',
     type: 'panel',
     class: 'sb_panel sb_main',
     items: [
-//        emv_mainbar,        
         emv_maintabs,
+    ],
+}
+
+var emv_toprightpanel = {
+    id : 'emv_toprightpanel',
+    type: 'panel',
+    class: 'sb_panel sb_row sb_left',
+    style: "width:0px; flex:none",
+    items: [
+
+    ],
+}
+
+var emv_toppanel = {
+    id : 'emv_toppanel',
+    type: 'panel',
+    class: 'sb_panel sb_main sb_row',
+    items: [
+        emv_topleftpanel,            
+        {id: 'emv_toprightpanel_drag',  class: 'sb_none', type:'drag', direction:'vertical', dragid: 'emv_toprightpanel'},           
+        emv_toprightpanel,
     ],
 }
 
@@ -112,12 +110,23 @@ var emv_bottompanel = {
     id : 'emv_bottompanel',
     type: 'panel',
     class: 'sb_panel sb_column sb_top',
+    style: "display:none",
     items: [
         emv_bottomtabs 
     ],
     bottomheight: 270,          
 }
 
+var emv_rightpanel = {
+    id : 'emv_rightpanel',
+    type: 'panel',
+    class: 'sb_panel sb_row sb_left',
+    items:
+    [ 
+         
+    ],        
+    rightwidth: 270,          
+}
 //----------------------------------------------------------------<<< PANEL >>>-----------------------------------------------------------------------
 
 var emv_sidebaremenu = {
@@ -170,6 +179,8 @@ var emv_main = {
         emv_toppanel,        
         {id: 'emv_mainpanel_drag',  class: 'sb_none', type:'drag', direction:'horizontal', dragid: 'emv_bottompanel'},             
         emv_bottompanel,        
+        {id: 'emv_rightpanel_drag',  class: 'sb_none', type:'drag', direction:'vertical', dragid: 'emv_rightpanel'},             
+//       emv_rightpanel,        
     ]
 }
 
@@ -192,6 +203,7 @@ var emvplatform = {
     select: 'emv_select(\'' + EMV_PLATFORM_NAME + '\')', 
     init: 'emv_init()',
     end:  'emv_end()',
+    beforeunload: 'emv_beforeunload()'
            
 };
 

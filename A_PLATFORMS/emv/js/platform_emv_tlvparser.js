@@ -7,7 +7,7 @@ function onclick_emv_byte(elt, event) {
     let bytepanel = $(elt).closest ('.bytepanel');
     let nbrbytes  = bytepanel.find('.emvbyte').length;
 
-    console.log ('click')
+
     if (bytepanel.hasClass('editable')) {
          if ($(elt).children().last().html() != 'RFU' ) {
             if ($(elt).hasClass('selected')) {
@@ -40,6 +40,12 @@ function emv_byte_init (panel) {
     return panel;
 }
 
+function emv_bytepanel_init (panel) {
+    emv_byte_init(panel)    
+    let index = panel.items.length -1;
+    sb.tab_select (panel.items[index], "BYTE 1")
+}
+
 function emv_byte_update (panel, bytes, scroll, shift) {
     emv_byte_init (panel)    
 
@@ -67,21 +73,11 @@ function emv_byte_update (panel, bytes, scroll, shift) {
 function emv_byte_select (panel, id, scroll) {
     let elt =  $('#' + panel.id + ' [byte="' + id + '"]');
     if (scroll) {
-        let ui       = solution.get('ui') 
-        let platform = ui.platform_get ('pname', EMV_PLATFORM_PNAME);     
-    
-        BottomPanel_Flat (platform, false ,true);        
-        
-        let paneid = elt.closest('.bytepanel').closest('[role="tabpanel"]').attr('id')
-        sb.tab_select(emv_bottomtabs, $('[data-bs-target="#' + paneid + '"]').attr('id'));
-        
+
         let bytepanelid = elt.closest('[role="tabpanel"]').attr('id')
         let bytetabid   = elt.closest('.sb_tabs' ).attr('id')
-        let sbelt = sb.get(emv_bottomtabs, 'id', bytetabid)
-        sb.tab_select(sbelt[0], $('[data-bs-target="#' + bytepanelid + '"]').attr('id'));
-
+        $('#' + bytetabid +  ' #' + CSS.escape($('[data-bs-target="#' + bytepanelid + '"]').attr('id'))).tab('show');        
         elt.closest ('.emvbyte')[0].scrollIntoView();  
-
     }    
     
     elt.html('1');    
@@ -94,18 +90,11 @@ function emv_byte_show (panel, id, show) {
     let elt     = $('#' + panel.id + ' [byte="' + id + '"]');
 
     if (scroll) {
-        let ui       = solution.get('ui') 
-        let platform = ui.platform_get ('pname', EMV_PLATFORM_PNAME);     
-    
-        BottomPanel_Flat (platform, false ,true);        
-        
-        let paneid = elt.closest('.bytepanel').closest('[role="tabpanel"]').attr('id')
-        sb.tab_select(emv_bottomtabs, $('[data-bs-target="#' + paneid + '"]').attr('id'));
+
 
         let bytepanelid = elt.closest('[role="tabpanel"]').attr('id')        
         let bytetabid   = elt.closest('.sb_tabs' ).attr('id')
-        let sbelt = sb.get(emv_bottomtabs, 'id', bytetabid)
-        sb.tab_select(sbelt[0], $('[data-bs-target="#' + bytepanelid + '"]').attr('id'));
+        $('#' + bytetabid +  ' #' + CSS.escape($('[data-bs-target="#' + bytepanelid + '"]').attr('id'))).tab('show');
 
         elt.closest ('.emvbyte')[0].scrollIntoView();  
     }    
@@ -144,8 +133,6 @@ function onclick_emv_tt(elt, event) {
     let binarystr = '';
     let ttpanel = $(elt).closest ('.ttpanel');
     let ttpanelid = ttpanel.attr('id');
-
-    console.log ('click TT')
 
     if ( ttpanel.hasClass('editable')) {
 
@@ -285,6 +272,91 @@ function emv_avn_update (panel, val) {
     $('#emv_' + panel.id + '_container').val(val);    
     
     $('#' +  panel.id).attr ("value", val.toString (16).toUpperCase().padStart(4, '0'))       
+
+}
+
+//----------------------------------------------------------MERCHANT CATEGORY CODE ------------------------------------------------------
+
+function onchange_emv_mcc (elt, event) {
+    let avnpanel = $(elt).closest ('.mccpanel');    
+
+    avnpanel.attr ("value", $(elt).val().padStart(4, '0'))      
+    avnpanel.trigger ('change') 
+}
+
+
+function emv_mcc_update (panel, val) {
+    $('#emv_' + panel.id + '_container').val(val);    
+    
+    $('#' +  panel.id).attr ("value", val.padStart(4, '0'))       
+
+}
+
+//----------------------------------------------------------MERCHANT IDENTIFICATION ------------------------------------------------------
+
+function onchange_emv_mi (elt, event) {
+    let avnpanel = $(elt).closest ('.mipanel');    
+
+    avnpanel.attr ("value", $(elt).val())      
+    avnpanel.trigger ('change') 
+}
+
+
+function emv_mi_update (panel, val) {
+    $('#emv_' + panel.id + '_container').val(val);    
+    
+    $('#' +  panel.id).attr ("value", val)       
+
+}
+
+//----------------------------------------------------------MERCHANT NAME AND LOCATION ------------------------------------------------------
+
+function onchange_emv_mnl (elt, event) {
+    let avnpanel = $(elt).closest ('.mnlpanel');    
+
+    avnpanel.attr ("value", $(elt).val())      
+    avnpanel.trigger ('change') 
+}
+
+function emv_mnl_update (panel, val) {
+    $('#emv_' + panel.id + '_container').val(val);    
+    
+    $('#' +  panel.id).attr ("value", val)       
+
+}
+
+
+//----------------------------------------------------------ACCEPTOR TERMINAL IDENTIFICATION ------------------------------------------------------
+
+function onchange_emv_ti (elt, event) {
+    let avnpanel = $(elt).closest ('.tipanel');    
+
+    avnpanel.attr ("value", $(elt).val())      
+    avnpanel.trigger ('change') 
+}
+
+function emv_ti_update (panel, val) {
+    $('#emv_' + panel.id + '_container').val(val);    
+    
+    $('#' +  panel.id).attr ("value", val)       
+
+}
+
+//----------------------------------------------------------ACQUIRER IDENTIFIER ------------------------------------------------------
+
+function onchange_emv_ai (elt, event) {
+    let aipanel = $(elt).closest ('.aipanel');  
+    let val =  $(elt).val();  
+
+    aipanel.attr ("value",val.padStart(val.length + val.length % 2, '0'))      
+    aipanel.trigger ('change') 
+}
+
+
+function emv_ai_update (panel, val) {
+    $('#emv_' + panel.id + '_container').val(val);    
+    
+    $('#' +  panel.id).attr ("value", val.padStart(val.length + val.length % 2, '0'))       
 
 }
 
@@ -496,6 +568,48 @@ function emv_tlvparser_panel () {
     </div>`;
     return content;
    
+}
+
+
+function gettagclassname(e) {
+    return (className = {    
+// Here are tags for response 
+    "6F": "FILE_CONTROL_INFORMATION_TEMPLATE",
+    "77": "RESPONSE_MESSAGE_TEMPLATE_FORMAT_2",
+    "80": "RESPONSE_MESSAGE_TEMPLATE_FORMAT_1",    
+    "70": "READ_RECORD_RESPONSE_MESSAGE_TEMPLATE",        
+    }[e]) || ""        
+}
+
+function getcommandclassname(e) {
+    return (className = {
+        "B0": "READ_BINARY",
+        "D0": "WRITE_ BINARY",
+        "D6": "UPDATE_BINARY",
+        "0E": "ERASE_BINARY",
+        "B2": "READ_RECORD",
+        "D2": "WRITE_RECORD",
+        "E2": "APPEND_RECORD",
+        "DC": "UPDATE_RECORD",
+        "CA": "GET_DATA",
+        "DA": "PUT_DATA",
+        "A4": "SELECT_FILE",
+        "20": "VERIFY",
+        "88": "INTERNAL_AUTHENTICATE",
+        "82": "EXTERNAL_AUTHENTICATE",
+        "84": "GET_CHALLENGE",
+        "70": "MANAGE_CHALLENGE",
+        "C0": "GET_RESPONSE",
+        "C2": "ENVELOPE",
+        "40": "VALIDATION",
+        "A8": "GET_PROCESSING_OPTIONS",
+        "1E": "APPLICATION_BLOCK",
+        "18": "APPLICATION_UNBLOCK",
+        "16": "CARD_BLOCK",
+        "AE": "GENERATE_APPLICATION_ CRYPTOGRAM",
+        "A8": "GET_PROCESSING_OPTIONS",
+        "24": "PERSONAL_IDENTIFICATION_NUMBER",
+    }[e]) || ""        
 }
 
 

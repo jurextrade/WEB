@@ -565,17 +565,17 @@ function pgproject (pname, name, path) {
     this.CurrentStrategy         = null;
 
     this.Create = function () {
-        return SubmitProjectRequest(this.Folder, this.Name, '', 'php/create_project.php', SYNCHRONE);
+        return SubmitProjectRequest('Projects',this.Folder, this.Name, '', 'php/create_project.php', SYNCHRONE);
     }
 
     this.Remove = function () {
         if (solution.UserId == "0") return;        
-        return SubmitProjectRequest(this.Folder, this.Name, '', 'php/remove_project.php', SYNCHRONE);
+        return SubmitProjectRequest('Projects',this.Folder, this.Name, '', 'php/remove_project.php', SYNCHRONE);
     }
 
     this.Rename = function (newname) {
         if (solution.UserId == "0") return;        
-        return SubmitProjectRequest(this.Folder, newname, '', 'php/rename_project.php', SYNCHRONE);
+        return SubmitProjectRequest('Projects',this.Folder, newname, '', 'php/rename_project.php', SYNCHRONE);
     }
     
     this.Save = function () {
@@ -1636,7 +1636,7 @@ function pg (pname) {
             line += "\n";
             line += strategy.Description + "\n";
         }
-        SubmitProjectRequest(projectfolder, null, line, 'php/save_strategies.php', ASYNCHRONE);
+        SubmitProjectRequest('Projects',projectfolder, null, line, 'php/save_strategies.php', ASYNCHRONE);
         return line;
     }     
 
@@ -2145,7 +2145,7 @@ function pg (pname) {
             if (!marker) continue;
             line += '(defun ' + marker.Name + ' () ' + marker.SCContent + ')\n';
         }
-        SubmitProjectRequest(terminal.Folder, terminal.Type, line, 'php/save_markers.php', ASYNCHRONE);
+        SubmitProjectRequest('Projects',terminal.Folder, terminal.Type, line, 'php/save_markers.php', ASYNCHRONE);
         return line;
     }
 
@@ -2346,7 +2346,7 @@ function pg (pname) {
 
         }
 
-        SubmitProjectRequest(projectfolder, null, line, 'php/save_objects.php', ASYNCHRONE);
+        SubmitProjectRequest('Projects',projectfolder, null, line, 'php/save_objects.php', ASYNCHRONE);
         return line;
     }
     
@@ -2400,7 +2400,7 @@ function pg (pname) {
             line += engine.SellLotSL + "\n";
         }
           
-        SubmitProjectRequest(projectfolder, null, line, 'php/save_engines.php', ASYNCHRONE);
+        SubmitProjectRequest('Projects',projectfolder, null, line, 'php/save_engines.php', ASYNCHRONE);
         return line;
     }
          
@@ -2438,7 +2438,7 @@ function pg (pname) {
             if (!condition) continue;
             line += '(defun ' + condition.Name + ' () ' + condition.SCContent + ')\n';
         }
-        SubmitProjectRequest(projectfolder, null, line, 'php/save_conditions.php', ASYNCHRONE);
+        SubmitProjectRequest('Projects',projectfolder, null, line, 'php/save_conditions.php', ASYNCHRONE);
         return line;
     }
 }    

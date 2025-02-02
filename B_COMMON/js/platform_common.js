@@ -230,29 +230,25 @@ function SubmitDistributeRequest(projectfolder, filename, terminalfolder, termin
     http.send(params);
 }
 
-function SubmitProjectRequest(projectfolder, projectname, content, phpfilename, asynchrone) {
-    let  site    = solution.get('site');    
-
-    var sendmode = !asynchrone ? false : asynchrone;    
-    var projectname = (projectname ? projectname : "");
-    var url = site.address + '/' + phpfilename;
-    var params = 'content=' + encodeURIComponent(content) + '&user_id=' + solution.UserId + '&project_folder=' + projectfolder + '&project_name=' + projectname;
+function SubmitProjectRequest (platformfolder, projectfolder, projectname, content, phpfilename, async) {
+    let  site    = solution.get('site');   
+    let  user    = solution.get('user')           
+    let url = site.address + '/' + phpfilename;
     
-    var http = new XMLHttpRequest();
-    http.open('POST', url, sendmode); //false = SYNC
-    http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    http.onreadystatechange = function (objet) { //Call a function when the state changes.
-        if (http.readyState == 4 && http.status == 200) {
-            console.log(http.responseURL + ' OK' + http.responseText, 1);
-            return http.responseText;
-        }
-        else {
-            console.log(http.responseURL + ' ERROR', 1);
-            return -1;
-        }
+    let param = {
+        user_id :  user.id,
+        platform_folder : platformfolder,        
+        project_folder: projectfolder,
+        project_name : projectname,
+        content: content          
     }
-    http.send(params);
-    return 1;
+    
+    let callback = function (responsetext, values) {
+        console.log(responsetext + ' OK' + responsetext, 1);
+        return responsetext;
+    }
+
+    url_submit ('POST', url, param /*object {}*/, async, callback, []);
 }
 
 function SubmitTerminalRequest(terminalfolder, terminaltype, content, filename, asynchrone) {
@@ -291,6 +287,9 @@ function SubmitFileRequest(content, filename, projectnamme, filetype, fileoperat
 
 //-------------------------------------------------------------- DIALOG ALERTS... ------------------------------------------------------------------------
   
+
+//---------------------------------------------------- REMOVE PROJECT ---------------------------------------------- 
+
 function RemoveProjectConfirm(callafter, param) {
     var project = param;
     sb.confirm_modal('Are you sure you want to delete '   + project.Name + ' ?', 'Delete Current Project',  null, true).yes(function () {
@@ -309,6 +308,15 @@ function OnRemoveProject(callafter, param) {
     RemoveProjectConfirm(callafter, project);
 }
 
+//---------------------------------------------------- RENAME PROJECT ---------------------------------------------- 
+
+function OnRenameProject(callafter, param) {
+    var project = param;    
+    if (!project) return;
+
+    RenameProjectConfirm(callafter, param);
+}
+
 function RenameProjectConfirm(callafter, param) {
     var project = param;
 
@@ -320,9 +328,19 @@ function RenameProjectConfirm(callafter, param) {
     }).no(function () {})
 }
 
-function OnRenameProject(callafter, param) {
-    var project = param;    
+//---------------------------------------------------- CLOSE PROJECT ---------------------------------------------- 
+
+function OnCloseProject (project, callback, param, param1) {
     if (!project) return;
 
-    RenameProjectConfirm(callafter, param);
+    CloseProjectConfirm(project, callback, param, param1);
 }
+
+function CloseProjectConfirm(project, callback, param, param1) {
+  
+    sb.confirm_modal('Exit Project ' + project.Name + ' ?').yes(function () {
+        setTimeout(callback, 300, param, param1);        
+        $("#confirmmodal").modal('hide');      
+    }).no(function () {})
+}
+

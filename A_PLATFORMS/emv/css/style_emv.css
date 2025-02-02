@@ -13,6 +13,14 @@
     display: none;
 }
 
+.treepanel.selected {
+    border: 1px solid #ff5858;
+}
+
+.treenode.selected {
+    border: 1px solid #ff5858;
+}
+
 /*------------------------------------------------- SERVER -----------------------------------------------*/
 
 #button_terminal, #button_card, #button_router {
@@ -51,39 +59,6 @@
     text-align: left !important;
 }
 
-/*------------------------------------------------- TRANSACTION TAGS TABLE -----------------------------------------------*/
-
-#emv_transactiontagspanel {
-    height:30px;
-}
-
-#emv_transactiontags_tablepanel {
-    border-top: 1px solid var(--theme-button-border-color);        
-    margin-top: -1px;    
-}
-
-#emv_transactiontagspanel {
-    height:30px;
-}
-
-#emv_transactiontagspanel.toggled {
-    flex:1;
-}
-
-#emv_transactiontagspanel td {
-    line-height: inherit;
-    border-top: 1px solid var(--theme-button-border-color);
-    border-left: 1px solid var(--theme-button-border-color);
-}
-
-#emv_transactiontagspanel td:nth-child(3) {
-    max-width: 300px;
-}
-
-#emv_transactiontags_table_info {
-    display:none;
-}
-
 /*---------------------------------------------------------------- MAIN PAGE -------------------------------------------------------------------------*/
 
 #emv_testerpage {
@@ -91,80 +66,9 @@
 }
 
 #emv_tester_tab .sb_close-tabs {
-    display:none;
+  /*  display:none; */
 }
 
-/*---------------------------------------------------- TVR TSI RAPDU ----------------------------------------------*/
-
-#emv_apdu {
-    font-size: var(--theme-sfont-size);    
-    font-family: Calibri, sans-serif;    
-    overflow:auto;
-    color:var(--theme-color);
-    margin-top: -1px;    
-}
-
-#emv_apdu_tree {                                         /* root span */
-    display:none;
-}
-
-.emvapdutree label {
-    width: 40px;
-    padding: 0px 0px;
-}
-
-.emvapdutree .sb_widget {
-    width: unset;
-    height: unset;
-}
-
-.emvapdutree .sb_formgroup label {
-    justify-content: center;
-    min-width: 50px;
-} 
-
-.emvapdutree .sb_formgroup div {
-  /*  border: 1px solid var(--theme-border-color);*/
-} 
-
-.emvapdutree span.tagextension   {
-    height: unset; 
-} 
-
-.emvapdutree span.tagextension input {
-    color:rgb(255, 182, 132) !important  ;
-} 
-
-.emvapdutree .sb_link input:first-child {
-    cursor:pointer;    
-    background: transparent !important;    
-    color: var(--theme-color);    
-}
-
-#emv_apdu_tree_ref  > li > ul >li > span.selected,
-#emv_apdu_tree_ref  > li > ul >li > span.selected div span {
-    border: 1px solid var(--theme-emv-select);
-    color: var(--theme-main-color);
-}
-
-.emvapdutree .rapduerror span  {
-    color: #ff5858 !important; 
-    background: var(--theme-hover-bg-color) !important; 
-    border: 1px solid #5e4037 !important; 
-}
-
-.emvapdutree .searchtag,
-.emvapdutree .searchtag span {
-    border : 1px solid var(--theme-emv-select);
-}
-
-.emvapdutree .searchtag + * {
-    border : 1px solid var(--theme-emv-select);
-}
-
-#emv_apdu_tree_bar {
-    width:100%;
-}
 
 /*--------------------------------------------------------------------------- BYTE PANEL --------------------------------------------------------------*/
 
@@ -451,8 +355,14 @@
     flex-wrap:wrap;
 }
 
+
 #emv_presentation_steppanels .related-primary label{
     margin:2px 2px
+}
+
+#emv_presentation_steppanels .related-primary.Info {
+    color:  rgb(255, 182, 132);
+    align-items: flex-start;
 }
 
 .emv_button_show {
@@ -473,15 +383,13 @@
     border-color: var(--theme-emv-select) !important;
     border-radius: 0px;    
     background: var(--theme-select-bg-color) !important;  
-    color:unset !important;  
 } 
 
 .EMVStep.selected>.card-body>.card-text>.alert-primary  {
     border-color: var(--theme-emv-select) !important;
     border-radius: 0px;    
     background: var(--theme-select-bg-color) !important;  
-    color:unset !important
-} 
+}
 /*-------------------------------------------------------------------------- EMV STEPS PANEL --------------------------------------------------------------------*/
 
 #emv_tree_steps_panel {
@@ -503,6 +411,15 @@
 
 #emv_tester_stepsgroup .EMVStep.selected {
     background:var(--theme-emv-select);
+}
+
+
+/*--------------------------------------------------------- RIGHT PANEL ----------------------------------------------------*/
+
+#emv_rightpanel {
+    flex : none;
+    font-size: var(--theme-sfont-size);
+    width:350px;
 }
 
 /*--------------------------------------------------------- BOTTOM PANEL ----------------------------------------------------*/
@@ -530,31 +447,6 @@
     min-width: 20px;
 }
 
-/*----------------------------------------------------------------------------- ADPU  -------------------------------------------------------------------------------*/
-
-#emv_apdu {
-    border-top: 1px solid var(--theme-button-border-color);        
-}
-
-#emv_apdupanel {
-    height:30px;
-}
-
-#emv_apdupanel.toggled {
-    flex:1;
-}
-
-#apdu_table  td {
-    text-align: center;
-    line-height: inherit;
-    border-top: 1px solid var(--theme-button-border-color);
-    border-left: 1px solid var(--theme-button-border-color);
-}
-
-#emv_apdu .sb_formcontainer {
-    padding: 7px;
-    border: 1px solid var(--theme-border-color);
-}
 
 /*----------------------------------------------------------------------------- TLV PARSE-------------------------------------------------------------------------------*/
 
@@ -679,16 +571,29 @@
 
 /*----------------------------------------------------------------------------- MANAGER PANEL -------------------------------------------------------------------------------*/
 
-#emv_managersidepanel .formcontrol {
+#emv_projects_sidepanel .formcontrol {
     max-width:300px;
     padding: .375rem .75rem;
     font-size: var(--theme-font-size);
 }
 
+/*--------------------------------------------------------- TREE ------------------------------------------------------*/
+
+#emv_tree_applications, #emv_tree_terminals, #emv_tree_acquirer, #emv_tree_acceptor {
+    display:none;
+}
+
+
+
 /*----------------------------------------------------------------------------- TESTER PANEL -------------------------------------------------------------------------------*/
 
+#emv_tester_panel {
+    flex:1;
+}
+
 #emv_tester_terminalpanel {
-    height: 30px;    
+    height: 30px; 
+    flex:none;   
 }
 
 #emv_tester_terminalpanel.toggled {
@@ -696,7 +601,8 @@
 }
 
 #emv_tester_cardpanel {
-    height: 30px;    
+    height: 30px;
+    flex:none;           
 }
 
 #emv_tester_cardpanel.toggled {
@@ -704,10 +610,11 @@
 }
 
 #emv_tester_recordgroup {
-    background-color: var(--theme-main-bg-color);
+    height:60px;
+    flex:none;
 }
 
-#emv_terminal_input {
+#emv_tester_terminalinput {
     border-top: 1px solid var(--theme-button-border-color);
 }
 
@@ -715,6 +622,225 @@
     border-top: 1px solid var(--theme-button-border-color);
 }
 
+#emv_tester_play_button {
+    width:59px;
+}
+
+#emv_tester_start_button {
+    width:30px; 
+}
+
+#emv_tester_forward_button {
+    width:30px; 
+}
+
+#emv_tester_stepsgroup {
+    flex-wrap: wrap;
+}
+
+#emv_tester_filtergroup {
+    flex-wrap: wrap;
+    width: 164px;
+    height: 48px;
+    overflow: hidden;
+    flex-direction: column;    
+}    
+
+
+#emv_tester_filtergroup span{
+    width: 58px;
+}
+
+/*----------------------------------------------------------------------------- ADPU  -------------------------------------------------------------------------------*/
+
+#emv_apdupanel {
+    height:30px;
+    flex:none;
+}
+
+#emv_apdupanel.toggled {
+    flex:1;
+}
+
+#apdu_table  td {
+    text-align: center;
+    line-height: inherit;
+    border-top: 1px solid var(--theme-button-border-color);
+    border-left: 1px solid var(--theme-button-border-color);
+}
+
+
+#emv_apdutreepanel {
+    font-size: var(--theme-sfont-size);    
+    font-family: Calibri, sans-serif;    
+    overflow:auto;
+    color:var(--theme-color);
+    margin-top: -1px;  
+    border-top: 1px solid var(--theme-button-border-color);        
+}
+
+#emv_apdutreepanel .sb_formcontainer {
+    padding: 7px;
+    border: 1px solid var(--theme-border-color);
+}
+
+#emv_apdu_roottree {                                         /* root span */
+    display:none;
+}
+
+.emv_apdutreeclass label {
+    width: 40px;
+    padding: 0px 0px;
+}
+
+.emv_apdutreeclass .sb_widget {
+    width: unset;
+    height: unset;
+}
+
+.emv_apdutreeclass .sb_formgroup label {
+    justify-content: center;
+    min-width: 50px;
+} 
+
+.emv_apdutreeclass .sb_formgroup div {
+  /*  border: 1px solid var(--theme-border-color);*/
+} 
+
+.emv_apdutreeclass span.tagextension   {
+    height: unset; 
+} 
+
+.emv_apdutreeclass span.tagextension input {
+    color:rgb(255, 182, 132) !important  ;
+} 
+
+.emv_apdutreeclass .sb_link input:first-child {
+    cursor:pointer;    
+    background: transparent !important;    
+    color: var(--theme-color);    
+}
+
+#emv_apdu_roottree_ref  > li > ul >li > span.selected,
+#emv_apdu_roottree_ref  > li > ul >li > span.selected div span {
+    border: 1px solid var(--theme-emv-select);
+    color: var(--theme-main-color);
+}
+
+.emv_apdutreeclass .rapduerror span  {
+    color: #ff5858 !important; 
+    background: var(--theme-hover-bg-color) !important; 
+    border: 1px solid #5e4037 !important; 
+}
+
+.emv_apdutreeclass .searchtag,
+.emv_apdutreeclass .searchtag span {
+    border : 1px solid var(--theme-emv-select);
+}
+
+.emv_apdutreeclass .searchtag + * {
+    border : 1px solid var(--theme-emv-select);
+}
+
+#emv_apdu_tree_bar {
+    width:100%;
+}
+
+
+/*------------------------------------------------- TRANSACTION TAGS TABLE -----------------------------------------------*/
+
+#emv_transactiontagspanel {
+    height:30px;
+    flex:none;
+}
+
+#emv_transactiontagspanel td {
+    line-height: inherit;
+    border-top: 1px solid var(--theme-button-border-color);
+    border-left: 1px solid var(--theme-button-border-color);
+}
+
+#emv_transactiontagspanel td:nth-child(3) {
+    max-width: 300px;
+}
+
+
+#emv_transactiontagspanel #emv_transactiontags_tablepanel {
+    display:none;
+}
+
+#emv_transactiontagspanel.toggled {
+    flex:1;
+}
+
+#emv_transactiontagspanel.toggled #emv_transactiontags_tablepanel {
+    display:flex;
+}
+
+#emv_transactiontags_tablepanel {
+    border-top: 1px solid var(--theme-button-border-color);        
+    margin-top: -1px;    
+}
+
+#emv_transactiontags_table_info {
+
+   /* display:none; */
+}
+
+
+/*----------------------------------------------------------------------------- INFO PANEL -------------------------------------------------------------------------------*/
+
+#emv_tester_toprightpanel .sb_tab {
+   /* height:24px;*/
+}
+
+#emv_tester_toprightpanel .sb_bar {
+  /*  min-height:unset; */
+
+}
+
+#emv_tester_toprightpanel .sb_f_classic {
+  /*  font-size:11px !important;*/
+}
+
+#emv_tester_terminalbyteinfo,
+#emv_tester_cardbyteinfo {
+   /* height :450px; */
+}
+
+#emv_tester_cardpage,
+#emv_tester_terminalpage {
+   /* width: 380px !important; */
+   /* max-width: 380px;         */
+   /* padding: 0px 0px 0px 10px;*/
+}
+
+#emv_tester_cardpage .bytepanel,
+#emv_tester_terminalpage .bytepanel{
+   /* padding: 5px;*/
+}
+
+
+#emv_tester_cardpage td:nth-child(9),
+#emv_tester_terminalpage td:nth-child(9) {
+    width: 220px !important;
+    max-width: 220px;
+}
+
+#emv_tester_tacpanel, #emv_tester_iacpanel {
+    flex:1;
+}
+
+#emv_tester_tacpanel td:nth-child(9),
+#emv_tester_iacpanel  td:nth-child(9) {
+    width: 220px !important;
+    max-width: 220px;
+}
+
+#emv_tester_terminalbyteinfobar,
+#emv_tester_cardbyteinfobar {
+   /* background: var(--theme-platform-color); */
+}
 /*----------------------------------------------------------------------------- ACCEPTOR SECTION -------------------------------------------------------------------------------*/
 
 #emv_acceptor_section {
@@ -730,7 +856,7 @@
 /*----------------------------------------------------------------------------- TERMINAL TYPE PANEL -------------------------------------------------------------------------------*/
 
 .ttpanel {
-    padding:10px;
+  /*  padding:10px;*/
 }
 
 .ttpanel .TT_value:hover {
@@ -787,11 +913,15 @@
     padding: 15px 0px 15px 5px !important;
 }
 
-#treenode-emv_projectmanager-0 {
+#treenode-emvmanager-0 {
     display:none;
 }
 
 #emv_root .treenode {
     text-transform: uppercase;
     color: var(--theme-main-color);
+}
+
+#102  {
+    color:blue;
 }

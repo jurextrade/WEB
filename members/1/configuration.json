@@ -213,11 +213,11 @@
               "/A_PLATFORMS/emv/js/emv_define.js",
               "/A_PLATFORMS/emv/js/platform_emv_connect.js",
               "/A_PLATFORMS/emv/js/interface_emv_tlvparser.js",
-               "/A_PLATFORMS/emv/js/platform_emv_tlvparser.js",
-              "/A_PLATFORMS/emv/js/interface_emv_project.js",              
+              "/A_PLATFORMS/emv/js/platform_emv_tlvparser.js",
+              "/A_PLATFORMS/emv/js/interface_emv_project.js",
               "/A_PLATFORMS/emv/js/platform_emv_project.js",
               "/A_PLATFORMS/emv/js/interface_emv_tools.js",
-               "/A_PLATFORMS/emv/js/interface_emv_database.js",
+              "/A_PLATFORMS/emv/js/interface_emv_database.js",
               "/A_PLATFORMS/emv/js/platform_emv_database.js",
               "/A_PLATFORMS/emv/js/platform_emv_tester.js",
               "/A_PLATFORMS/emv/js/interface_emv_tester.js",
@@ -441,7 +441,7 @@
             "market",
             "news"
           ],
-          "active": true,
+          "active": false,
           "library": {
             "stylesheet": [
               "/C_TOOLS/css/quill.snow.css",

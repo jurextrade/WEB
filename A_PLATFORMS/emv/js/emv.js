@@ -1,3 +1,9 @@
+var   EMVCODE              = 25;
+
+
+function EMVGetNextCode () {
+    return EMVCODE++;
+}
 
 
 class emv_Settings {
@@ -12,7 +18,63 @@ class emv_Settings {
     }
 } 
 
- 
+class EMVPointOfSale  {
+    constructor () { 
+    this.ClassName = "EMVPointOfSale";     
+    this.Code      = EMVGetNextCode ();                
+	this.pCom;
+	this.PointAcceptationIdentification = '';		            // NEW TAG DF5C [9]
+	this.SystemAcceptationIdentification = '';	                // NEW TAG DF5E [9]
+	this.PointAcceptationLogicalNumber = '';		            // NEW TAG DF5B [4]
+	this.SystemAcceptationLogicalNumber = '';		            // NEW TAG DF51 [4]
+    }
+}
+
+class EMVAcquirer {
+    constructor () {     
+        this.ClassName = "EMVAcquirer";        
+        this.Code      = EMVGetNextCode ();                
+        this.AcquirerIdentifier;                                //9F01 n6..11 [6];
+    }
+}
+
+//Enseigne de l’accepteur ansc 60  //DF04  DF20, DF21, DF22, DF23 
+//Identification organisme acquéreur ansc 11 
+//Type d’activité commerciale ansc 4						 MerchantCategoryCode
+//Réservé usage futur (renseigné à blanc) ansc 2 
+//Numéro contrat accepteur ansc 7 
+//Enveloppe 41 : valeur à utiliser dans le champ 41 ansc 8    Terminal Identification 9F1C
+//Enveloppe 42 : valeur à utiliser dans le champ 42 ansc 15   Merchant Identifier 9F16
+
+class EMVAcceptor {
+    constructor (cc,mi,mn, ti, cn, ) {    
+        this.ClassName = "EMVAcceptor";
+        this.Code      = EMVGetNextCode ();                
+        this.MerchantCategoryCode;				                // MerchantCategoryCode[2];				//9F15 n4 Merchant Category Code, Ex. {0x30, 0x01}    
+        this.MerchantIdentifier;				                // MerchantIdentifier[16];				//9F16  ans15 Merchant Identifier  Ex. "000000000018003"  When concatenated with the Acquirer Identifier; uniquely identifies a given merchant   
+        this.MerchantNameAndLocation;			                // MerchantNameAndLocation[41];			//9F4E ans Merchant Name and Location,Null terminated C string, Ex. "202B,
+        this.TerminalIdentification;				            // TerminalIdentification[9];			//9F1C an8 Designates the unique location of a terminal at a merchant, Ex. "EMVPOS4 "   
+
+        this.MerchantContractNumber;				            // NEW TAG DF5F  ans7					           
+        this.MerchantBillMode;						            // MerchantBillMode;						//DF20 MODE FACTURATION TELECOM		
+        this.MerchantActivationCode;					        // MerchantActivationCode;	                //DF21 CODE ACTIVATION MODE APPELE. 
+        this.SystemAcceptationIdentification;		            // SystemAcceptationIdentification[9];		NEW TAG DF5E //Type de Site ?? DF23             
+        this.SIRET;								                // SIRET[15];								NEW TAG DF5D //DF22      
+        
+    }
+}
+class EMVTerminal {
+    constructor (serialnumber, countrycode, tt, tc, atc, ttq) {       
+        this.ClassName = "EMVTerminal";    
+        this.Code      = EMVGetNextCode ();                
+		this.IFDSerialNumber = serialnumber;              	            // 9F1E char Ex. "12345678" [9];
+		this.TerminalCountryCode = countrycode;				            // BYTE Ex. {0x08, 0x40} [2];
+		this.TerminalType = tt;						                    // BYTE Ex. 0x22
+        this.TerminalCapabilities  = tc;			                    // BYTE Ex. {0xE0, 0xF8, 0xE8} [3];
+        this.AdditionalTerminalCapabilities = atc;                      // BYTE Ex. {0xC1, 0x00, 0xF0, 0xA0, 0x01} [5];
+        this.TTQ = ttq;                                                 // BYTE Ex. {0x26, 0x40, 0x40, 0x00} [4]
+    }
+} 
 
 //MESSAGECLASS SIT_D753 (
 //    BYTE ParOpen 
@@ -42,7 +104,8 @@ class emv_Settings {
 //EPV_D787;BYTE ParOpen CHAR[10] RID CHAR[22] PIX CHAR[4] ApplicationVersionNumber CHAR[2] Priority BYTE ForceTransaction BYTE ParClose BYTE[2] CR;Liste des donn้es sp้cifiques EMV par AID
 class EMVAid {
     constructor (aid, avn, priority, ft,  tacdenial, taconline, tacdefault) {
-        this.ClassName = "EMVAid";                       
+        this.ClassName = "EMVAid";     
+        this.Code      = EMVGetNextCode ();                
         this.AID  = aid;							            // BYTE Ex. {0xA0, 0x00, 0x00, 0x00, 0x00, 0x10, 0x10} [16] //9F06     
         this.ApplicationVersionNumber = avn; 		            // BYTE Ex. {0x00, 0x8C}                                    //9F09   
 	    this.Priority = priority;                               // int	less then 16 
@@ -56,7 +119,8 @@ class EMVAid {
 
 class EMVApplication {
     constructor (rid) {    
-        this.ClassName = "EMVApplication";               
+        this.ClassName = "EMVApplication";       
+        this.Code      = EMVGetNextCode ();                
         this.RID = rid								            // BYTE	Registered Application Provider Identifier, Ex. {0xA0, 0x00, 0x00, 0x00, 0x03}
         this.AID = [];								            // EMVAid	EMVAID of current configuration
         this.IndexAIDSelected;                                  // int		
@@ -78,64 +142,10 @@ class EMVApplication {
     }
 } 
 
-class EMVPointOfSale  {
-    constructor () { 
-    this.ClassName = "EMVPointOfSale";           
-	this.pCom;
-	this.PointAcceptationIdentification = '';		            // NEW TAG DF5C [9]
-	this.SystemAcceptationIdentification = '';	                // NEW TAG DF5E [9]
-	this.PointAcceptationLogicalNumber = '';		            // NEW TAG DF5B [4]
-	this.SystemAcceptationLogicalNumber = '';		            // NEW TAG DF51 [4]
-    }
-}
-
-class EMVAcquirer {
-    constructor () {     
-        this.ClassName = "EMVAcquirer";        
-        this.AcquirerIdentifier;                                //9F01 n6..11 [6];
-    }
-}
-
-//Enseigne de l’accepteur ansc 60  //DF04  DF20, DF21, DF22, DF23 
-//Identification organisme acquéreur ansc 11 
-//Type d’activité commerciale ansc 4						 MerchantCategoryCode
-//Réservé usage futur (renseigné à blanc) ansc 2 
-//Numéro contrat accepteur ansc 7 
-//Enveloppe 41 : valeur à utiliser dans le champ 41 ansc 8    Terminal Identification 9F1C
-//Enveloppe 42 : valeur à utiliser dans le champ 42 ansc 15   Merchant Identifier 9F16
-
-class EMVAcceptor {
-    constructor (cc,mi,mn, ti, cn, ) {    
-        this.ClassName = "EMVAcceptor";
-        this.MerchantCategoryCode;				                // MerchantCategoryCode[2];				//9F15 n4 Merchant Category Code, Ex. {0x30, 0x01}    
-        this.MerchantIdentifier;				                // MerchantIdentifier[16];				//9F16  ans15 Merchant Identifier  Ex. "000000000018003"  When concatenated with the Acquirer Identifier; uniquely identifies a given merchant   
-        this.MerchantNameAndLocation;			                // MerchantNameAndLocation[41];			//9F4E ans Merchant Name and Location,Null terminated C string, Ex. "202B,
-        this.TerminalIdentification;				            // TerminalIdentification[9];			//9F1C an8 Designates the unique location of a terminal at a merchant, Ex. "EMVPOS4 "   
-
-        this.MerchantContractNumber;				            // NEW TAG DF5F  ans7					           
-        this.MerchantBillMode;						            // MerchantBillMode;						//DF20 MODE FACTURATION TELECOM		
-        this.MerchantActivationCode;					        // MerchantActivationCode;	                //DF21 CODE ACTIVATION MODE APPELE. 
-        this.SystemAcceptationIdentification;		            // SystemAcceptationIdentification[9];		NEW TAG DF5E //Type de Site ?? DF23             
-        this.SIRET;								                // SIRET[15];								NEW TAG DF5D //DF22      
-        
-    }
-}
-class EMVTerminal {
-    constructor (serialnumber, countrycode, tt, tc, atc, ttq) {       
-        this.ClassName = "EMVTerminal";             
-		this.IFDSerialNumber = serialnumber;              	            // 9F1E char Ex. "12345678" [9];
-		this.TerminalCountryCode = countrycode;				            // BYTE Ex. {0x08, 0x40} [2];
-		this.TerminalType = tt;						                    // BYTE Ex. 0x22
-        this.TerminalCapabilities  = tc;			                    // BYTE Ex. {0xE0, 0xF8, 0xE8} [3];
-        this.AdditionalTerminalCapabilities = atc;                      // BYTE Ex. {0xC1, 0x00, 0xF0, 0xA0, 0x01} [5];
-        this.TTQ = ttq;                                                 // BYTE Ex. {0x26, 0x40, 0x40, 0x00} [4]
-    }
-} 
-
-
 class EMVManager {
     constructor () {        
         this.ClassName = "EMVManager";
+        this.Code = 0;        
         this.Applications = [];	
         this.Terminals    = [];	
         this.Clients      = [];	
@@ -150,58 +160,4 @@ class EMVManager {
    		this.ApplicationCurrencyCode = '';             		    // Application Currency Code 0x9F42  [2]
         this.ApplicationCurrencyExponent;		    	        // 0x9F44
     }
-    Save (url) {
-        let content = JSON.stringify(this, null, 2)
-        let cuser = solution.get('user')
-       
-        cuser.send ({Name: 'savefile', Values: [url, content]}, true, 
-                    function (content, values) {
-                        DisplayOperation("Project Saved", true, 'operationpanel');                             
-                    }, 
-                    ['emvsolution.json']);  
-    }
-
-    Load = function (url, async, interfacecallback, par) {  
-
-        solution.get_file(url, async, interfacecallback, [par]);        
-
-        //this.ReadTagFile();				 //TAGS.csv
-        //this.ReadApduErrorFile();		     //SW1SW2.csv
-        //this.ReadFile();					 //FILES.csv
-    }
-    LoadAcceptor() {				//SIT_D753.wp
-    }
-    LoadRangeBins() {			    //APB_D236.wp
-    }
-
-    LoadExceptionCards() {	//APL_D253.wp
-    }
-
-    LoadAuthorityPublicKeys() {	//EPK_D782.wp
-    }
-
-    LoadTerminals() {
-        let terminal = new emv_Terminal("12345678", [0x02, 0x50], 0x22, [0x60, 0xB8, 0xC8], [0xC1, 0x00, 0xF0, 0xA0, 0x01], [0x26, 0x40, 0x40, 0x00]);
-        this.AddTerminal(terminal)
-    }
-    LoadApplications() {			//EPV_D787.wp  a000000333010103
-        let aid = new emv_aid ( " a000000333010103",
-            //[0xA0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x03, 0x03, 0x00, 0x01, 0x00, 0x01, 0x00, 0x03], 
-                                                [0x00, 0x8C], 8, 1,  
-                                                [0xC1, 0x00, 0xF0, 0xA0, 0x01],[0xC1, 0x00, 0xF0, 0xA0, 0x01],[0xC1, 0x00, 0xF0, 0xA0, 0x01])
-        this.AddApplication(aid)                                                
-    }
-        
-    LoadTacs() {					//EPT_D778.wp  
-    }      
-
-    AddTerminal (terminal) {
-   
-        this.Terminals.push(terminal);
-        this.TerminalsCount++;
-    }
-    AddApplication (aid) {
-        this.Applications.push(aid);
-    }
-
 }

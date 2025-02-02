@@ -1686,10 +1686,12 @@ function TreatProperty(solution, Session, nbr, Value) {
 function OnExitSession (terminal, engineindex, symbolname, start) {
     
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
-        return null;
-    }    
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        return;
+    }  
     
     sorder = "*EXITSESSION " + engineindex + " = [-1] ";            
     solution.CurrentTerminal.Com.Send(solution.UserId + '*' + symbolName + sorder);
@@ -1699,9 +1701,11 @@ function OnExitSession (terminal, engineindex, symbolname, start) {
 function OnStartEngine(terminal, engineindex, symbolname, start) {
  
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
-        return null;
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        return;
     }
     
     var sorder = "*STARTAENGINE " + engineindex + " = [" + ((start == 'manual') ? "0" : "1") + "] ";
@@ -1711,10 +1715,12 @@ function OnStartEngine(terminal, engineindex, symbolname, start) {
 
 function OnSessionCommand (terminal, Session, nID) {
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
-    }    
+    }
 
     var sorder = '';
     var sessionnumber = Session.SessionNumber;
@@ -1797,8 +1803,10 @@ function OnSessionCommand (terminal, Session, nID) {
 
 function OnCloseAll(terminal, optype, profit, symbol) {
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var sorder = "*CLOSEALLENGINE " + optype + " = [" + "0" + "] ";
@@ -1809,8 +1817,10 @@ function OnCloseAll(terminal, optype, profit, symbol) {
 
 function OnExitAll(terminal, optype, profit, symbol) {
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var sorder = "*EXITALLENGINE " + optype + " = [" + "0" + "] ";
@@ -1823,9 +1833,11 @@ function OnOrder () {
     
     var terminal = solution.CurrentTerminal;
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
-        return null;
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        return;
     }
     var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;    
@@ -1867,8 +1879,10 @@ function OnOrder () {
 
 function OnManualSession(terminal, sessionnumber, s) {
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var symbolcanvas = solution.GetCanvasFromTerminal();
@@ -1881,8 +1895,10 @@ function OnManualSession(terminal, sessionnumber, s) {
 }
 
 function OnSaveMM(terminalname, terminaltype) {
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
 
@@ -1908,8 +1924,10 @@ function OnSaveMM(terminalname, terminaltype) {
 function OnBuy() {
     var terminal = solution.CurrentTerminal;
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var symbolcanvas = solution.GetCanvasFromTerminal();
@@ -1924,8 +1942,10 @@ function OnBuy() {
 function OnSell() {
     var terminal = solution.CurrentTerminal;
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var symbolcanvas = solution.GetCanvasFromTerminal();
@@ -1939,8 +1959,10 @@ function OnSell() {
 
 function OnModify (terminal) {
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     // var sorder = "*ORDER -1 = [0 SELL 1 0 0 ]";
@@ -1949,8 +1971,10 @@ function OnModify (terminal) {
 
 function OnClose (terminal, etype) {
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var seltab;
@@ -2017,10 +2041,13 @@ function OnClose (terminal, etype) {
 function OnPendingOrder(terminal, type, svolume, stoploss, stakeprofit) {
  
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
-        return null;
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        return;
     }
+    
     if (type == BUYSTOP) var sorder = "ORDER -1 = [" + m_SBidAsk + " BUYSTOP " + svolume + " " + sstoploss + " " + stakeprofit + "]";
     else
     if (type == SELLSTOP) var sorder = "ORDER -1 = [" + m_SBidAsk + " SELLSTOP " + svolume + " " + sstoploss + " " + stakeprofit + "]";

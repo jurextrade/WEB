@@ -1,60 +1,225 @@
-12-23-2024,07:00,EUR,German Import Prices m/m,Low,0.5%,0.5%,0.6%
-12-23-2024,07:00,GBP,Current Account,Low,-22.9B,-22.9B,-28.4B
-12-23-2024,07:00,GBP,Final GDP q/q,Low,0.1%,0.1%,0.1%
-12-23-2024,07:00,GBP,Revised Business Investment q/q,Low,1.2%,1.2%,1.2%
-12-23-2024,09:00,CHF,UBS Economic Expectations,Low,
-		<previous>-12.4</previous>
-		<url><!--[CDATA[https://www.forexfactory.com/calendar/315-sz-ubs-economic-expectations]]--></url>
+02-02-2025,23:50,JPY,BOJ Summary of Opinions,Low,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/633-jn-boj-summary-of-opinions</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/633-jn-boj-summary-of-opinions</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/633-jn-boj-summary-of-opinions</url>
+	
+02-03-2025,00:00,AUD,MI Inflation Gauge m/m,Low,
+		<previous>0.6%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/294-au-mi-inflation-gauge-mm]]--></url>
 	,
-		<previous>-12.4</previous>
-		<url><!--[CDATA[https://www.forexfactory.com/calendar/315-sz-ubs-economic-expectations]]--></url>
-	,-12.4
-12-23-2024,13:30,CAD,GDP m/m,High,0.2%,0.2%,0.1%
-12-23-2024,13:30,CAD,IPPI m/m,Low,0.3%,0.3%,1.2%
-12-23-2024,13:30,CAD,RMPI m/m,Low,0.4%,0.4%,3.8%
-12-23-2024,13:30,USD,Core Durable Goods Orders m/m,Medium,0.3%,0.3%,0.1%
-12-23-2024,13:30,USD,Durable Goods Orders m/m,Medium,-0.3%,-0.3%,0.2%
-12-23-2024,15:00,USD,CB Consumer Confidence,Medium,112.9,112.9,111.7
-12-23-2024,15:00,USD,New Home Sales,Medium,666K,666K,610K
-12-23-2024,18:30,CAD,BOC Summary of Deliberations,Low,
+		<previous>0.6%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/294-au-mi-inflation-gauge-mm]]--></url>
+	,0.6%
+02-03-2025,00:30,AUD,Retail Sales m/m,Medium,-0.7%,-0.7%,0.8%
+02-03-2025,00:30,AUD,ANZ Job Advertisements m/m,Low,
+		<previous>0.3%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/234-au-anz-job-advertisements-mm]]--></url>
+	,
+		<previous>0.3%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/234-au-anz-job-advertisements-mm]]--></url>
+	,0.3%
+02-03-2025,00:30,AUD,Building Approvals m/m,Low,0.9%,0.9%,-3.6%
+02-03-2025,00:30,JPY,Final Manufacturing PMI,Low,48.8,48.8,48.8
+02-03-2025,01:01,CNY,Bank Holiday,Holiday,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/891-ca-boc-summary-of-deliberations</url>
+		<url>https://www.forexfactory.com/calendar/468-ch-bank-holiday</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/891-ca-boc-summary-of-deliberations</url>
+		<url>https://www.forexfactory.com/calendar/468-ch-bank-holiday</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/891-ca-boc-summary-of-deliberations</url>
+		<url>https://www.forexfactory.com/calendar/468-ch-bank-holiday</url>
 	
-12-23-2024,23:50,JPY,Monetary Policy Meeting Minutes,Low,
+02-03-2025,01:45,CNY,Caixin Manufacturing PMI,Low,50.6,50.6,50.5
+02-03-2025,05:30,AUD,Commodity Prices y/y,Low,
+		<previous>-10.7%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/245-au-commodity-prices-yy]]--></url>
+	,
+		<previous>-10.7%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/245-au-commodity-prices-yy]]--></url>
+	,-10.7%
+02-03-2025,08:15,EUR,Spanish Manufacturing PMI,Low,53.5,53.5,53.3
+02-03-2025,08:30,CHF,Manufacturing PMI,Low,49.0,49.0,48.4
+02-03-2025,08:45,EUR,Italian Manufacturing PMI,Low,46.8,46.8,46.2
+02-03-2025,08:50,EUR,French Final Manufacturing PMI,Low,45.3,45.3,45.3
+02-03-2025,08:55,EUR,German Final Manufacturing PMI,Low,44.1,44.1,44.1
+02-03-2025,09:00,EUR,Final Manufacturing PMI,Low,46.1,46.1,46.1
+02-03-2025,09:30,GBP,Final Manufacturing PMI,Low,48.2,48.2,48.2
+02-03-2025,10:00,EUR,Core CPI Flash Estimate y/y,Medium,2.6%,2.6%,2.7%
+02-03-2025,10:00,EUR,CPI Flash Estimate y/y,Medium,2.4%,2.4%,2.4%
+02-03-2025,10:00,EUR,Italian Prelim CPI m/m,Low,0.4%,0.4%,0.1%
+02-03-2025,10:15,All,OPEC-JMMC Meetings,Medium,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/306-jn-monetary-policy-meeting-minutes</url>
+		<url>https://www.forexfactory.com/calendar/798-opec-jmmc-meetings</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/306-jn-monetary-policy-meeting-minutes</url>
+		<url>https://www.forexfactory.com/calendar/798-opec-jmmc-meetings</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/306-jn-monetary-policy-meeting-minutes</url>
+		<url>https://www.forexfactory.com/calendar/798-opec-jmmc-meetings</url>
 	
-12-24-2024,00:30,AUD,Monetary Policy Meeting Minutes,Medium,
+02-03-2025,14:30,CAD,Manufacturing PMI,Low,
+		<previous>52.2</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/629-ca-manufacturing-pmi]]--></url>
+	,
+		<previous>52.2</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/629-ca-manufacturing-pmi]]--></url>
+	,52.2
+02-03-2025,14:45,USD,Final Manufacturing PMI,Medium,50.1,50.1,50.1
+02-03-2025,15:00,USD,ISM Manufacturing PMI,High,49.3,49.3,49.3
+02-03-2025,15:00,USD,ISM Manufacturing Prices,Medium,52.6,52.6,52.5
+02-03-2025,15:00,USD,Construction Spending m/m,Low,0.3%,0.3%,0.0%
+02-03-2025,15:15,USD,Wards Total Vehicle Sales,Low,16.1M,16.1M,16.8M
+02-03-2025,17:30,USD,FOMC Member Bostic Speaks,Low,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/307-au-monetary-policy-meeting-minutes</url>
+		<url>https://www.forexfactory.com/calendar/725-us-fomc-member-bostic-speaks</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/307-au-monetary-policy-meeting-minutes</url>
+		<url>https://www.forexfactory.com/calendar/725-us-fomc-member-bostic-speaks</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/307-au-monetary-policy-meeting-minutes</url>
+		<url>https://www.forexfactory.com/calendar/725-us-fomc-member-bostic-speaks</url>
 	
-12-24-2024,04:59,JPY,BOJ Core CPI y/y,Low,1.5%,1.5%,1.5%
-12-24-2024,07:02,EUR,German Bank Holiday,Holiday,
+02-03-2025,19:03,USD,Loan Officer Survey,Low,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/391-ge-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/473-us-loan-officer-survey</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/391-ge-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/473-us-loan-officer-survey</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/391-ge-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/473-us-loan-officer-survey</url>
 	
-12-24-2024,14:59,USD,Richmond Manufacturing Index,Medium,-10,-10,-14
-12-24-2024,20:00,NZD,Bank Holiday,Holiday,
+02-03-2025,21:45,NZD,Building Consents m/m,Low,
+		<previous>5.3%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/229-nz-building-consents-mm]]--></url>
+	,
+		<previous>5.3%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/229-nz-building-consents-mm]]--></url>
+	,5.3%
+02-03-2025,23:30,USD,FOMC Member Musalem Speaks,Low,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/911-us-fomc-member-musalem-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/911-us-fomc-member-musalem-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/911-us-fomc-member-musalem-speaks</url>
+	
+02-03-2025,23:50,JPY,Monetary Base y/y,Low,-0.5%,-0.5%,-1.0%
+02-04-2025,03:35,JPY,10-y Bond Auction,Low,
+		<previous>1.14|3.4</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/574-jn-10-y-bond-auction]]--></url>
+	,
+		<previous>1.14|3.4</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/574-jn-10-y-bond-auction]]--></url>
+	,1.14|3.4
+02-04-2025,07:45,EUR,French Gov Budget Balance,Low,
+		<previous>-172.5B</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/378-fr-gov-budget-balance]]--></url>
+	,
+		<previous>-172.5B</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/378-fr-gov-budget-balance]]--></url>
+	,-172.5B
+02-04-2025,08:00,EUR,Spanish Unemployment Change,Low,45.4K,45.4K,-25.3K
+02-04-2025,15:00,USD,JOLTS Job Openings,High,7.88M,7.88M,8.10M
+02-04-2025,15:00,USD,Factory Orders m/m,Low,-0.7%,-0.7%,-0.4%
+02-04-2025,15:10,USD,RCM/TIPP Economic Optimism,Low,53.0,53.0,51.9
+02-04-2025,15:50,NZD,GDT Price Index,Low,
+		<previous>1.4%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/602-nz-gdt-price-index]]--></url>
+	,
+		<previous>1.4%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/602-nz-gdt-price-index]]--></url>
+	,1.4%
+02-04-2025,16:00,USD,FOMC Member Bostic Speaks,Low,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/725-us-fomc-member-bostic-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/725-us-fomc-member-bostic-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/725-us-fomc-member-bostic-speaks</url>
+	
+02-04-2025,18:15,USD,FOMC Member Daly Speaks,Low,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/807-us-fomc-member-daly-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/807-us-fomc-member-daly-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/807-us-fomc-member-daly-speaks</url>
+	
+02-04-2025,21:45,NZD,Employment Change q/q,High,-0.2%,-0.2%,-0.5%
+02-04-2025,21:45,NZD,Unemployment Rate,High,5.1%,5.1%,4.8%
+02-04-2025,21:45,NZD,Labor Cost Index q/q,Low,0.6%,0.6%,0.6%
+02-04-2025,23:30,JPY,Average Cash Earnings y/y,Low,3.8%,3.8%,3.0%
+02-05-2025,00:00,NZD,ANZ Commodity Prices m/m,Low,
+		<previous>0.2%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/190-nz-anz-commodity-prices-mm]]--></url>
+	,
+		<previous>0.2%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/190-nz-anz-commodity-prices-mm]]--></url>
+	,0.2%
+02-05-2025,00:30,USD,FOMC Member Jefferson Speaks,Low,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/881-us-fomc-member-jefferson-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/881-us-fomc-member-jefferson-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/881-us-fomc-member-jefferson-speaks</url>
+	
+02-05-2025,01:45,CNY,Caixin Services PMI,Low,52.3,52.3,52.2
+02-05-2025,07:45,EUR,French Industrial Production m/m,Low,-0.1%,-0.1%,0.2%
+02-05-2025,08:15,EUR,Spanish Services PMI,Low,56.8,56.8,57.3
+02-05-2025,08:45,EUR,Italian Services PMI,Low,50.5,50.5,50.7
+02-05-2025,08:50,EUR,French Final Services PMI,Low,48.9,48.9,48.9
+02-05-2025,08:55,EUR,German Final Services PMI,Low,52.5,52.5,52.5
+02-05-2025,09:00,EUR,Final Services PMI,Low,51.4,51.4,51.4
+02-05-2025,09:00,EUR,Italian Retail Sales m/m,Low,0.1%,0.1%,-0.4%
+02-05-2025,09:30,GBP,Final Services PMI,Low,51.2,51.2,51.2
+02-05-2025,10:00,EUR,PPI m/m,Low,0.5%,0.5%,1.6%
+02-05-2025,13:15,USD,ADP Non-Farm Employment Change,High,149K,149K,122K
+02-05-2025,13:30,CAD,Trade Balance,Low,0.4B,0.4B,-0.3B
+02-05-2025,13:30,USD,Trade Balance,Low,-97.1B,-97.1B,-78.2B
+02-05-2025,14:00,USD,FOMC Member Barkin Speaks,Low,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/728-us-fomc-member-barkin-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/728-us-fomc-member-barkin-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/728-us-fomc-member-barkin-speaks</url>
+	
+02-05-2025,14:45,USD,Final Services PMI,Medium,53.1,53.1,52.8
+02-05-2025,15:00,USD,ISM Services PMI,High,54.2,54.2,54.1
+02-05-2025,15:30,USD,Crude Oil Inventories,Medium,
+		<previous>3.5M</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/10-us-crude-oil-inventories]]--></url>
+	,
+		<previous>3.5M</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/10-us-crude-oil-inventories]]--></url>
+	,3.5M
+02-05-2025,18:00,USD,FOMC Member Goolsbee Speaks,Low,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/889-us-fomc-member-goolsbee-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/889-us-fomc-member-goolsbee-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/889-us-fomc-member-goolsbee-speaks</url>
+	
+02-05-2025,20:00,USD,FOMC Member Bowman Speaks,Low,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/812-us-fomc-member-bowman-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/812-us-fomc-member-bowman-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/812-us-fomc-member-bowman-speaks</url>
+	
+02-05-2025,20:00,NZD,Bank Holiday,Holiday,
 		<previous>
 		<url>https://www.forexfactory.com/calendar/395-nz-bank-holiday</url>
 	</previous>,
@@ -63,167 +228,174 @@
 	</previous>,
 		<url>https://www.forexfactory.com/calendar/395-nz-bank-holiday</url>
 	
-12-24-2024,21:00,AUD,Bank Holiday,Holiday,
+02-06-2025,00:30,AUD,Goods Trade Balance,Low,6.73B,6.73B,7.08B
+02-06-2025,00:30,USD,FOMC Member Jefferson Speaks,Low,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/394-au-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/881-us-fomc-member-jefferson-speaks</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/394-au-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/881-us-fomc-member-jefferson-speaks</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/394-au-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/881-us-fomc-member-jefferson-speaks</url>
 	
-12-24-2024,23:50,JPY,SPPI y/y,Low,3.0%,3.0%,2.9%
-12-25-2024,04:17,JPY,BOJ Gov Ueda Speaks,Low,
+02-06-2025,01:30,AUD,NAB Quarterly Business Confidence,Low,
+		<previous>-6</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/248-au-nab-quarterly-business-confidence]]--></url>
+	,
+		<previous>-6</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/248-au-nab-quarterly-business-confidence]]--></url>
+	,-6
+02-06-2025,03:35,JPY,30-y Bond Auction,Low,
+		<previous>2.30|3.7</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/575-jn-30-y-bond-auction]]--></url>
+	,
+		<previous>2.30|3.7</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/575-jn-30-y-bond-auction]]--></url>
+	,2.30|3.7
+02-06-2025,06:45,CHF,Unemployment Rate,Low,2.7%,2.7%,2.6%
+02-06-2025,07:00,EUR,German Factory Orders m/m,Low,1.7%,1.7%,-5.4%
+02-06-2025,09:30,GBP,Construction PMI,Medium,53.7,53.7,53.3
+02-06-2025,10:00,EUR,Retail Sales m/m,Low,-0.1%,-0.1%,0.1%
+02-06-2025,10:18,EUR,French 10-y Bond Auction,Low,
+		<previous>3.40|2.0</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/523-fr-10-y-bond-auction]]--></url>
+	,
+		<previous>3.40|2.0</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/523-fr-10-y-bond-auction]]--></url>
+	,3.40|2.0
+02-06-2025,12:00,GBP,BOE Monetary Policy Report,High,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/892-jn-boj-gov-ueda-speaks</url>
+		<url>https://www.forexfactory.com/calendar/418-uk-boe-monetary-policy-report</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/892-jn-boj-gov-ueda-speaks</url>
+		<url>https://www.forexfactory.com/calendar/418-uk-boe-monetary-policy-report</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/892-jn-boj-gov-ueda-speaks</url>
+		<url>https://www.forexfactory.com/calendar/418-uk-boe-monetary-policy-report</url>
 	
-12-25-2024,06:00,CHF,Bank Holiday,Holiday,
+02-06-2025,12:00,GBP,Monetary Policy Summary,High,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/392-sz-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/628-uk-monetary-policy-summary</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/392-sz-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/628-uk-monetary-policy-summary</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/392-sz-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/628-uk-monetary-policy-summary</url>
 	
-12-25-2024,07:01,EUR,French Bank Holiday,Holiday,
+02-06-2025,12:00,GBP,MPC Official Bank Rate Votes,High,0-8-1,0-8-1,0-3-6
+02-06-2025,12:00,GBP,Official Bank Rate,High,4.50%,4.50%,4.75%
+02-06-2025,12:30,USD,Challenger Job Cuts y/y,Low,
+		<previous>11.4%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/76-us-challenger-job-cuts-yy]]--></url>
+	,
+		<previous>11.4%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/76-us-challenger-job-cuts-yy]]--></url>
+	,11.4%
+02-06-2025,13:30,USD,Unemployment Claims,High,214K,214K,207K
+02-06-2025,13:30,USD,Prelim Nonfarm Productivity q/q,Low,1.8%,1.8%,2.2%
+02-06-2025,13:30,USD,Prelim Unit Labor Costs q/q,Low,3.3%,3.3%,1.9%
+02-06-2025,15:00,CAD,Ivey PMI,Medium,53.0,53.0,54.7
+02-06-2025,15:30,USD,Natural Gas Storage,Low,
+		<previous>-321B</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/26-us-natural-gas-storage]]--></url>
+	,
+		<previous>-321B</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/26-us-natural-gas-storage]]--></url>
+	,-321B
+02-06-2025,16:15,EUR,German Buba President Nagel Speaks,Low,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/396-fr-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/851-ge-buba-president-nagel-speaks</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/396-fr-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/851-ge-buba-president-nagel-speaks</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/396-fr-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/851-ge-buba-president-nagel-speaks</url>
 	
-12-25-2024,07:02,EUR,German Bank Holiday,Holiday,
+02-06-2025,19:30,USD,FOMC Member Waller Speaks,Medium,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/391-ge-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/839-us-fomc-member-waller-speaks</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/391-ge-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/839-us-fomc-member-waller-speaks</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/391-ge-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/839-us-fomc-member-waller-speaks</url>
 	
-12-25-2024,07:03,EUR,Italian Bank Holiday,Holiday,
+02-06-2025,20:30,USD,FOMC Member Daly Speaks,Low,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/397-it-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/807-us-fomc-member-daly-speaks</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/397-it-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/807-us-fomc-member-daly-speaks</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/397-it-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/807-us-fomc-member-daly-speaks</url>
 	
-12-25-2024,08:00,GBP,Bank Holiday,Holiday,
+02-06-2025,23:30,JPY,Household Spending y/y,Low,0.3%,0.3%,-0.4%
+02-07-2025,05:00,JPY,Leading Indicators,Low,108.1%,108.1%,107.0%
+02-07-2025,07:00,EUR,German Industrial Production m/m,Low,-0.7%,-0.7%,1.5%
+02-07-2025,07:00,EUR,German Trade Balance,Low,17.1B,17.1B,19.7B
+02-07-2025,07:00,GBP,Halifax HPI m/m,Low,0.4%,0.4%,-0.2%
+02-07-2025,07:45,EUR,French Prelim Private Payrolls q/q,Low,-0.1%,-0.1%,-0.1%
+02-07-2025,07:45,EUR,French Trade Balance,Low,-5.3B,-5.3B,-7.1B
+02-07-2025,08:00,CHF,Foreign Currency Reserves,Low,
+		<previous>731B</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/517-sz-foreign-currency-reserves]]--></url>
+	,
+		<previous>731B</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/517-sz-foreign-currency-reserves]]--></url>
+	,731B
+02-07-2025,08:00,CHF,SECO Consumer Climate,Low,-31,-31,-30
+02-07-2025,12:15,GBP,MPC Member Pill Speaks,Low,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/390-uk-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/850-uk-mpc-member-pill-speaks</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/390-uk-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/850-uk-mpc-member-pill-speaks</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/390-uk-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/850-uk-mpc-member-pill-speaks</url>
 	
-12-25-2024,13:00,CAD,Bank Holiday,Holiday,
+02-07-2025,13:30,CAD,Employment Change,High,26.5K,26.5K,90.9K
+02-07-2025,13:30,CAD,Unemployment Rate,High,6.8%,6.8%,6.7%
+02-07-2025,13:30,USD,Average Hourly Earnings m/m,High,0.3%,0.3%,0.3%
+02-07-2025,13:30,USD,Non-Farm Employment Change,High,154K,154K,256K
+02-07-2025,13:30,USD,Unemployment Rate,High,4.1%,4.1%,4.1%
+02-07-2025,14:25,USD,FOMC Member Bowman Speaks,Low,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/389-ca-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/812-us-fomc-member-bowman-speaks</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/389-ca-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/812-us-fomc-member-bowman-speaks</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/389-ca-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/812-us-fomc-member-bowman-speaks</url>
 	
-12-25-2024,13:00,USD,Bank Holiday,Holiday,
+02-07-2025,15:00,USD,Prelim UoM Consumer Sentiment,Medium,71.4,71.4,73.2
+02-07-2025,15:00,USD,Prelim UoM Inflation Expectations,Medium,
+		<previous>3.3%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/236-us-prelim-uom-inflation-expectations]]--></url>
+	,
+		<previous>3.3%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/236-us-prelim-uom-inflation-expectations]]--></url>
+	,3.3%
+02-07-2025,15:00,USD,Final Wholesale Inventories m/m,Low,-0.4%,-0.4%,-0.5%
+02-07-2025,17:00,USD,FOMC Member Kugler Speaks,Low,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/370-us-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/901-us-fomc-member-kugler-speaks</url>
 	</previous>,
 		<previous>
-		<url>https://www.forexfactory.com/calendar/370-us-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/901-us-fomc-member-kugler-speaks</url>
 	</previous>,
-		<url>https://www.forexfactory.com/calendar/370-us-bank-holiday</url>
+		<url>https://www.forexfactory.com/calendar/901-us-fomc-member-kugler-speaks</url>
 	
-12-25-2024,20:00,NZD,Bank Holiday,Holiday,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/395-nz-bank-holiday</url>
-	</previous>,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/395-nz-bank-holiday</url>
-	</previous>,
-		<url>https://www.forexfactory.com/calendar/395-nz-bank-holiday</url>
-	
-12-25-2024,21:00,AUD,Bank Holiday,Holiday,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/394-au-bank-holiday</url>
-	</previous>,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/394-au-bank-holiday</url>
-	</previous>,
-		<url>https://www.forexfactory.com/calendar/394-au-bank-holiday</url>
-	
-12-26-2024,06:00,CHF,Bank Holiday,Holiday,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/392-sz-bank-holiday</url>
-	</previous>,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/392-sz-bank-holiday</url>
-	</previous>,
-		<url>https://www.forexfactory.com/calendar/392-sz-bank-holiday</url>
-	
-12-26-2024,07:02,EUR,German Bank Holiday,Holiday,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/391-ge-bank-holiday</url>
-	</previous>,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/391-ge-bank-holiday</url>
-	</previous>,
-		<url>https://www.forexfactory.com/calendar/391-ge-bank-holiday</url>
-	
-12-26-2024,07:03,EUR,Italian Bank Holiday,Holiday,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/397-it-bank-holiday</url>
-	</previous>,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/397-it-bank-holiday</url>
-	</previous>,
-		<url>https://www.forexfactory.com/calendar/397-it-bank-holiday</url>
-	
-12-26-2024,08:00,GBP,Bank Holiday,Holiday,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/390-uk-bank-holiday</url>
-	</previous>,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/390-uk-bank-holiday</url>
-	</previous>,
-		<url>https://www.forexfactory.com/calendar/390-uk-bank-holiday</url>
-	
-12-26-2024,13:00,CAD,Bank Holiday,Holiday,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/389-ca-bank-holiday</url>
-	</previous>,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/389-ca-bank-holiday</url>
-	</previous>,
-		<url>https://www.forexfactory.com/calendar/389-ca-bank-holiday</url>
-	
-12-26-2024,13:30,USD,Unemployment Claims,High,223K,223K,220K
-12-26-2024,23:30,JPY,Tokyo Core CPI y/y,Medium,2.5%,2.5%,2.2%
-12-26-2024,23:30,JPY,Unemployment Rate,Low,2.5%,2.5%,2.5%
-12-26-2024,23:50,JPY,BOJ Summary of Opinions,Low,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/633-jn-boj-summary-of-opinions</url>
-	</previous>,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/633-jn-boj-summary-of-opinions</url>
-	</previous>,
-		<url>https://www.forexfactory.com/calendar/633-jn-boj-summary-of-opinions</url>
-	
-12-26-2024,23:50,JPY,Prelim Industrial Production m/m,Low,-3.4%,-3.4%,3.0%
-12-26-2024,23:50,JPY,Retail Sales y/y,Low,1.5%,1.5%,1.6%
-12-27-2024,05:00,JPY,Housing Starts y/y,Low,-0.1%,-0.1%,-2.9%
-12-27-2024,13:30,USD,Goods Trade Balance,Low,-101.3B,-101.3B,-99.1B
-12-27-2024,13:30,USD,Prelim Wholesale Inventories m/m,Low,0.1%,0.1%,0.2%
-12-27-2024,15:30,USD,Natural Gas Storage,Low,-100B,-100B,-125B
-12-27-2024,18:00,USD,Crude Oil Inventories,Medium,-0.7M,-0.7M,-0.9M
+02-07-2025,20:00,USD,Consumer Credit m/m,Low,12.9B,12.9B,-7.5B
+02-09-2025,01:30,CNY,CPI y/y,Medium,
+		<previous>0.1%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/454-ch-cpi-yy]]--></url>
+	,
+		<previous>0.1%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/454-ch-cpi-yy]]--></url>
+	,0.1%
+02-09-2025,01:30,CNY,PPI y/y,Medium,
+		<previous>-2.3%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/455-ch-ppi-yy]]--></url>
+	,
+		<previous>-2.3%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/455-ch-ppi-yy]]--></url>
+	,-2.3%

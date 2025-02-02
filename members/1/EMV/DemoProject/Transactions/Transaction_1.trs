@@ -1,0 +1,171 @@
+:CARD**TRACE^1^Active protocol T=0
+*:CARD**TRACE^1^The card has been reset and specific communication protocols have been established.
+*:CARD**TRACE^1^ATR ok : 3B6B00000031C1640924331E079000 
+*:CARD**TRACE^1^Open Connection With EMV Server 
+*:TERMINAL**LOGIN^OK^*:TERMINAL**TRACE^1^Hello admin
+^*:CARD**TRACE^1^Sending Transaction  to Server 
+*:CARD**TRACE^1^Sending ATR  to Server 
+*:TERMINAL**TAG^1^5F2A020978*:TERMINAL**TAG^1^5F360102**TAG^1^9F2103225606**TAG^1^9A03250128**TAG^1^9C0100*:CARD**TRACE^1^Receiving APDU Command from Terminal 
+*:TERMINAL**TAG^1^9F4103000000*:TERMINAL**TAG^1^9F0206000000000000**TAG^1^9F0306000000000000**TAG^1^9F370400000000**TAG^1^9F4C0400000000*:TERMINAL**TAG^1^9F45020000*:TERMINAL**TAG^1^9F390105**TRACE^1^Received ATR from client 3B6B00000031C1640924331E079000
+**TRACE^1^EMV PROCESS 0 : Card Detection 
+============================== 
+**STEP^1^0*:TERMINAL**TRACE^1^Init Terminal 3B6B00000031C1640924331E079000
+**TAG^1^9F42020978*:TERMINAL**TAG^1^9F440102**TAG^1^95050000000000**TAG^1^9B020000*:TERMINAL**TAG^1^82020000*:TERMINAL**TAG^1^9F07020000**TAG^1^9F6C020000**TAG^1^9F3403000000**TAG^1^9F1A020250*:TERMINAL**TAG^1^9F330360B8C8*:TERMINAL**TAG^1^9F4005C100F0A001**TAG^1^9F350122**TAG^1^9F1E083132333435363738**TAG^1^9F660426404000*:TERMINAL**TRACE^1^
+     Terminal Type :       Merchant Attended Offline with online capability
+*:TERMINAL**TT^1^34**TC^1^6338760**TRACE^1^
+     Terminal Capabilities :
+                                   Magnetic_stripe : YES
+                                  IC_with_contacts : YES
+                Plaintext_PIN_for_ICC_verification : YES
+                                 Signature_(paper) : YES
+           Enciphered_PIN_for_offline_verification : YES
+                                   No_CVM_Required : YES
+                                               SDA : YES
+                                               DDA : YES
+                                               CDA : YES
+                                              Cash : YES
+                                             Goods : YES
+                                    Administrative : YES
+                                      Numeric_keys : YES
+            Alphabetic_and_special_characters_keys : YES
+                                      Command_keys : YES
+                                     Function_keys : YES
+                                   Print_attendant : YES
+                                 Display_attendant : YES
+                                      Code_table_1 : YES
+**ATC^1^828944457729*:TERMINAL**TAG^1^DF5C080000000000000000**TAG^1^DF5103000000*:TERMINAL**TAG^1^DF5B03000000**TAG^1^DF5D0E3130363130363032343130363237**TAG^1^DF5E082A2A2A2A2A2A2A2A*:TERMINAL**TAG^1^DF5F0730353439323233*:TERMINAL**TAG^1^9F15028050**TAG^1^9F160F313035343932323330313520202020**TAG^1^9F4E2853414C4F4E204341525445532052414E472031203735303136202020202020202020202020202020**TAG^1^9F0106045334814806*:TERMINAL**TRACE^1^EMV PROCESS 1 : Candidate List Creation 
+======================================= 
+*:TERMINAL**STEP^1^1**TRACE^1^     1.1 : Attempt To Get Directory List With PSE
+     --------------------------------------------
+**STEP^1^100**TRACE^1^>>SELECT 1PAY.SYS.DDF01
+*:TERMINAL**C-APDU^1^00A404000E315041592E5359532E4444463031*:CARD**TRACE^1^Response APDU From Card 
+*:CARD**TRACE^1^Sending APDU Answer to Server 
+*:CARD**C-APDU^1^00A404000E315041592E5359532E4444463031*:CARD**R-APDU^1^6F20840E315041592E5359532E4444463031A50E8801015F2D047468656E9F1101019000*:TERMINAL**R-APDU^1^6F20840E315041592E5359532E4444463031A50E8801015F2D047468656E9F1101019000*:TERMINAL**TRACE^1^>>READ RECORD with SFI: 01
+**TRACE^1^     1.2 : Reading Records
+     ---------------------
+**STEP^1^101**C-APDU^1^00B2010C00*:CARD**TRACE^1^Receiving APDU Command from Terminal 
+*:CARD**TRACE^1^Response APDU From Card 
+*:CARD**TRACE^1^Sending APDU Answer to Server 
+*:CARD**C-APDU^1^00B2010C00**R-APDU^1^701A61184F08A00000067701010150035442419F12035442418701019000*:TERMINAL**R-APDU^1^701A61184F08A00000067701010150035442419F12035442418701019000*:TERMINAL**TRACE^1^Add candidate from PSE: TBA
+**INFO^1^Add candidate from PSE: TBA
+**C-APDU^1^00B2020C00*:CARD**TRACE^1^Receiving APDU Command from Terminal 
+*:CARD**TRACE^1^Response APDU From Card 
+*:CARD**TRACE^1^Sending APDU Answer to Server 
+*:CARD**C-APDU^1^00B2020C00**R-APDU^1^7030612E4F08A000000333010101500E554E494F4E5041592044454249549F120E554E494F4E5041592044454249548701019000*:TERMINAL**R-APDU^1^7030612E4F08A000000333010101500E554E494F4E5041592044454249549F120E554E494F4E5041592044454249548701019000*:TERMINAL**TRACE^1^Add candidate from PSE: UNIONPAY DEBIT
+**INFO^1^Add candidate from PSE: UNIONPAY DEBIT
+**C-APDU^1^00B2030C00*:CARD**TRACE^1^Receiving APDU Command from Terminal 
+*:CARD**TRACE^1^Response APDU From Card 
+*:CARD**TRACE^1^Sending APDU Answer to Server 
+*:CARD**C-APDU^1^00B2030C00**R-APDU^1^6A83*:TERMINAL**R-APDU^1^6A83*:TERMINAL**TRACE^1^EMV PROCESS 2 : Application Selection 
+===================================== 
+**STEP^1^2*:TERMINAL**TRACE^1^     2.1 :Select Application File
+     -----------------------------------
+*:TERMINAL**STEP^1^200*:CARD**TRACE^1^Select application from list:
+*:CARD**SELECT^1^0 (priority 1) - TBA^1 (priority 1) - UNIONPAY DEBIT*:TERMINAL**TRACE^1^User must select application
+**INFO^1^User must select application
+*:TERMINAL**TRACE^1^>>SELECT application index: 0
+*:TERMINAL**INFO^1^>>SELECT application index: 0
+**C-APDU^1^00A4040008A000000677010101*:CARD**TRACE^1^Receiving APDU Command from Terminal 
+*:CARD**TRACE^1^Response APDU From Card 
+*:CARD**TRACE^1^Sending APDU Answer to Server 
+*:CARD**C-APDU^1^00A4040008A000000677010101**R-APDU^1^6F2D8408A000000677010101A52150035442418701015F2D047468656E9F1101019F1203544241BF0C059F4D020B0A9000*:TERMINAL**R-APDU^1^6F2D8408A000000677010101A52150035442418701015F2D047468656E9F1101019F1203544241BF0C059F4D020B0A9000**TAG^1^9F0608A000000677010101*:TERMINAL**TAG^1^8408A000000677010101**TAG^1^5003544241**TAG^1^870101*:CARD**TRACE^1^Receiving APDU Command from Terminal 
+*:CARD**TRACE^1^Response APDU From Card 
+*:CARD**TRACE^1^Sending APDU Answer to Server 
+*:CARD**C-APDU^1^80A8000000**R-APDU^1^6700*:TERMINAL**TAG^1^5F2D047468656E*:TERMINAL**TAG^1^9F110101**TAG^1^9F1203544241**TAG^1^BF0C059F4D020B0A**TRACE^1^PDOL is absent
+*:CARD**TRACE^1^Close Connection With EMV Server 
+*:TERMINAL**INFO^1^PDOL is absent
+**TAG^1^DF5605D84000A800**TAG^1^DF57050010000000*:TERMINAL**TAG^1^DF5805D84004F800**TAG^1^9F09020000*:CARD**TRACE^1^Transaction Completed please Remove Card
+*:TERMINAL**TAG^1^9F1B0400000000*:TERMINAL**TAG^1^9F1C00**TAG^1^9F1D00**TAG^1^9F3C020000**TAG^1^9F3D0100*:TERMINAL**TRACE^1^     TAC_Denial
+     Offline data authentication was not performed : NO
+                                        SDA failed : NO
+                                  ICC data missing : NO
+           Card appears on terminal exception file : NO
+                                        DDA failed : NO
+                                        CDA failed : NO
+                                      SDA selected : NO
+ICC and terminal have different application versions : NO
+                               Expired application : NO
+                     Application not yet effective : NO
+    Requested service not allowed for card product : YES
+                                          New Card : NO
+        Cardholder verification was not successful : NO
+                                  Unrecognised CVM : NO
+                            PIN Try Limit exceeded : NO
+PIN entry required and PIN pad not present or not working : NO
+PIN entry required, PIN pad present, but PIN was not entered : NO
+                                Online PIN entered : NO
+                   Transaction exceeds floor limit : NO
+          Lower consecutive offline limit exceeded : NO
+          Upper consecutive offline limit exceeded : NO
+Transaction selected randomly for online processing : NO
+                Merchant forced transaction online : NO
+                                 Default TDOL used : NO
+                      Issuer authentication failed : NO
+ Script processing failed before final GENERATE AC : NO
+  Script processing failed after final GENERATE AC : NO
+*:TERMINAL**TAC_Denial^1^268435456**TRACE^1^     TAC_Online
+     Offline data authentication was not performed : YES
+                                        SDA failed : YES
+                                  ICC data missing : NO
+           Card appears on terminal exception file : YES
+                                        DDA failed : YES
+                                        CDA failed : NO
+                                      SDA selected : NO
+ICC and terminal have different application versions : NO
+                               Expired application : YES
+                     Application not yet effective : NO
+    Requested service not allowed for card product : NO
+                                          New Card : NO
+        Cardholder verification was not successful : NO
+                                  Unrecognised CVM : NO
+                            PIN Try Limit exceeded : NO
+PIN entry required and PIN pad not present or not working : NO
+PIN entry required, PIN pad present, but PIN was not entered : NO
+                                Online PIN entered : YES
+                   Transaction exceeds floor limit : YES
+          Lower consecutive offline limit exceeded : YES
+          Upper consecutive offline limit exceeded : YES
+Transaction selected randomly for online processing : YES
+                Merchant forced transaction online : YES
+                                 Default TDOL used : NO
+                      Issuer authentication failed : NO
+ Script processing failed before final GENERATE AC : NO
+  Script processing failed after final GENERATE AC : NO
+**TAC_Online^1^928787003392**TRACE^1^     TAC_Default
+     Offline data authentication was not performed : YES
+                                        SDA failed : YES
+                                  ICC data missing : NO
+           Card appears on terminal exception file : YES
+                                        DDA failed : YES
+                                        CDA failed : NO
+                                      SDA selected : NO
+ICC and terminal have different application versions : NO
+                               Expired application : YES
+                     Application not yet effective : NO
+    Requested service not allowed for card product : NO
+                                          New Card : NO
+        Cardholder verification was not successful : NO
+                                  Unrecognised CVM : NO
+                            PIN Try Limit exceeded : NO
+PIN entry required and PIN pad not present or not working : NO
+PIN entry required, PIN pad present, but PIN was not entered : NO
+                                Online PIN entered : NO
+                   Transaction exceeds floor limit : YES
+          Lower consecutive offline limit exceeded : NO
+          Upper consecutive offline limit exceeded : YES
+Transaction selected randomly for online processing : NO
+                Merchant forced transaction online : YES
+                                 Default TDOL used : NO
+                      Issuer authentication failed : NO
+ Script processing failed before final GENERATE AC : NO
+  Script processing failed after final GENERATE AC : NO
+*:TERMINAL**TAC_Default^1^928786720768**TRACE^1^     2.2 : Get Processing Options
+     --------------------------
+*:TERMINAL**STEP^1^201**TRACE^1^>>GPO : Get Processing Options
+**INFO^1^>>GPO : Get Processing Options
+*:TERMINAL**C-APDU^1^80A8000000*:TERMINAL**R-APDU^1^6700**TRACE^1^Remove candidate from list
+**TRACE^1^EMV PROCESS 13 : Transaction Completion 
+======================================= 
+**STEP^1^13*:TERMINAL**TRACE^1^     13.2 : Terminate Transaction
+     ----------------------------
+*:TERMINAL**STEP^1^1301**END^1*

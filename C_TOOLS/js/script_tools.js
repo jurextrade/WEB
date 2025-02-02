@@ -126,7 +126,7 @@ function url_stringifypar (type, parstruct){
     return content;
 }
 
-function url_submit (type, url, par /*object {}*/, async, callback, values /* array []*/, aftercallback, aftervalues)  {           //depends engine
+function url_submit (type, url, par /*object {}*/, async, callback, values /* can be array []*/, aftercallback, aftervalues)  {           //depends engine
     var callbackreturn = null;    //case synchrone
     if (!async) async = false;
     
@@ -147,7 +147,7 @@ function url_submit (type, url, par /*object {}*/, async, callback, values /* ar
             } else {
                 callbackreturn = this.responseText;
             }
-            if (aftercallback)  aftercallback (this.responseText, aftervalues);    
+            if (aftercallback)  aftercallback (aftervalues);    
                   
         }
         if (this.readyState == 4 && this.status == 404) {
@@ -814,3 +814,15 @@ function LoaderDisplay(display) {
         LoaderRemove();        
     }
 }   
+
+//---------------------------------------------------------------------- MODALS ------------------------------------------------------------
+
+function focusAndCursor(selector){
+    var input = $(selector);
+
+    setTimeout(function() {
+      // this focus on last character if input isn't empty
+      tmp = input.val(); input.focus().val("").blur().focus().val(tmp);
+    }, 10);
+  }
+

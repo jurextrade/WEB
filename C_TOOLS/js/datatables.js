@@ -1305,11 +1305,6 @@
             n._iDisplayStart = 0,
             y(n))
         }
-//<span class="sb_link sb_search " title="Search Tag"> 
-//<label class="sb_label">Search:</label>
-//<input id="emv_search_tag" type="text" class="form-control" funcname="emv_apdu_searchtag" placeholder="TAG" autocomplete="off" maxlength="4" onkeydown="onkeydown_emv_search_tag(event, this)" onchange="onchange_default_sb_item(this);" style="text-transform:uppercase;">
-//<a type="submit" class="sb_link box-btn-search" onclick="onclick_emv_search_tag(this)"></a>
-//</span>
 
         var t = n.oClasses
           , a = n.sTableId

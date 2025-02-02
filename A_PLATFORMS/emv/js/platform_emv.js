@@ -8,16 +8,18 @@ function emv_init () {
     if (marketpanel.length != 0) {
         $('#marketpanel').css ('display', 'none')   
     } 
+
     Tester = new emvtester();
     emv_solution()
+    EMVConnect(solution.EMVRouter_Address, solution.EMVRouter_Port);     
     emv_home_init () ;
 
 //    emv_loadproject()    
     emv_tester_init();
-  
+
     emv_ServerPanel_Update();
     emv_TLVParserPanel_Update(); 
-   
+ 
     setInterval(emv_timer, 300);         
 }
 
@@ -28,6 +30,10 @@ function emv_end () {
     }   
 }
 
+
+function emv_beforeunload () {
+    onclick_selectcancel();
+}
 //---------------------------------------------------------------------MODULE END -----------------------------------------------------------------------------//
 
 function emv_select (name) {
@@ -68,34 +74,26 @@ function emv_solution () {
    //     solution.EMVRouter_Address   =  '127.0.0.1';    
    // }
     solution.emv_LoadProjects = function (Id, url, async, interfacecallback, par) {
-        if (!async) async = false;
-        var params = 'user_id=' + (Id == "0" ? "1" : Id);     
-        
-        var xhttp = new XMLHttpRequest();
-        xhttp.userid = Id;
-        xhttp.pname  = par;
-        
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
+        let param = {
+            user_id :  (Id == "0" ? "1" : Id),
+            platform_pname: EMV_PLATFORM_PNAME,
+            platform_folder : 'EMV'             
+        }
 
-                let arraystructure =  JSON.parse(this.responseText);
-                for (var i = 0; i < arraystructure.length; i++) {
-                    let projectstruct = arraystructure[i];
-                    console.log ('connect')
-                    if (!projectstruct.Name || !projectstruct.Path) continue;
-                    if (this.userid == '0' && projectstruct.Name != "Demo_Project") continue;                    
-                    let project = new emvproject(EMV_PLATFORM_PNAME, projectstruct.Name, projectstruct.Path)
-                    project =  {...project, ...projectstruct}
-                    EMVConnect(project, project.Server, project.Port); 
-                    solution.emv_Projects.push(project);
+        let callback = function (responsetext, values) {
+            let arraystructure =  JSON.parse(responsetext);
+            for (var i = 0; i < arraystructure.length; i++) {
+                let projectstruct = arraystructure[i];
 
-                }   
-                if (interfacecallback)  interfacecallback (par);            
+                if (!projectstruct.Name || !projectstruct.Path) continue;
+                if (this.userid == '0' && projectstruct.Name != "Demo_Project") continue;                    
+                let project = new emvproject(EMV_PLATFORM_PNAME, projectstruct.Name, projectstruct.Path)
+                project =  {...project, ...projectstruct}
+                solution.emv_Projects.push(project);
             }
-        };
-        xhttp.open('POST', url, async);
-        xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhttp.send(params);
+        }
+
+        url_submit ('POST', url, param /*object {}*/, async, callback, [] , interfacecallback, par);
     }    
     solution.emv_GetProjectFromName = function (name) {
         for (var i = 0; i < this.emv_Projects.length; i++) {
@@ -118,7 +116,7 @@ function emv_solution () {
         sb.tree_additems ('emv_tree_projects', projects);
     }
     
-    solution.emv_LoadProjects(user.id, site.address + "/php/read_emv_projects.php",  SYNCHRONE, solution.emv_UpdateProjects, solution);
+    solution.emv_LoadProjects(user.id, site.address + "/php/read_projects.php",  SYNCHRONE, solution.emv_UpdateProjects, solution);
 
 }
 
@@ -130,6 +128,11 @@ function emv_timer () {
         $('#emv_projectsbar #emv_projectcompile').css ('display', '');
         $('#emv_projectsbar #emv_projectdistribute').css ('display', '');
         $('#emv_projectsbar #emv_projectclose').css ('display', '');
+        if (Tester.Reader.Records.length != 0) {
+            $('emv_tester_recordgroup').css ('display', 'flex');
+        } else {
+            $('emv_tester_recordgroup').css ('display', 'none');
+        }
     }
     else {
         $('#emv_projectsbar #emv_projectrename').css ('display', 'none');
@@ -137,6 +140,7 @@ function emv_timer () {
         $('#emv_projectsbar #emv_projectcompile').css ('display', 'none');
         $('#emv_projectsbar #emv_projectdistribute').css ('display', 'none');
         $('#emv_projectsbar #emv_projectclose').css ('display', 'none');
+        $('emv_tester_recordgroup').css ('display', 'none');
     }
 }
 
@@ -171,6 +175,7 @@ function emv_selectproject(project, forcedisplay) {
 
         Interval_emv_loadproject = setInterval(emv_loadedproject, 300, project); //5 minutes 300000     
         project.Load();
+   
     }
     else {
         DisplayOperation("Project " + project.Name + " loaded", true, 'operationpanel');      
@@ -204,8 +209,12 @@ function emv_closeproject (project) {
 }
 
 function emv_initproject () {
-    $('#emv_managersidepanel').addClass('sb_none')
-   // sb.tree_removechildren ('treenode-emv_projectmanager-0');    
+    sb.tree_removechildren ('emv_tree_applications');
+    sb.tree_removechildren ('emv_tree_terminals');
+    sb.tree_removechildren ('emv_tree_acceptor');
+    sb.tree_removechildren ('emv_tree_acquirer');    
+
+   // sb.tree_removechildren ('treenode-emvmanager-0');    
    // sb.tab_delete(emv_maintabs, 'emv_terminal_tab');    
     
 }
@@ -222,8 +231,9 @@ function emv_drawproject(project, open) {
         $("#emv_projectselect option[value='--Select Project--']").remove();   
         $('#emv_projectselect option[value="' + project.Name + '"]').prop('selected', true);
         sb.tree_selectitem ('emv_tree_projects', project.Name); 
-        $('#emv_managersidepanel').removeClass('sb_none')
-        sb.box_toggle('emv_boxmanagerpanel', true);
+        sb.box_toggle('emv_boxapplicationspanel', true);        
+
+
         emv_ServerPanel_Update();
   
     } else {
@@ -231,7 +241,7 @@ function emv_drawproject(project, open) {
         $("#emv_projectselect option").eq(0).before($('<option>', {value: '--Select Project--', text: '--Select Project--'}));
         $("#emv_projectselect option[value='--Select Project--']").prop('selected', true);
         sb.tree_selectitem ('emv_tree_projects', '');
-        sb.box_toggle('emv_boxmanagerpanel', false);      
+        sb.box_toggle('emv_boxapplicationspanel', false);      
         
      //   sb.tab_delete(emv_maintabs, 'emv_tester_tab');   
 
@@ -306,13 +316,32 @@ function onclick_emv_search_tag (elt) {
     fn(name);
 }
 
-function emv_table_searchtag (tag, event) {
 
+function emv_searchtag (tag, event) {
+/*    
+    $('.emv_button_show').on('click', function(event){
+        $('#overlay_tag').remove();        
+        console.log ('click on button show')
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+    })
+   
+    event.preventDefault();  
+    event.stopPropagation();
+*/
+    emv_table_searchtag(tag, event);
+    emv_apdu_searchtag(tag, event);    
+}
+
+
+function emv_table_searchtag (tag, event) {
+/*
     if ($('#zoom_tag_' + tag).length != 0) {
         event.stopPropagation();
         return;
     }
-
+*/
 
     url_submit ('POST', document.location.protocol + '//' + document.location.host + '/php/get_table.php', {tablename: 'gtags', fieldname: 'Tag', valuename: tag} , false, 
         function(content, values) {
@@ -354,23 +383,12 @@ function emv_table_searchtag (tag, event) {
 
 }
 
-
-
-
 function emv_apdu_searchtag (name, event) {
-    $('.emv_button_show').on('click', function(event){
-        $('#overlay_tag').remove();        
-        console.log ('click on button show')
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-    })
-    emv_table_searchtag (name, event)
 
     let tags = [];
 
     if (!name || name.length == 0) return;
-    let labels = $('#emv_apdu_tree_ref  .treeref .sb_label');
+    let labels = $('#emv_apdu_roottree_ref  .treeref .sb_label');
     
     for (var i =0; i < labels.length; i++) {
         if ($(labels[i]).html() == name) {
@@ -378,7 +396,7 @@ function emv_apdu_searchtag (name, event) {
         }
     }
     if (tags.length != 0) {
-        $('#emv_apdu_tree_ref *').removeClass ('searchtag');
+        $('#emv_apdu_roottree_ref *').removeClass ('searchtag');
 
         for (var i = 0; i < tags.length; i++) {
             let rapdu_tree    = tags[i].closest('.rapdu');
@@ -397,13 +415,38 @@ function emv_apdu_searchtag (name, event) {
         }
         $('#' + tags[0].attr('id'))[0].scrollIntoView(); 
     }
-    event.preventDefault();    
-    event.stopPropagation();   
+   // event.preventDefault();    
+   // event.stopPropagation();   
     return false;   
 }
 
+function emv_apdu_searchcommand (classname, event) {
+    console.log ('emv_apdu_searchcommand')
+    let commands = [];
+
+    if (!classname || classname.length == 0) return;
+    let ul   = $('#emv_apdu_roottree_ref  .treenode.' + classname);
+    
+    for (var i =0; i < ul.length; i++) {
+        commands.push ($(ul[i]).find ('span').first());
+    }
+
+    if (commands.length != 0) {
+        $('#emv_apdu_roottree_ref *').removeClass ('searchtag');
+
+        for (var i = 0; i < commands.length; i++) {
+            sb.tree_open(commands[i].attr('id'));   // open rapdu
+            commands[i].addClass ('searchtag')
+
+        }
+        $('#' + commands[0].attr('id'))[0].scrollIntoView(); 
+    }
+    return false;   
+}
+
+
 function onclick_apdu_treenode (elt, event) {
-    console.log ('click tree')
+
     let nodetree    = elt.closest('.sb_tree');
     if ($(nodetree).hasClass ('treenode')) {   
         let closed      = $('#' + elt.id + '_ref').hasClass("closed") ? true : false;
@@ -422,7 +465,7 @@ function onclick_apdu_treenode (elt, event) {
 function onclick_apdu_tree_inspect (elt, event) {
     let node        = $(elt.parentElement).closest('.sb_link');
     let nodetree    = node.closest('.sb_tree');
-    console.log ('inspect')
+
     if (nodetree.hasClass ('treenode')) {    
         let nodeid      = node.attr('id');
         let panelid     = nodeid.replace ('treenode', 'treepanel');
@@ -444,11 +487,11 @@ function onclick_apdu_tree_inspect (elt, event) {
 }
 
 function emv_apdu_init () {
-    sb.tree_removechildren ('emv_apdu_tree');
+    sb.tree_removechildren ('emv_apdu_roottree');
 }
 
 function emv_apdu_closeall () {
-    let children = $('#emv_apdu_tree_ref > li span')
+    let children = $('#emv_apdu_roottree_ref > li span')
     for (var i= 0; i < children.length; i++) {
         let id = children[i].id
         if (id) {
@@ -500,6 +543,8 @@ function emv_rapdu_treepanelitem (tag, value, subvalue, index, hidden) {
 }
 
 function emv_capduselect (command, index, scroll) {
+
+    emv_apdu_closeall();     
     let ins      = command.ins;
    
     let id = 'capdu' + '_' + index;
@@ -507,7 +552,7 @@ function emv_capduselect (command, index, scroll) {
     sb.tree_expand(id)
    
    
-    $('#emv_apdu_tree_ref  > li > ul >li > span').removeClass('selected')
+    $('#emv_apdu_roottree_ref  > li > ul >li > span').removeClass('selected')
     $('#capdu' + '_' + index).addClass ('selected')  
     if (scroll) {
         $('#capdu' + '_' + index)[0].scrollIntoView();   
@@ -515,13 +560,15 @@ function emv_capduselect (command, index, scroll) {
 }
 
 function emv_rapduselect (roottag, index, scroll) {
+
+    emv_apdu_closeall();        
     let tag      = roottag.tag;
 
     let id = 'rapdu' + '_' + index;
     sb.tree_expand(id)
 
     
-    $('#emv_apdu_tree_ref  > li > ul >li > span').removeClass('selected')
+    $('#emv_apdu_roottree_ref  > li > ul >li > span').removeClass('selected')
     $('#rapdu' + '_' + index).addClass ('selected')  
 
     if (scroll) {
@@ -539,7 +586,7 @@ function emv_capdu_update (capdu, index, item) {
     let lc   = parseInt(capdu.lc, 16)
     
     
-    let nodeitem  = {id: 'capdu' + '_' + index, item: 'C-APDU', type: 'tree',  class: 'capdu treenode',  arrow: (lc == 0 ? false : true), events: apdu_default_node_events, closed: true,
+    let nodeitem  = {id: 'capdu' + '_' + index, item: 'C-APDU', type: 'tree',  class: 'capdu treenode ' + getcommandclassname(ins),  arrow: (lc == 0 ? false : true), events: apdu_default_node_events, closed: true,
                     rootitem: emv_apdu_tree_bar(cla, getcommandname (ins) + ' CLA: ' + cla + ' INS: ' + ins + ' P1: ' + p1 + ' P2: ' + p2,  true)};        
     
     sb.tree_additem (item.id, nodeitem);
@@ -554,7 +601,7 @@ function emv_rapdu_update (rapdu, index, value, item) {
     let sw2 = rapdu.sw2;
     let error = (sw1 != '90' || sw2 != '00')
 
-    let nodeitem  = {id: 'rapdu' + '_' + index, item: 'R-APDU', type: 'tree',  class: 'rapdu treenode' + (error ? ' rapduerror' : ''),  arrow: (error == true ? false : true), events: apdu_default_node_events, closed: true,
+    let nodeitem  = {id: 'rapdu' + '_' + index, item: 'R-APDU', type: 'tree',  class: 'rapdu treenode ' + gettagclassname(rapdu.tag) + (error ? ' rapduerror' : ''),  arrow: (error == true ? false : true), events: apdu_default_node_events, closed: true,
                     rootitem: emv_apdu_tree_bar(sw2,  gettagname(rapdu.tag) + ' SW1: ' + sw1 + ' SW2: ' + sw2,  true)};        
     
     sb.tree_additem (item.id, nodeitem);
@@ -627,28 +674,7 @@ function emv_selectstep (step, scroll) {
     
     emv_tree_step_selectsubstep(step, scroll);   
     emv_presentation_selectsubstep(step, true);  
-    emv_tester_stepsgroup_selectstep(mainstep_id)    
 }
-
-//--------------------------------------------------- TESTER BARGROUP --------------------------------------------------------
-
-function onclick_emv_tester_stepsgroup(elt, event) {
-    let step = elt.id;
-    emv_selectstep(step, true);
-}
-
-function emv_tester_stepsgroup_selectstep (step) {
-
-    $('#emv_tester_stepsgroup .EMVStep').removeClass ('selected');    
-
-    let selected_element =  $('#emv_tester_stepsgroup .EMVStep').filter('#' +step)  
-    if (selected_element.length != 0) {    
-        selected_element.addClass ('selected')
-    }
-    return step;  
-}
-
-
 
 //----------------------------------------------------  EMV DIAGRAM PANEL    ------------------------------------------------ 
 
@@ -661,7 +687,8 @@ function onclick_tree_step_button (elt, event) {
 }
 
 function onmousedown_emv_tree_step (elt, event) {
-    let step = elt.id;
+    console.log ('sssssssssssssssssss')
+    let step = elt.id.replace("step_", "");
     emv_selectstep(step); 
 }
 
@@ -669,7 +696,7 @@ function emv_tree_step_selectstep (step, scroll) {
     let step_id = emv_returnmainstep (step);
 
     $('#emv_tree_steps .EMVStep').removeClass ('selected');    
-    let selected_element = $('#emv_tree_steps .EMVStep').filter('#' + step_id)
+    let selected_element = $('#emv_tree_steps .EMVStep').filter('#step_' + step_id)
     if (selected_element.length != 0) {
         selected_element.addClass ('selected')
         if (scroll) {
@@ -682,7 +709,7 @@ function emv_tree_step_selectstep (step, scroll) {
 function emv_tree_step_selectsubstep (substep, scroll) {
 
     $('#emv_tree_steps .EMVSubStep').removeClass ('selected');        
-    let selected_element = $('#emv_tree_steps .EMVSubStep').filter('#' + substep)
+    let selected_element = $('#emv_tree_steps .EMVSubStep').filter('#step_' + substep)
     if (selected_element.length != 0) {
         selected_element.addClass ('selected')
         if (scroll) {
@@ -697,7 +724,7 @@ function emv_steps_diagram (id) {
     content +=  '<ol class="process_diagram">';
     
     content += '<li>' +
-    '               <div  id ="' + emv_Steps[0].id + '" class= "EMVStep" onmousedown="onmousedown_emv_tree_step(this, event)" >' +
+    '               <div  id ="step_' + emv_Steps[0].id + '" class= "EMVStep" onmousedown="onmousedown_emv_tree_step(this, event)" >' +
     '                   <div class="sb_widget-title">STEP ' + 0 + '</div>' +
     '                   <div>' + emv_Steps[0].item + '</div>' +
     '               </div>' +
@@ -707,7 +734,7 @@ function emv_steps_diagram (id) {
     for (var i = 1; i < emv_Steps.length; i++) {
         content += '<li><ol>';
         content += '<li>' +
-        '               <div id ="' + emv_Steps[i].id + '" class= "EMVStep" onmousedown="onmousedown_emv_tree_step(this, event)" >' +
+        '               <div id ="step_' + emv_Steps[i].id + '" class= "EMVStep" onmousedown="onmousedown_emv_tree_step(this, event)" >' +
         '                   <div class="sb_widget-title">STEP ' + i + '</div>' +
         '                   <div >' + emv_Steps[i].item + '</div>' + 
         '               </div>' +
@@ -716,7 +743,7 @@ function emv_steps_diagram (id) {
             if (j == 0) {
                 content += '<ul>';
             }
-            content += '<li><div id ="' + emv_Steps[i].substeps[j].id + '" class= "EMVSubStep" onmousedown="onmousedown_emv_tree_step(this, event)">' + emv_Steps[i].substeps[j].item + '</div></li>';
+            content += '<li><div id ="step_' + emv_Steps[i].substeps[j].id + '" class= "EMVSubStep" onmousedown="onmousedown_emv_tree_step(this, event)">' + emv_Steps[i].substeps[j].item + '</div></li>';
             if (j ==  emv_Steps[i].substeps[j].length - 1) {
                 content += '</ul>';
             }
@@ -737,7 +764,7 @@ function emv_presentation_selectstep(step, scroll) {
     $('#emv_presentation_steps_panel .EMVStep').removeClass ('selected');    
     $('#emv_presentation_steps_panel .EMVStep').addClass ('sb_none');
    
-    let selected_element =  $('#emv_presentation_steps_panel .EMVStep').filter('#' + step_id)
+    let selected_element =  $('#emv_presentation_steps_panel .EMVStep').filter('#step_' + step_id)
     if (selected_element.length != 0) {    
         selected_element.addClass ('selected')
         selected_element.removeClass ('sb_none')
@@ -754,7 +781,7 @@ function emv_presentation_selectstep(step, scroll) {
  function emv_presentation_selectsubstep(substep, scroll) {
     $('#emv_presentation_steps_panel .EMVSubStep').removeClass ('selected');        
     
-    let selected_element =    $('#emv_presentation_steps_panel .EMVSubStep').filter('#' + substep)
+    let selected_element =    $('#emv_presentation_steps_panel .EMVSubStep').filter('#step_' + substep)
     if (selected_element.length != 0) {        
         selected_element.addClass ('selected')
         if (scroll) {
@@ -780,12 +807,15 @@ function emv_presentation_form (stepnbr) {
         '   <div class="card-title sb_f_size12">' +  step.item + '</div>' + 
         '   <div class="card-text">';
                 content += step.description;
+                content += sb.render(emv_presentation_flags(stepnbr, 'Info', ['']));
+
                 for (var j = 0; j < step.substeps.length; j++) {
-                    content += '<div id ="' + step.substeps[j].id + '" class= "card EMVSubStep" >' + 
+                    content += '<div id ="step_' + step.substeps[j].id + '" class= "card EMVSubStep" >' + 
                             '    <div class="card-body">' +
                             '        <div class="card-title">' +  step.substeps[j].item + '</div>' + 
                             '        <div class="sb_main card-text">';
                     content += step.substeps[j].description;
+                    content += sb.render(emv_presentation_flags(step.substeps[j].id , 'Info', ['']));                    
                     content += '        </div>' +
                             '    </div>' +  
                             '</div>'; 
@@ -830,8 +860,9 @@ function onclick_ResetEMVServer (elt, event) {
 function onclick_ApplyEMVServer (elt, event) {
     let newadress  =   $('#nodeserveradress').val();
     let newport    =   $('#nodeserverport').val();
-    solution.emv_CurrentProject.Com.Close ();
-    EMVConnect(solution.emv_CurrentProject, newadress, newport);
+    RouterCom.Com.Close ();
+    
+    EMVConnect(newadress, newport);
 
 }
 
@@ -879,3 +910,14 @@ function ondblclick_emvtabs(elt, event) {
     }
     BottomPanel_Flat (platform, undefined, true);
 } 
+
+
+function emv_table_search_aidtable (fieldvalue, field, callback, tabvalue) {
+
+
+    url_submit ('POST', document.location.protocol + '//' + document.location.host + '/php/get_table.php', {tablename: 'aids', fieldname: field, valuename: fieldvalue} , false, 
+        callback,
+        tabvalue
+    )
+    return;    
+}

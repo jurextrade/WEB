@@ -141,11 +141,12 @@ function TreatCompile(project, values, Line) {
 function TreatUpload(project, values, Line) {
     var compiletype =  values[3];   
   
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
-    }    
-
+    }
     FinishUploading = true;
 
     if (values[4] == "OK") {
@@ -203,11 +204,12 @@ function SelectCompileProject (project, langtype) {
 }
 
 function CompileProject(project, langtype, terminaltype) {
-
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
-    }    
+    }
     
     let sfiles = ["", "", ""];
     let content;
@@ -230,11 +232,12 @@ function CompileProject(project, langtype, terminaltype) {
 
 function OnCompileProject(project, filename, content, langtype, terminaltype) {
 
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
-
     var sorder = "*COMPILE*" + project.Folder + "*" + filename + "*" + langtype + "*" + terminaltype + "*" + content;
     project.Com.Send(solution.UserId + sorder);
 }
@@ -265,8 +268,10 @@ function SelectCompileStrategy (project, strategy, langtype) {
 
 function CompileStrategy(project, strategy, langtype) {
     
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
 
@@ -318,8 +323,10 @@ function CompileStrategy(project, strategy, langtype) {
 
 function OnCompileStrategy (project, strategyname, content, langtype) {
    
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
 

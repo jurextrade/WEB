@@ -1454,7 +1454,7 @@
     width: 50px;
     font-size: 18px !important;
     padding: 0.5rem;  
-    z-index: 10;    
+    z-index: 9;    
    
 }
 
@@ -1508,7 +1508,7 @@
 }
 
 .sb_sidepanel {
-    overflow:auto;
+    overflow-y:auto;
 }
 
 /*---------------------------------------------------- sb_rightsidebarpanel ---------------------------------------------------*/
@@ -1820,6 +1820,7 @@ sb_roundbutton.active{
     background-color: var(--theme-bar-bg-color);   
 /* NEW */
     margin-bottom: 1px;
+   /* overflow: hidden;*/    
 }
 
 .sb_bar .container-fluid {
@@ -1984,7 +1985,7 @@ sb_roundbutton.active{
 
 .sb_datatable .dataTables_scrollBody {
     overflow: auto;
-    height: calc(100% - 18px);
+    height: calc(100% - 23px);
 }
 
 .sb_datatable td {
@@ -2001,7 +2002,7 @@ sb_roundbutton.active{
     border-left: 0px solid var(--theme-button-border-color);      
 }
 
-/*---------------------------------------------------- sb_tab ---------------------------------------------------*/
+--------------------------------------------- sb_tab ---------------------------------------------------*/
 
 .sb_tabs {
     height:100%;

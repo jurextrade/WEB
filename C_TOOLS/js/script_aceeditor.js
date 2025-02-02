@@ -77,7 +77,10 @@ class aceeditor {
     }
 
     setOptions (options) {
-        this.Options = options;
+        this.Options = {...this.Options, ...options};
+        if (this.aceEditor) {
+           this.aceEditor.setOptions(this.Options);
+        }
     }
     
     addCommand (option) {

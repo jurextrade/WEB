@@ -59,7 +59,7 @@ function click_main (elt, event) {
     let psidebarpanel   = $('#right_sidebarpanel'); 
     
     if (!psidebarpanel.hasClass('pinned')) {    
-        rightsidebarpanel_hide();
+        rightsidebarpanel_hide(psidebarpanel);
     }
 }
 
@@ -1582,7 +1582,36 @@ class _navigator {                                                           // 
         this.geolocation    = window.navigator.geolocation	
         this.language       = window.navigator.language	
         this.online         = window.navigator.onLine	
-        this.useragent      = window.navigator.userAgent	
+        this.useragent      = window.navigator.userAgent
+        window.addEventListener("beforeunload", function(event) {
+            solution.navigator.onbeforeunload (event);
+          });   
+          window.addEventListener("onunload", function(event) {
+            solution.navigator.onunload (event);
+          });                    
+    //    window.onbeforeunload   = function (event) {solution.navigator.onbeforeunload (event)}
+    //    window.onunload   = function (event) {solution.navigator.onunload (event)}        
+    }
+    onunload(event) {
+        let cuser       = solution.get('user')            
+        event.preventDefault();
+ 
+
+        
+    }    
+    onbeforeunload(event) {
+        let cuser       = solution.get('user')            
+
+        let platforms = solution.ui.platforms;
+        for (var i = 0; i < platforms.length; i++) {
+            let platform = platforms[i];
+            if (defined(platform.beforeunload)) {        //define external data to platform
+                eval (platform.beforeunload);                
+            }
+        }
+        if (cuser.id != "0")  {
+            event.returnValue =  "Are you sure you want to leave?";    
+        }
     }
     setCookie(cname, cvalue, exdays) {
         let expires = "Thu, 01 Jan 1970 00:00:00 UTC";
@@ -1668,18 +1697,20 @@ function onclick_rightsidebarmenu (id, show) {
             show = 1;
         }
     }
+    let panelid = id.replace("sidebar", "sidebarpanel");
+    let psidebarpanel   =  $('#' + panelid).parent ();    
+
     if (show == 1) {
-        rightsidebarpanel_select(id.replace("sidebar", "sidebarpanel"));    
+        rightsidebarpanel_select(psidebarpanel, id);    
     } else    
     if (show == 0) {
-        rightsidebarpanel_hide();            
+        rightsidebarpanel_hide(psidebarpanel);            
     }
 }
 
 
-function rightsidebarpanel_hide () {
-    let psidebarmenu    = $('#right_sidebarmenu'); 
-    let psidebarpanel   = $('#right_sidebarpanel'); 
+function rightsidebarpanel_hide (psidebarpanel) {
+    let psidebarmenu    = psidebarpanel.next(); 
     let toresize        = psidebarpanel.hasClass('pinned')
     
     psidebarpanel.css ({'transition':''});
@@ -1693,18 +1724,22 @@ function rightsidebarpanel_hide () {
     });
 
     let sbmenus  = psidebarmenu.find('.sb_link');
+
     $.each(sbmenus, function (index, menu) {
         $(menu).removeClass("checked");
     });
+
     psidebarpanel.removeClass('toggled')
+
     if (toresize) {0
         sb.resize(sb.interface);        
     }
 }
 
-function rightsidebarpanel_select (id) {
-    let sidebarpanel    =  $('#' + id);
-    let psidebarpanel   = sidebarpanel.parent ();
+
+function rightsidebarpanel_select (psidebarpanel, id) {
+    let sidebarmenu         = $('#' + id);    
+    let psidebarmenu    = psidebarpanel.next(); 
     let toresize        = psidebarpanel.hasClass ('pinned')
         
     let sbpanels = psidebarpanel.children ();
@@ -1715,19 +1750,19 @@ function rightsidebarpanel_select (id) {
         }
     });
     
+    let sidebarpanel   =  $('#' + id.replace("sidebar", "sidebarpanel"));  
     sidebarpanel.removeClass("sb_none");    
     sidebarpanel.addClass("sb_active");    
-
-    let sidebarmenu     = $('#' + id.replace("sidebarpanel", "sidebar"))
-    
-    let psidebarmenu    = sidebarmenu.closest('.sb_sidebarmenu'); 
+ 
     let sbmenus         = psidebarmenu.find('.sb_link');
     $.each(sbmenus, function (index, menu) {
         $(menu).removeClass("checked");
     });
 
     sidebarmenu.addClass("checked");
+
     psidebarpanel.addClass('toggled')
+
     if (toresize) {
         sb.resize(sb.interface);        
     }
@@ -1818,6 +1853,10 @@ function sidebarpanel_select (platform, id) {
         sb.resize(platform);
     }
 }
+
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------
 var theme_main_color;
 var theme_color;
 var theme_chart_bullstroke;    

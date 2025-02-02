@@ -98,8 +98,15 @@ function filenamepanel () {
 }
 
 function onclick_export_file() {
-//    user = solution.get('user')
-    cuser.send ({Name: 'savefile',  Values: [cuser.path + '/NetProg', 'Script_Server', $('#export_filename').val(), netprog_server_input.getValue()]},
+    let cuser = solution.user;
+
+    let project_folder = solution.netprog_CurrentProject.Folder;
+    let file_path      = cuser.fileexplorer.Root + cuser.path  + '/NetProg/' + project_folder  + '/Script_Server/' ;
+
+
+    let netprogserver  = solution.GetServerFromName('NetProgServer');   
+
+    cuser.send ({Name: 'savefile',  Values: [file_path + $('#export_filename').val(), netprogserver.Input.getValue()]},
                 false,  
                 function (content, values) {
                     let message = JSON.parse (content);
@@ -241,7 +248,7 @@ function onclick_netprog_server_group (elt, event) {
                 id: 'exportserver_filename', 
                 header: 'Export File in Workspace', 
                 resizable: true,
-                body: filenamepanel(), 
+                body: sb.render ({id: 'export_filename', item: 'File Name', type:'text',   class: "sb_formgroup", value:"script_.js"}),
                 footer: 
                     '<button class="sb_mbutton" onclick="onclick_export_file(); ">Save</button>' +
                     '<button class="sb_mbutton" data-bs-dismiss="modal">Cancel</button>',                      

@@ -117,6 +117,15 @@ function nodeserver (cardsport, terminalport, httpport, shttpport) {
         }
         return null;
     }	
+    
+    this.GetWebClientFromUserId = function (userid) {
+        for (i = 0; i < this.webClients.length; i++) {
+            if (this.webClients[i].UserID == userid)
+                return this.webClients[i];
+        }
+        return null;
+    }	
+
     this.GetCardClientFromUserId = function (userid) {  // First cardClient
         for (i = 0; i < this.cardClients.length; i++) {
             if (this.cardClients[i].UserID == userid)
@@ -137,9 +146,9 @@ function nodeserver (cardsport, terminalport, httpport, shttpport) {
 	this.SendToWebClient = function (cardclient, origin, message, toall) {                      
 		for (i = 0; i < NS.webClients.length; i++) {
 //            console.log (NS.webClients.length);
-			if (NS.webClients[i].Socket.connected &&  
-				(NS.webClients[i].UserID == cardclient.UserID  || cardclient.UserID == 1 && NS.webClients[i].UserID == 0)) {
-				if (toall == 1 || NS.webClients[i].CanSend){
+			if (this.webClients[i].Socket.connected &&  
+				(this.webClients[i].UserID == cardclient.UserID)){ //  || cardclient.UserID == 1 && NS.webClients[i].UserID == 0)) {
+				if (toall == 1 || this.webClients[i].CanSend){
 					NS.webClients[i].Socket.emit('message', ":" + origin + "*" + message);	
                 }
 			}
@@ -147,7 +156,7 @@ function nodeserver (cardsport, terminalport, httpport, shttpport) {
 	}	
     this.SendToAllWebClients = function (origin, message) {
 		for (i = 0; i < NS.webClients.length; i++) {
-    		NS.webClients[i].Socket.emit('message', ":" + origin + "*" + message);	
+    		this.webClients[i].Socket.emit('message', ":" + origin + "*" + message);	
         }
 	}
 	
@@ -157,7 +166,7 @@ function nodeserver (cardsport, terminalport, httpport, shttpport) {
 	}
 	this.EmitToCardClient = function (socket, message) {
 		if (socket)
-			socket.emit('message', message);
+			socket.write(message);
 	}
     ListenTerminal(terminalport);
     ListenCards(cardsport);
@@ -214,14 +223,15 @@ function ListenHTTP (port) {
 
 				for (var i = 0; i < NS.cardClients.length; i++) {
 
-					if  (NS.cardClients[i].UserID == userid || (userid == 0 && NS.cardClients[i].UserID == 1)) {
+					if  (NS.cardClients[i].UserID == userid) { // || (userid == 0 && NS.cardClients[i].UserID == 1)) {
 						if (NS.cardClients[i].Connected) {
+                            foundconnection = true;
 					//		client.CanSend = false;  // need to ask me to send again
 							Print('====>  HTTP LOGIN : [' + userid + ']'  + 'A CLIENT IS RUNNING for userid ' + NS.cardClients[i].UserID);
 							NS.EmitToWebClient(socket, ":CARD**LOGIN^" + "OK^" +"*");  
-							foundconnection = true;
-						}
-					}
+                            NS.EmitToCardClient(NS.cardClients[i].Socket,  userid + "*WEBCLIENT*OK*");
+    			        }0
+                    }
 				}
 				if (!foundconnection) {
 					NS.EmitToWebClient(socket, ":CARD**LOGIN^" + "KO*");  
@@ -240,7 +250,7 @@ function ListenHTTP (port) {
 				Print('<====  HTTP START : [' + userid + '] Start : ' +start);			
 				var foundconnection = false;
 				for (var i = 0; i < NS.cardClients.length; i++) {
-					if  (NS.cardClients[i].UserID == userid || (userid == 0 && NS.cardClients[i].UserID == 1)) {
+					if  (NS.cardClients[i].UserID == userid) { //} || (userid == 0 && NS.cardClients[i].UserID == 1)) {
 						if (NS.cardClients[i].Connected) {
 				            Print('====>  HTTP START : [' + userid + ']' + 'Start : ' + start);			
 							client.CanSend = (start == 0 ? false : true);
@@ -256,17 +266,24 @@ function ListenHTTP (port) {
 				
 			}
 			else {			
-				var userid = values[0];
-				var command = values[2];
-
+				var userid  = values[0];
+				var command =  values[1];
+                var par     = values[2];
                 Print('recu message de HTTP : ' + userid + ' ' + command);
 				let cardclient = NS.GetCardClientFromUserId(userid);
-			
-                if (cardclient == null) return;
-				if (cardclient.Connected == false) return;
+
+                if (cardclient == null) {
+                    Print('cardclient == null');                    
+                    return;
+
+                }
+				if (cardclient.Connected == false) {
+                    Print('cardclient not Connected')
+                    return;
+                }
 
                 Print('envoi message : ' + userid + ' ' + command);
-				EmitToCardClient(cardclient.Socket, '*' + command + '*');
+				NS.EmitToCardClient(cardclient.Socket, message);
 			}
 		});
 
@@ -405,8 +422,12 @@ function ListenTerminal (port) {
                        // NS.SendToWebClient(cardclient, TERMINAL, '*LOGIN^KO^*');      
                         return;       
                     }
+                    
                     console.log ('get connection from  EMVServer client id is : ' + cardclient.UserID)
-					socket.write(cardclient.UserID);
+					
+                    socket.write(cardclient.UserID);
+
+
                     NS.SendToWebClient(cardclient, TERMINAL, '*LOGIN^OK^*');      
                     NS.SendToWebClient(cardclient, TERMINAL, '*TRACE^' + cardclient.UserID + '^Hello ' + username +  '\n^*');      
 					return;
@@ -493,15 +514,17 @@ function VerifyUser (socket, port, servername, username, password) {
             Print("recu : *" + http.responseText + "*");
         
             let userid =  http.responseText;
-            socket.write(userid)            
         
             if (userid == '0') 
                 {
                     Print("Authentification Failed : " + userid);
+                    socket.write(userid + "*LOGIN*KO*")            
+
                 }
                 else
                 {
                     Print("Authentification Succeeded : " + userid);
+                           
                     let connection = NS.GetCardClientFromUserId(userid);
                     if (!connection) {
                         connection = new cardClient(userid, servername, username, password);
@@ -511,8 +534,12 @@ function VerifyUser (socket, port, servername, username, password) {
                     }
                     connection.Connected = true;
                     connection.Socket = socket;
-
-                    NS.SendToWebClient(connection, CARD, "*CONNECT^" + connection.UserID +"^1*", 1);					
+                    if (NS.GetWebClientFromUserId(userid)) {
+                        socket.write(userid + "*LOGIN*OK*")    
+                        NS.SendToWebClient(connection, CARD, "*CONNECT^" + connection.UserID +"^1*", 1);					
+                    } else {
+                        socket.write(userid + "*LOGIN*KO*")    
+                    }
                 }
             }
 	}

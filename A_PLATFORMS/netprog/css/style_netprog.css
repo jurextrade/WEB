@@ -49,6 +49,10 @@
     border: 1px solid #ff5858;
 }
 
+.treenode.selected {
+    border: 1px solid #ff5858;
+}
+
 
 
 #netprog_main .sb_widget .sb_icon {
@@ -60,21 +64,23 @@
 }
 
 .netprog_jseditor_input {
-    flex: 0.7;
+    flex: 1;
 }
 
 .netprog_jseditor_output {
-    flex: 0.3;
+    flex: none;
     border-top: 1px solid var(--theme-border-color);
-    margin-top: 2px;    
+    margin-top: 2px;  
+    height:200px;      
 }
 
 .netprog_server_input {
-    flex: 0.7;
+    flex: 1;
 }
 
 .netprog_server_output {
-    flex: 0.3;
+    flex: none;
+    height:200px;
     border-top: 1px solid var(--theme-border-color);
     margin-top: 2px;    
 }

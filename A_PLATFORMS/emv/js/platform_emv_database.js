@@ -44,7 +44,7 @@ function emv_tagspanel_update () {
                 $(row).addClass(data.Origin);
             },               
             columnDefs: [
-                {title: "Tag",           width: 100, targets: 0 },
+                {title: "Tag",           width: 200, targets: 0 },
                 {title: "Name",          width: 300, targets: 1 },
                 {title: "Origin",        width: 100, targets: 2 },
                 {title: "Description",   width: 500, targets: 3 },

@@ -1,6 +1,6 @@
 const NETPROG_ID              = 'netprog_root';
 const NETPROG_PLATFORM_PNAME  = 'netprog';
-const NETPROG_PLATFORM_NAME   = 'Netprog';
+const NETPROG_PLATFORM_NAME   = 'NetProg';
 
 const MXSystems_Menu = [ 
     {id: 'ID_UNIX',  text: 'UNIX'},
@@ -381,9 +381,9 @@ var netprog_projectsbar = {
                 type: 'group',                        
                 items:
                     [ 
+                        {id: 'netprog_projectcreate',    type:'link',       icon: icon_new,              events: {onclick: "onclick_netprog_projectcreate()"},  title: 'Create New Project'},      
                         {id: 'netprog_projectrename',    type:'link',       icon: icon_rename,           events: {onclick: "onclick_netprog_projectrename()"},  title: 'Rename Current Project'},  
                         {id: 'netprog_projectremove',    type:'link',       icon: icon_remove,           events: {onclick: "onclick_netprog_projectremove()"},  title: 'Delete Current Project'},              
-                        {id: 'netprog_projectcreate',    type:'link',       icon: icon_new,              events: {onclick: "onclick_netprog_projectcreate()"},  title: 'Create New Project'},      
                         {id: 'netprog_projectclose',     type:'link', icon: icon_close,    class:'sb_close',  events: {onclick: "onclick_netprog_projectclose()"}, title: 'Close Current Project'}
                     ]
             }
@@ -484,8 +484,8 @@ var netprog_projects_headerpanel = {
     ]
 }
 
-var netprog_project_sidepanel = {
-    id: 'netprog_project_sidepanel',
+var netprog_projects_sidepanel = {
+    id: 'netprog_projects_sidepanel',
     type: 'panel',
     class: 'sb_sidepanel sb_panel sb_main sb_column',
     items: [
@@ -605,7 +605,7 @@ var netprog_sidebarpanel  = {
     class: 'sb_panel sb_sidebarpanel sb_right',     
     items : 
     [
-        {id: 'sidebarpanel_netprogsiteview',    class: 'sb_panel sb_main sb_pane',  type: 'panel',  items: [netprog_projects_headerpanel,  netprog_project_sidepanel]},      
+        {id: 'sidebarpanel_netprogsiteview',    class: 'sb_panel sb_main',  type: 'panel',  items: [netprog_projects_headerpanel,  netprog_projects_sidepanel]},      
         {id: 'sidebarpanel_netprogmanager',     class: 'sb_panel sb_main',   type: 'panel',  items: [netprog_box_manager, netprog_program]},             
         {id: 'sidebarpanel_netprogfilemanager', class: 'sb_panel sb_main',   type: 'panel',  items: [netprog_file_headerpanel, netprog_filemanager]},             
         {id: 'sidebarpanel_netprogsettings',    class: 'sb_panel sb_pane',   type: 'panel',  items: [settingspanel('netprog')]},             

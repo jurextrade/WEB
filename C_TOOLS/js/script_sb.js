@@ -31,6 +31,14 @@ $(document).ready(function(){
         });
     });
     
+    $(document).on('mouseup', function(event){
+        var overlays = $('.sb_overlay');
+        $.each(overlays, function (index, overlay) {
+            var overlay_options = $(overlay).data('options');  
+            if (overlay_options && !overlay_options.keepopen)
+                $(overlay).remove();      
+        });
+    });  
     $(document).on("contextmenu", function(){
         let overlays = $('.sb_overlay');
         $.each(overlays, function (index, overlay) {
@@ -115,7 +123,7 @@ function onchange_default_sb_item(elt){
 
     var default_value;    
     var element_value;
-    console.log ('changed here')
+
     if (elt.tagName.toLowerCase() == 'select') {
         default_value =  $('#' + elt.id + ' [selected="selected"]').val();  
         element_value = $(elt).val();
@@ -669,7 +677,8 @@ class SB {
                             (defined(bar.style) ? ' style= "' + bar.style + '" ' : '')  + 
                             (defined(bar.attributes) ?  this.stringify(bar.attributes) : '') +    
                             (defined(bar.events) ? this.stringify(bar.events) : '') +                                                                       
-                    '>';
+                    '>' + 
+                    (defined(bar.item)  ?  bar.item : '');
 
         content += this.bar_header (bar.header);
 
@@ -982,7 +991,7 @@ class SB {
         var colcontent = colcontent + '</thead>';
         var rowcontent = '<tbody>';
 
-        rowcontent += this.table_returnrowscontent (table, table.rows);
+        rowcontent += this.table_returnrowscontent (table);
 
         var rowcontent = rowcontent + '</tbody>'
     
@@ -1082,8 +1091,8 @@ class SB {
         var rowcontent = '';
         var cellid = rowid + rowindex + '_';   
 
-        rowcontent += '<tr id= "' + rowid + rowindex + '" class="sb_tablerow"' + 
-                        (table.events ? this.stringify(table.events) : '') +
+        rowcontent += '<tr id= "' + rowid + rowindex + '" class="sb_tablerow"' + (defined (table.rowstitle) ? ' title ="' + table.rowstitle[rowindex]  + '"' : '')
+                        + (table.events ? this.stringify(table.events) : '') +
                     '>';     
 
         for (var j = 0; j < row.length; j++) {
@@ -1100,13 +1109,13 @@ class SB {
         return rowcontent;
     }
 
-    table_returnrowscontent = function (table, rows) {
+    table_returnrowscontent = function (table) {
         var tableid = table.id;    
         var rowid = tableid + '_';
         var content = '';
 
-        for (var rowindex = 0; rowindex < rows.length; rowindex++) {
-            content += this.table_returnrowcontent (table, rows[rowindex], rowindex);
+        for (var rowindex = 0; rowindex < table.rows.length; rowindex++) {
+            content += this.table_returnrowcontent (table, table.rows[rowindex], rowindex);
         }    
 
         return content;
@@ -1133,7 +1142,7 @@ class SB {
         table.columnstitle.length = fromindex;
         table.rows = [];
 
-        $('#' + table.id + ' tbody').html(this.table_returnrowscontent (table, table.rows)); 
+        $('#' + table.id + ' tbody').html(this.table_returnrowscontent (table)); 
         $('#' + table.id + ' thead').html(this.table_returncolumnscontent (table));      
     }
 
@@ -1213,9 +1222,9 @@ class SB {
 
     table_setrows = function (table, rows) {
         var tableid = table.id;
-
-        $('#' + tableid + ' tbody').html(this.table_returnrowscontent (table, rows));
         table.rows= rows;    
+
+        $('#' + tableid + ' tbody').html(this.table_returnrowscontent (table));
     }
 
     table_setrowattr = function (table, rowindex, attr, attrvalue){
@@ -1403,7 +1412,7 @@ class SB {
     modal = function (modal, classnames) { 
         var content = ''; 
         content += 
-    '   <div id="' + modal.id + '" class="sb_modal modal fade"' + (modal.static ? ' data-bs-backdrop="static"' : '') + ' fade tabindex="-1" role="dialog" aria-hidden="true">' + 
+    '   <div id="' + modal.id + '" class="sb_modal modal"' + (modal.static ? ' data-bs-backdrop="static"' : '') + ' fade tabindex="-1" role="dialog" aria-hidden="true">' + 
     '       <div class="modal-dialog' + (classnames ? classnames : '')  + '" style= "' + (modal.width ? 'max-width:' + modal.width + 'px;' : '')  + '">' +
     '           <div class="modal-content remixModalContent">' +
     '               <div class="modal-header">' +
@@ -1528,7 +1537,7 @@ class SB {
         div1.data('options', options)
             .data('position', offset.left + 'x' + offset.top)
             .fadeIn('fast')
-            .on('click', function (event) {
+            .on('mouseup', function (event) {
                     if (options.clickinside) {
                         event.stopPropagation();  
                         event.preventDefault();    

@@ -649,7 +649,7 @@ var project_projectsbar = {
                     [ 
                         {id: 'project_projectrename',    type:'link',       icon: icon_rename,           events: {onclick: "onclick_project_projectrename(this)"},  title: 'Rename Current Project'},  
                         {id: 'project_projectremove',    type:'link',       icon: icon_remove,           events: {onclick: "onclick_project_projectremove(this)"},  title: 'Delete Current Project'},              
-                        {id: 'project_projectcreate',    type:'link',       icon: icon_new,              events: {onclick: "onclick_project_projectcreate(this)"},   title: 'Create New Project'},      
+                        {id: 'project_projectcreate',    type:'link',       icon: icon_new,              events: {onclick: "onclick_project_t_projectcreate(this)"},   title: 'Create New Project'},      
                         {id: 'project_projectclose',     type:'link',       icon: icon_close,    class:'sb_close',  events: {onclick: "onclick_project_projectclose()"}, title: 'Close Current Project'}
                     ]
             }
@@ -744,8 +744,8 @@ var project_projects_headerpanel = {
     ]
 }
 
-var project_project_sidepanel = {
-    id: 'project_project_sidepanel',
+var project_projects_sidepanel = {
+    id: 'project_projects_sidepanel',
     type: 'panel',
     class: 'sb_sidepanel sb_panel sb_main sb_column',
     items:[
@@ -844,7 +844,7 @@ var project_sidebarpanel  = {
     class: 'sb_panel sb_sidebarpanel sb_right',   
     items: 
         [
-            {id: 'sidebarpanel_files',           type: 'panel',     class: 'sb_panel',             items: [project_projects_headerpanel, project_project_sidepanel]},        
+            {id: 'sidebarpanel_files',           type: 'panel',     class: 'sb_panel',             items: [project_projects_headerpanel, project_projects_sidepanel]},        
             {id: 'sidebarpanel_tester',          type: 'panel',     class: 'sb_panel sb_main',     items: [project_tester_headerpanel, testerpanel]},                     
             {id: 'sidebarpanel_deploy',          type: 'html',      class: 'sb_panel', content: "DeployPanel('deploypanel', 'sb_main sb_column')"},
             {id: 'sidebarpanel_projectcharttools',  type: 'panel',class: 'sb_panel',               items: [charttools_header_panel, charttoolspanel('project')]},                  

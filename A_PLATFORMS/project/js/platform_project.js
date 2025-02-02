@@ -135,33 +135,27 @@ function project_solution (pname) {
         return null;
     }
     solution.project_LoadProjects = function (Id, url, async, interfacecallback, par) {
-        if (!async) async = false;
-        var params = 'user_id=' + (Id == "0" ? "1" : Id);     
-        
-        var xhttp = new XMLHttpRequest();
-        xhttp.userid = Id;
-        xhttp.pname  = par;
-        
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                let arraystructure =  JSON.parse(this.responseText);
-                for (var i = 0; i < arraystructure.length; i++) {
-                    let projectstruct = arraystructure[i];
+        let param = {
+            user_id :  (Id == "0" ? "1" : Id),
+            platform_pname: PROJECT_PLATFORM_PNAME,
+            platform_folder : 'Projects'             
+        }
 
-                    if (!projectstruct.Name || !projectstruct.Path) continue;
-                    if (this.userid == '0' && projectstruct.Name != "Demo_Project") continue;                    
-                    let project = new pgproject(PROJECT_PLATFORM_PNAME, projectstruct.Name, projectstruct.Path)
+        let callback = function (responsetext, values) {
+            let arraystructure =  JSON.parse(responsetext);
+            for (var i = 0; i < arraystructure.length; i++) {
+                let projectstruct = arraystructure[i];
 
-                    project =  {...project, ...projectstruct}
+                if (!projectstruct.Name || !projectstruct.Path) continue;
+                if (this.userid == '0' && projectstruct.Name != "Demo_Project") continue;                    
+                let project = new pgproject(PROJECT_PLATFORM_PNAME, projectstruct.Name, projectstruct.Path)
 
-                    solution.Projects.push(project);
-                }   
-                if (interfacecallback)  interfacecallback (par);            
-            }
-        };
-        xhttp.open('POST', url, async);
-        xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhttp.send(params);
+                project =  {...project, ...projectstruct}
+
+                solution.Projects.push(project);
+            }   
+        }
+        url_submit ('POST', url, param /*object {}*/, async, callback, [] , interfacecallback, par);
     }
     
     solution.project_UpdateProjects = function (solution) {
@@ -421,41 +415,17 @@ function onclick_project_projectclose () {
     OnCloseProject (solution.CurrentProject, project_closeproject, solution.CurrentProject);
 }
 
-
-//---------------------------------------------------- CLOSE PROJECT ---------------------------------------------- 
-
-
 function SelectCloseProject () {
-    OnCloseProject(project_closeproject, solution.CurrentProject);
+    OnCloseProject(solution.CurrentProject, OnCloseStrategy, project_closeproject, solution.CurrentProject);
 }
-
-function OnCloseProject (project, callafter, project) {
-    if (!project) return;
-
-    CloseProjectConfirm(project, callafter, project);
-}
-
-function CloseProjectConfirm(project, callafter, param) {
-   
-    sb.confirm_modal('Exit Project ' + project.Name + ' ?').yes(function () {
-        setTimeout(OnCloseStrategy, 300, callafter, param);        
-        $("#confirmmodal").modal('hide');      
-    }).no(function () {})
-}
-
 //---------------------------------------------------- CREATE PROJECT ---------------------------------------------- 
 
-function onclick_project_projectcreate () {
-    OnNewProject ();
-}
-
-//---------------------------------------------------- CREATE PROJECT ---------------------------------------------- 
-
-function OnNewProject () {
+function onclick_project_t_projectcreate () {
     openPopupNewProject(solution.ProjectFindName(), 'Create Project', "#newprojectname2");
 }
 
-function OnClickProjectCreate (elt) {
+
+function onclick_project_b_projectcreate (elt) {
     
     var projectname     = $('#newprojectname2').val();    
 
@@ -474,9 +444,12 @@ function OnClickProjectCreate (elt) {
 
 function NewProject (name) {
 
-    if (solution.UserId == "0") {
-        TreatOperation('As you are not registered the project will not be saved', 'operationpanel');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation('As you are not registered the project will not be saved', 'operationpanel');  
     }
+
 
     project_closeproject (solution.CurrentProject);
     
@@ -514,10 +487,14 @@ function onclick_project_projectrename () {
 function RenameProject (project, newname) {
     if (!project) return;
 
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+        
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
+
+
     if ($('#project_projectsbar .box-btn-slide').hasClass('rotate-180'))    
         $('#project_projectsbar #slide').click (); 
 
@@ -543,10 +520,13 @@ function onclick_project_projectremove() {
 function RemoveProject (project) {
     if (!project) return;
 
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
+
     if ($('#project_projectsbar .box-btn-slide').hasClass('rotate-180'))    
         $('#project_projectsbar #slide').click ();   
 
@@ -584,10 +564,13 @@ function DistributeProject (project, terminal) {
 }
 
 function DistributeProjectOnTerminal(project, terminal) {
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+   
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
-    }    
+    }
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
     TraceErrorEditor("> START DISTRIBUTION " + project.Name + " ON " + terminal.Name + " " +  terminal.Type, 1);
     TraceErrorEditor("-----------------------------------------------------------", 1);
@@ -1466,8 +1449,10 @@ function OnReloadProject(terminal, terminalname, terminaltype) {
 
     var terminal = solution.GetTerminalFromNameType(terminalname, terminaltype);
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     for (var i = 0; i < PG.Symbols.length; i++) {
@@ -1531,7 +1516,7 @@ function ProjectPickerPanel (name) {
 '       <div class="sb_confirmation">'+    
 '           <div class="sb_row" id="colprojectname">'+           	        	    
 '               <div class="input-group mb-3">'+       
-'                  <button  id = "projectcreator_createbutton" type="button" class="sb_buttonprepend sb_mbutton" onclick="OnClickProjectCreate(this);window.speechSynthesis.cancel();">Create</button> ' +
+'                  <button  id = "projectcreator_createbutton" type="button" class="sb_buttonprepend sb_mbutton" onclick="onclick_project_b_projectcreate(this);window.speechSynthesis.cancel();">Create</button> ' +
 '                  <input type="text" id="newprojectname2" name="' + name + '" class="required form-control error"  value="' + name + '" autocomplete="off" onkeypress="return CheckChar(event)">'+
 '               </div>'+ 
 '           </div>'+      

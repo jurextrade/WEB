@@ -19,7 +19,7 @@ function onclick_right_sidebarpin(elt, event) {
     if ($(elt).hasClass ('checked')) {
         $rightsidebarpanel = $(elt).closest('.sb_rightsidebarpanel') ;
         $rightsidebarpanel.css ({'transition':'none'});
-        rightsidebarpanel_hide();
+        rightsidebarpanel_hide($rightsidebarpanel);
         $rightsidebarpanel.removeClass ('pinned')
         
     } else {

@@ -1616,8 +1616,10 @@ function openPopupAlertsSettings(terminal) {
 function ReloadAlerts(terminalname, terminaltype) {
     var terminal = solution.GetTerminalFromNameType(terminalname, terminaltype);
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var sorder = "*RELOADALERTFILE ";
@@ -1629,12 +1631,12 @@ function ReloadAlerts(terminalname, terminaltype) {
 
 
 function SaveAlerts (terminal) {    
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
-        $("#popupalertssettings").modal('hide');            
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
-
     var PG = terminal.PG;    
 
     var alerttablerows = $('#alertssettingstable tbody tr');
@@ -2444,12 +2446,14 @@ function openPopupPanelSettings(terminal) {
 }
 
 function SavePanelCSV(terminalname, terminaltype) {
-
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
-        $("#popuppanelsettings").modal('hide');            
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');     
+        $("#popuppanelsettings").modal('hide');              
         return;
     }
+
 
     var terminal = solution.GetTerminalFromNameType(terminalname, terminaltype);
     var PG = terminal.PG;
@@ -2594,8 +2598,10 @@ function ResultPanelCSV(terminal, data) {
 }
 
 function ReloadPanel(terminalname, terminaltype) {
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var terminal = solution.GetTerminalFromNameType(terminalname, terminaltype);
@@ -3016,6 +3022,7 @@ function openPopupTarget(terminal) {
         id: 'targetsmodal', 
         header: 'Targets', 
         width: 700,
+        static: true,        
         body: TargetSettingsPanel('terminaltargetpanel', 'sb_formcontainer'), 
         footer: 
             '<button class="sb_mbutton"  data-bs-dismiss="modal">Cancel</button>' +
@@ -3032,8 +3039,10 @@ function SaveMMCSV(terminalname, terminaltype) {
     var terminal = solution.GetTerminalFromNameType(terminalname, terminaltype);
     var PG = terminal.PG;
     
-        if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
 

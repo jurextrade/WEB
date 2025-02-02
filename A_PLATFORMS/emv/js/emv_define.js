@@ -163,39 +163,39 @@ const emv_TC = {
 
 //---------------------------------------------------------------------------------  ADDITIONAL TERMINAL CAPABILITIES
 
-const Cash									 = 0x0380
-const Goods									 = 0x0340
-const Services								 = 0x0320
-const Cashback								 = 0x0310
-const Inquiry 								 = 0x0308
-const Transfer 								 = 0x0304
-const Payment 								 = 0x0302
-const Administrative						 = 0x0301
+const Cash									 = 0x0080
+const Goods									 = 0x0040
+const Services								 = 0x0020
+const Cashback								 = 0x0010
+const Inquiry 								 = 0x0008
+const Transfer 								 = 0x0004
+const Payment 								 = 0x0002
+const Administrative						 = 0x0001
 
-const Cash_Deposit							 = 0x0480
-
-
-const Numeric_keys							 = 0x0580
-const Alphabetic_and_special_characters_keys = 0x0540
-const Command_keys							 = 0x0520
-const Function_keys							 = 0x0510
+const Cash_Deposit							 = 0x0180
 
 
-const Print_attendant						 = 0x0680
-const Print_cardholder						 = 0x0640
-const Display_attendant						 = 0x0620
-const Display_cardholder					 = 0x0610
-const Code_table_10							 = 0x0602
-const Code_table_9							 = 0x0601
+const Numeric_keys							 = 0x0280
+const Alphabetic_and_special_characters_keys = 0x0240
+const Command_keys							 = 0x0220
+const Function_keys							 = 0x0210
 
-const Code_table_8							 = 0x0780
-const Code_table_7							 = 0x0740
-const Code_table_6							 = 0x0720
-const Code_table_5							 = 0x0710
-const Code_table_4							 = 0x0708
-const Code_table_3							 = 0x0704
-const Code_table_2							 = 0x0702
-const Code_table_1							 = 0x0701
+
+const Print_attendant						 = 0x0380
+const Print_cardholder						 = 0x0340
+const Display_attendant						 = 0x0320
+const Display_cardholder					 = 0x0310
+const Code_table_10							 = 0x0302
+const Code_table_9							 = 0x0301
+
+const Code_table_8							 = 0x0480
+const Code_table_7							 = 0x0440
+const Code_table_6							 = 0x0420
+const Code_table_5							 = 0x0410
+const Code_table_4							 = 0x0408
+const Code_table_3							 = 0x0404
+const Code_table_2							 = 0x0402
+const Code_table_1							 = 0x0401
 
 const emv_ATC = {
     tag: '9F40',
@@ -212,31 +212,31 @@ const emv_ATC = {
         ],
         [
             {id:  Cash_Deposit	                                        , item: "Cash Deposit"},
-            {id:  0x440                                                 , item: "RFU"},
-            {id:  0x420                                                 , item: "RFU"},
-            {id:  0x410                                                 , item: "RFU"},
-            {id:  0x408                                                 , item: "RFU"},
-            {id:  0x404                                                 , item: "RFU"},
-            {id:  0x402                                                 , item: "RFU"},
-            {id:  0x401                                                 , item: "RFU"},
+            {id:  0x140                                                 , item: "RFU"},
+            {id:  0x120                                                 , item: "RFU"},
+            {id:  0x110                                                 , item: "RFU"},
+            {id:  0x108                                                 , item: "RFU"},
+            {id:  0x104                                                 , item: "RFU"},
+            {id:  0x102                                                 , item: "RFU"},
+            {id:  0x101                                                 , item: "RFU"},
         ],
         [
             {id: Numeric_keys							                , item: "Numeric keys"},							
             {id: Alphabetic_and_special_characters_keys                 , item: "Alphabetic and special characters keys"}, 
             {id: Command_keys								            , item: "Command keys"},							
             {id: Function_keys							                , item: "Function keys"},							
-            {id: 0x508                                                  , item: "RFU"},
-            {id: 0x504									                , item: "RFU"},
-            {id: 0x502                                                  , item: "RFU"},
-            {id: 0x501                                                  , item: "RFU"},
+            {id: 0x208                                                  , item: "RFU"},
+            {id: 0x204									                , item: "RFU"},
+            {id: 0x202                                                  , item: "RFU"},
+            {id: 0x201                                                  , item: "RFU"},
         ],
         [
             {id: Print_attendant	                                    , item: "Print, attendant"},	
             {id: Print_cardholder	                                    , item: "Print, cardholder"},	
             {id: Display_attendant	                    	            , item: "Display, attendant"},	
             {id: Display_cardholder                                     , item: "Display, cardholder"},
-            {id: 0x608                                                  , item: "RFU"},
-            {id: 0x604									                , item: "RFU"},
+            {id: 0x308                                                  , item: "RFU"},
+            {id: 0x304									                , item: "RFU"},
             {id: Code_table_10	                                        , item: "Code table 10"},
             {id: Code_table_9	                                        , item: "Code table 9"},
         ],
@@ -360,7 +360,7 @@ const emv_TVR = {
     tag: '95',
     struct: [
         [
-            {id :  Offline_data_authentication_was_not_performed	    , item : "Offline data processing was not performed"},
+            {id :  Offline_data_authentication_was_not_performed	    , item : "Offline data processing was not performed", title: "essai"},
             {id :  SDA_failed									        , item : "SDA failed"},
             {id :  ICC_data_missing								        , item : "ICC data missing"},
             {id :  Card_appears_on_terminal_exception_file		        , item : "Card number appears on hotlist"},
@@ -600,8 +600,32 @@ const emv_CID = {
     ]
 }
 
+var emv_presentation_flags= ((stepid, classname, flags) =>  {
+    let items = [];
+
+    for(var i= 0; i <flags.length; i++) {
+        let elt = {
+            id: 'step_' + stepid + '_' + i,
+            type: "label",
+            item: flags[i],          
+            class: classname == 'Flags' ? 'emv_button_show' : '', 
+            events: {onmousedown: ""},            
+        }
+        items.push (elt)   
+    }     
+    return {
+        id: 'step_' + stepid + '_' + classname,
+        type: 'bar',
+        direction: classname == 'Flags' ? 'row' : 'column',
+        item:  classname == 'Flags' ? 'Related ' + classname +  ' : ' : '', 
+        class: 'related-primary ' + classname,
+        items: items,     
+    }
+} 
+)    
+  
 const emv_Steps  = [
-    {id: EMV_STEP_CARD_DETECTION_AND_RESET, item: 'Card Detection And Reset', substeps: [],
+    {id: EMV_STEP_CARD_DETECTION_AND_RESET, info: '', item: 'Card Detection And Reset', substeps: [], 
     description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
     Card detection and reset needs to be performed by the card interface functions specific to the hardware device being used. 
     <br>									
@@ -619,20 +643,18 @@ const emv_Steps  = [
     It is preconfigured to read some applications like VISA, Master Card, Union Pay, ...
     <br><br>    
     The configuration of the terminal is treated in the Project Workspace Section.
-    <br><br>    
-        <div class="sb_bar related-primary">Related Flags: 
-            <label class="emv_button_show" onmousedown= "" >ATR</label> 
-        </div>            
+    <br><br> ${sb.render(emv_presentation_flags(EMV_STEP_CARD_DETECTION_AND_RESET, 'Flags', ['ATR']))}   
+         
     </div>`
     },
-    {id: 1,  item:'Candidate List Creation', substeps: [
-        {id:  EMV_SUBSTEP_ATTEMP_DIRECTORY_LISTING_PSE	, item:'Attempt Directory Listing PSE', substeps: [],
+    {id: EMV_STEP_CANDIDATE_LIST_CREATION,  info: '', item:'Candidate List Creation', substeps: [
+        {id:  EMV_SUBSTEP_ATTEMP_DIRECTORY_LISTING_PSE, info: '', item:'Attempt Directory Listing PSE', substeps: [], 
         description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
         First we select the PSE  (Payment System Environment) (1PAY.SYS.DDF01)
         <br>									
         The selection was successful (SW1/SW2=9000), so the card supports the PSE method.									
         <br><br>
-        <u>Structure of a C-ADPU Command SELECT FILE</u>
+        <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('SELECT_FILE', event)">Structure of a C-ADPU Command SELECT FILE</label></u>
         <br><br>								
         C-APDU : 00 A4 04 00 0E 31 50 41 59 2E 53 59 53 2E 44 44 46 30 31 00									
         <br>									
@@ -648,12 +670,12 @@ const emv_Steps  = [
         <br><br>
         </div>`
         },
-        {id:  EMV_SUBSTEP_READ_RECORD_SFI				, item:'Read Record SFI', substeps: [],
+        {id:  EMV_SUBSTEP_READ_RECORD_SFI,  info: '', item:'Read Record SFI', substeps: [],
         description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
         The data structure of any response from the card will be in TLV Format
         <br>	        
         <br>	        
-        <u>Structure of a R-ADPU Command SELECT FILE</u>        						
+        <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('FILE_CONTROL_INFORMATION_TEMPLATE', event)">Structure of a R-ADPU Command SELECT FILE</label></u>        						
         <br><br>			
         R-APDU :  6F 20  84 0E315041592E5359532E4444463031A50E8801015F2D086672656E64656573		
         <br>	
@@ -663,18 +685,18 @@ const emv_Steps  = [
         <br>				
         <br>				
 
-        <li>Tag: 0x6F  File Control Information  (FCI) Template,  Length: 0x20  i.e.  32, Value:  84 0E 315041592E5359532E4444463031A50E8801015F2D086672656E64656573</li>
-        <li>Tag: 0x84  Dedicated File (DF) Name, Length: 0x0E i.e. 14, Value: 315041592E5359532E4444463031</li>
-        <li>Tag: 0xA5  File Control Information (FCI) Proprietary Template, Length: 0x0E i.e. 14, Value:  8801015F2D086672656E64656573</li>
-        <li>Tag: 0x88  Short File Identifier (SFI),  Length:  01 i.e. 1, Value: 01</li>
-        <li>Tag: 5F2D  Language Preference,  Length:  08  i.e. 8, Value:  6672656E64656573</li>
+        <li><label class="emv_button_show" onmousedown="emv_searchtag('6F', event)">(tag 6F)</label> File Control Information  (FCI) Template,  Length: 0x20  i.e.  32, Value:  84 0E 315041592E5359532E4444463031A50E8801015F2D086672656E64656573</li>
+        <li><label class="emv_button_show" onmousedown="emv_searchtag('84', event)">(tag 84)</label> Dedicated File (DF) Name, Length: 0x0E i.e. 14, Value: 315041592E5359532E4444463031</li>
+        <li><label class="emv_button_show" onmousedown="emv_searchtag('A5', event)">(tag A5)</label> File Control Information (FCI) Proprietary Template, Length: 0x0E i.e. 14, Value:  8801015F2D086672656E64656573</li>
+        <li><label class="emv_button_show" onmousedown="emv_searchtag('88', event)">(tag 88)</label> Short File Identifier (SFI),  Length:  01 i.e. 1, Value: 01</li>
+        <li><label class="emv_button_show" onmousedown="emv_searchtag('5F2D', event)">(tag 5F2D)</label> Language Preference,  Length:  08  i.e. 8, Value:  6672656E64656573</li>
         </p>
         <p>Now we create a loop to read all records in this AEF (Application Elementary File) , started with record number 1.									
         <br>
         C-APDU : 0x00, 0xB2, recnum, [(sfi << 0x03) | 0x04], 0x00									
         </div>`
         },
-        {id:  EMV_SUBSTEP_BUILD_CANDIDATE_LIST_WITH_SELECT, item:'Build Candidate List With SELECT', substeps: [],
+        {id:  EMV_SUBSTEP_BUILD_CANDIDATE_LIST_WITH_SELECT, info: '', item:'Build Candidate List With SELECT', substeps: [], 
         description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
         Check Priority
         <br>									
@@ -697,7 +719,7 @@ const emv_Steps  = [
     <br><br>
     The terminal has a list containing the AID (Application Identifier) (tag 9F06) of every EMV application that it is configured to support.
     <br>
-    In the same way an EMV card can contain multiple payment applications ADF (Application Definition File) <label class="emv_button_show" onmousedown="emv_apdu_searchtag('4F', event)">(tag 4F)</label>,
+    In the same way an EMV card can contain multiple payment applications ADF (Application Definition File) <label class="emv_button_show" onmousedown="emv_searchtag('4F', event)">(tag 4F)</label>,
     <br><br>
     The value of an ADF is an AID, so ADF and AID represents the same value. You check the list of the available AID's here.
     <br><br>
@@ -708,22 +730,17 @@ const emv_Steps  = [
     <li>If the card supports the Payment System Environment (PSE), the terminal reads out the necessary information to select the ADF. </li>
     <br>
     <li>If there is no PSE, the terminal will use it's list of AIDs and get the rights by trying one by one.</li>        
-    <br><br>       
-        <div class="sb_bar related-primary">Related Flags:
-            <label class="emv_button_show" onmousedown= "" >AID</label> 
-            <label class="emv_button_show" onmousedown= "" >ADF</label> 
-            <label class="emv_button_show" onmousedown= "" >PSE</label>                 
-        </div>       
+    <br><br> ${sb.render(emv_presentation_flags(EMV_STEP_CANDIDATE_LIST_CREATION, 'Flags', ['AID', 'ADF', 'PSE']))}         
     </div>`        
     },
-    {id: EMV_STEP_APPLICATION_SELECTION, item: 'Application Selection', substeps: [
-        {id: EMV_SUBSTEP_SET_APPLICATION			        , item: 'Select Application File', substeps: [],
+    {id: EMV_STEP_APPLICATION_SELECTION, item: 'Application Selection',  info: '', substeps: [
+        {id: EMV_SUBSTEP_SET_APPLICATION,  info: '', item: 'Select Application File', substeps: [], 
         description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
         When the application to use has been chosen, the terminal must select the application on the card, so that the card can supply the correct data records for the transaction.
         <br><br>
         The selection of the application is done with the C-APDU command SELECT FILE CLA: 00 INS: A4 P1: 04 P2: 00 with the DF containing the ADF (Application Definition File)
         <br><br>
-        <u>Structure of a C-ADPU Command SELECT FILE</u>
+        <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('SELECT_FILE', event)">Structure of a C-ADPU Command SELECT FILE</label></u>
         <br><br>								
         C-APDU : 00 A4 04 00 08 A0 00 00 03 33 01 01 01 00									
         <br>									
@@ -739,25 +756,22 @@ const emv_Steps  = [
         <br>
         <i>*noticed that this command is similar to select PSE, the only difference is in this case we specify the AID, in comparaison to list * or list Foldername</i> 
         <br><br>
-        <u>Structure of a R-ADPU Command SELECT FILE</u>        						
+        <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('FILE_CONTROL_INFORMATION_TEMPLATE', event)">Structure of a R-ADPU Command SELECT FILE</label></u>        						
         <br><br>			
         R-APDU :  6F 20  84 0E315041592E5359532E4444463031A50E8801015F2D086672656E64656573	
         <br><br>
-        The DF response is a File Control Information (FCI) Template <label class="emv_button_show" onmousedown="emv_apdu_searchtag('6F', event)">(tag 6F)</label>which value is the AID of the selected application 
-        and the FCI Proprietary Template <label class="emv_button_show" onmousedown="emv_apdu_searchtag('A5', event)">(tag A5)</label> consisting of Data elements, or Data objects.
+        The DF response is a File Control Information (FCI) Template <label class="emv_button_show" onmousedown="emv_searchtag('6F', event)">(tag 6F)</label>which value is the AID of the selected application 
+        and the FCI Proprietary Template <label class="emv_button_show" onmousedown="emv_searchtag('A5', event)">(tag A5)</label> consisting of Data elements, or Data objects.
         <br>
-        Some data Elements are mandatory like the Processing options Data Object List PDOL <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F38', event)">(tag 9F38)</label>.
+        Some data Elements are mandatory like the Processing options Data Object List PDOL <label class="emv_button_show" onmousedown="emv_searchtag('9F38', event)">(tag 9F38)</label>.
         <br><br>
         The PDOL is a list of data elements that the card needs to receive from the terminal in order to execute the next command in the transaction process GPO.
         <br>
         The PDOL only contains the expected tagnames and their length.
-        <br><br>
-            <div class="sb_bar related-primary">Related Flags:
-                <label class="emv_button_show" onmousedown= "" >PDOL</label> 
-            </div>           
+        <br><br> ${sb.render(emv_presentation_flags(EMV_STEP_APPLICATION_SELECTION, 'Flags', ['PDOL']))}   
         </div>` 
         },
-        {id: EMV_SUBSTEP_GET_PROCESSING_OPTIONS	            , item: 'Get Processing Options', substeps: [],
+        {id: EMV_SUBSTEP_GET_PROCESSING_OPTIONS,  info: '', item: 'Get Processing Options', substeps: [],
         description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
         Now the terminal needs to determine two things:
         <br><br>
@@ -765,26 +779,34 @@ const emv_Steps  = [
         <li>Where does it keep all the information needed to use the functionality? </li>
         <br>
         To answer this question the terminal issues the Get Processing Options (GPO) command with the DF value is the data precised in the PDOL from the the previous APDU command SELECT FILE. 
+        <br><br> 
+        
+        <mark>If PDOL is not returned the GET PROCESSING OPTIONS command uses a command data field of '8300', indicating that the length of the value field in the command data is zero.</mark>
+        <br><br> 
+        <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('GET_PROCESSING_OPTIONS', event)">Structure of the C-ADPU Command GET PROCESSING OPTIONS</label></u>
         <br><br>
-        <u>Structure of the C-ADPU Command GET PROCESSING OPTIONS</u>
+        
+        The card responds with a Response Message Template Format 1 <label class="emv_button_show" onmousedown="emv_searchtag('80', event)">(tag 80)</label>, 
+
+        <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('RESPONSE_MESSAGE_TEMPLATE_FORMAT_1', event)">Structure of the R-ADPU to the Command GET PROCESSING OPTIONS</u>
         <br><br>
-        <u>Structure of the R-ADPU to the Command GET PROCESSING OPTIONS</u>
-        <br><br>
-        The card responds with a Response Message Template Format 1 <label class="emv_button_show" onmousedown="emv_apdu_searchtag('80', event)">(tag 80)</label>, 
+
         the value of the response contains 2 records that will be read sequently <mark>without their associated tags</mark>
         <br><br>
         The AIP (Application Interchange Profile tag 82)
         <br><br>
         <li>The AIP is a 2-byte bit array that indicates the types of functions supported by the card. We will explain this tag in Step : Data Authentification.</li> 
         <br>        
-        The AFL (Application File Locator tag 94)
+        The AFL (Application File Locator <label class="emv_button_show" onmousedown="emv_searchtag('94', event)">(tag 94)</label>
+        
         <br><br>
         <li>The AFL is essentially a list of records the terminal should read from the card in order to use these functions.</li>
         <br><br>
         Every entry on the AFL list has 4 bytes. That is why the length of the AFL bytestring has to be a multiple of 4. 
         <br>
         The first byte contains the Short File Indicator (SFI). <mark>The five most significant bits represents the SFI.</mark>
-        The SFI is a reference to a file on the card. Every file have one or more records.
+        The SFI is a reference to a file on the card. Every file have one or more records.<label class="emv_button_show" onmousedown="emv_searchtag('88', event)">(tag 88)</label>
+        
         <br>
         The second and third bytes are the first and last record to read. 
         <br>
@@ -797,22 +819,18 @@ const emv_Steps  = [
         After the AFL is returned the terminal issues one or more Read Record commands. 
         <br><br>
         In the next step we explain the reading of the AFL entries.	
-
-        <br><br>
-            <div class="sb_bar related-primary">Related Flags:
-                <label class="emv_button_show" onmousedown= "" >AIP</label> 
-                <label class="emv_button_show" onmousedown= "" >AFL</label> 
-            </div>          
+        <br><br> ${sb.render(emv_presentation_flags(EMV_SUBSTEP_GET_PROCESSING_OPTIONS, 'Flags', ['AIP', 'AFL']))}   
+       
         </div>`  
         },
     ],
     description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
     How to choose the application from the List Candidates created in the previous step ? 
     <br><br>
-    <li>In case there was no mutually support applications added to the candidate list [which means that none of the applications available on the card are matched with one of the AIDs supported by the terminal], then the terminal will terminate the card session, 
+    <li>In case there was no mutually support applications added to the candidate list which means that none of the applications available on the card are matched with one of the AIDs supported by the terminal], then the terminal will terminate the card session, 
     and this concludes our journey with that card.</li>
     <br>
-    <li>If there was only one mutually support application added to the candidate list, then the terminal will select this application if Application Priority Indicator "tag 87" is present and bit8 of it's value = '1', </i>
+    <li>If there was only one mutually support application added to the candidate list, then the terminal will select this application if Application Priority Indicator <label class="emv_button_show" onmousedown="emv_searchtag('87', event)">tag 87</label>  is present and bit8 of it's value = '1', </i>
     otherwise the terminal shall requests confirmation and selects the application if the cardholder approves.
     </li>
     <br>
@@ -826,7 +844,7 @@ const emv_Steps  = [
     <br><br>    
     After the terminal has completed the final selection of the EMV application in the card, it initiates the EMV transaction flow, during the initiate application processing stage.
     <br><br>    
-    The terminal has two checklists, one is called TVR (Terminal Verification Results tag 95), the other one is called TSI (Transaction Status Information tag 9B)
+    The terminal has two checklists, one is called TVR (Terminal Verification Results)  <label class="emv_button_show" onmousedown="emv_searchtag('95', event)">tag 95</label>, the other one is called TSI (Transaction Status Information)  <label class="emv_button_show" onmousedown="emv_searchtag('9B', event)">tag 9B</label>
     <br><br>
     <li>TSI is a 2-byte bit array that records when a particular step or process has been executed: the terminal will check off items on its TSI checklist to keep track of where the transaction is in the process.</li> 
     <br>
@@ -837,17 +855,13 @@ const emv_Steps  = [
     Both of these checklists start as arrays of bits set to 0. Depending on how the transaction progresses, some bits will be set to 1.
     <br><br>
     During this step the terminal sets the Transaction Status Information (TSI) and Terminal Verification Results (TVR) bit arrays to all zeros.
-    <br><br>
-        <div class="sb_bar related-primary">Related Flags: 
-            <label class="emv_button_show" onmousedown= "" >TSI</label> 
-            <label class="emv_button_show" onmousedown= "" >TVR</label> 
-        </div>           
+        <br><br> ${sb.render(emv_presentation_flags(EMV_STEP_APPLICATION_SELECTION, 'Flags', ['TSI', 'TVR']))}   
     </div>`        
     },
-    {id: EMV_STEP_READ_APPLICATION_DATA, item: 'Read Application Data', substeps: [
+    {id: EMV_STEP_READ_APPLICATION_DATA,  info: '', item: 'Read Application Data', substeps: [
             {id: EMV_SUBSTEP_COMPLETE_EQUIVALENTDATA_TAGS	, item: 'Complete Equivalent Data Tags', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
-            Service code values common in financial cards <label class="emv_button_show" onmousedown="emv_apdu_searchtag('5F30', event)">(tag 5F30)</label>
+            Service code values common in financial cards <label class="emv_button_show" onmousedown="emv_searchtag('5F30', event)">(tag 5F30)</label>
             <br>
             First digit
                 <li>1: International interchange OK</li>
@@ -874,29 +888,24 @@ const emv_Steps  = [
                 <br><br>
                 </div>`          
             },
-            {id: EMV_SUBSTEP_CHECK_MANDATORY_DATA			, item: 'Check Mandatory Data', substeps: [],
+            {id: EMV_SUBSTEP_CHECK_MANDATORY_DATA,  info: '', item: 'Check Mandatory Data', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             When the read application data processing ends, the terminal verifies the presence of the mandatory data objects in the EMV data objects heap. 
             <br>
             The presence of the following data objects is mandatory (according to Table II-2 in Book 3 [1]):
             <br><br>
-            <li>Application Expiration Date <label class="emv_button_show" onmousedown="emv_apdu_searchtag('5F24', event)">(tag 5F24)</label></li>
-            <li>Application Primary Account Number (PAN) <label class="emv_button_show" onmousedown="emv_apdu_searchtag('5A', event)">(tag 5A)</label></li>
-            <li>Card risk management data object list 1 (CDOL1) <label class="emv_button_show" onmousedown="emv_apdu_searchtag('8C', event)">(tag 8C)</label></li>
-            <li>Card risk management data object list 2 (CDOL2) <label class="emv_button_show" onmousedown="emv_apdu_searchtag('8D', event)">(tag 8D)</label></li>
+            <li>Application Expiration Date <label class="emv_button_show" onmousedown="emv_searchtag('5F24', event)">(tag 5F24)</label></li>
+            <li>Application Primary Account Number (PAN) <label class="emv_button_show" onmousedown="emv_searchtag('5A', event)">(tag 5A)</label></li>
+            <li>Card risk management data object list 1 (CDOL1) <label class="emv_button_show" onmousedown="emv_searchtag('8C', event)">(tag 8C)</label></li>
+            <li>Card risk management data object list 2 (CDOL2) <label class="emv_button_show" onmousedown="emv_searchtag('8D', event)">(tag 8D)</label></li>
             <br><br>
 
             <mark>When mandatory data is missing we abort the processing of the current transaction.</mark>
-            <br><br>
-            <div class="sb_bar related-primary">Related Flags: 
-                <label class="emv_button_show" onmousedown= "" >AED</label> 
-                <label class="emv_button_show" onmousedown= "" >PAN</label> 
-                <label class="emv_button_show" onmousedown= "" >CDOL1</label> 
-                <label class="emv_button_show" onmousedown= "" >CDOL2</label> 
-            </div>                
+            <br><br> ${sb.render(emv_presentation_flags(EMV_SUBSTEP_CHECK_MANDATORY_DATA, 'Flags', ['AED', 'PAN', 'CDOL1', 'CDOL2']))}   
+            
             </div>`
             },
-            {id: EMV_SUBSTEP_CHECK_MISSING_DATA			, item: 'Check Missing Data', substeps: [],
+            {id: EMV_SUBSTEP_CHECK_MISSING_DATA	,  info: '', item: 'Check Missing Data', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             The terminal also verifies whether other data objects that are mandatory only in the context of a certain flags AIP that are set or not (bit = 1). 
             <br>
@@ -905,7 +914,7 @@ const emv_Steps  = [
 
             If AIP indicates that Cardholder verification is supported (bit 5 = 1 in the first Byte of AIP) 
             <label class="emv_button_show" onmousedown= "emv_byte_show(emv_AIPPanel, Cardholder_verification_is_supported, 1)" onmouseup= "emv_byte_show(emv_AIPPanel, Cardholder_verification_is_supported, 0)">See</label> 
-            the terminal must verify the presence in the card of the Cardholder Verification Method (CVM) List <label class="emv_button_show" onmousedown="emv_apdu_searchtag('8E', event)">(tag 8E)</label>.
+            the terminal must verify the presence in the card of the Cardholder Verification Method (CVM) List <label class="emv_button_show" onmousedown="emv_searchtag('8E', event)">(tag 8E)</label>.
             <br><br>
             If AIP indicates that 
             <label class="emv_button_show" onmousedown= "emv_byte_show(emv_AIPPanel, SDA_Supported, 1)" onmouseup= "emv_byte_show(emv_AIPPanel, SDA_Supported, 0)">
@@ -919,27 +928,22 @@ const emv_Steps  = [
             </label> 
             we check the presence of the following tags:
             <br><br>
-            <li>Certification Authority Public Key Index (PKI) <label class="emv_button_show" onmousedown="emv_apdu_searchtag('8F', event)">(tag 8F)</label> : dentifies the certification authority's public key in conjunction with the RID</li>
-            <li>Issuer Public Key Certificate <label class="emv_button_show" onmousedown="emv_apdu_searchtag('90', event)">(tag 90)</label> : Issuer public key certified by a certification authority</li>
-            <li>Issuer Public Key Exponent <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F32', event)">(tag 9F32)</label> : Issuer public key exponent used for the verification of the Signed Static Application Data and the ICC Public Key Certificate</li>
-            <li>Issuer Public Key Remainder <label class="emv_button_show" onmousedown="emv_apdu_searchtag('92', event)">(tag 92)</label> : Remaining digits of the Issuer Public Key Modulus</li>
+            <li>Certification Authority Public Key Index (PKI) <label class="emv_button_show" onmousedown="emv_searchtag('8F', event)">(tag 8F)</label> : dentifies the certification authority's public key in conjunction with the RID</li>
+            <li>Issuer Public Key Certificate <label class="emv_button_show" onmousedown="emv_searchtag('90', event)">(tag 90)</label> : Issuer public key certified by a certification authority</li>
+            <li>Issuer Public Key Exponent <label class="emv_button_show" onmousedown="emv_searchtag('9F32', event)">(tag 9F32)</label> : Issuer public key exponent used for the verification of the Signed Static Application Data and the ICC Public Key Certificate</li>
+            <li>Issuer Public Key Remainder <label class="emv_button_show" onmousedown="emv_searchtag('92', event)">(tag 92)</label> : Remaining digits of the Issuer Public Key Modulus</li>
             <br><br>
             Moreover if DDA is supported or CDA is supported we check also the presence of the following tags: 
             <br><br>            
-            <li>Integrated Circuit Card (ICC) Public Key Certificate <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F46', event)">(tag 9F46)</label> :	ICC Public Key certified by the issuer</li>
-            <li>Integrated Circuit Card (ICC) Public Key Remainder  <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F48', event)">(tag 9F48)</label> : Remaining digits of the ICC Public Key Modulus</li>
-            <li>Integrated Circuit Card (ICC) Public Key Exponent    <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F47', event)">(tag 9F47)</label> : Exponent ICC Public Key Exponent used for the verification of the Signed Dynamic Application Data</li>
+            <li>Integrated Circuit Card (ICC) Public Key Certificate <label class="emv_button_show" onmousedown="emv_searchtag('9F46', event)">(tag 9F46)</label> :	ICC Public Key certified by the issuer</li>
+            <li>Integrated Circuit Card (ICC) Public Key Remainder  <label class="emv_button_show" onmousedown="emv_searchtag('9F48', event)">(tag 9F48)</label> : Remaining digits of the ICC Public Key Modulus</li>
+            <li>Integrated Circuit Card (ICC) Public Key Exponent    <label class="emv_button_show" onmousedown="emv_searchtag('9F47', event)">(tag 9F47)</label> : Exponent ICC Public Key Exponent used for the verification of the Signed Dynamic Application Data</li>
             <br><br>
             If one of the following occurs, the ICC data missing bit in the TVR is set to 1. 
             <label class="emv_button_show" onmousedown= "emv_byte_show(emv_TVRPanel, ICC_data_missing, 1)" onmouseup= "emv_byte_show(emv_TVRPanel, ICC_data_missing, 0)">See</label> 
             <br><br>
-            <br><br>
-            <div class="sb_bar related-primary">Related Flags: 
-                <label class="emv_button_show" onmousedown= "" >AED</label> 
-                <label class="emv_button_show" onmousedown= "" >PAN</label> 
-                <label class="emv_button_show" onmousedown= "" >CDOL1</label> 
-                <label class="emv_button_show" onmousedown= "" >CDOL2</label> 
-            </div>                
+            <br><br> ${sb.render(emv_presentation_flags(EMV_SUBSTEP_CHECK_MISSING_DATA, 'Flags', ['AED', 'PAN', 'CDOL1', 'CDOL2']))}
+                  
             </div>`            
         },
         ],
@@ -961,23 +965,20 @@ const emv_Steps  = [
 
         For each of these READ RECORD commands, the R-APDU received from the card should reports SW1SW2 = 9000
         <br>
-        The DF of each R-APDU is a READ RECORD Response Message Template <label class="emv_button_show" onmousedown="emv_apdu_searchtag('70', event)">(tag 70)</label>.
+        The DF of each R-APDU is a READ RECORD Response Message Template <label class="emv_button_show" onmousedown="emv_searchtag('70', event)">(tag 70)</label>.
         <br><br>
         The value of this tag will contain data objects like the card PAN, the expiry date, authentication, cardholder verification plus many other tags of information that will be used for the transaction processing.
         <br>
-        One of these data objects is the AUC (Application Usage Control) <label class="emv_button_show" onmousedown="emv_apdu_searchtag('92', event)">(tag 92)</label>
+        One of these data objects is the AUC (Application Usage Control) <label class="emv_button_show" onmousedown="emv_searchtag('92', event)">(tag 92)</label>
         <br><br> 
         <li>The AUC is a 2-byte bit array that tells the terminal whether the card: Is valid for domestic cash transaction, Is valid for international cash transaction, … The AUC will be examined in the Processing Restrictions Step</li> 
-      
-        <br><br>
-            <div class="sb_bar related-primary">Related Flags:
-                <label class="emv_button_show" onmousedown= "" >AUC</label> 
-            </div>           
+        <br><br> ${sb.render(emv_presentation_flags(EMV_STEP_READ_APPLICATION_DATA, 'Flags', ['AUC']))}
+       
         </div>`
     },            
-    {id: EMV_STEP_DATA_AUTHENTIFICATION, item: 'Data Authentification', substeps: [ 
-            {id: EMV_SUBSTEP_CHECK_TERMINAL_TYPE				      , item: 'Check Terminal Type', substeps: []},
-            {id: EMV_SUBSTEP_SELECTION_OFFLINE_AUTHENTIFICATION_MISM , item: 'Selection Off-Line Authentification Mechanism', substeps: [],
+    {id: EMV_STEP_DATA_AUTHENTIFICATION,  info: '', item: 'Data Authentification', substeps: [ 
+            {id: EMV_SUBSTEP_CHECK_TERMINAL_TYPE,  info: '',  item: 'Check Terminal Type', substeps: []},
+            {id: EMV_SUBSTEP_SELECTION_OFFLINE_AUTHENTIFICATION_MISM,  info: '', item: 'Selection Off-Line Authentification Mechanism', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">     
             The type of ODA performed depends on the types supported by both the card and the terminal.
             <br><br>
@@ -991,7 +992,7 @@ const emv_Steps  = [
             <br><br>
             </div>`  
             },
-            {id: EMV_SUBSTEP_OFFLINE_SDA						      , item: 'Off-Line SDA', substeps: [],
+            {id: EMV_SUBSTEP_OFFLINE_SDA,  info: '', item: 'Off-Line SDA', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">            
             The off-line SDA requires two separate stages:
             <br><br>
@@ -1021,11 +1022,11 @@ const emv_Steps  = [
             <br><br>
             Stage 1 The terminal verifies the existence of the following objects in the EMV data objects heap:
             <br><br>            
-            <li>Certification Authority Public Key Index <label class="emv_button_show" onmousedown="emv_apdu_searchtag('8F', event)">(tag 8F)</label></li>
-            <li>Issuer Public Key Certificate <label class="emv_button_show" onmousedown="emv_apdu_searchtag('90', event)">(tag 90)</label></li>
-            <li>Issuer Public Key Remainder <label class="emv_button_show" onmousedown="emv_apdu_searchtag('92', event)">(tag 92)</label>, which is present only in certain conditions;</li>
-            <li>Issuer Public Key Exponent <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F32', event)">(tag 9F32)</label></li>
-            <li>Signed Static Application Data <label class="emv_button_show" onmousedown="emv_apdu_searchtag('93', event)">(tag 93)</label></li>
+            <li>Certification Authority Public Key Index <label class="emv_button_show" onmousedown="emv_searchtag('8F', event)">(tag 8F)</label></li>
+            <li>Issuer Public Key Certificate <label class="emv_button_show" onmousedown="emv_searchtag('90', event)">(tag 90)</label></li>
+            <li>Issuer Public Key Remainder <label class="emv_button_show" onmousedown="emv_searchtag('92', event)">(tag 92)</label>, which is present only in certain conditions;</li>
+            <li>Issuer Public Key Exponent <label class="emv_button_show" onmousedown="emv_searchtag('9F32', event)">(tag 9F32)</label></li>
+            <li>Signed Static Application Data <label class="emv_button_show" onmousedown="emv_searchtag('93', event)">(tag 93)</label></li>
             <br><br>
             If any of the objects mentioned above are not present in the card (except for tag 92), set up bit 6, "ICC data missing", of byte 1 of the TVR 
             and consider that SDA has failed.
@@ -1047,7 +1048,7 @@ const emv_Steps  = [
             The terminal uses the Certification Authority Public Key Index (tag 8F) together with the RID to retrieve the CA public key ( n CA , e CA ) 
             from the appropriate record of the terminal database of CA public keys (see Table 5.2 in Section 5.5). 
             <br><br>
-            The RID is obtained from the AID (DF Name)<label class="emv_button_show" onmousedown="emv_apdu_searchtag('84', event)">(tag 84)</label> returned in the FCI of the currently selected ADF, which contains the EMV debit/credit application. 
+            The RID is obtained from the AID (DF Name)<label class="emv_button_show" onmousedown="emv_searchtag('84', event)">(tag 84)</label> returned in the FCI of the currently selected ADF, which contains the EMV debit/credit application. 
             The length of the modulus n CAis N CA .
             <br><br>
             If the verification of the Issuer Public Key Certificate does not pass, then the SDA has failed.
@@ -1074,7 +1075,7 @@ const emv_Steps  = [
             <label class="emv_button_show" onmousedown= "emv_byte_show(emv_TVRPanel, SDA_failed, 1)" onmouseup= "emv_byte_show(emv_TVRPanel, SDA_failed, 0)">See</label> 
             </div>`                    
             },
-            {id: EMV_SUBSTEP_OFFLINE_DDA						      , item: 'Off-Line DDA', substeps: [],
+            {id: EMV_SUBSTEP_OFFLINE_DDA, info: '', item: 'Off-Line DDA', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">                   
             The off-line DDA guarantees the authenticity of the data personalized in the card by the issuer, as well as that of the card itself. 
             <br><br>
@@ -1114,7 +1115,7 @@ const emv_Steps  = [
             <br><br>
             </div>`      
         },
-            {id: EMV_SUBSTEP_CDA								      , item: 'CDA', substeps: []},
+            {id: EMV_SUBSTEP_CDA, info: '', item: 'CDA', substeps: []},
         ],
     description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
     The data authentication step does not have to be performed immediately after the read application data step. 
@@ -1153,15 +1154,12 @@ const emv_Steps  = [
     </li>
     <br><br>
     Once ODA has been performed, the  Offline data authentication was performed  bit in the TSI is set to 1.
-    <br><br>
-        <div class="sb_bar related-primary">Related Flags: 
-            <label class="emv_button_show" onmousedown= "" >AIP</label> 
-            <label class="emv_button_show" onmousedown= "" >TSI</label> 
-        </div>    
+    <br><br> ${sb.render(emv_presentation_flags(EMV_STEP_DATA_AUTHENTIFICATION, 'Flags', ['AIP', 'TSI']))}
+
     </div>`
     },      
-    {id: EMV_STEP_PROCESSING_RESTRICTIONS, item: 'Processing Restrictions', substeps: [
-            {id: EMV_SUBSTEP_APPLICATION_VERSION_NUMBER		  , item: 'Application Version Number', substeps: [],
+    {id: EMV_STEP_PROCESSING_RESTRICTIONS, info: '', item: 'Processing Restrictions', substeps: [
+            {id: EMV_SUBSTEP_APPLICATION_VERSION_NUMBER, info: '', item: 'Application Version Number', substeps: [],
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             <p>Both the card and the terminal have an application version number.
             <br>
@@ -1181,7 +1179,7 @@ const emv_Steps  = [
             </p>
             </div>`
             },
-            {id: EMV_SUBSTEP_APPLICATION_USAGE_CONTROL			  , item: 'Application Usage Control', substeps: [],
+            {id: EMV_SUBSTEP_APPLICATION_USAGE_CONTROL, info: '', item: 'Application Usage Control', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             During the “read application data” step the card will have received an Application Usage Control (AUC) record in tag 9F07. 
             <br>
@@ -1219,11 +1217,11 @@ const emv_Steps  = [
             <br><br>
             -- Transaction Type (tag 9C in the terminal): This indicates the type of financial transaction that is actually accepted by the terminal application. The first two digits of the processing code data element (i.e., cash transaction, purchase of goods, and purchase of services), according to ISO: 8583:1993 [4], represents the transaction type. The value field of this data objects is denoted V1 in the remainder of this section.
             <br><br>
-            -- Issuer Country Code <label class="emv_button_show" onmousedown="emv_apdu_searchtag('5F28', event)">(tag 5F28)</label> This indicates on 2 bytes the country code of the issuer, according to the ISO 3166 [5]. The value field of this data object is denoted V2 in the remainder of this section.
+            -- Issuer Country Code <label class="emv_button_show" onmousedown="emv_searchtag('5F28', event)">(tag 5F28)</label> This indicates on 2 bytes the country code of the issuer, according to the ISO 3166 [5]. The value field of this data object is denoted V2 in the remainder of this section.
             <br><br>
-            -- Terminal Country Code <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F1A', event)">(tag 9F1A)</label> This indicates on 2 bytes the country code of the terminal, according to the ISO 3166 [5]. The value field of this data objects is denoted V3 in the remainder of this section.
+            -- Terminal Country Code <label class="emv_button_show" onmousedown="emv_searchtag('9F1A', event)">(tag 9F1A)</label> This indicates on 2 bytes the country code of the terminal, according to the ISO 3166 [5]. The value field of this data objects is denoted V3 in the remainder of this section.
             <br><br>
-            -- Amount, Other <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F04', event)">(tag 9F04)</label> (binary format), <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F03', event)">(tag 9F03)</label>(numeric format) in the terminal]: This indicates a secondary amount associated with a purchase of goods or purchase of services transaction, representing a cashback amount.
+            -- Amount, Other <label class="emv_button_show" onmousedown="emv_searchtag('9F04', event)">(tag 9F04)</label> (binary format), <label class="emv_button_show" onmousedown="emv_searchtag('9F03', event)">(tag 9F03)</label>(numeric format) in the terminal]: This indicates a secondary amount associated with a purchase of goods or purchase of services transaction, representing a cashback amount.
             <br><br>
             
             The algorithm that performs the verification of the geographical usage and service restrictions is given below:
@@ -1272,7 +1270,7 @@ const emv_Steps  = [
             </p>
             </div>`
             },        
-            {id: EMV_SUBSTEP_APPLICATION_EFFECTIVE_EXPIRATION_DAT, item: 'Application Effective Expiration Dates', substeps: [],
+            {id: EMV_SUBSTEP_APPLICATION_EFFECTIVE_EXPIRATION_DAT, info: '', item: 'Application Effective Expiration Dates', substeps: [],
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             Sometimes a card is issued that is not valid yet at the moment of issuing.
             <br><br>
@@ -1307,14 +1305,11 @@ const emv_Steps  = [
     <li>Whether the application version on the card is the same as on the terminal</li>
     <li>Whether the type of transaction is allowed</li>
     <li>And whether the card is valid and not expired</li>
-    <br><br>
-        <div class="sb_bar related-primary">Related Flags: 
-            <label class="emv_button_show" onmousedown= "" >AUC</label> 
-        </div>     
+    <br><br> ${sb.render(emv_presentation_flags(EMV_STEP_PROCESSING_RESTRICTIONS, 'Flags', ['AUC']))}
     </div>`
     },              
-    {id: EMV_STEP_CARD_HOLDER_VERIFICATION, item: 'Card Holder Verification', substeps: [
-            {id: EMV_SUBSTEP_CHECK_CVM_RULES, item: 'Check CVM Rules', substeps: [],
+    {id: EMV_STEP_CARD_HOLDER_VERIFICATION, info: '', item: 'Card Holder Verification', substeps: [
+            {id: EMV_SUBSTEP_CHECK_CVM_RULES, info: '', item: 'Check CVM Rules', substeps: [],
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             Depending on the results of the CVM processing the following bits in TVR Byte 3 may be set to 1 in the TVR:
             <br><br> 
@@ -1336,7 +1331,7 @@ const emv_Steps  = [
     description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
     EMV offers additional tools for the cardholder to prove that he or she is the rightful holder of the card. 
     <br>
-    These tools are called Cardholder Verification Methods (CVM) <label class="emv_button_show" onmousedown="emv_apdu_searchtag('8E', event)">(tag 8E)</label> includes:
+    These tools are called Cardholder Verification Methods (CVM) <label class="emv_button_show" onmousedown="emv_searchtag('8E', event)">(tag 8E)</label> includes:
 
     <br><br>  
         <li>Online PIN</li>
@@ -1438,16 +1433,14 @@ const emv_Steps  = [
     100000 “101111: method numbers to be assigned by the individual payment systems ” a possible candidate is a one-time password scheme (see Appendix D, Section D.7.3);
     <br><br>  
     110000 “111110: method numbers to be assigned by individual issuers.
-    <br><br>
-        <div class="sb_bar related-primary">Related Flags: 
-            <label class="emv_button_show" onmousedown= "" >CVM</label> 
-        </div>  
+    <br><br> ${sb.render(emv_presentation_flags(EMV_STEP_CARD_HOLDER_VERIFICATION, 'Flags', ['CVM']))}
+d
     </div>`
     },               
-    {id: EMV_STEP_TERMINAL_RISK_MANAGEMENT, item: 'Terminal Risk Management', substeps: [
-            {id: EMV_SUBSTEP_EXCEPTION_LIST_CARDS_CHECKING		, item: 'Exception List Cards Checking', substeps: []}, 
-            {id: EMV_SUBSTEP_CB_REGISTERED_BIN_CHECKING		, item: 'CB registered Bin Checking', substeps: []}, 
-            {id: EMV_SUBSTEP_FLOOR_LIMIT_CHECKING				,  item: 'Floor Limit Checking', substeps: [],
+    {id: EMV_STEP_TERMINAL_RISK_MANAGEMENT, info: '', item: 'Terminal Risk Management', substeps: [
+            {id: EMV_SUBSTEP_EXCEPTION_LIST_CARDS_CHECKING, info: '',  item: 'Exception List Cards Checking', substeps: []}, 
+            {id: EMV_SUBSTEP_CB_REGISTERED_BIN_CHECKING, info: '', item: 'CB registered Bin Checking', substeps: []}, 
+            {id: EMV_SUBSTEP_FLOOR_LIMIT_CHECKING, info: '',   item: 'Floor Limit Checking', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             Floor Limit Checking:
             Terminal may have a Transaction Log of approved transactions
@@ -1476,7 +1469,7 @@ const emv_Steps  = [
             3. In case there is no such record in the transaction log, or the terminal does not keep a transaction log, the terminal checks whether the value of the Amount, Authorized in the current transaction is greater than or equal to the value field of the Terminal Floor Limit.				
             If this is true, the terminal sets bit 8, "Transaction exceeds floor limit", in byte 4 of the TVR.</div>				
             `}, 
-            {id: EMV_SUBSTEP_RANDOM_TRANSACTION_SELECTION		,  item: 'Random Transaction Selection', substeps: [],
+            {id: EMV_SUBSTEP_RANDOM_TRANSACTION_SELECTION, info: '',  item: 'Random Transaction Selection', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             <p>A terminal may randomly select a transaction. If the transaction is selected the  Transaction selected randomly for online processing  bit in the TVR will be set to 1.
             For each application:
@@ -1521,16 +1514,16 @@ const emv_Steps  = [
             o   Because random number> Target Percentage so transaction would not go online            
             </p></div>`
             }, 
-            {id: EMV_SUBSTEP_VELOCITY_CHECKING,  item: 'Velocity Checking', substeps: [],
+            {id: EMV_SUBSTEP_VELOCITY_CHECKING,  info: '', item: 'Velocity Checking', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             <br>
-            Only Performed if Card contains Lower Consecutive Offline Limit <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F14', event)">(tag 9F14)</label> and 
-            Upper Consecutive Offline Limit <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F23', event)">(tag 9F23)</label>
+            Only Performed if Card contains Lower Consecutive Offline Limit <label class="emv_button_show" onmousedown="emv_searchtag('9F14', event)">(tag 9F14)</label> and 
+            Upper Consecutive Offline Limit <label class="emv_button_show" onmousedown="emv_searchtag('9F23', event)">(tag 9F23)</label>
             <br><br>
-            Terminal sends a GET DATA Command for the ATC (Application Transaction Counter), <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F36', event)">(tag 9F36)</label><br>
-            Card responds on GET DATA Command for the ATC (Application Transaction Counter), <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F36', event)">(tag 9F36)</label><br>
-            Terminal sends a GET DATA Command for the Last Online ATC <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F13', event)">(tag 9F13)</label><br>
-            Card responds on GET DATA Command for the Last Online ATC <label class="emv_button_show" onmousedown="emv_apdu_searchtag('9F13', event)">(tag 9F13)</label>
+            Terminal sends a GET DATA Command for the ATC (Application Transaction Counter), <label class="emv_button_show" onmousedown="emv_searchtag('9F36', event)">(tag 9F36)</label><br>
+            Card responds on GET DATA Command for the ATC (Application Transaction Counter), <label class="emv_button_show" onmousedown="emv_searchtag('9F36', event)">(tag 9F36)</label><br>
+            Terminal sends a GET DATA Command for the Last Online ATC <label class="emv_button_show" onmousedown="emv_searchtag('9F13', event)">(tag 9F13)</label><br>
+            Card responds on GET DATA Command for the Last Online ATC <label class="emv_button_show" onmousedown="emv_searchtag('9F13', event)">(tag 9F13)</label>
             <br><br>
                    <li>If (ATC   Last Online ATC) > Lower Consecutive Offline Limit, Terminal sets  Lower consecutive offline limit exceeded  bit in TVR to 1</li>
                    <li>If (ATC   Last Online ATC) > Upper Consecutive Offline Limit, Terminal sets  Upper consecutive offline limit exceeded  bit in TVR to 1</li>
@@ -1618,8 +1611,8 @@ const emv_Steps  = [
     <div class="related-primary"><br>Related Flags: </br></div>       
     </div>`
     },             
-    {id: EMV_STEP_TERMINAL_ACTION_ANALYSIS, item: 'Terminal Action Analysis', substeps: [
-            {id: EMV_SUBSTEP_ACTION_IF_DENIAL		, item: 'Action If Denial', substeps: [],
+    {id: EMV_STEP_TERMINAL_ACTION_ANALYSIS, info: '', item: 'Terminal Action Analysis', substeps: [
+            {id: EMV_SUBSTEP_ACTION_IF_DENIAL, info: '', item: 'Action If Denial', substeps: [],
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
 
             For each bit in the TVR with value 1, the terminal checks the corresponding bit in the Issuer Action Code “Denial and Terminal Action Code “Denial.
@@ -1664,7 +1657,7 @@ const emv_Steps  = [
             When the AAC is forwarded to the issuer, it proves that the card was present during the denied transaction.
             </div>`
             }, 
-            {id: EMV_SUBSTEP_ACTION_IF_ONLINE		, item: 'Action If OnLine', substeps: [],
+            {id: EMV_SUBSTEP_ACTION_IF_ONLINE, info: '', item: 'Action If OnLine', substeps: [],
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             
             If the terminal is "off-line-only" (with Terminal Type in the set of values 13, 23, 16, 26, 36), the analysis described in this section is meaningless.
@@ -1724,7 +1717,7 @@ const emv_Steps  = [
             <br><<br>            
             </div>`        
             }, 
-            {id: EMV_SUBSTEP_ACTION_IF_APPROVED	, item: 'Action If Approved', substeps: [],
+            {id: EMV_SUBSTEP_ACTION_IF_APPROVED, info: '', item: 'Action If Approved', substeps: [],
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             </div>`                                
             },          
@@ -1902,8 +1895,8 @@ const emv_Steps  = [
     <div class="related-primary"><br>Related Flags: </br></div>       
     </div>`
     },        
-    {id: EMV_STEP_CARD_ACTION_ANALYSIS, item: 'Card Action Analysis', substeps: [
-            {id: EMV_SUBSTEP_GENERATE_AC_FIRST, item: 'Generate AC First', substeps: [],
+    {id: EMV_STEP_CARD_ACTION_ANALYSIS, info: '', item: 'Card Action Analysis', substeps: [
+            {id: EMV_SUBSTEP_GENERATE_AC_FIRST, info: '', item: 'Generate AC First', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             <p>What s a cryptogram?
             A cryptogram is cryptographic hash of some transaction related data. Only the card and the issuer know the keys used to generate the cryptogram.
@@ -1937,7 +1930,7 @@ const emv_Steps  = [
         <br><br>
         </div>`
     },                   
-    {id: EMV_STEP_ONLINE_OFFLINE_DECISION, item: 'On-Line/Off-Line Decision', substeps: [],
+    {id: EMV_STEP_ONLINE_OFFLINE_DECISION, info: '', item: 'On-Line/Off-Line Decision', substeps: [],
     description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
     If the terminal received an ARQC the terminal will request authorization from the issuer. 
     <br><br>
@@ -1956,6 +1949,7 @@ const emv_Steps  = [
     The card can use this data to verify that the response received is really from the issuer.
     <br>    
     The card will have told the terminal that it supports issuer authentication in the AIP. 
+    <label class="emv_button_show" onmousedown= "emv_byte_show(emv_AIPPanel, Issuer_authentication_is_supported, 1)" onmouseup= "emv_byte_show(emv_AIPPanel, Issuer_authentication_is_supported, 0)">See</label> 
     <br>    
     If a response cryptogram is received and the card supports issuer authentication the terminal will request authentication using the EXTERNAL AUTHENTICATE command.
     <br>    
@@ -1964,8 +1958,8 @@ const emv_Steps  = [
     <div class="related-primary"><br>Related Flags: </br></div>       
     </div>`
     }, 
-    {id: EMV_STEP_ONLINE_PROCESSING, item: 'On-Line Processing', substeps: [
-            {id:  EMV_SUBSTEP_CONNECT_ACQUIRER			, item: 'Connect Acquirer', substeps: [],
+    {id: EMV_STEP_ONLINE_PROCESSING, info: '', item: 'On-Line Processing', substeps: [
+            {id:  EMV_SUBSTEP_CONNECT_ACQUIRER, info: '', item: 'Connect Acquirer', substeps: [],
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             </div>`     
             }, 
@@ -2014,12 +2008,12 @@ const emv_Steps  = [
     <br><br>
     </div>`
     },                   
-    {id: EMV_STEP_SCRIPT_PROCESSING, item: 'Script Processing', substeps: [ 
-            {id: EMV_SUBSTEP_CHECK_ISSUER_SCRIPTS_TEMPLATE	, item: 'Check_Issuer Scripts Template', substeps: [],
+    {id: EMV_STEP_SCRIPT_PROCESSING, info: '', item: 'Script Processing', substeps: [ 
+            {id: EMV_SUBSTEP_CHECK_ISSUER_SCRIPTS_TEMPLATE, info: '', item: 'Check_Issuer Scripts Template', substeps: [],
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             </div>`     
             }, 
-            {id: EMV_SUBSTEP_POST_ISSUANCE_COMMANDS    	, item: 'Post Issuance Commands', substeps: [],
+            {id: EMV_SUBSTEP_POST_ISSUANCE_COMMANDS, info: '', item: 'Post Issuance Commands', substeps: [],
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             </div>`     
             },  
@@ -2030,12 +2024,12 @@ const emv_Steps  = [
         <div class="related-primary"><br>Related Flags: </br></div>       
         </div>`
     },                
-    {id: EMV_STEP_TRANSACTION_COMPLETION, item: 'Transaction Completion', substeps: [
-        {id: EMV_SUBSTEP_GENERATE_AC_SECOND	, item: 'Generate AC Second', substeps: [],
+    {id: EMV_STEP_TRANSACTION_COMPLETION, info: '', item: 'Transaction Completion', substeps: [
+        {id: EMV_SUBSTEP_GENERATE_AC_SECOND	, info: '', item: 'Generate AC Second', substeps: [],
         description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
         </div>`     
         }, 
-        {id: EMV_SUBSTEP_TERMINATE_TRANSACTION	, item: 'Terminate Transaction', substeps: [],
+        {id: EMV_SUBSTEP_TERMINATE_TRANSACTION, info: '', item: 'Terminate Transaction', substeps: [],
         description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
         </div>`     
         }, 

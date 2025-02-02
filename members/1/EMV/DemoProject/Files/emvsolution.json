@@ -1,95 +1,177 @@
 {
   "Applications": [
     {
-        "RID": "a000000333",
+      "RID": "a000000333",
+      "ClassName": "EMVApplication",
+      "Code": "15",
+      "AID": [
+        {
+          "AID": "a000000333010103",
+          "ClassName": "EMVAid",
+          "Code": "16",
+          "ApplicationVersionNumber": "0020",
+          "Priority": 8,
+          "applicationSelectionIndicator": 1,
+          "ForceTransaction": 1,
+          "TerminalActionCodeDenial": "0010000000", 
+          "TerminalActionCodeOnline": "d84004f800",
+          "TerminalActionCodeDefault": "d84000a800"
+        },
+        {
+        "AID": "a000000333010102",
+        "ClassName": "EMVAid",
+        "Code": "17",
+        "ApplicationVersionNumber": "0020",
+        "Priority": 8,
+        "applicationSelectionIndicator": 1,
+        "ForceTransaction": 1,
+        "TerminalActionCodeDenial": "0010000000", 
+        "TerminalActionCodeOnline": "d84004f800",
+        "TerminalActionCodeDefault": "d84000a800"
+        },
+        {
+        "AID": "a000000333010101",
+        "ClassName": "EMVAid",
+        "Code": "18",
+        "ApplicationVersionNumber": "0020",
+        "Priority": 8,
+        "applicationSelectionIndicator": 1,
+        "ForceTransaction": 1,
+        "TerminalActionCodeDenial": "0010000000", 
+        "TerminalActionCodeOnline": "d84004f800",
+        "TerminalActionCodeDefault": "d84000a800"
+        }
+        ]
+      },
+      {
+        "RID": "A000000677",
+        "ClassName": "EMVApplication",
+        "Code": "22",
         "AID": [
             {
-                "AID":"a000000333010103",    
-                "ApplicationVersionNumber": [0, 8],
-                "Priority": 8,
-                "applicationSelectionIndicator": 0,
-                "ForceTransaction": 1,
-                "TerminalActionCodeDenial":  [ 0,
-                0,
-                240,
-                160,
-                1],
-                "TerminalActionCodeOnline": [ 193,
-                0,
-                240,
-                160,
-                1],
-                "TerminalActionCodeDefault":[ 193,
-                0,
-                240,
-                160,
-                1]
-            },
-            {
-                "AID":"a000000333010102",    
-                "ApplicationVersionNumber": [0, 8],
-                "Priority": 8,
-                "applicationSelectionIndicator": 0,
-                "ForceTransaction": 1,
-                "TerminalActionCodeDenial":  [ 0,
-                0,
-                240,
-                160,
-                30],
-                "TerminalActionCodeOnline": [ 193,
-                0,
-                240,
-                160,
-                55],
-                "TerminalActionCodeDefault":[ 193,
-                0,
-                240,
-                160,
-                60]
-            }
+            "AID": "A000000677010101",
+            "ClassName": "EMVAid",
+            "Code": "30",
+            "ApplicationVersionNumber": "0020",
+            "Priority": 8,
+            "applicationSelectionIndicator": 1,
+            "ForceTransaction": 1,
+            "TerminalActionCodeDenial": "0010000000", 
+            "TerminalActionCodeOnline": "d84004f800",
+            "TerminalActionCodeDefault": "d84000a800"
+            }  
         ]
-    }
+    },            
+      {
+        "RID": "a000000003",
+        "ClassName": "EMVApplication",
+        "Code": "19",
+        "AID": [
+          {
+            "AID": "a0000000031010",
+            "ClassName": "EMVAid",
+            "Code": "20",
+            "ApplicationVersionNumber": "008C",
+            "Priority": 127,
+            "applicationSelectionIndicator": 1,
+            "ForceTransaction": 31,
+            "TerminalActionCodeDenial": "0000000000", 
+            "TerminalActionCodeOnline": "0000000000",
+            "TerminalActionCodeDefault": "0000000000"
+          },
+          {
+          "AID": "a0000000032010",
+          "ClassName": "EMVAid",
+          "Code": "21",
+          "ApplicationVersionNumber": "008C",
+          "Priority": 127,
+          "applicationSelectionIndicator": 1,
+          "ForceTransaction": 30,
+          "TerminalActionCodeDenial": "0000000000", 
+          "TerminalActionCodeOnline": "0000000000",
+          "TerminalActionCodeDefault": "0000000000"
+          }
+          ]
+        },
+        {
+            "RID": "A000000660",
+            "ClassName": "EMVApplication",
+            "Code": "22",
+            "AID": [
+                {
+                "AID": "A0000006600100",
+                "ClassName": "EMVAid",
+                "Code": "23",
+                "ApplicationVersionNumber": "009a",
+                "Priority": 127,
+                "applicationSelectionIndicator": 1,
+                "ForceTransaction": 1,
+                "TerminalActionCodeDenial": "0000000000", 
+                "TerminalActionCodeOnline": "0000000000",
+                "TerminalActionCodeDefault": "0000000000"
+                }
+            ]
+         },
+         {
+            "RID": "A000000042",
+            "ClassName": "EMVApplication",
+            "Code": "24",
+            "AID": [
+                {
+                "AID": "A0000000421010",
+                "ClassName": "EMVAid",
+                "Code": "25",
+                "ApplicationVersionNumber": "0002",
+                "Priority": 254,
+                "applicationSelectionIndicator": 1,
+                "ForceTransaction": 31,
+                "TerminalActionCodeDenial": "0000000000", 
+                "TerminalActionCodeOnline": "0000000000",
+                "TerminalActionCodeDefault": "0000000000"
+              },
+              {
+                  "AID": "A0000000422010",
+                  "ClassName": "EMVAid",
+                  "Code": "26",
+                  "ApplicationVersionNumber": "0002",
+                  "Priority": 254,
+                  "applicationSelectionIndicator": 1,
+                  "ForceTransaction": 30,
+                  "TerminalActionCodeDenial": "0000000000", 
+                  "TerminalActionCodeOnline": "0000000000",
+                  "TerminalActionCodeDefault": "0000000000"
+               }              
+            ]
+         }  
   ],
   "Terminals": [
     {
+      "ClassName": "EMVTerminal",
+      "Code": "27",
       "IFDSerialNumber": "12345678",
-      "TerminalCountryCode": [
-        2,
-        80
-      ],
-      "TerminalType": 34,
-      "TerminalCapabilities": [
-        96,
-        184,
-        200
-      ],
-      "AdditionalTerminalCapabilities": [
-        193,
-        0,
-        240,
-        160,
-        1
-      ],
-      "TTQ": [
-        38,
-        64,
-        64,
-        0
-      ]
+      "TerminalCountryCode": "0250",
+      "TerminalType": "22",
+      "TerminalCapabilities": "60B8C8",
+      "AdditionalTerminalCapabilities": "100F0A001",
+      "TTQ": "26404000"
     }
   ],
   "Clients": [],
   "Acquirer": {
-    "AcquirerIdentifier": "45334814806"
+    "ClassName": "EMVAcquirer",
+    "Code": "28",
+    "AcquirerIdentifier": "045334814806"
   },
   "Acceptor": {
+    "ClassName": "EMVAcceptor",
+    "Code": "29",
     "MerchantCategoryCode": "8050",
     "MerchantIdentifier": "10549223015         ",
-    "MerchantNameAndLocation": "THIS IS A TEST SHOP BANGKOK THAILAND",
-    "TerminalIdentification": "01                  ",
-    "MerchantContractNumber": "500549223             ",
+    "MerchantNameAndLocation": "SALON CARTES RANG 1 75016   ",
+    "TerminalIdentification": "01",
+    "MerchantContractNumber": "0549223",
     "MerchantBillMode": "",
-    "MerchantActivationCode":"",
+    "MerchantActivationCode": "",
     "SystemAcceptationIdentification": "********",
     "SIRET": "10610602410627"
   },

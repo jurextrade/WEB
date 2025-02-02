@@ -1910,19 +1910,6 @@ function ReturnChartMenu (platform) {
 
 }
 
-
-
-function focusAndCursor(selector){
-    var input = $(selector);
-
-    setTimeout(function() {
-      // this focus on last character if input isn't empty
-      tmp = input.val(); input.focus().val("").blur().focus().val(tmp);
-    }, 10);
-  }
-
-
-
 function OnChangeSignal (elt) {
     var signalname= elt.value;    
     return;

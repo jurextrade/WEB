@@ -54,7 +54,7 @@ class npproject {
         this.Port                   = solution.DeployServer_Port;    
     }
     Create = function () {
-        return SubmitProjectRequest(this.Folder, this.Name, '', 'php/create_project.php', SYNCHRONE);
+        return SubmitProjectRequest('NetProg',this.Folder, this.Name, '', 'php/create_project.php', SYNCHRONE);
     }
 
     Remove = function () {
@@ -62,14 +62,14 @@ class npproject {
             return;        
         }
 
-        return SubmitProjectRequest(this.Folder, this.Name, '', 'php/remove_project.php', SYNCHRONE);
+        return SubmitProjectRequest('NetProg',this.Folder, this.Name, '', 'php/remove_project.php', SYNCHRONE);
     }
 
     Rename = function (newname) {
         if (solution.UserId == "0") {
             return;            
         }
-        return SubmitProjectRequest(this.Folder, newname, '', 'php/rename_project.php', SYNCHRONE);
+        return SubmitProjectRequest('NetProg',this.Folder, newname, '', 'php/rename_project.php', SYNCHRONE);
     }
     
     Save = function () {
@@ -99,7 +99,6 @@ class npproject {
     UpdateSites = function (response, par) {
         let project = par[0];
         project.Manager = JSON.parse (response);
-        console.log ('BEFORE UPDATE')
 
 // we need to correct the JSON parse structure to have same objects in case of modifying
         MXUpdate (project.Manager);        
@@ -169,29 +168,25 @@ function netprog_solution () {
     }
 
     solution.netprog_LoadProjects = function (Id, url, async, interfacecallback, par) {
-        if (!async) async = false;
-        var params = 'user_id=' + (Id == "0" ? "1" : Id);     
         
-        var xhttp = new XMLHttpRequest();
-        xhttp.userid = Id;
-        xhttp.pname  = par;
-        
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
+        let param = {
+            user_id :  (Id == "0" ? "1" : Id),
+            platform_pname: NETPROG_PLATFORM_PNAME,
+            platform_folder : 'NetProg'             
+        }
 
-                let arraystructure =  JSON.parse(this.responseText);
-                for (var i = 0; i < arraystructure.length; i++) {
-                    let projectname = arraystructure[i].name;
-                    let projectpath = arraystructure[i].path;
-                    if (this.userid == '0' && projectname != "Demo_Project") continue;
-                    solution.netprog_Projects.push(new npproject(NETPROG_PLATFORM_PNAME, projectname, projectpath));
-                }   
-                if (interfacecallback)  interfacecallback (par);            
-            }
-        };
-        xhttp.open('POST', url, async);
-        xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhttp.send(params);
+        let callback = function (responsetext, values) {
+            let arraystructure =  JSON.parse(responsetext);
+            for (var i = 0; i < arraystructure.length; i++) {
+                let projectname = arraystructure[i].name;
+                let projectpath = arraystructure[i].path;
+                if (this.userid == '0' && projectname != "Demo_Project") continue;
+                solution.netprog_Projects.push(new npproject(NETPROG_PLATFORM_PNAME, projectname, projectpath));
+            } 
+        }
+
+        url_submit ('POST', url, param /*object {}*/, async, callback, [] , interfacecallback, par);
+
     }
 
     solution.netprog_UpdateProjects = function (solution) {
@@ -213,13 +208,13 @@ function netprog_solution () {
        
     }
 
-    solution.netprog_LoadProjects(user.id, site.address + "/php/read_netprog_projects.php",  SYNCHRONE, solution.netprog_UpdateProjects, solution);
+    solution.netprog_LoadProjects(user.id, site.address + "/php/read_projects.php",  SYNCHRONE, solution.netprog_UpdateProjects, solution);
     return solution;   
 }
 
 
-
 function netprog_timer () {
+
     if (solution.netprog_CurrentProject) {        
             $('#netprog_projectsbar #netprog_projectrename').css ('display', '');
             $('#netprog_projectsbar #netprog_projectremove').css ('display', '');
@@ -288,14 +283,32 @@ function netprog_selectproject(project, forcedisplay) {
 }
 
 function netprog_closeproject (project) {
-//--- data ui platform update .............
-    let ui  = solution.get('ui')               
-    solution.CurrentProject = null;   
-    ui.platform_updatedata('emv', solution.emv_CurrentProject)                   
+    if (!project) {
+        return;
+    }
+    
+    if (project.ShouldSave) {
+        SaveProjectConfirm(project);
+    } else {
   
+        
+    }
+   
+    if (project == solution.netprog_CurrentProject) {
+        netprog_initproject ();    
+        netprog_drawproject(project, false);
+
+//--- data ui platform update .............
+        let ui  = solution.get('ui')               
+        solution.netprog_CurrentProject = null;   
+        ui.platform_updatedata('netprog', solution.netprog_CurrentProject)                                 
+    }   
+    return project;       
+ 
 }
 
 function netprog_initproject () {
+    $('#netprog_managersidepanel').addClass('sb_none')    
  //   sb.tab_clear (netprog_maintabs);      
 }
 
@@ -312,7 +325,7 @@ function netprog_drawproject(project, open) {
       $("#netprog_projectselect option[value='--Select Project--']").remove();   
       $('#netprog_projectselect option[value="' + project.Name + '"]').prop('selected', true);
       sb.tree_selectitem ('netprog_tree_projects', project.Name);  
-
+      $('#netprog_managersidepanel').removeClass('sb_none')
       sb.box_toggle('netprog_boxmanagerpanel', true);
 
   } else {
@@ -568,7 +581,31 @@ function onclick_netprog_projectrename () {
 }
 
 function onclick_netprog_projectremove() {
-    //OnRemoveProject (RemoveProject, solution.CurrentProject);
+    OnRemoveProject (netprog_RemoveProject, solution.netprog_CurrentProject);
+}
+
+
+function netprog_RemoveProject (project) {
+    if (!project) return;
+
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        return;
+    }
+    if ($('#emv_projectsbar .box-btn-slide').hasClass('rotate-180'))    
+        $('#emv_projectsbar #slide').click ();   
+
+    var returnvalue = project.Remove ();
+    if (returnvalue != -1) {
+
+        sb.tree_removeitem('netrog_tree_projects', project.Name);
+        sb.select_removeitem('netprog_projectselect', project.Name);
+
+        if (project == solution.netprog_CurrentProject) 
+            netprog_closeproject(project);    
+    }
 }
 
 function onclick_netprog_projectcompile() {
@@ -696,8 +733,6 @@ function netprog_treenodeitem (entity, closed) {
     let classname       = entity.ClassName; 
     let nodename        = classname + ':' + entity.Code;
 
-    let fatherclasstype = netprog_entityfatherclass(classname);
-
     return {
         id:   'treenode-' + classname + '-' + entity.Code,
         type: 'tree',
@@ -707,6 +742,7 @@ function netprog_treenodeitem (entity, closed) {
         rootitem: netprog_tree_update,
         closed:  closed,
         icon: netprog_iconfromclass (classname),
+        items:[],        
         attributes:{
                     nodename: nodename,
                     draggable: true
@@ -1133,7 +1169,7 @@ function oncontextmenu_netprog_treenode (elt, event) {
             switch (entity.Type) {
                 case MXApplicationClass_Type.INTERNAL :
                 break;
-                case MXApplicationClass_Type.ESTERNAL :
+                case MXApplicationClass_Type.EXTERNAL :
                 break;
             }
 
@@ -1161,6 +1197,7 @@ function oncontextmenu_netprog_treenode (elt, event) {
         par : entity,
 
         onselect:function (elt, par) {
+            console.log ('select')
             let entity = this.par;    
             switch (parseInt(elt.id)) {
                 case MENU_SITEVIEW_LAUNCH_ID :

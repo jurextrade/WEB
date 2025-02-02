@@ -1,3 +1,29 @@
+//--------------------------------------------------------------------- SELECTED APPLICATION TERMINAL TVR TSI ... PANEL  --------------------------------------------------------------------
+
+var emv_TSIPanel = emv_bytepanel('TSI', '9B',   emv_TSI, {editable:false})
+var emv_TVRPanel = emv_bytepanel('TVR', '95',   emv_TVR, {editable:false})
+
+var emv_TACDenialPanel = emv_bytepanel('TAC_Denial', 'DF57',   emv_TVR, {editable:false})
+var emv_TACOnlinePanel = emv_bytepanel('TAC_Online', 'DF58',   emv_TVR, {editable:false})
+var emv_TACDefaultPanel = emv_bytepanel('TAC_Default', 'DF56', emv_TVR, {editable:false})
+
+
+var emv_TCPanel  = emv_bytepanel('TC',  '9F33', emv_TC, {editable:false})               //Terminal capabilities editable
+var emv_ATCPanel = emv_bytepanel('ATC', '9F40', emv_ATC, {editable:false})              //Additional terminal capabilities editable
+var emv_TTPanel  = emv_ttpanel('TT', {editable:false});                                 //Terminal Type
+var emv_TTQPanel = emv_bytepanel('TTQ', '9F66', emv_TTQ, {editable:false})              //TTQ
+
+var emv_AUCPanel = emv_bytepanel('AUC', '9F07', emv_AUC, {editable:false})
+var emv_AIPPanel = emv_bytepanel('AIP', '82',   emv_AIP, {editable:false})
+
+var emv_IACDenialPanel = emv_bytepanel('IAC_Denial', '9F0E',   emv_TVR, {editable:false})
+var emv_IACOnlinePanel = emv_bytepanel('IAC_Online', '9F0F',   emv_TVR, {editable:false})
+var emv_IACDefaultPanel = emv_bytepanel('IAC_Default', '9F0D', emv_TVR, {editable:false})
+
+var emv_CTQPanel = emv_bytepanel('CTQ', '9F6C', emv_CTQ, {editable:false})
+var emv_CIDPanel = emv_bytepanel('CID', '9F27', emv_CID, {editable:false})
+
+
 //--------------------------------------------------------------------- EMV TREE Steps Panel --------------------------------------------------------------------
 
 var emv_tree_steps = {
@@ -64,8 +90,8 @@ var emv_presentation_steps_panel = ((emv_Steps) =>  {
     for(var i= 0; i <emv_Steps.length; i++) {
 
         let step = emv_Steps[i];
-        elt = {
-            id: step.id ,
+        let elt = {
+            id: 'step_' + step.id ,
             type: "html",
            
             class: "sb_pane card EMVStep " +  (i != 0 ? "sb_none" : ""),
@@ -134,6 +160,7 @@ var emv_transactiontagsbar = ((toggled) =>  {return {
     id: 'emv_transactiontagsbar',
     type: 'bar',     
     class: 'sb_transform',    
+    style: 'border-top: 1px solid var(--theme-button-border-color)',    
     items:
         [ 
            {id: 'emv_description_TTAGS',  type: 'link',    icon: icon_tags, item: 'TAGS Used in Transaction',  class: '', title: 'Transaction Tags'},         
@@ -185,7 +212,7 @@ var emv_apdu_bargroup = (hidden => {return {
     type: 'group',      
     items:
         [
-            {id: 'inspect_button',  type:'link', icon: icon_eye,  style: (hidden ? 'display:none' : 'display:flex'), events: {onclick: "onclick_apdu_tree_inspect (this, event)"},  title: 'Inspect'},      
+            {id: 'inspect_button',  type:'link', icon: icon_eye,  style: (hidden ? 'display:none' : 'display:flex'), events: {onclick: "onclick_apdu_tree_inspect (this, event)"},  title: 'Inspect Value'},      
         ]
 }})
 
@@ -201,10 +228,10 @@ var emv_apdu_tree_bar = ((tag, value, hidden) =>  {return {
     ]
 }})
 
-var emv_apdu_tree = {
-    id: 'emv_apdu_tree',       
+var emv_apdu_roottree = {
+    id: 'emv_apdu_roottree',       
     type: 'tree',       
-    class: 'treenode emvapdutree',
+    class: 'treenode emv_apdutreeclass',
     item: 'APDU',
     attributes:{nodename: 'RootTag'},   
     arrow: true,
@@ -213,12 +240,12 @@ var emv_apdu_tree = {
     ]
 } 
 
-var emv_apdu = {
-    id: 'emv_apdu',
+var emv_apdutreepanel = {
+    id: 'emv_apdutreepanel',
     type: 'panel',            
     class:'sb_panel',
     items : [
-        emv_apdu_tree,
+        emv_apdu_roottree,
     ] 
 }
 
@@ -240,6 +267,7 @@ var emv_apdu_searchgroup  = ((toggled) =>  {return {
 var emv_apdu_bar  = ((toggled) =>  {return {
     id: 'emv_apdu_bar',
     type: 'bar',
+    style: 'border-top: 1px solid var(--theme-button-border-color)',    
     items: [
         {id: 'emv_APDU',  type: 'link', icon: icon_exchange, item: 'APDU Exchange',  class: 'sb_fsclassic ', title: 'APPLICATION PROTOCOL DATA UNIT'}, 
         emv_apdu_searchgroup(toggled),
@@ -254,7 +282,7 @@ var emv_apdupanel  = ((toggled) =>  {return {
     class: 'sb_panel' + (toggled ? ' toggled' : '') + (toggled ? ' toggled' : ''),
     items: [
         emv_apdu_bar(toggled),
-        emv_apdu,
+        emv_apdutreepanel,
     ]
 }})
 
@@ -264,6 +292,7 @@ var emv_tester_commandgroup = {
     id: 'emv_tester_commandgroup',  
     class: 'sb_transform',
     type: 'group',
+   // style: 'display:none',
     items:
         [    
             {id: 'emv_tester_play_button' ,    /*item: 'Run',*/       icon: icon_play,      type:'button',  class: 'sb_sbutton', title: 'replay',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
@@ -279,7 +308,7 @@ var emv_tester_commandgroup = {
 var emv_tester_stepsgroup = (steps => {
     let items = [];
     for (var i = 0; i < steps.length; i++) {
-        items.push ({id: i,   type: 'button', class: 'sb_roundbutton EMVStep',   events: {onclick: "onclick_emv_tester_stepsgroup (this, event)"}, title: 'Step ' + i})
+        items.push ({id: 'step_' + i,   type: 'button', class: 'sb_roundbutton EMVStep',   events: {onclick: "onclick_emv_tester_stepsgroup (this, event)"}, title: 'Step ' + i})
     }
     return {
     id:   'emv_tester_stepsgroup',  
@@ -293,13 +322,15 @@ var emv_tester_filtergroup = {
     id: 'emv_tester_filtergroup',  
     class: 'sb_transform',
     type: 'group',
- //   position: 'sb_end',
+    position: 'sb_end',
     items:
         [
             {id: 'ignore_apdu',    type: 'checkbox', item: 'APDU',     events: {onclick:'onclick_emv_tester_filtergroup(this, event)'}}, 
             {id: 'ignore_step',    type: 'checkbox', item: 'Step',     events: {onclick:'onclick_emv_tester_filtergroup(this, event)'}}, 
             {id: 'ignore_trace',   type: 'checkbox', item: 'Trace',    events: {onclick:'onclick_emv_tester_filtergroup(this, event)'}}, 
             {id: 'ignore_tag',     type: 'checkbox', item: 'Tag',      events: {onclick:'onclick_emv_tester_filtergroup(this, event)'}}, 
+            {id: 'ignore_tvr',     type: 'checkbox', item: 'TVR',      events: {onclick:'onclick_emv_tester_filtergroup(this, event)'}}, 
+            {id: 'ignore_tsi',     type: 'checkbox', item: 'TSI',      events: {onclick:'onclick_emv_tester_filtergroup(this, event)'}}, 
         ]
 }
 
@@ -322,7 +353,9 @@ var emv_tester_headerpanel = {
     class: 'sb_sidebarheader ',    
     items : 
     [
-        {id: '',                type: 'link',    item: 'EMV Tester',  class: 'sb_sidebarheadertitle'},      
+        {id: '',                type: 'link',    item: 'EMV Tester',  class: 'sb_sidebarheadertitle'},     
+        {id: 'label_router',    item: 'Router', type: 'link',  icon: icon_connection, title: 'ROUTER'},
+        {id: 'button_router',   type: 'button', class: 'sb_roundbutton',   events: {onclick: "onclick_button_router (this, event)"}, title: 'ROUTER'},
         {id: 'header_load',     type: 'link',   class: 'sb_sidebarheaderinfo',   icon:  icon_file,  events: {onclick: "onclick_jsonloadfile(this, event)"}, title: 'link to documentation'},                 
     ]
 }
@@ -340,8 +373,8 @@ var emv_tester_cardbuttonbar = {
     ]
 }
 
-var emv_tester_cardevalbar = ((toggled) =>  {return {
-    id: 'emv_tester_cardevalbar',
+var emv_tester_cardvalbar = ((toggled) =>  {return {
+    id: 'emv_tester_cardvalbar',
     type: 'group',     
     position: 'sb_end',
     class: 'sb_transform',    
@@ -352,20 +385,19 @@ var emv_tester_cardevalbar = ((toggled) =>  {return {
 }})
 
 var emv_tester_cardbar  = ((toggled) =>  {return {
-
-    
     id: 'emv_tester_cardbar', 
-    type: 'bar',    
+    type: 'bar',   
+    style: 'border-top: 1px solid var(--theme-button-border-color)',
     items:
      [
         emv_tester_cardbuttonbar,
-        emv_tester_cardevalbar(toggled),    
+        emv_tester_cardvalbar(toggled),    
         emv_testerpanel_buttongroup(toggled)                 
       ]
 }})
 
-var emv_card_input = {
-    id: 'emv_card_input',
+var emv_testercardinput = {
+    id: 'emv_testercardinput',
     type: 'html',
     class: 'sb_panel sb_main sb_top sb_top', 
 }
@@ -376,7 +408,7 @@ var emv_tester_cardpanel  = ((toggled) =>  {return {
     class: 'sb_panel sb_column' + (toggled ? ' toggled' : ''),
     items:[
         emv_tester_cardbar(toggled),
-        emv_card_input,
+        emv_testercardinput,
     ],
     catchresize: true,
     resizefunction: "cardinputresize()"        
@@ -388,7 +420,7 @@ var emv_tester_cardpanel  = ((toggled) =>  {return {
 var emv_tester_terminalbuttonbar = {
     id: 'emv_tester_terminalbuttonbar',
     type: 'group',         
-    class: '',
+
     events: {onclick: 'onclick_emv_tester_terminal(this, event)'},
     items : [
         {id: 'label_terminal',  item: 'EMV Terminal', type: 'link',  icon: icon_terminal, title: 'EMV Terminal'},
@@ -396,8 +428,8 @@ var emv_tester_terminalbuttonbar = {
     ]
 }
 
-var emv_tester_terminalevalbar = ((toggled) =>  {return {
-    id: 'emv_tester_terminalevalbar',
+var emv_tester_terminalvalbar = ((toggled) =>  {return {
+    id: 'emv_tester_terminalvalbar',
     type: 'group',     
     position: 'sb_end',
     class: 'sb_transform',    
@@ -410,16 +442,17 @@ var emv_tester_terminalevalbar = ((toggled) =>  {return {
 var emv_tester_terminalbar = ((toggled) =>  {return {
     id: 'emv_tester_terminalbar', 
     type: 'bar',    
+    style: 'border-top: 1px solid var(--theme-button-border-color)',    
     items:
      [
         emv_tester_terminalbuttonbar,
-        emv_tester_terminalevalbar(toggled),    
+        emv_tester_terminalvalbar(toggled),    
         emv_testerpanel_buttongroup(toggled)                 
       ]
 }})
 
-var emv_terminal_input = {
-    id: 'emv_terminal_input',
+var emv_tester_terminalinput = {
+    id: 'emv_tester_terminalinput',
     type: 'html',
     class: 'sb_panel sb_main', 
 }
@@ -430,34 +463,13 @@ var emv_tester_terminalpanel = ((toggled) =>  {return {
     class: 'sb_panel sb_column' + (toggled ? ' toggled' : ''),
     items:[
         emv_tester_terminalbar(toggled),
-        emv_terminal_input,
+        emv_tester_terminalinput,
     ],
     catchresize: true,
     resizefunction: "terminalinputresize()"    
 }})
 
-//-------------------------------------------------------------------------EMV TESTER MAIN PANEL ------------------------------------------------------------------------
 
-var emv_testerleft_panel = {
-    id : 'emv_testerleft_panel',
-    type: 'panel',
-    class: 'sb_panel sb_main sb_column',
-    items: [
-        emv_presentation_panel,        
-    ],
-}
-
-var emv_testerright_panel = {
-    id : 'emv_testerright_panel',
-    type: 'panel',
-    class: 'sb_column sb_main',
-    items: [
-        emv_apdupanel(true),        
-        {id: '',  type:'drag', direction:'horizontal', dragid: 'emv_transactiontagspanel'},            
-        emv_transactiontagspanel
-    ],    
-    
-}
 
 //-------------------------------------------------------------------- TESTER SIDEBAR PANEL --------------------------------------------------------------
 
@@ -465,29 +477,292 @@ var emv_tester_sidepanel = {
     id: 'emv_tester_sidepanel',
     type: 'panel',
     class: 'sb_sidepanel sb_panel sb_main sb_column',
-    items:[
-        emv_tester_recordgroup,                 
-        emv_tester_cardpanel(true),
-//        {id: '',  type:'drag', direction:'horizontal', dragid: 'emv_tester_cardpanel'},            
-        emv_tester_terminalpanel(true),   
-//        {id: '',  type:'drag', direction:'horizontal', dragid: 'emv_testerright_panel'},            
-//        emv_testerright_panel        
-        emv_apdupanel(true),        
-        emv_transactiontagspanel(true)        
+    items:[        emv_tester_recordgroup,                 
+        {
+            id: 'emv_tester_panel',
+            type: 'panel',
+            class: 'sb_panel sb_main sb_column',
+            items:[        
+                emv_tester_cardpanel(true),
+                emv_tester_terminalpanel(true),   
+                emv_apdupanel(true),        
+                emv_transactiontagspanel(true)        
+            ]
+        }
+    ],
+}
+    //        {id: '',  type:'drag', direction:'horizontal', dragid: 'emv_testerright_panel'},            
+    //        emv_testerright_panel        
+    //        {id: '',  type:'drag', direction:'horizontal', dragid: 'emv_tester_cardpanel'},            
+
+
+
+var emv_tester_terminalinfo = {
+    id: 'emv_tester_terminalinfo', 
+    type: 'panel',       
+    class: 'sb_panel sb_column',
+    items: [
+        emv_TTPanel,        
+        emv_TCPanel,
+        emv_ATCPanel,
+        emv_TTQPanel,
+    ] 
+}
+
+var emv_tester_tacpanel = {
+    id: "emv_tester_tacpanel",
+    type: "panel",
+    class: "sb_column",
+     items: [
+        emv_TACDenialPanel,
+        emv_TACOnlinePanel,
+        emv_TACDefaultPanel,            
+    ]
+}
+
+var emv_tester_iacpanel = {
+    id: "emv_tester_iacpanel",
+    type: "panel",
+    class: "sb_column",
+    style: "",    
+    items: [
+        emv_IACDenialPanel,
+        emv_IACOnlinePanel,
+        emv_IACDefaultPanel,           
+    ]
+}
+
+var emv_tester_cardbyteinfo = {
+    id: "emv_tester_cardbyteinfo",
+    type: "panel",
+    class: "sb_column",
+    style: "",    
+    items: [
+        emv_AIPPanel, 
+        emv_AUCPanel, 
+    ]
+}
+
+var emv_tester_cardbyteinfobar = {
+    id: 'emv_tester_cardbyteinfobar', 
+    type: 'bar', 
+    items: [
+        {
+            position: '',
+            id: 'emv_tester_carbar_maingroup', 
+            type: 'group',                    
+            direction: 'row',
+            toggle : false,
+            items : 
+            [
+                {id: 'emv_tester_cardbar_description',  type: 'label',    style: 'margin-right:20px', item: "CURRENT CARD",  class: ' ', title: 'Selected Card'},
+            ]
+        } 
+    ] 
+}
+    
+var emv_tester_terminalbyteinfobar = {
+    id: 'emv_tester_terminalbyteinfobar', 
+    type: 'bar', 
+    items: [
+        {
+            position: '',
+            id: 'emv_tester_terminalbar_maingroup', 
+            type: 'group',                    
+            direction: 'row',
+            toggle : false,
+            items : 
+            [
+                {id: 'emv_tester_terminalbar_description',  type: 'label',    style: 'margin-right:20px', item: "CURRENT APPLICATION",  class: '', title: 'Selected Application'},
+            ]
+        } 
+    ] 
+}
+ 
+var emv_tester_terminalbyteinfo = {
+    id: "emv_tester_terminalbyteinfo",
+    type: "panel",
+    class: "sb_column",
+    items: [
+        emv_TSIPanel, 
+        emv_TVRPanel,
+    ]
+}
+
+
+
+var emv_tester_sidebarpanel_terminal = {
+    id: "emv_tester_sidebarpanel_terminal",
+    type: "panel",
+    class: "sb_panel sb_column",
+    style: "overflow:auto",   
+    items: [
+     //   emv_tester_terminalbyteinfobar,        
+        emv_tester_terminalbyteinfo,
+        emv_tester_terminalinfo        
+    ]
+}
+
+var emv_tester_sidebarpanel_card = {
+    id: "emv_tester_sidebarpanel_card",
+    type: "panel",
+    class: "sb_panel sb_column",
+    style: "overflow:auto",    
+    items: [
+     //   emv_tester_cardbyteinfobar,        
+        emv_tester_cardbyteinfo,
+
+    ]
+}    
+
+var emv_tester_sidebarpanel_actioncode = {
+    id : 'emv_tester_sidebarpanel_actioncode',
+    type: 'panel',
+    class: 'sb_panel sb_row sb_top',
+    style: "overflow:auto",   
+    items: [
+        emv_tester_iacpanel,
+        emv_tester_tacpanel,          
     ],
 }
 
+
+var emv_tester_sidebarheader = {
+    id: 'emv_tester_sidebarheader',
+    type: 'bar',
+    class: 'sb_rightsidebarheader ',    
+    items : 
+    [
+        {id: '',                  type: 'link',  item: 'Selected Application',  class: 'sb_fs-12 sb_sidebarheadertitle'},                           
+//        {id: 'right_sidebarsave', type: 'button', item:'Save',  class: 'sb_none',  icon:  sb_icons['icon_save'], events: {onclick: "onclick_right_sidebarsave(this, event)"}, title: 'Save Configuration'},                 
+        {id: 'right_sidebarpin',  type: 'link',   toggle: true, class: 'sb_rightsidebarpin',   icon:  sb_icons['icon_pin'],  events: {onclick: "onclick_right_sidebarpin(this, event)"}, title: 'Pin Window'},                 
+    ]
+}
+
+var emv_tester_sidebarpanel  = {
+    id: 'emv_tester_sidebarpanel',
+    type: 'panel',
+    class: 'sb_panel sb_rightsidebarpanel sb_left',     
+    items : 
+    [
+        emv_tester_sidebarheader,        
+        emv_tester_sidebarpanel_terminal,                 
+        emv_tester_sidebarpanel_card,
+        emv_tester_sidebarpanel_actioncode,
+      //  {id: 'rightsidebarpanel_solution',         type: 'panel',    class: 'sb_panel sb_main', items: [solutionpanel]},
+    ]
+}
+
+var emv_tester_sidebar = {
+    id:'emv_tester_sidebar',
+    type: 'bar',
+    class: 'sb_sidebarmenu sb_left',  
+    direction: 'column',    
+    items : 
+    [
+        {
+            id: 'emv_tester_rightbar_maingroup',
+            type: 'group',                    
+            direction: 'column',
+            items : [
+                
+                {id: 'emv_tester_sidebar_terminal',   type: 'link', icon:  sb_icons['icon_terminal'], events: {onclick: "onclick_rightsidebarmenu(this.id)"}, title: 'Selected Terminal'},                 
+                {id: 'emv_tester_sidebar_card',       type: 'link', icon:  sb_icons['icon_card'],     events: {onclick: "onclick_rightsidebarmenu(this.id)"}, title: 'Current Card'},                 
+                {id: 'emv_tester_sidebar_actioncode', type: 'link', icon:  sb_icons['icon_settings'], events: {onclick: "onclick_rightsidebarmenu(this.id)"}, title: 'Action Codes'},                 
+            ]
+        }, 
+   ]
+}
+
+//-------------------------------------------------------------------------EMV TESTER MAIN PANEL ------------------------------------------------------------------------
+
+var emv_tester_toprightpanel = {
+    id : 'emv_tester_toprightpanel',
+    type: 'panel',
+    class: 'sb_panel sb_row sb_left',
+    items: [
+        emv_tester_sidebarpanel_terminal,           
+        emv_tester_sidebarpanel_card,  
+    ],
+}
+
+
+var emv_tester_leftpanel = {
+    id : 'emv_tester_leftpanel',
+    type: 'panel',
+    class: 'sb_panel sb_main sb_column',
+    style:"flex:1",
+    items: [
+        emv_presentation_panel,        
+    ],
+}
+
+
+var emv_tester_rightpanel = {
+    id : 'emv_tester_rightpanel',
+    type: 'panel',
+    class: 'sb_column sb_main',
+    style: "width:360px; flex:none",
+    items: [
+        emv_tester_toprightpanel
+    ],    
+    
+}
+    
+var emv_tester_bottompanel = {
+    id:'emv_tester_bottompanel',
+    type: 'tabs',    
+    label: 'emvtabs',   
+    tabevents: {ondblclick: "ondblclick_testertabs(this, event)"}, 
+    items:
+        [ 
+           // {id: 'tester-tab-terminal',       item: 'Terminal',   type: 'link',  icon: icon_terminal,        events: {onclick: "onclick_testertabs(this, event)"}, items: [emv_tester_sidebarpanel_terminal],  title: ''},           
+           // {id: 'tester-tab-card',           item: 'Card',       type: 'link',  icon: icon_card,         events: {onclick: "onclick_testertabs(this, event)"}, items: [emv_tester_sidebarpanel_card],  title: ''},           
+           // {id: 'tester-tab-actioncode',     item: 'Action Code /Terminal-Card',  type: 'link',  icon: icon_settings,        events: {onclick: "onclick_testertabs(this, event)"}, items: [emv_tester_sidebarpanel_actioncode],  title: ''},           
+        ],
+    groupitems:
+    [    
+        {
+            id: 'emvactions',    
+            type: 'group',            
+            class:'sb_controls',               
+            items:
+                [  
+                    {id: 'fullscreen',    type:'control',  class : 'box-btn-fullscreen sb_none',     events: {onclick: "onclick_controlstesterbottompanel (this)"}, title: ''}, 
+                    {id: 'compressscreen',type:'control',  class : 'box-btn-compressscreen sb_none', events: {onclick: "onclick_controlstesterbottompanel (this)"}, title: ''}, 
+                    {id: 'slide',         type:'control',  class : 'box-btn-slide rotate-180' ,      events: {onclick: "onclick_controlstesterbottompanel (this)"}, title: ''},  
+                ]
+        }        
+    ],
+    bottomheight: 270,   
+} 
+
+
+
 //---------------------------------------------------------------------EMV MAIN PANEL --------------------------------------------------------------------
+
+var emv_tester_maintop = {
+    id: 'emv_tester_maintop', 
+    type: 'panel',       
+    class: 'sb_panel sb_main sb_row',
+    items:[
+        emv_tester_leftpanel,
+/*        {id: '', type:'drag', direction:'vertical', dragid: 'emv_tester_rightpanel'},             
+        emv_tester_rightpanel, */
+        emv_tester_sidebarpanel,        
+        emv_tester_sidebar,        
+    ]
+}
 
 var emv_tester_main = {
     id: "emv_tester_main",
     type: "panel",
-    class: "sb_main sb_panel sb_row",
-    events: { ondragover: "allowDrop(event)", ondrop: "ondrop_mainpage(event)" },    
+    class: "sb_main sb_panel sb_column",
+    events: { ondragover: "allowDrop(event)", ondrop: "ondrop_mainpage(event)" },  
+
     items: [
-        emv_testerleft_panel,
-  //      {id: '', type:'drag', direction:'vertical', dragid: 'emv_testerright_panel'},             
-//  //      emv_testerright_panel,
-    //    emv_apdupanel(true),        
+        emv_tester_maintop,
+       {id: '',  class: '', type:'drag', direction:'horizontal', dragid: 'emv_tester_bottompanel'},             
+        emv_tester_bottompanel
     ]
 }

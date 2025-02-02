@@ -383,3 +383,4 @@ function onclick_assistant_nextprev(elt, event) {
         $('#' + assistantid + '-t-' + prevstep).trigger('click');                                
     }
 }
+

@@ -283,8 +283,10 @@ function InsertConditionInTrackResult(condition) {
 
 function OnReloadSchedule(terminal) {
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var sorder = "*RELOADSCHEDULEFILE ";
@@ -294,8 +296,10 @@ function OnReloadSchedule(terminal) {
 
 
 function OnPauseStrategy () {
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var symbolcanvas = solution.GetCanvasFromTerminal();
@@ -316,8 +320,10 @@ function OnPauseStrategy () {
 
 function SaveSchedulesCSV(terminal) {
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatOperation(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var content = "RULE,OPERATION,SYMBOL,STARTMONTH,OCCURENCEDAYINWEEK,STARTDAY,STARTTIME,ENDMONTH,ENDOCCURENCEDAYINWEEK,ENDDAY,ENDTIME,FREQDAY,SAMEBAR, TIMEBETWEENSESSION, TIMEZONE\n";
