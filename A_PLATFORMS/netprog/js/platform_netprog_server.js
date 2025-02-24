@@ -238,12 +238,16 @@ function onclick_netprog_server_group (elt, event) {
         case 'exportlocal_serverjsscript':
             saveAs_LocalFile ('text/javascript', server.Input.getValue())
         break;
-        case 'uploadserver_serverjscript':     
+        case 'uploadlocal_serverjscript':     
             read_LocalFile('text/javascript', function (file, content) {
                 server.Input.setValue(content)
             })
         break;
         case 'exportserver_serverjsscript':
+            if (!solution.user.is_registered()) {
+                TreatOperation(register_needed_label, 'operationpanel', 'red');            
+                return;                
+            }                
             sb.modal ({
                 id: 'exportserver_filename', 
                 header: 'Export File in Workspace', 
@@ -265,10 +269,47 @@ function onclick_netprog_server_group (elt, event) {
             }); 
 */            
         break;
-        case 'uploadserver_serverjscript':     
-            readFrom_LocalFile(function (content) {
-                server.Input.setValue(content)
-            })
+        case 'uploadserver_serverjscript':  
+            let cuser = solution.user;
+
+            if (!cuser.is_registered()) {
+                TreatOperation(register_needed_label, 'operationpanel', 'red');            
+                return;                
+            }        
+
+            let project_folder = solution.netprog_CurrentProject.Folder;
+            let file_path      = cuser.fileexplorer.Root + cuser.path  + '/NetProg/' + project_folder  + '/Script_Server/' ;           
+
+            cuser.send({Name: 'scandir_r',Values: [cuser.path  + '/NetProg/' + project_folder  + '/Script_Server', '.']}, false,  function (content, values) {
+                let dirstruct = JSON.parse (content);
+                let menu = [];
+                
+                for (var i = 0; i < dirstruct.Values[0].Files.length; i++) {
+                    menu.push ({id: i,     text: dirstruct.Values[0].Files[i].Name})
+                }
+                if (dirstruct.Values[0].Files.length == 0) {
+                    return;
+                }
+                sb.overlay({
+                    rootelt: $(elt).closest('.sb_root'),
+                    event: event,        
+                    pageX:   event.pageX,
+                    pageY:   event.pageY + 20,
+                    par: menu,
+                    onselect:function (elt, par) {
+                        console.log ('select')
+                        let menu = this.par;
+                        cuser.send ({Name: 'readfile', Values: [file_path + menu[elt.id].text]}, false, 
+                                    function (content, values) {
+                                        let message = JSON.parse (content);
+                                        server.Output.setValue(message.Values[0].Content)
+             
+                                    }, 
+                                    []);                          
+                    },
+                    html: sb.menu (menu)
+                })}, 
+                [cuser])
         break;        
     }
 }

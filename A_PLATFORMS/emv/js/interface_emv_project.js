@@ -17,7 +17,22 @@ var emv_treenodetagitem = ((tag, value, index, update) => {
 }
 )
 
-
+var emv_treenodenameitem = ((name, value, index, update) => {
+    let item = {
+        id: 'emv_notag_' + index, 
+        type: 'bar', 
+        class: 'sb_panel',
+        items: [
+                {id: 'emv_' + 'notag' + '_name',     type: 'label',    style: 'min-width:220px', item : name,  class: '', title:name},
+                {id: 'emv_' + 'notag' + '_value',        type: 'text',      icon: '', value: value, disabled: true,  style: 'min-width:150px', attributes: {placeholder: ""}, events: {onchange: "onchange_emv_treenode_value(this)"}, title: 'Tag Value'},  
+        ] 
+    }
+    if (update) { 
+        item.items.push (emv_tree_update)
+    }
+    return item
+}
+)
 
 //--------------------------------------------------------------------- APPLICATION PANEL  --------------------------------------------------------------------
 

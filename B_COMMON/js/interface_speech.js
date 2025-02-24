@@ -130,7 +130,7 @@ var speech_bar  = ((id, toggled) =>  {return {
 var speech = ((id, toggled) =>  {return {
     id: 'speech_' + id,
     type: 'panel',
-    class: 'sb_panel speech sb_right'  + (toggled ? ' toggled' : ''),
+    class: 'sb_panel speech'  + (toggled ? ' toggled' : ''),
      items:
     [
         speech_bar(id, toggled),

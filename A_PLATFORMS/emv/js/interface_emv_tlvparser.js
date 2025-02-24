@@ -7,6 +7,7 @@ var emv_bytepanel = ((name, tag, entity, useroption) =>  {
         editable:true,
         withbar: true,
         class: '',
+        bytetable: null,
         events: {}
     }
     let moption = defined(useroption) ? useroption : {};
@@ -14,11 +15,13 @@ var emv_bytepanel = ((name, tag, entity, useroption) =>  {
     let tabs     = option.tabs;
     let editable = option.editable;
     let withbar  = option.withbar;
+    let bytetable    = option.bytetable;
     let items = [];
 
     for(var i= 0; i < entity.struct.length; i++) {
-        tabs ? items.push ({id: name + '_bytetab_' + i,   cname: 'BYTE ' + (i + 1), item: 'BYTE ' + (i + 1),  type: 'link', items: [emv_byte(i, entity, tabs)]}) :
-               items.push (emv_byte(i, entity, tabs)) 
+        tabs ? items.push ({id: name + '_bytetab_' + i,   cname: 'BYTE ' + (i + 1), item: 'BYTE ' + (i + 1),  type: 'link', 
+                        items: [emv_byte(i, entity, tabs, bytetable)]}) :
+               items.push (emv_byte(i, entity, tabs, bytetable)) 
                
     }
 
@@ -38,7 +41,7 @@ var emv_bytepanel = ((name, tag, entity, useroption) =>  {
     let panel = {
         id: name, 
         type: 'panel',  
-        class: 'sb_column sb_right  bytepanel'+ (editable ? ' editable ' : ' ') + option.class,  
+        class: 'sb_column  bytepanel'+ (editable ? ' editable ' : ' ') + option.class,  
         style: option.style ? option.style : '',    
         struct: entity.struct,        
         events : option.events,   
@@ -84,37 +87,187 @@ var emv_bytepanel = ((name, tag, entity, useroption) =>  {
     return panel;
 })
 
-var emv_byte = ((index, entity, tabs) =>  {return {
+var emv_byte = ((index, entity, tabs, bytetablefunc) =>  {return {
     id: 'emv_byte_' + index,
     type: 'panel',            
     class:'sb_column',
     style: "padding:0px;overflow: hidden;",     
     items : [
-        {id: 'emv_description_' + index,  type: 'label',  style: tabs ? 'display:none;' : '', item: 'BYTE ' + (index + 1),  class: 'tagheader'},    
-        emv_bytetable(index, entity.struct[index]),
+        {id: 'emv_description_' + index,  type: 'label',  style: tabs ? 'display:none;' : '', item: 'BYTE ' + (index + 1),  class: 'tagheader'},  
+        bytetablefunc ? bytetablefunc(index, entity.struct[index]) : emv_bytetable(index, entity.struct[index]),
     ] 
 }})
 
+var emv_bytetable = ((id, desc) =>  {
+    
+    let tablerows = [];
+    let titlerows = [];
+    let stylerows = []
+    for (var i = 0; i < desc.length; i++) {
+        desc[i].type ?  tablerows.push(['x','x','x','x','x','x','x','x',desc[i].item]) : tablerows.push([0,0,0,0,0,0,0,0,desc[i].item]);
+        titlerows.push (desc[i].item);
+        desc[i].type ? stylerows.push ("background: var(--theme-hover-bg-color); color: var(--theme-hover-color);") : stylerows.push("");
+    }
 
-var emv_bytetable = ((id, desc) =>  {return {
-    id: 'emv_bytetable_' + id,
-    type: 'table',            
-    class:'emvbyte',
-    events: {onclick: "onclick_emv_byte(this, event)"},
-    columns :  ['b8', 'b7', 'b6', 'b5', 'b4', 'b3', 'b2', 'b1', 'description'],
-    columnstitle : ['bit 8', 'bit 7', 'bit 6', 'bit 5', 'bit 4', 'bit 3', 'bit 2', 'bit 1', 'description'],
-    rowstitle : [desc[0].item, desc[1].item, desc[2].item, desc[3].item, desc[4].item, desc[5].item, desc[6].item, desc[7].item],    
-    rows : [
-        [0,0,0,0,0,0,0,0,desc[0].item],
-        [0,0,0,0,0,0,0,0,desc[1].item],
-        [0,0,0,0,0,0,0,0,desc[2].item],
-        [0,0,0,0,0,0,0,0,desc[3].item],
-        [0,0,0,0,0,0,0,0,desc[4].item],
-        [0,0,0,0,0,0,0,0,desc[5].item],
-        [0,0,0,0,0,0,0,0,desc[6].item],
-        [0,0,0,0,0,0,0,0,desc[7].item],
-    ] 
-}})
+    return {
+        id: 'emv_bytetable_' + id,
+        type: 'table',            
+        class:'emvbyte',
+        events: {onclick: "onclick_emv_byte(this, event)"},
+        columns :  ['b8', 'b7', 'b6', 'b5', 'b4', 'b3', 'b2', 'b1', 'description'],
+        columnstitle : ['bit 8', 'bit 7', 'bit 6', 'bit 5', 'bit 4', 'bit 3', 'bit 2', 'bit 1', 'description'],
+        rowstitle : titlerows,  
+        rowsstyle: stylerows,          
+        rows : tablerows,
+    }
+}
+)
+
+var emv_cidbytetable = ((id, desc) =>  {
+    
+    let tablerows = [];
+    let titlerows = [];
+    let stylerows = []
+    for (var i = 0; i < desc.length; i++) {
+        titlerows.push (desc[i].item);
+        desc[i].type ? stylerows.push ("background: var(--theme-hover-bg-color); color: var(--theme-hover-color);") : stylerows.push("");
+    }
+    console.log ('CIDDDDDDDDDDDDDDDDDDDDDDDDD')
+    return {
+        id: 'emv_bytetable_' + id,
+        type: 'table',            
+        class:'emvbyte',
+        events: {onclick: "onclick_emv_byte(this, event)"},
+        columns :  ['b8', 'b7', 'b6', 'b5', 'b4', 'b3', 'b2', 'b1', 'description'],
+        columnstitle : ['bit 8', 'bit 7', 'bit 6', 'bit 5', 'bit 4', 'bit 3', 'bit 2', 'bit 1', 'description'],
+        rowstitle : titlerows,  
+        rowsstyle: stylerows,          
+        rows : [
+            [0,0,'','','','','','',desc[0].item],
+            [0,1,'','','','','','',desc[1].item],
+            [1,0,'','','','','','',desc[2].item],
+            [1,1,'','','','','','',desc[3].item],
+            ['','','x','x','','','','',desc[4].item],
+            ['','','','',0,'','','',desc[5].item],
+            ['','','','',1,'','','',desc[6].item],
+            ['','','','','','x','x','x',desc[7].item],
+            ['','','','','',0,0,1,desc[8].item],
+            ['','','','','',0,1,0,desc[9].item],
+            ['','','','','',0,1,1,desc[10].item],
+            ['','','','','',1,'x','x',desc[11].item],
+        ]       
+    }
+}
+)
+
+//---------------------------------------------------------------------CVM PANEL  --------------------------------------------------------------------
+
+function getCVRuleControl(t, e, a) {
+    first = 63 & parseInt(t.substr(0, 2), 16),
+    action = 64 & parseInt(t.substr(0, 2), 16) ? "Apply succeeding CV Rule" : "Fail cardholder verification",
+    second = parseInt(t.substr(2, 2), 16);
+    var n = {
+        0: "Fail CVM processing",
+        1: "Plaintext PIN verification performed by ICC",
+        2: "Enciphered PIN verified online",
+        3: "Plaintext PIN verification performed by ICC and signature (paper)",
+        4: "Enciphered PIN verification performed by ICC",
+        5: "Enciphered PIN verification performed by ICC and signature (paper)",
+        30: "Signature (paper)",
+        31: "No CVM required"
+    }[first]
+      , i = (void 0 === n && (n = "Unrecognized"),
+    {
+        0: "Always",
+        1: "If unattended cash",
+        2: "If not unattended cash and not manual cash and not purchase with cashback",
+        3: "If terminal supports the CVM",
+        4: "If manual cash",
+        5: "If purchase with cashback",
+        6: "If transaction is in the application currency and is under %X% value (implicit decimal point)",
+        7: "If transaction is in the application currency and is over %X% value (implicit decimal point)",
+        8: "If transaction is in the application currency and is under %Y% value (implicit decimal point)",
+        9: "If transaction is in the application currency and is over %Y% value (implicit decimal point)"
+    }[second]);
+    return `<div class="sb_widget list-group-item-action ">
+			<div class="sb_widget-title d-flex w-100 justify-content-between">
+			<h6 class="mb-1">${n}</h6>
+			<small class="text-muted">${t}</small>
+			</div>
+			<p class="mb-1">Condition: ${i = (i = void 0 === i ? "RFU or Reserved for use by individual payment systems" : i).replace("%X%", e).replace("%Y%", a)}</p>
+			<small class="text-muted">If unsuccessful: ${action}</small>
+		</div>`
+}
+
+function GetCVMLControl(t) {
+    var e, 
+        a = parseInt(t.substr(0, 8), 16),
+        n = parseInt(t.substr(8, 8), 16);
+
+    let buf = '<div class="sb_row sb_widget-container" >';
+    for (e of t.substr(16).match(/.{4}/g))
+        buf += getCVRuleControl(e, a, n);
+    return buf += "</div>"
+}
+
+function emv_CVMPanel() {
+    
+    return `<div class="sb_widget list-group-item-action ">
+    <div class="sb_widget-title d-flex w-100 justify-content-between">
+    <h6 class="mb-1">${n}</h6>
+    <small class="text-muted">${t}</small>
+    </div>
+    <p class="mb-1">Condition: ${i = (i = void 0 === i ? "RFU or Reserved for use by individual payment systems" : i).replace("%X%", e).replace("%Y%", a)}</p>
+    <small class="text-muted">If unsuccessful: ${action}</small>
+    </div>`
+}
+
+var emv_cvmpanel = ((name, value, useroption) => {
+    let defaultoption = {
+        editable:true,
+        withbar: true,
+        class: '',
+        events: {}
+    }
+    let moption = defined(useroption) ? useroption : {};
+    let option = {...defaultoption , ...moption};
+    let editable = option.editable;
+    let withbar  = option.withbar;
+
+    let panel = {
+        id: name, 
+        type: 'html',  
+        class: 'sb_column cvmpanel'+ (editable ? ' editable ' : ' ') + option.class,  
+        style: option.style ? option.style : '',     
+        events : option.events,           
+        content: "emv_CVMPanel()"        
+    }
+
+    if (withbar) {
+        panel.items.unshift (
+            {
+                id: 'emv_' + name + '_bar', 
+                type: 'bar', 
+                items: [
+                    {
+                        position: '',
+                        id: 'emv_' + name + '_maingroup', 
+                        type: 'group',                    
+                        direction: 'row',
+                        toggle : false,
+                        items : 
+                        [
+                            {id: 'emv_' + name + '_description',  type: 'label',    style: 'margin-right:20px', item: gettagname ('9F35'),  class: 'sb_f_classic ', title: 'Tag: ' + '9F35'},
+                            {id: 'emv_' + name + '_tag',          type: 'label',    class: 'emv_button_show', item: '9F35', events :{onmousedown: "emv_searchtag('9F35', event)"} },                       
+                        ]
+                    } 
+                ] 
+            })
+    }    
+    return panel;    
+})
+
+
 
 //--------------------------------------------------------------------- TERMINAL TYPE PANEL  --------------------------------------------------------------------
 
@@ -133,7 +286,7 @@ var emv_ttpanel = ((name, useroption) => {
     let panel = {
         id: name, 
         type: 'panel',  
-        class: 'sb_column sb_right ttpanel'+ (editable ? ' editable ' : ' ') + option.class,  
+        class: 'sb_column ttpanel'+ (editable ? ' editable ' : ' ') + option.class,  
         style: option.style ? option.style : '',     
         events : option.events,   
         items:[        
@@ -266,7 +419,7 @@ var emv_snpanel = ((name, useroption) => {
     let panel = {
         id: name, 
         type: 'panel',  
-        class: 'sb_column sb_right snpanel'+ (editable ? ' editable ' : ' ') + option.class,  
+        class: 'sb_column snpanel'+ (editable ? ' editable ' : ' ') + option.class,  
         style: option.style ? option.style : '',       
         events : option.events,   
         items:[        
@@ -317,7 +470,7 @@ var emv_ccpanel = ((name, useroption) => {
     let panel = {
         id: name, 
         type: 'panel',  
-        class: 'sb_column sb_right ccpanel'+ (editable ? ' editable ' : ' ') + option.class,  
+        class: 'sb_column ccpanel'+ (editable ? ' editable ' : ' ') + option.class,  
         style: option.style ? option.style : '',     
         events : option.events,   
         items:[        
@@ -368,7 +521,7 @@ var emv_aidpanel = ((name, useroption) => {
     let panel = {
         id: name, 
         type: 'panel',  
-        class: 'sb_column sb_right aidpanel'+ (editable ? ' editable ' : ' ') + option.class,  
+        class: 'sb_column aidpanel'+ (editable ? ' editable ' : ' ') + option.class,  
         style: option.style ? option.style : '',
         events : option.events,   
         items:[        
@@ -419,7 +572,7 @@ var emv_avnpanel = ((name, useroption) => {
     let panel = {
         id: name, 
         type: 'panel',  
-        class: 'sb_column sb_right avnpanel'+ (editable ? ' editable ' : ' ') + option.class,  
+        class: 'sb_column  avnpanel'+ (editable ? ' editable ' : ' ') + option.class,  
         style: option.style ? option.style : '',    
         events : option.events,   
         items:[        
@@ -470,7 +623,7 @@ var emv_mccpanel = ((name, useroption) => {
     let panel = {
         id: name, 
         type: 'panel',  
-        class: 'sb_column sb_right mccpanel'+ (editable ? ' editable ' : ' ') + option.class,  
+        class: 'sb_column  mccpanel'+ (editable ? ' editable ' : ' ') + option.class,  
         style: option.style ? option.style : '',    
         events : option.events,   
         items:[        
@@ -521,7 +674,7 @@ var emv_mipanel = ((name, useroption) => {
     let panel = {
         id: name, 
         type: 'panel',  
-        class: 'sb_column sb_right mipanel'+ (editable ? ' editable ' : ' ') + option.class,  
+        class: 'sb_column  mipanel'+ (editable ? ' editable ' : ' ') + option.class,  
         style: option.style ? option.style : '',    
         events : option.events,   
         items:[        
@@ -572,7 +725,7 @@ var emv_mnlpanel = ((name, useroption) => {
     let panel = {
         id: name, 
         type: 'panel',  
-        class: 'sb_column sb_right mnlpanel'+ (editable ? ' editable ' : ' ') + option.class,  
+        class: 'sb_column  mnlpanel'+ (editable ? ' editable ' : ' ') + option.class,  
         style: option.style ? option.style : '',    
         events : option.events,   
         items:[        
@@ -622,7 +775,7 @@ var emv_tipanel = ((name, useroption) => {
     let panel = {
         id: name, 
         type: 'panel',  
-        class: 'sb_column sb_right tipanel'+ (editable ? ' editable ' : ' ') + option.class,  
+        class: 'sb_column  tipanel'+ (editable ? ' editable ' : ' ') + option.class,  
         style: option.style ? option.style : '',    
         events : option.events,   
         items:[        
@@ -675,7 +828,7 @@ var emv_aipanel = ((name, useroption) => {
     let panel = {
         id: name, 
         type: 'panel',  
-        class: 'sb_column sb_right aipanel'+ (editable ? ' editable ' : ' ') + option.class,  
+        class: 'sb_column  aipanel'+ (editable ? ' editable ' : ' ') + option.class,  
         style: option.style ? option.style : '',    
         events : option.events,   
         items:[        

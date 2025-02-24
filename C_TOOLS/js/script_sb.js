@@ -678,7 +678,7 @@ class SB {
                             (defined(bar.attributes) ?  this.stringify(bar.attributes) : '') +    
                             (defined(bar.events) ? this.stringify(bar.events) : '') +                                                                       
                     '>' + 
-                    (defined(bar.item)  ?  bar.item : '');
+                    (defined(bar.item)  ?  bar.item : '')                  ;
 
         content += this.bar_header (bar.header);
 
@@ -1092,8 +1092,8 @@ class SB {
         var cellid = rowid + rowindex + '_';   
 
         rowcontent += '<tr id= "' + rowid + rowindex + '" class="sb_tablerow"' + (defined (table.rowstitle) ? ' title ="' + table.rowstitle[rowindex]  + '"' : '')
-                        + (table.events ? this.stringify(table.events) : '') +
-                    '>';     
+                        + (table.events ? this.stringify(table.events) : '') + (defined (table.rowsstyle) ? ' style= "' + table.rowsstyle[rowindex]  + '"' : '')
+                    + '>';     
 
         for (var j = 0; j < row.length; j++) {
             rowcontent += '<td id= "' + cellid + j + '"  class="sb_tablecell">' +  (row[j] == undefined ? '' : row[j]) + '</td>';

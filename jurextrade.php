@@ -199,9 +199,8 @@
             let dynamic            = false;
 
             solution = new SOLUTION(userid, username, usermail, userfirstname, userlastname, userdname, userphoto, action, key, login, error, dynamic);
-            $(".sb_load_page" ).remove();    
-
-            InitApp1 (solution)
+            document.getElementsByClassName("sb_load_page")[0].remove()          
+            CookieBanner_init();   
            
         };
         setTimeout(call, 5);

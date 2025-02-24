@@ -607,6 +607,7 @@
 
 #right {
     height: 100%;
+    position:relative;
 
 }
 
@@ -1454,7 +1455,7 @@
     width: 50px;
     font-size: 18px !important;
     padding: 0.5rem;  
-    z-index: 9;    
+    z-index: 9  ;    
    
 }
 
@@ -1529,13 +1530,12 @@
 .sb_rightsidebarpanel {
     font-size: var(--theme-sfont-size);
     position: absolute;
-    inset: 0px 0px auto auto;
+    inset: -1px 0px 0px calc(100% - 50px);
     transition: transform .3s cubic-bezier(0,0,.3,1);    
-    transform: translate(calc(100% - 50px), 50px);    /*translate(446px, 50px);*/
+    inset: -1px 0px 0px calc(100% - 50px);
     border-radius: 10px 0px 0px 10px;
-    height: calc(100% - 80px);
-    width: calc(30% - 100px);                      /*496px;*/
-    min-width: 500px;
+    height: 100%;
+    width: 500px;
     padding-left: 13px;
     padding-right: 3px;
     margin: 0px 0px 0px 0px;
@@ -1549,15 +1549,11 @@
 .sb_rightsidebarpanel.pinned {
     position: static;    
     display: none;    
-    width: 496px;
-    min-width:400px;
+    width: 500px;
     padding-left: 3px;   
     padding-right: 3px;       
     overflow: hidden;  
     flex-direction: column;
-    font-size: var(--theme-sfont-size);
-    color: var(--theme-color);    
-    background: var(--theme-main-bg-color);  
     flex:none;  
     height: unset;
     border-radius: unset;
@@ -1579,7 +1575,7 @@
 .sb_rightsidebarpanel.toggled {
     display: flex;    
     transition: transform .3s cubic-bezier(0,0,.3,1);
-    transform: translate(-50px, 50px);    
+    transform: translate(-500px, 0px);
 }
 
 .sb_rightsidebarpin {
@@ -1727,8 +1723,18 @@ sb_roundbutton.active{
     box-shadow: 0 0 0 0.0rem var(--theme-select-bg-color);      
 }
 
-.sb_button:disabled, .sb_mbutton:disabled, .sb_sbutton:disabled  { 
-    color: transparent;
+.sb_button:disabled, .sb_mbutton:disabled, .sb_sbutton:disabled  {
+    color: var(--theme-select-bg-color);
+   
+}
+
+.sb_button:disabled:hover, .sb_mbutton:disabled:hover, .sb_sbutton:disabled:hover  { 
+   color: var(--theme-select-bg-color);
+   background: var(--theme-button-bg-color);
+ 	
+}
+.sb_button:disabled i:hover, .sb_mbutton:disabled i:hover, .sb_sbutton:disabled i:hover{ 
+    transform: unset !important;
 }
 
 .sb_mbutton {

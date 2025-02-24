@@ -27,8 +27,8 @@ var header = {
     class: '',
     events: {ondblclick: 'ondblclick_header()'},    
     brand: {
-        title: 'YOUR SITE', 
-        logo: '/res/UnderCon_black.png',
+        title: 'Jurextrade', 
+        logo: "/res/jurextrade.svg",
         events: {onclick: ""}
     },    
     items: [         

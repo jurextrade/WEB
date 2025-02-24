@@ -87,7 +87,7 @@ var emv_topleftpanel = {
 var emv_toprightpanel = {
     id : 'emv_toprightpanel',
     type: 'panel',
-    class: 'sb_panel sb_row sb_left',
+    class: 'sb_panel sb_row',
     style: "width:0px; flex:none",
     items: [
 

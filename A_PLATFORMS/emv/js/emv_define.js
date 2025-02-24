@@ -78,6 +78,61 @@ const BYTE = [B1, B2, B3, B4, B5]
 const BIT  = [b8, b7, b6, b5, b4, b3, b2, b1]
 
 
+//----------------------------------------------------------------------------------CVM tag  8E
+
+const Fail_cardholder_verification_if_verification_is_unsuccessful				= 0x40; 
+const Move_to_next_rule_if_verification_is_unsuccessful							= 0x3F; 
+
+const Fail_CVM_processing														= 0x00;  /* Echec CVM*/
+const Offline_plaintext_PIN														= 0x01;  /* Code Pin OffLine En Clair*/
+const Online_PIN_always_enciphered   											= 0x02;  /* Code Pin OnLine  Crypte*/
+const Offline_plaintext_PIN_and_paper_based_Signature							= 0x03;  /* Code Pin OffLine Clair + Signature */
+const Offline_enciphered_PIN													= 0x04;  /* Code Pin OffLine Crypte*/
+const Offline_enciphered_PIN_and_paper_based_Signature							= 0x05;  /* Code Pin OffLine Crypte*/
+const Paper_based_Signature_only												= 0x1E;  /* Signature*/
+const Approve_CVM_processing													= 0x1F;  /* Aucune Authentification Porteur*/
+
+const Always_try_to_apply_this_rule												= 0x00;  /* Application sans Condition */
+const Only_try_to_apply_this_rule_where_this_is_an_unattended_cash_transaction	= 0x01;  /* Application si Type Trs  = Cash */
+const If_not_unattended_cash_and_not_manual_cash_and_not_purchase_with_cashback	= 0x02;  /* Application si Type Trs != Cash */	
+const Always_try_to_apply_this_rule_where_the_CVM_code_is_supported				= 0x03;  /* Application si Supporte */
+const If_this_is_a_manual_cash_transaction_apply_this_rule						= 0x04; 
+const If_this_is_a_purchase_with_cashback_apply_this_rule						= 0x05; 
+const If_transaction_is_in_the_application_currency_and_is_under_X_value 		= 0x06;  /* Application si M<X */
+const If_transaction_is_in_the_application_currency_and_is_over_X_value			= 0x07;  /* Application si M>X */
+const If_transaction_is_in_the_application_currency_and_is_under_Y_value		= 0x08;  /* Application si M<Y */
+const If_transaction_is_in_the_application_currency_and_is_over_Y_value			= 0x09;  /* Application si M>Y */
+
+
+
+const emv_CVM = {
+    tag: '8E',
+    struct: [    
+        [
+            {id :  Fail_CVM_processing								       , item : "Fail CVM processing"},
+            {id :  Offline_plaintext_PIN								   , item : "Plaintext PIN verification performed by ICC"},
+            {id :  Online_PIN_always_enciphered	     				       , item : "Enciphered PIN verified online"},
+            {id :  Offline_plaintext_PIN_and_paper_based_Signature	       , item : "Plaintext PIN verification performed by ICC and signature (paper)"},
+            {id :  Offline_enciphered_PIN							       , item : "Enciphered PIN verification performed by ICC"},
+            {id :  Offline_enciphered_PIN_and_paper_based_Signature	       , item : "Enciphered PIN verification performed by ICC and signature (paper)"},
+            {id :  Paper_based_Signature_only						       , item :  "Signature (paper)"},
+            {id :  Approve_CVM_processing							       , item :  "No CVM required"},
+        ],        
+        [
+            {id :  Always_try_to_apply_this_rule											, item : "Always"},
+            {id :  Only_try_to_apply_this_rule_where_this_is_an_unattended_cash_transaction	, item : "If unattended cash"},
+            {id :  If_not_unattended_cash_and_not_manual_cash_and_not_purchase_with_cashback, item : "If not unattended cash and not manual cash and not purchase with cashback"},
+            {id :  Always_try_to_apply_this_rule_where_the_CVM_code_is_supported			, item : "If terminal supports the CVM"},
+            {id :  If_this_is_a_manual_cash_transaction_apply_this_rule						, item : "If manual cash"},
+            {id :  If_this_is_a_purchase_with_cashback_apply_this_rule						, item : "If purchase with cashback"},
+            {id :  If_transaction_is_in_the_application_currency_and_is_under_X_value 		, item : "If transaction is in the application currency and is under %X% value (implicit decimal point)"},
+            {id :  If_transaction_is_in_the_application_currency_and_is_over_X_value		, item : "If transaction is in the application currency and is over %X% value (implicit decimal point)"},
+            {id :  If_transaction_is_in_the_application_currency_and_is_under_Y_value		, item : "If transaction is in the application currency and is under %Y% value (implicit decimal point)"},
+            {id :  If_transaction_is_in_the_application_currency_and_is_over_Y_value		, item : "If transaction is in the application currency and is over %Y% value (implicit decimal point)"},
+        ],
+    ]
+}
+
 
 //---------------------------------------------------------------------------------  TRANSACTION TYPE tag 9C
 
@@ -85,7 +140,7 @@ const emv_TRT = {
     "00": "Purchase",
     "01": "Cash advance",
     "09": "Purchase with cashback",
-    20: "Refund"
+     20: "Refund"
 }
 
 //---------------------------------------------------------------------------------  TERMINAL TYPE tag 9F35
@@ -561,42 +616,55 @@ const EMV_CRYPTO_TYPE_TC                            = 0x40 // A TC is a type of 
 const EMV_CRYPTO_TYPE_ARQC                          = 0x80 // An ARQC is a type of Application Cryptogram that is generated whenever the card requests online authorization during Card Action Analysis.
 const EMV_CRYPTO_TYPE_AAR                           = 0xC0 // Referral requested by the card
 
+
 const EMV_CRYPTO_TYPE_PSS                           = 0x30 // Payment System-specific cryptogram",
 const EMV_CRYPTO_AR                                 = 0x08 // Advice Required", "YES");
+const EMV_CRYPTO_NAR                                = 0x00 // No Advice Required", "YES");
 const EMV_CRYPTO_SNA                                = 0x01 // Service not allowed", "YES");
 const EMV_CRYPTO_TLE                                = 0x02 // PIN Try Limit exceeded", "YES");
 const EMV_CRYPTO_IAF                                = 0x03 // Issuer authentication failed", 
-
+const EMV_CRYPTO_RFU					            = 0x04 // Other Values RFU", 
+const EMV_CRYPTO_NIG					            = 0x00 // No information given, 
 //const EMVCardReturnAAR(pclient)       ((pclient->EMV_CID[B1]  & EMV_CRYPTO_TYPE_AAR) == EMV_CRYPTO_TYPE_AAR)
 //const EMVCardReturnARQC(pclient)      ((pclient->EMV_CID[B1]  & EMV_CRYPTO_TYPE_ARQC) == EMV_CRYPTO_TYPE_ARQC)
 //const EMVCardReturnTC(pclient)        ((pclient->EMV_CID[B1]  & EMV_CRYPTO_TYPE_TC) == EMV_CRYPTO_TYPE_TC)
 //const EMVCardReturnAAC(pclient)       ((pclient->EMV_CID[B1]  & EMV_CRYPTO_TYPE_AAR) == EMV_CRYPTO_TYPE_AAC)
 
-
+const CID_AAC                                           = 0
+const CID_TC                                            = 1    
+const CID_ARQC                                          = 2
+const CID_RFU                                           = 3
+const CID_Payment_Systemspecific_cryptogram             = 4
+const CID_No_advice_required                            = 5
+const CID_Advice_required                               = 6
+const CID_Reasonadvice_code                             = 7
+const CID_No_information_given                          = 8
+const CID_Service_not_allowed                           = 9
+const CID_PIN_Try_Limit_exceeded                        = 10
+const CID_Issuer_authentication_failed                  = 11
+const CID_Other_values_RFU                              = 12
 
 const emv_CID = {
     tag: '9F27',
     struct: [
         [
-            {id: 0x0080                                                 , item: "RFU"},
-            {id: SDA_Supported                                          , item: "SDA Supported"},
-            {id: DDA_Supported                                          , item: "DDA Supported"},
-            {id: Cardholder_verification_is_supported                   , item: "Cardholder verification is supported"},
-            {id: Terminal_risk_management_is_to_be_performed            , item: "Terminal risk management is to be performed"},
-            {id: Issuer_authentication_is_supported                     , item: "Issuer authentication is supported"},
-            {id: 0x0002                                                 , item: "RFU"},
-            {id: CDA_Supported                                          , item: "CDA Supported"},
+            {id: EMV_CRYPTO_TYPE_AAC                                    , item: "AAC"},
+            {id: EMV_CRYPTO_TYPE_TC                                     , item: "TC"},
+            {id: EMV_CRYPTO_TYPE_ARQC                                   , item: "ARQC"},
+            {id: EMV_CRYPTO_TYPE_AAR                                    , item: "RFU"},
+         
+            {id: EMV_CRYPTO_TYPE_PSS                                    , item: "Payment System-specific cryptogram"},
+          
+            {id: EMV_CRYPTO_NAR                                         , item: "No advice required"},
+            {id: EMV_CRYPTO_AR                                          , item: "Advice required"},
+            {id: -1                                                     , item: "Reason/advice code"},
+            {id: EMV_CRYPTO_NIG                                         , item: "No information given"},
+            {id: EMV_CRYPTO_SNA                                         , item: "Service not allowed"},
+            {id: EMV_CRYPTO_TLE                                         , item: "PIN Try Limit exceeded"},
+            {id: EMV_CRYPTO_IAF                                         , item: "Issuer authentication failed"},
+            {id: EMV_CRYPTO_RFU                                         , item: "Other values RFU"},
+            
         ],
-        [
-            {id: EMV_Mode_has_been_selected                              , item: "EMV Mode has been selected"}, 
-            {id: OTA_capable_mobile_device                               , item: "RFU / OTA capable mobile device"}, 
-            {id: 0x0020                                                  , item: "RFU"}, 
-            {id: 0x0010                                                  , item: "RFU"}, 
-            {id: 0x0008                                                  , item: "RFU"}, 
-            {id: 0x0004                                                  , item: "RFU"}, 
-            {id: 0x0002                                                  , item: "RFU"}, 
-            {id: 0x0001                                                  , item: "RFU"},
-        ]
     ]
 }
 
@@ -717,7 +785,7 @@ const emv_Steps  = [
     <br><br>
     Candidate List Creation is the first step after the Answer to Reset ATR.
     <br><br>
-    The terminal has a list containing the AID (Application Identifier) (tag 9F06) of every EMV application that it is configured to support.
+    The terminal has a list containing the AID (Application Identifier) <label class="emv_button_show" onmousedown="emv_searchtag('9F06', event)">(tag 9F06)</label>,of every EMV application that it is configured to support.
     <br>
     In the same way an EMV card can contain multiple payment applications ADF (Application Definition File) <label class="emv_button_show" onmousedown="emv_searchtag('4F', event)">(tag 4F)</label>,
     <br><br>
@@ -742,6 +810,9 @@ const emv_Steps  = [
         <br><br>
         <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('SELECT_FILE', event)">Structure of a C-ADPU Command SELECT FILE</label></u>
         <br><br>								
+        Example
+        <br><br>								
+
         C-APDU : 00 A4 04 00 08 A0 00 00 03 33 01 01 01 00									
         <br>									
         P1 = 04 : Select a directory by name.									
@@ -939,7 +1010,7 @@ const emv_Steps  = [
             <li>Integrated Circuit Card (ICC) Public Key Remainder  <label class="emv_button_show" onmousedown="emv_searchtag('9F48', event)">(tag 9F48)</label> : Remaining digits of the ICC Public Key Modulus</li>
             <li>Integrated Circuit Card (ICC) Public Key Exponent    <label class="emv_button_show" onmousedown="emv_searchtag('9F47', event)">(tag 9F47)</label> : Exponent ICC Public Key Exponent used for the verification of the Signed Dynamic Application Data</li>
             <br><br>
-            If one of the following occurs, the ICC data missing bit in the TVR is set to 1. 
+            If one of the following occurs (except for tag 9F48 and tag 9F49), the ICC data missing bit in the TVR is set to 1. 
             <label class="emv_button_show" onmousedown= "emv_byte_show(emv_TVRPanel, ICC_data_missing, 1)" onmouseup= "emv_byte_show(emv_TVRPanel, ICC_data_missing, 0)">See</label> 
             <br><br>
             <br><br> ${sb.render(emv_presentation_flags(EMV_SUBSTEP_CHECK_MISSING_DATA, 'Flags', ['AED', 'PAN', 'CDOL1', 'CDOL2']))}
@@ -969,7 +1040,7 @@ const emv_Steps  = [
         <br><br>
         The value of this tag will contain data objects like the card PAN, the expiry date, authentication, cardholder verification plus many other tags of information that will be used for the transaction processing.
         <br>
-        One of these data objects is the AUC (Application Usage Control) <label class="emv_button_show" onmousedown="emv_searchtag('92', event)">(tag 92)</label>
+        One of these data objects is the AUC (Application Usage Control) <label class="emv_button_show" onmousedown="emv_searchtag('9F07', event)">(tag 9F07)</label>
         <br><br> 
         <li>The AUC is a 2-byte bit array that tells the terminal whether the card: Is valid for domestic cash transaction, Is valid for international cash transaction, … The AUC will be examined in the Processing Restrictions Step</li> 
         <br><br> ${sb.render(emv_presentation_flags(EMV_STEP_READ_APPLICATION_DATA, 'Flags', ['AUC']))}
@@ -1006,7 +1077,7 @@ const emv_Steps  = [
             The issuer first proves knowledge of the appropriate credentials for obtaining writing rights in the card. 
             <br><br>
             Then, the issuer loads into the card the signed static application data, 
-            which is stored as the data object with tag 93, together with the certificate of the CA on the issuer public key ( N I , e I ), 
+            which is stored as the data object with <label class="emv_button_show" onmousedown="emv_searchtag('93', event)">(tag 93)</label>, together with the certificate of the CA on the issuer public key ( N I , e I ), 
             referred to as the issuer public key certificate.
             <br><br>
             During the utilization stage, when the off-line SDA is required by the EMV transaction profile, the card submits to the terminal the data objects 
@@ -1181,7 +1252,7 @@ const emv_Steps  = [
             },
             {id: EMV_SUBSTEP_APPLICATION_USAGE_CONTROL, info: '', item: 'Application Usage Control', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
-            During the “read application data” step the card will have received an Application Usage Control (AUC) record in tag 9F07. 
+            During the “read application data” step the terminal will have received an Application Usage Control (AUC) record in  <label class="emv_button_show" onmousedown="emv_searchtag('9F07', event)">(tag 9F07)</label>. 
             <br>
             The terminal checks whether the transaction it is processing is allowed by the AUC or not.
             <br>
@@ -1434,7 +1505,6 @@ const emv_Steps  = [
     <br><br>  
     110000 “111110: method numbers to be assigned by individual issuers.
     <br><br> ${sb.render(emv_presentation_flags(EMV_STEP_CARD_HOLDER_VERIFICATION, 'Flags', ['CVM']))}
-d
     </div>`
     },               
     {id: EMV_STEP_TERMINAL_RISK_MANAGEMENT, info: '', item: 'Terminal Risk Management', substeps: [
@@ -1443,75 +1513,135 @@ d
             {id: EMV_SUBSTEP_FLOOR_LIMIT_CHECKING, info: '',   item: 'Floor Limit Checking', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             Floor Limit Checking:
+            <br>    
             Terminal may have a Transaction Log of approved transactions
+            <br>    
             Transaction Log contains (at least) for each approved transaction:
             Card s PAN
+            <br>    
             Amount
+            <br>    
             Terminal checks if Log contains approved transactions for the same PAN with which current transaction is performed.
+            <br>    
             The terminal adds the Amount for current transaction to amount stored in the log for that PAN and checks if sum >= Terminal Floor Limit.
+            <br>    
             If sum >= Terminal Floor Limit, terminal sets the  Transaction exceeds floor limit  bit in TVR (Terminal Verification Results, Tag 95) to 1
+            <br>    
             An effective security measure against attempts to overspend is to check that the amount involved in a transaction does not exceed a floor limit established by the acquirer, referred to as the Terminal Floor Limit.				
+            <br>    
             However, if the cardholder colludes with the shopkeeper , an amount over the floor limit needed to buy one expensive item can be split into two distinct amounts below the floor limit, which are authorized in two separate transactions with the same card at the same terminal. This kind of threat is called a split sale.				
+            <br>    
             If the acquirer is willing to provide security protection against split sales, the terminal has to have enough storage space to accommodate a transaction log like that presented in Table 6.7.				
+            <br>    
             Table 6.7: Transaction Log as a Security Protection Against Split Sales				
+            <br>    
                 Application PAN	Amount, Authorized	Application PAN Sequence Number	Transaction Date
+            <br>    
             Transaction 1	PAN1	Amount 1	PAN Seq1	10/5/2001
+            <br>    
             Transaction 2				
-                            
+            <br>                                
             Transaction 1,000	PAN1	Amount 2	PAN Seq1	10/5/2001
-                            
+            <br>                    
             The processing performed by the terminal for each new EMV ¢ transaction is described by the following actions.				
+            <br>    
             1. Use the Application PAN and optionally the Application PAN Sequence Number of the card involved in the current transaction to search for an existing record in the transaction log.				
+            <br>    
             2. If there is such a record, add the value of the Amount, Authorized field in the current transaction (Amount 2) with the Amount, Authorized field in the most recent transaction (Amount 1) with the same Application PAN/PAN sequence number. 				
+            <br>    
             The cumulated value of the two transactions represents the total.				
+            <br>    
             If the value of total is greater than or equal to the value field of the Terminal Floor Limit data object with tag 9F1B in the terminal, then set bit 8, "Transaction exceeds floor limit", in byte 4 of the TVR.				
+            <br>    
             Record the new transaction (e.g., at index 1,000) within the transaction log and end the processing.				
+            <br>    
             3. In case there is no such record in the transaction log, or the terminal does not keep a transaction log, the terminal checks whether the value of the Amount, Authorized in the current transaction is greater than or equal to the value field of the Terminal Floor Limit.				
+            <br>    
             If this is true, the terminal sets bit 8, "Transaction exceeds floor limit", in byte 4 of the TVR.</div>				
+            <br>    
             `}, 
             {id: EMV_SUBSTEP_RANDOM_TRANSACTION_SELECTION, info: '',  item: 'Random Transaction Selection', substeps: [],
             description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             <p>A terminal may randomly select a transaction. If the transaction is selected the  Transaction selected randomly for online processing  bit in the TVR will be set to 1.
             For each application:
+            <br>    
             Target Percentage to be used for Random Selection (in the range of 0 to 99)
+            <br>    
             Threshold Value for Biased Random Selection (which must be zero or a positive number less than the floor limit)
+            <br>    
             Maximum Target Percentage to be used for Biased Random Selection (also in the range of 0 to 99 but at least as high as the previous Target Percentage to be used for Random Selection). This is the desired percentage of transactions just below the floor limit that will be selected by this algorithm.
+            <br>    
             Amount < Threshold Value for Biased Random Selection:
+            <br>    
             Terminal generates random number in the range of 1 to 99
+            <br>    
             If this random number <= Target Percentage to be used for Random Selection, terminal sets  Transaction selected randomly for online processing  bit in TVR to 1
+            <br>    
             Threshold Value for Biased Random Selection <= Amount < Floor Limit:
+            <br>    
             Terminal generates random number in the range of 1 to 99
+            <br>    
             Interpolation Factor = (Amount   Threshold Value) / (Floor Limit   Threshold Value)
+            <br>    
             Transaction Target Percent = ((Maximum Target Percent   Target Percent) X Interpolation Factor) + Target Percent
+            <br>    
             If this random number <= Transaction Target Percent, terminal sets  Transaction selected randomly for online processing  bit in TVR to 1
+            <br>    
             o   Example calculation for Random Transaction Selection
+            <br>    
             §  Floor Limit=50$
+            <br>    
             §  Target Percentage = 40%
+            <br>    
             §  Threshold value = 45$( Threshold value for Biased Random Selection)
+            <br>    
             §  Maximum Target Percentage = 55%
+            <br>    
             
             §  Case1:
+            <br>    
                    Amount < Threshold Value
+            <br>    
                    Amount = 35$
+            <br>    
             Ø  1a:
+            <br>    
             §  Terminal generated Random number = 23
+            <br>    
             §  Because random number <= Target Percentage so transaction would go to online
+            <br>    
             §  Terminal sets  Transaction selected randomly for online processing  bit in TVR to 1
+            <br>    
             Ø  1b:
+            <br>    
             o    Terminal generated Random number = 42
+            <br>    
             o   Because random number> Target Percentage so transaction would not go online
+            <br>    
             §  Case2:
+            <br>    
                    Floor Limit>Amount>=Threshold Value
+            <br>    
                    Amount = 48$
+            <br><br>                           
             Ø  2a:
+            <br>    
             o   Terminal generated Random number = 23
+            <br>    
             o   Interpolation Factor = (Amount   Threshold Value) / (Floor Limit   Threshold Value)=48-45/50-45=3/5=0.6
+            <br>    
             o   Transaction Target Percent = ((Maximum Target Percent   Target Percent) X Interpolation Factor) + Target Percent = ((55-40)X 0.6)+40 =  9+40 =  49
+            <br>    
             o   Random Number<Transaction Target Percentage then transaction would go to online
+            <br>    
             o   terminal sets  Transaction selected randomly for online processing  bit in TVR to 1
+            <br>    
             Ø  2b:
+            <br>    
             o   Terminal generated Random number = 52
+            <br>    
             o   Because random number> Target Percentage so transaction would not go online            
+            <br>    
             </p></div>`
             }, 
             {id: EMV_SUBSTEP_VELOCITY_CHECKING,  info: '', item: 'Velocity Checking', substeps: [],
@@ -1909,6 +2039,7 @@ d
         ],
         description:`<div class="col alert alert-primary alert-dismissible fade show" role="alert">
         This step starts when the terminal issues its first GENERATE APPLICATION CRYPTOGRAM (generate AC) command to the card.
+        <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('GENERATE_APPLICATION_CRYPTOGRAM', event)">Structure of a C-ADPU Command GENERATE APPLICATION CRYPTOGRAM</label></u>
         <br><br>
         During this step the card may perform its own risk management checks. 
         <br>        
@@ -1916,16 +2047,40 @@ d
         <br>        
         The card only has to communicate the results of its decision. 
         <br>        
+        The data field of the response message consists of a BER-TLV coded data object.
+        The coding of the data object shall be according to one of the following two
+        formats.
+        • Format 1: The data object returned in the response message is a primitive data object with tag equal to '80'.
+        The value field consists of the concatenation without delimiters (tag and length) of the value fields of the data objects
+        specified in Table 13 of EMV Book 3:
+        Value Presence
+        <li>Cryptogram Information Data (CID) Mandatory <label class="emv_button_show" onmousedown="emv_searchtag('9F27', event)">(tag 9F27)</label></li>
+        <li>Application Transaction Counter (ATC) Mandatory  <label class="emv_button_show" onmousedown="emv_searchtag('9F36', event)">(tag 9F36)</label></li> 
+        <li>Application Cryptogram (AC) Mandatory <label class="emv_button_show" onmousedown="emv_searchtag('9F26', event)">(tag 9F26)</label></li>
+        <li>Issuer Application Data (IAD) Optional <label class="emv_button_show" onmousedown="emv_searchtag('9F10', event)">(tag 9F10)</label></li>
+        
+        Format 2: The data object returned in the response message is a constructed
+        data object with tag equal to '77'. The value field may contain several BERTLV coded objects, but shall always include the Cryptogram Information
+        Data, the Application Transaction Counter, and the cryptogram computed by
+        the ICC (either an AC or a proprietary cryptogram). The utilisation and
+        interpretation of proprietary data objects which may be included in this
+        response message are outside the scope of these specifications.
+        Format 2 shall be used if the response is being returned in a signature as
+        specified for the CDA function described in section 6.6 of Book 2. The required
+        data elem
+        
         This result is communicated using a cryptogram.
         <br>
+
+
         The card will generate one of three possible cryptograms:
         <br><br>
-        <li>Transaction approved: Transaction Certificate (TC)</li>
-        <li>Request online approval: Authorization ReQuest Cryptogram (ARQC)</li>
-        <li>Transaction declined: Application Authentication Cryptogram (AAC)</li>
+        <li>Transaction approved: Transaction Certificate<label class="emv_button_show"  type="button" onmousedown= "emv_cidbyte_show(emv_CIDPanel, CID_TC, 1)" onmouseup= "emv_cidbyte_show(emv_CIDPanel, CID_TC, 0)">(TC)</label></li>
+        <li>Request online approval: Authorization ReQuest Cryptogram <label class="emv_button_show"  type="button" onmousedown= "emv_cidbyte_show(emv_CIDPanel, CID_ARQC, 1)" onmouseup= "emv_cidbyte_show(emv_CIDPanel, CID_ARQC, 0)">(ARQC)</label></li>
+        <li>Transaction declined: Application Authentication Cryptogram <label class="emv_button_show"  type="button" onmousedown= "emv_cidbyte_show(emv_CIDPanel, CID_AAC, 1)" onmouseup= "emv_cidbyte_show(emv_CIDPanel, CID_AAC, 0)">(AAC)</label></li>
         <br><br>
         At the end of this step the card provides a TC, ARQC or AAC to the terminal together with the transaction data used to generate the cryptogram.
-        The terminal will set the “Card risk management was performed” bit in the TSI to 1.
+        The terminal will set the “Card risk management was performed” bit in the TSI to 1.<label class="emv_button_show"  type="button" onmousedown= "emv_byte_show(emv_TSIPanel, Card_risk_management_was_performed, 1)" onmouseup= "emv_byte_show(emv_TSIPanel, Card_risk_management_was_performed , 0)">see</label>
 
         <br><br>
         </div>`
@@ -1953,7 +2108,7 @@ d
     <br>    
     If a response cryptogram is received and the card supports issuer authentication the terminal will request authentication using the EXTERNAL AUTHENTICATE command.
     <br>    
-    If the issuer authentication fails the “Issuer authentication failed” bit in the TVR will be set to 1. 
+    If the issuer authentication fails the “Issuer authentication failed” bit in the TVR will be set to 1. <label class="emv_button_show" onmousedown= "emv_byte_show(emv_TVRPanel, Issuer_authentication_failed, 1)" onmouseup= "emv_byte_show(emv_TVRPanel, Issuer_authentication_failed, 0)">See</label>  
     <br><br>
     <div class="related-primary"><br>Related Flags: </br></div>       
     </div>`
@@ -2011,15 +2166,70 @@ d
     {id: EMV_STEP_SCRIPT_PROCESSING, info: '', item: 'Script Processing', substeps: [ 
             {id: EMV_SUBSTEP_CHECK_ISSUER_SCRIPTS_TEMPLATE, info: '', item: 'Check_Issuer Scripts Template', substeps: [],
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
+            The IH can group the post-issuance commands in two types of templates:
+            <br>
+            1. Issuer Script Template 1 (tag 71) groups proprietary post-issuance commands to be transmitted to the ICC before sending the 2nd GENERATE AC to the ICC.
+            <br>
+            2. Issuer Script Template 2 (tag 72) groups proprietary post-issuance commands to be transmitted to the ICC after sending the second GENERATE AC to the ICC.
+            <br>
+            Each issuer script template, regardless of whether it is of the type 1 or type 2, can include the following data objects:
+            <br>
+            Issuer Script Identifier (tag 9F18), which is represented on 4 bytes in binary format. This identifier is optional and is not interpreted by the terminal. The Issuer Script Identifier allows the issuer to distinguish among several issuer script templates that can be included in the same authorization response message.
+            <br>
+            Issuer Script Command APDU (tag 86) has a variable number of bytes depending on the type of the C-APDU to be sent to the card. Several Issuer Script Command APDU(s) can be included in an issuer script template.
+            <br>
+            The issuer can send more than one issuer script template in the same authorization response message. The only restriction is that the total length of the issuer script templates is less than or equal to 128 bytes.
+            <br>
+            After the reception of the authorization response message, the terminal processes each issuer script template in the sequence it appears in field 55 of the authorization response message. For each template the terminal performs the following processing:
+            <br>
+            Create a new data structure issuer script results of 5 bytes (see Appendix A5 in Book 4 [3]), which will store the results concerning the processing of the commands contained in the current issuer script template. Add this data structure at the end of a byte string containing the data structures corresponding to other templates that were already processed .
+            <br>
+            Reset the command counter that keeps the number of Issuer Script Command APDU(s) identified in the current issuer script template.
+            <br>
+            Parse the value field of the current template.
+            <br>
+            Check whether the Issuer Script Identifier (tag 9F18) is present. In the affirmative case, copy the value field of this data object into bytes 2 to 5 in the issuer script results. The Issuer Script Identifier is meaningful to the issuer when interpreting the issuer script results reported by the terminal after sending of the post-issuance commands to the ICC.
+            <br>
+            Create a first-in-first-out stack (FIFO), where each element contains the value field of one Issuer Script Command APDU data object (tag 86) separated from the value field of the template. Each new element added in the stack increments the command counter.
+            <br>
+            The processing sequence described below is performed before the second GENERATE AC , if the current template was identified with tag 71, or after the second GENERATE AC , in case the current template was identified with tag 72. Repeat the following steps a number of times equal to the command counter:
+            <br>
+            Pop the C-APDU kept in the current element of the FIFO stack indicated by the stack pointer.
+            <br>
+            Deliver this C-APDU to the ICC.
+            <br>
+            Examine only the status word SW1 in the R-APDU delivered by the ICC.
+            <br>
+            If SW1 indicates normal processing (SW1 = 90) or warning (SW1 = 62 or 63), the processing continues with the next Issuer Script Command APDU stored in the stack. If the command counter indicates that this is the first C-APDU that is processed, set to 1 bit 3, "Script processing was performed", in byte 1 of the TSI.
+            <br>
+            If SW1 indicates an error condition, the processing does not continue with other C-APDU(s) in the stack. The terminal shall set the first nibble of the first byte in the issuer script results to 1, "Script processing failed". The terminal shall write the sequence number of the Issuer Script Command APDU that reported the error in the second nibble of the first byte in the issuer script results. This sequence number equals the value of the command counter, when less than E, or otherwise the sequence number is set to F. The terminal sets to 1 bit 6, "Script processing failed before final GENERATE AC ", in the byte 5 of the TVR, if the current template is encoded with tag 71. The terminal sets to 1 bit 5, "Script processing failed after final GENERATE AC", in byte 5 of the TVR, if the current template is encoded with tag 72.
+            <br>
+            When the processing of the entire sequence of Issuer Script Command APDU(s) is successfully performed, the terminal sets up the first nibble of the first byte in the issuer script results to 2, "Script processing successful". The terminal shall write the value 0 in the second nibble of the first byte in the issuer script results.
             </div>`     
             }, 
             {id: EMV_SUBSTEP_POST_ISSUANCE_COMMANDS, info: '', item: 'Post Issuance Commands', substeps: [],
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
+            The post-issuance commands can be divided into two groups:
+            <br>            
+            1. Commands that change the status of an application or of the entire card, including APPLICATION BLOCK , APPLICATION UNBLOCK , and CARD BLOCK (see Sections 2.5.1, 2.5.2, and 2.5.3 in Book 3 [1]);
+            <br>
+            2. Commands that change the values of some internal parameters, like the status of a PIN, of some cryptographic keys, or a PIN value, or the values of the data elements associated with the EMV ¢ application that participates in the card risk management processing.
+            <br>
+            and issuers may define supplementary commands tailored to their specific needs.
+            <br>
+            This category includes the EMV ¢ post-issuance command PIN CHANGE/UNBLOCK (see Section 2.5.10 in Book 3 [1]). Payment systems 
+            <br>
+            The post-issuance commands use secure messaging:
+            <br>
+            The integrity and authenticity of the issuer is achieved using a MAC.
+            <br>
+            The confidentiality of cryptographic keys or of a PIN value to be updated in the EMV ¢ application is achieved through symmetric key encryption.
             </div>`     
             },  
         ],
         description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
         <p>
+        It was mentioned in Section 6.9.1 that the authorization response message 1110 received from the IH can include post-issuance commands to be delivered to the ICC via the terminal. These commands are not relevant for the current EMV ¢ transaction, but they are used for updating the application data in the card during its utilization lifetime, or for switching an application in the card or even the entire card between the "unblocked" and "blocked" states. EMV ¢ does not make any provisions for updating the application code in the card. The format of the post-issuance commands can be proprietary to the issuer. They are not meaningful for the terminal, which should only dispatch them from the authorization response message and send them sequentially to the ICC that has to be updated.        
         </p>
         <div class="related-primary"><br>Related Flags: </br></div>       
         </div>`

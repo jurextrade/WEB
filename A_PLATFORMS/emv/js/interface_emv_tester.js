@@ -21,8 +21,8 @@ var emv_IACOnlinePanel = emv_bytepanel('IAC_Online', '9F0F',   emv_TVR, {editabl
 var emv_IACDefaultPanel = emv_bytepanel('IAC_Default', '9F0D', emv_TVR, {editable:false})
 
 var emv_CTQPanel = emv_bytepanel('CTQ', '9F6C', emv_CTQ, {editable:false})
-var emv_CIDPanel = emv_bytepanel('CID', '9F27', emv_CID, {editable:false})
 
+var emv_CIDPanel = emv_bytepanel('CID', '9F27', emv_CID, {editable:false, bytetable: emv_cidbytetable})
 
 //--------------------------------------------------------------------- EMV TREE Steps Panel --------------------------------------------------------------------
 
@@ -295,13 +295,14 @@ var emv_tester_commandgroup = {
    // style: 'display:none',
     items:
         [    
-            {id: 'emv_tester_play_button' ,    /*item: 'Run',*/       icon: icon_play,      type:'button',  class: 'sb_sbutton', title: 'replay',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
-            {id: 'emv_tester_start_button' ,   /*item: 'Start',*/     icon: icon_backward,    type:'button',  class: 'sb_sbutton', title: 'go to start',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
-            {id: 'emv_tester_forward_button' , /*item: 'Forward',*/ icon: icon_forwardstep,   type:'button',  class: 'sb_sbutton', title: 'step Forward',   events: {onclick:'onclick_emv_tester_button(this, event)'}},            
+            {id: 'emv_tester_upload_transaction',  icon: icon_download,  class: 'sb_right', item : 'Load Transaction', type:'link',  title: 'Load transaction',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},  
+            {id: 'emv_tester_play_button' ,    /*item: 'Run',*/       icon: icon_play,      type:'button',  class: 'sb_sbutton', title: 'replay',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
+            {id: 'emv_tester_start_button' ,   /*item: 'Start',*/     icon: icon_backward,    type:'button',  class: 'sb_sbutton', title: 'go to start',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
+            {id: 'emv_tester_forward_button' , /*item: 'Forward',*/ icon: icon_forwardstep,   type:'button',  class: 'sb_sbutton', title: 'step Forward',   events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
 
-//         {id: 'emv_tester_stop_button' ,    item: 'Stop',    icon: icon_stop,      type:'button',  class: 'sb_sbutton', title: 'stop',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
-//         {id: 'emv_tester_back_button' ,    item: 'Back',    icon: icon_backwardstep,  type:'button',  class: 'sb_sbutton', title: 'step backward',  events: {onclick:'onclick_emv_tester_button(this, event)'}},            
-//         {id: 'emv_tester_pause_button' ,   item: 'Pause',   icon: icon_pause,     type:'button',  class: 'sb_sbutton', title: 'pause',  events: {onclick:'onclick_emv_tester_button(this, event)'}},                        
+//         {id: 'emv_tester_stop_button' ,    item: 'Stop',    icon: icon_stop,      type:'button',  class: 'sb_sbutton', title: 'stop',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
+//         {id: 'emv_tester_back_button' ,    item: 'Back',    icon: icon_backwardstep,  type:'button',  class: 'sb_sbutton', title: 'step backward',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
+//         {id: 'emv_tester_pause_button' ,   item: 'Pause',   icon: icon_pause,     type:'button',  class: 'sb_sbutton', title: 'pause',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},                        
     ]    
 }
 
@@ -423,7 +424,7 @@ var emv_tester_terminalbuttonbar = {
 
     events: {onclick: 'onclick_emv_tester_terminal(this, event)'},
     items : [
-        {id: 'label_terminal',  item: 'EMV Terminal', type: 'link',  icon: icon_terminal, title: 'EMV Terminal'},
+        {id: 'label_terminal',  item: 'EMV Server', type: 'link',  icon: icon_terminal, title: 'EMV Terminal'},
         {id: 'button_terminal',   type: 'button', class: 'sb_roundbutton',   events: {onclick: "onclick_terminal_card (this, event)"}, title: 'EMV Terminal'},
     ]
 }
@@ -532,6 +533,40 @@ var emv_tester_iacpanel = {
     ]
 }
 
+var emv_tester_denialpanel = {
+    id: "emv_tester_denialpanel",
+    type: "panel",
+    class: "sb_column",
+    style: "",    
+    items: [
+        emv_IACDenialPanel,
+        emv_TACDenialPanel,
+    ]
+}
+
+var emv_tester_onlinepanel = {
+    id: "emv_tester_onlinepanel",
+    type: "panel",
+    class: "sb_column",
+    style: "",    
+    items: [
+        emv_IACOnlinePanel,
+        emv_TACOnlinePanel,
+    ]
+}
+
+var emv_tester_defaultpanel = {
+    id: "emv_tester_defaultpanel",
+    type: "panel",
+    class: "sb_column",
+    style: "",    
+    items: [
+        emv_IACDefaultPanel,
+        emv_TACDefaultPanel,
+    ]
+}
+
+
 var emv_tester_cardbyteinfo = {
     id: "emv_tester_cardbyteinfo",
     type: "panel",
@@ -540,6 +575,7 @@ var emv_tester_cardbyteinfo = {
     items: [
         emv_AIPPanel, 
         emv_AUCPanel, 
+        emv_CIDPanel,        
     ]
 }
 
@@ -584,8 +620,8 @@ var emv_tester_terminalbyteinfo = {
     type: "panel",
     class: "sb_column",
     items: [
-        emv_TSIPanel, 
         emv_TVRPanel,
+        emv_TSIPanel, 
     ]
 }
 
@@ -594,7 +630,7 @@ var emv_tester_terminalbyteinfo = {
 var emv_tester_sidebarpanel_terminal = {
     id: "emv_tester_sidebarpanel_terminal",
     type: "panel",
-    class: "sb_panel sb_column",
+    class: "sb_panel sb_column tester_sidebar",
     style: "overflow:auto",   
     items: [
      //   emv_tester_terminalbyteinfobar,        
@@ -606,7 +642,7 @@ var emv_tester_sidebarpanel_terminal = {
 var emv_tester_sidebarpanel_card = {
     id: "emv_tester_sidebarpanel_card",
     type: "panel",
-    class: "sb_panel sb_column",
+    class: "sb_panel sb_column tester_sidebar",
     style: "overflow:auto",    
     items: [
      //   emv_tester_cardbyteinfobar,        
@@ -618,11 +654,14 @@ var emv_tester_sidebarpanel_card = {
 var emv_tester_sidebarpanel_actioncode = {
     id : 'emv_tester_sidebarpanel_actioncode',
     type: 'panel',
-    class: 'sb_panel sb_row sb_top',
+    class: 'sb_panel sb_column tester_sidebar',
     style: "overflow:auto",   
     items: [
-        emv_tester_iacpanel,
-        emv_tester_tacpanel,          
+//        emv_tester_iacpanel,
+//        emv_tester_tacpanel,          
+        emv_tester_denialpanel,          
+        emv_tester_onlinepanel,     
+        emv_tester_defaultpanel,     
     ],
 }
 
@@ -635,14 +674,14 @@ var emv_tester_sidebarheader = {
     [
         {id: '',                  type: 'link',  item: 'Selected Application',  class: 'sb_fs-12 sb_sidebarheadertitle'},                           
 //        {id: 'right_sidebarsave', type: 'button', item:'Save',  class: 'sb_none',  icon:  sb_icons['icon_save'], events: {onclick: "onclick_right_sidebarsave(this, event)"}, title: 'Save Configuration'},                 
-        {id: 'right_sidebarpin',  type: 'link',   toggle: true, class: 'sb_rightsidebarpin',   icon:  sb_icons['icon_pin'],  events: {onclick: "onclick_right_sidebarpin(this, event)"}, title: 'Pin Window'},                 
+        {id: 'right_sidebarpin',  type: 'link',   toggle: true, class: 'sb_rightsidebarpin',   icon:  sb_icons['icon_pin'],  events: {onclick: "onclick_tright_sidebarpin(this, event)"}, title: 'Pin Window'},                 
     ]
 }
 
 var emv_tester_sidebarpanel  = {
     id: 'emv_tester_sidebarpanel',
     type: 'panel',
-    class: 'sb_panel sb_rightsidebarpanel sb_left',     
+    class: 'sb_panel emv_tester_sidebarpanel sb_left',     
     items : 
     [
         emv_tester_sidebarheader,        

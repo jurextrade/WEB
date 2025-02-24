@@ -110,12 +110,14 @@ class SOLUTION {
             this.add_configuration_scripts(this.Init)
 
         }  
-        if (this.user.is_registered ()) {
-            this.user.send({Name: 'scandir_r',Values: this.user.is_admin () ? ['.', ''] : [this.user.path  + '/NetProg', '.']}, false,  function (content, values) {
-                let dirstruct = JSON.parse (content);
-                values[0].fileexplorer = dirstruct.Values[0]}, [this.user])
-        }
 
+
+        let path =  this.user.id != 0 ? '/members/' +  this.user.id : '/members/1';
+  
+        this.user.send({Name: 'scandir_r',Values: this.user.is_admin () ? ['.', ''] : [path  + '/NetProg', '.']}, false,  function (content, values) {
+            let dirstruct = JSON.parse (content);
+            values[0].fileexplorer = dirstruct.Values[0]}, [this.user])
+        
         c_solution.machine      = new machine();
         c_solution.ui           = new ui(this.configuration.theme);        
        
@@ -570,7 +572,7 @@ class SOLUTION {
             }
         } else {
             if (index >= 0) { 
-                header.items.splice(index, 1); 
+                footer.items.splice(index, 1); 
             } 
         }
 
@@ -1553,9 +1555,6 @@ class user {
     send (message, async, onrecvcallback, values) {
         async =  async != undefined ? async : true;
 
-        if (!this.is_registered()) {
-            return;
-        }
         let smessage = JSON.stringify(message);
         url_submit ('POST', document.location.protocol + '//' + document.location.host + '/php/solution_dialog.php', {message: smessage} , async, onrecvcallback != undefined ? onrecvcallback : this.onrecv, values)
 
@@ -1712,7 +1711,7 @@ function onclick_rightsidebarmenu (id, show) {
 function rightsidebarpanel_hide (psidebarpanel) {
     let psidebarmenu    = psidebarpanel.next(); 
     let toresize        = psidebarpanel.hasClass('pinned')
-    
+    console.log ('hide right');
     psidebarpanel.css ({'transition':''});
 
     let sbpanels = psidebarpanel.children ();
@@ -1741,6 +1740,7 @@ function rightsidebarpanel_select (psidebarpanel, id) {
     let sidebarmenu         = $('#' + id);    
     let psidebarmenu    = psidebarpanel.next(); 
     let toresize        = psidebarpanel.hasClass ('pinned')
+    console.log ('select right');
         
     let sbpanels = psidebarpanel.children ();
     $.each(sbpanels, function (index, panel) {

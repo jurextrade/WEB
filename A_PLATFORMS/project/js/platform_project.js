@@ -147,7 +147,7 @@ function project_solution (pname) {
                 let projectstruct = arraystructure[i];
 
                 if (!projectstruct.Name || !projectstruct.Path) continue;
-                if (this.userid == '0' && projectstruct.Name != "Demo_Project") continue;                    
+                if (values[0].userid == '0' && projectstruct.Name != "Demo_Project") continue;                    
                 let project = new pgproject(PROJECT_PLATFORM_PNAME, projectstruct.Name, projectstruct.Path)
 
                 project =  {...project, ...projectstruct}
@@ -155,7 +155,7 @@ function project_solution (pname) {
                 solution.Projects.push(project);
             }   
         }
-        url_submit ('POST', url, param /*object {}*/, async, callback, [] , interfacecallback, par);
+        url_submit ('POST', url, param /*object {}*/, async, callback, [solution.user] , interfacecallback, par);
     }
     
     solution.project_UpdateProjects = function (solution) {

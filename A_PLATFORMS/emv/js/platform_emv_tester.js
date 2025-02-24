@@ -74,6 +74,121 @@ function terminalinputresize() {
 
 //-------------------------------------------------------------------TESTER BARGROUP --------------------------------------------------------
 
+
+//-----------------------------------------------------------------command group
+function  onclick_emv_tester_commandgroup (elt, event) {
+    switch (elt.id) {
+        case 'emv_tester_play_button':
+       //     console.log('play')
+            if (Tester.Reader.Statut != READER_PLAYING) {
+                let silentmode = false;
+                Tester.Reader.play (silentmode);
+                $('#emv_tester_play_button ' + 'i').attr('class', icon_pause);
+            } else {
+                Tester.Reader.pause ();
+                $('#emv_tester_play_button ' + 'i').attr('class', icon_play);                
+            }
+            
+        break;
+        case 'emv_tester_start_button'  :
+            Tester.Reader.firststep ();       
+            $('#emv_tester_play_button ' + 'i').attr('class', icon_play);                   
+        break;
+        case 'emv_tester_forward_button' :
+            let silentmode = false;
+            Tester.Reader.nextstep(silentmode)
+        break;
+        case 'emv_tester_stop_button':
+        break;
+
+        case 'emv_tester_back_button':
+        break;
+        case 'emv_tester_pause_button'   :
+        break;
+        case 'emv_tester_upload_transaction' :
+            let cuser = solution.user;
+
+            let file_path        = cuser.path + '/EMV/' + solution.emv_CurrentProject.Folder
+
+            cuser.send({Name: 'scandir_r',Values: [file_path  + '/Transactions', '.']}, false,  function (content, values) {
+                let dirstruct = JSON.parse (content);
+                let menu = [];
+                
+                for (var i = 0; i < dirstruct.Values[0].Files.length; i++) {
+                    menu.push ({id: i,     text: dirstruct.Values[0].Files[i].Name})
+                }
+                if (dirstruct.Values[0].Files.length == 0) {
+                    return;
+                }
+                sb.overlay({
+                    rootelt: $(elt).closest('.sb_root'),
+                    event: event,        
+                    pageX:   event.pageX,
+                    pageY:   event.pageY + 20,
+                    par: menu,
+                    onselect:function (elt, par) {
+                        console.log ('select')
+                        let menu = this.par;
+                        cuser.send ({Name: 'readfile', Values: [cuser.fileexplorer.Root + '/' + file_path + '/Transactions/' + menu[elt.id].text]}, false, 
+                                    function (content, values) {
+                                        let message = JSON.parse (content);
+                                        Tester.Reader.RecordBuffer = message.Values[0].Content
+                                        Tester.Reader.save_record();
+                                    }, 
+                                    []);                          
+                    },
+                    html: sb.menu (menu)
+                })}, 
+                [cuser])            
+        break;
+    }
+}
+
+//-----------------------------------------------------------------steps group
+
+function onclick_emv_tester_stepsgroup(elt, event) {
+    let stepid = elt.id;
+    let step = stepid.replace ('step_', '')
+    let recordindex = Tester.Reader.find_record(step);
+  
+    if (recordindex != -1) {
+        console.log ('silentmode')
+        emv_tester_reset();
+        Tester.Reader.reset();
+
+        
+        let silentmode = true;
+        let display    = false;
+        let fromrouter = false;
+        for (var j = 0; j <= recordindex; j++) {
+            let request     = Tester.Reader.Records[j];
+            let origin      = request.origin;
+            let line        = request.content;
+            let values      = line.split('^');
+            let commandtype = values[0];            
+            emv_TreatCommand(origin, Tester.Reader, line, values, silentmode, display, fromrouter);
+        }
+        Tester.Reader.RecordIndex = recordindex;   
+
+        Tester.card_write (Tester.Reader.CTRACE)
+        Tester.terminal_write (Tester.Reader.TTRACE)
+   
+        let table   = $('#emv_transactiontags_table').DataTable();
+        table.rows.add(Tester.Reader.TAGS).draw()    
+
+        $('#emv_apdutreepanel').html(sb.render (emv_apdu_roottree))
+        emv_selectstep(step, true);
+
+        $('#emv_tester_recordgroup #emv_tester_start_button').removeAttr('disabled');
+        $('#emv_tester_recordgroup #emv_tester_forward_button').removeAttr('disabled');
+        $('#emv_tester_play_button ' + 'i').attr('class', icon_play);                
+
+
+        //   Tester.Reader.play (silentmode, recordindex)
+     //   $('#emv_tester_play_button ' + 'i').attr('class', icon_pause);        
+    }    
+}
+
 function emv_tester_stepsgroup_selectstep (step) {
 
     //  $('#emv_tester_stepsgroup .EMVStep').removeClass ('selected');    
@@ -85,50 +200,7 @@ function emv_tester_stepsgroup_selectstep (step) {
       return step;  
 }
 
-function  onclick_emv_tester_button (elt, event) {
-    switch (elt.id) {
-        case 'emv_tester_play_button':
-            console.log('play')
-            if (Tester.Reader.Statut == READER_PAUSED || Tester.Reader.Statut == READER_END) {
-                if (Tester.Reader.Statut == READER_END) {
-                  Tester.Reader.firststep ();  
-                }
-                Tester.Reader.play ();
-                $('#emv_tester_play_button ' + 'i').attr('class', icon_pause);
-            } else {
-                if (Tester.Reader.Statut == READER_PLAYING) {            
-                    Tester.Reader.pause ();
-                    $('#emv_tester_play_button ' + 'i').attr('class', icon_play);                
-                }
-            }
-        break;
-        case 'emv_tester_start_button'  :
-            Tester.Reader.firststep ();       
-            $('#emv_tester_play_button ' + 'i').attr('class', icon_play);                   
-        break;
-        case 'emv_tester_forward_button' :
-            Tester.Reader.nextstep()
-        break;
-        case 'emv_tester_stop_button':
-        break;
-
-        case 'emv_tester_back_button':
-        break;
-        case 'emv_tester_pause_button'   :
-        break;
-    }
-}
-
-function onclick_emv_tester_stepsgroup(elt, event) {
-    let step = elt.id;
-    let recordindex = Tester.Reader.find_record(step.replace ('step_', ''));
-    if (recordindex != -1) {
-
-        emv_tester_reset();
-        Tester.Reader.reset();
-        Tester.Reader.play (recordindex)
-    }    
-}
+//-----------------------------------------------------------------filter group
 
 function onclick_emv_tester_filtergroup(elt, event) {
     var checked = $(elt).prop('checked');    
@@ -156,7 +228,8 @@ function onclick_emv_tester_filtergroup(elt, event) {
     }
 }
 
-function emv_tester_recordgroup_init () {
+
+function emv_tester_filtergroup_init () {
     $('#ignore_apdu').prop('checked',    !Tester.Reader.IgnoreApdu)  
     $('#ignore_step').prop('checked',    !Tester.Reader.IgnoreStep)  
     $('#ignore_trace').prop('checked',   !Tester.Reader.IgnoreTrace)   
@@ -164,6 +237,7 @@ function emv_tester_recordgroup_init () {
     $('#ignore_tvr').prop('checked',     !Tester.Reader.IgnoreTVR)      
     $('#ignore_tsi').prop('checked',     !Tester.Reader.IgnoreTSI)      
 }
+
 
 function emv_tester_Input_init () {
     Tester.terminal_clear();
@@ -193,7 +267,7 @@ function emv_tester_transactiontags_reset () {
 }
 
 function emv_tester_init () {
-    emv_tester_recordgroup_init();
+    emv_tester_filtergroup_init();
     emv_tester_Input_init();    
     emv_apdu_init ();    
     emv_tester_transactiontags_init();
@@ -209,11 +283,13 @@ function emv_tester_init () {
     emv_bytepanel_init(emv_IACDefaultPanel)
     emv_bytepanel_init(emv_AUCPanel);
     emv_bytepanel_init(emv_AIPPanel);    
+    emv_cidbytepanel_init(emv_CIDPanel)    
     emv_selectstep('0');
     $('#emv_tester_leftpanel').on({
-        click: function (event) {
+        mouseup: function (event) {
             let psidebarpanel   = $('#emv_tester_sidebarpanel'); 
-    
+            $('#emv_tester_sidebarpanel .sb_tablerow ').removeClass('marked')
+
             if (!psidebarpanel.hasClass('pinned')) {    
                 rightsidebarpanel_hide(psidebarpanel);
             }
@@ -237,10 +313,11 @@ function emv_tester_reset () {
     emv_bytepanel_init(emv_IACDefaultPanel)    
     emv_bytepanel_init(emv_AUCPanel);
     emv_bytepanel_init(emv_AIPPanel);                
-
+    emv_cidbytepanel_init(emv_CIDPanel); 
 
     emv_selectstep('0');
-    $('#emv_tester_stepsgroup .EMVStep').removeClass ('selected');     
+    $('#emv_tester_stepsgroup .EMVStep').removeClass ('selected');    
+    $('#emv_tester_sidebarheader label').html ('') 
     emv_tester_stepsgroup_selectstep('0')   
     //emv_byte_init(emv_TCPanel);
     //emv_byte_init(emv_ATCPanel);    
@@ -267,27 +344,59 @@ class CardReader {
         this.RecordIndex    = 0;
         this.StepIndex      = 0;     
         this.CurrentStep    = 0;
-        this.RAPDU          = [];   
-        this.CAPDU          = [];
+        this.TesterStartAsync = 0;
+        this.Statut         = READER_START;
+
         this.IgnoreApdu     = false;
         this.IgnoreStep     = false;
         this.IgnoreTrace    = false;
         this.IgnoreTag      = false;
         this.IgnoreTVR      = false;
         this.IgnoreTSI      = false;
-        this.TesterStartAsync = 0;
-        this.Statut         = READER_START;
+
+        this.CONNECT        = [];           //emv_TreatConnect(origin, reader, values);
+        this.LOGIN          = [];           // emv_TreatLogin(origin, reader, values);
+        this.START          = [];
+        this.END            = [];           //emv_TreatInit(origin, reader, values, router);
+        this.SELECT         = [];           //emv_TreatSelect(origin, reader, values, display, router);
+        this.PLUG           = [];           //emv_TreatPlug(origin, reader, values, display, router);
+        this.INFO           = [];           //emv_TreatInfo(origin, reader, values, display);
+        this.CTRACE         = "";           //emv_TreatTrace(origin, reader, values, display);
+        this.TTRACE         = "";           //emv_TreatTrace(origin, reader, values, display);
+        this.TAGS            = [];           //emv_TreatTAG(origin, reader, values, display);
+        this.RAPDU          = [];
+        this.CAPDU          = [];           //emv_TreatAPDU(origin, reader, values, display, router);
+        this.STEP           = [];           //emv_TreatStep(origin, reader, values, display, router);
+        this.SETTSI         = [];           //emv_TreatSetTSI(origin, reader, values, display);
+        this.SETTVR         = [];           //emv_TreatSetTVR(origin, reader, values, display);
+        this.AIP            = [];           //emv_TreatAIP(origin, reader, values, display);
+        this.AUC            = [];           //emv_TreatAUC(origin, reader, values, display);
+        this.IAC_Denial     = [];           //emv_TreatTVR(origin, reader, values, display);
+        this.IAC_Online     = [];           //emv_TreatTVR(origin, reader, values, display);
+        this.IAC_Default    = [];           //emv_TreatTVR(origin, reader, values, display);
+        this.TAC_Denial     = [];           //emv_TreatTVR(origin, reader, values, display);
+        this.TAC_Online     = [];           //emv_TreatTVR(origin, reader, values, display);
+        this.TAC_Default    = [];           //emv_TreatTVR(origin, reader, values, display);
+        this.CTQ            = [];           //emv_TreatCTQ(origin, reader, values, display);
+        this.CID            = [];           //emv_TreatCID(origin, reader, values, display);
+        this.CRYPTO         = [];           //emv_TreatCRYPTO(origin, reader, values, display);
+        this.SERVICECODE    = [];           // service code         emv_TreatSC(origin, reader, values, display);
+        this.TT             = [];           //terminal type         emv_TreatTT(origin, reader, values), display;
+        this.TC             = [];           //terminal capabilities emv_TreatTC(origin, reader, values, display);
+        this.ATC            = [];           //Additionalterminal capabilities    emv_TreatATC(origin, reader, values, display);
+        this.TTQ            = [];           // emv_TreatTTQ(origin, reader, values, display);
+        this.CVM            = [];           //emv_TreatCVM(origin, reader, values, display);
     }
     
-    play (tillindex) {
+    play (silentmode, tillindex) {
 
         this.Statut = READER_PLAYING;
         let finalindex = tillindex ? tillindex + 1 : this.Records.length; // read the final till index
 
-        this.TesterStartAsync = setInterval(function treat(reader, finalindex) {
-
-            reader.nextstep(finalindex)    
-        }, 10, this, finalindex);   // every milli second
+        this.TesterStartAsync = setInterval(function treat(reader, silentmode, finalindex) {
+            
+            reader.nextstep(silentmode, finalindex)    
+        }, 10, this, silentmode, finalindex);   // every milli second
     }
     
     pause () {
@@ -296,11 +405,16 @@ class CardReader {
     }    
     
     reset () {
-        this.RAPDU = [];
-        this.CAPDU = [];     
+        
+        this.CTRACE         = "";           //emv_TreatTrace(origin, reader, values, display);
+        this.TTRACE         = "";           //emv_TreatTrace(origin, reader, values, display);
+        this.TAGS           = [];           //emv_TreatTAG(origin, reader, values, display);
+        this.RAPDU          = [];
+        this.CAPDU          = [];     
+
         this.RecordIndex    = 0;   
-        this.StepIndex = 0;        
-        this.CurrentStep = 0;        
+        this.StepIndex      = 0;        
+        this.CurrentStep    = 0;        
     }        
 
     start (fromrouter) {
@@ -324,20 +438,30 @@ class CardReader {
             this.save_transaction('last_transaction')
         }          
     }    
+    
     firststep () {
         emv_tester_reset();
-        this.reset();
+        this.reset();   
         emv_selectstep(0, true)          
     }    
-    nextstep (finalindex) {
+    
+    nextstep (silentmode, finalindex) {
+        let fromrouter = false;
+        let display    = true;
 
 
+        this.Statut == READER_PLAYING
+        
         if (this.RecordIndex >= this.Records.length) {
             this.RecordIndex = this.Records.length;
             return;
         }
-        console.log ('nextstep')
+    //    console.log ('nextstep')
         let nextfound = true;
+    // find last step in records from i
+        this.StepIndex = 0;
+
+
 
         for (var i = this.RecordIndex; i < this.Records.length; i++) {
             let nextfound   = true;
@@ -352,6 +476,19 @@ class CardReader {
                 this.pause();
                 return;
             }            
+  
+            for (var j = this.RecordIndex; j >= 0; j--) {
+                let request     = this.Records[j];
+                let values      = request.content.split('^');
+                if (values[0] == "STEP") {
+                    this.StepIndex = values[2]; 
+                    break;      
+                }
+            }
+            if (this.CurrentStep != this.StepIndex) {
+                let stepvalues = ['STEP', '', this.StepIndex]
+                emv_TreatStep(TERMINAL, this, stepvalues, 1)
+            }
 
             switch (commandtype) {
                 case "TRACE":
@@ -377,7 +514,6 @@ class CardReader {
                     }
                     break;
                 case "STEP":
-                    this.StepIndex = values[2];                    
                     if (this.IgnoreStep){
                         nextfound = false;
                     }
@@ -411,13 +547,10 @@ class CardReader {
                 case "CVM":
                     break;                
             }
-            if (this.CurrentStep != this.StepIndex) {
-                let stepvalues = ['STEP', '', this.StepIndex]
-                emv_TreatStep(request.origin, this, stepvalues, 1)
-            }
+
                  
             if (nextfound) {
-                emv_TreatCommand(request.origin, this, request.content, values, 1);   
+                emv_TreatCommand(request.origin, this, request.content, values, silentmode, display, fromrouter);   
                 break;
             }
         }
@@ -470,18 +603,17 @@ class CardReader {
         return -1;
     }
     save_transaction (name) {
-        console.log ('save transacation')
+
         let cuser = solution.get('user')
         if (!cuser.is_registered()) {
+            TreatOperation(register_needed_label, 'operationpanel', 'red');               
             return;
         }
+        
         let path        = cuser.path + '/EMV/' + solution.emv_CurrentProject.Folder
 
         cuser.send({Name: 'makedir',  Values: [path, 'Transactions']}, false, function (content, values) {}, [this])
-
         let transactionfile     = cuser.fileexplorer.Root +  path + "/Transactions/"  + name + '.trs';
-
-
         cuser.send ({Name: 'savefile', Values: [transactionfile,  this.RecordBuffer]}, true, 
             function (content, values) {
                 DisplayOperation("Transaction " + values[0] + " Saved", true, 'operationpanel');                             
@@ -495,9 +627,6 @@ class CardReader {
    
 }
 
-
-
-
 function onclick_emv_tester_reader(elt, event) {
 
 }
@@ -505,8 +634,6 @@ function onclick_emv_tester_reader(elt, event) {
 function onclick_emv_tester_terminal(elt, event) {
 
 }
-
-
 
 function emv_command_container(id) {
     var content = '<input type="range" id="' + id + '" class="form-range" value="999" min="1" max="1000" step="0.1"  onchange="">';
@@ -566,3 +693,83 @@ function emv_tester_toggle_all (open) {
 
 
 //------------------------------------------------------------------- MAIN SIDEBAR---------------------------------------------------------------------
+
+
+function onclick_tright_sidebarpin(elt, event) {
+    let $rightsidebarpanel;    
+    if ($(elt).hasClass ('checked')) {
+        $rightsidebarpanel = $(elt).closest('.emv_tester_sidebarpanel') ;
+        $rightsidebarpanel.css ({'transition':'none'});
+        rightsidebarpanel_hide($rightsidebarpanel);
+        $rightsidebarpanel.removeClass ('pinned')
+        
+    } else {
+        $rightsidebarpanel = $(elt).closest('.emv_tester_sidebarpanel') ;
+        $rightsidebarpanel.addClass ('pinned')
+        sb.resize(sb.interface);        
+    }
+}
+
+function trightsidebarpanel_hide (psidebarpanel) {
+    let psidebarmenu    = psidebarpanel.next(); 
+    let toresize        = psidebarpanel.hasClass('pinned')
+    console.log ('tester hide right');
+    psidebarpanel.css ({'transition':''});
+
+    let sbpanels = psidebarpanel.children ();
+    $.each(sbpanels, function (index, panel) {
+        if (index != 0) {
+            $(panel).removeClass("sb_active");
+            $(panel).addClass("sb_none");        
+        }
+    });
+
+    let sbmenus  = psidebarmenu.find('.sb_link');
+
+    $.each(sbmenus, function (index, menu) {
+        $(menu).removeClass("checked");
+    });
+
+    psidebarpanel.removeClass('toggled')
+
+    if (toresize) {0
+        sb.resize(sb.interface);        
+    }
+}
+
+
+function trightsidebarpanel_select (psidebarpanel, id) {
+    let sidebarmenu         = $('#' + id);    
+    let psidebarmenu    = psidebarpanel.next(); 
+    let toresize        = psidebarpanel.hasClass ('pinned')
+    console.log ('tester select right');
+        
+    let sbpanels = psidebarpanel.children ();
+    $.each(sbpanels, function (index, panel) {
+        if (index != 0) {
+            $(panel).removeClass("sb_active");
+            $(panel).addClass("sb_none");        
+        }
+    });
+
+    if (psidebarpanel.hasClass ('toggled')) {
+
+    } else {
+        psidebarpanel.addClass('toggled')
+    }
+
+    let sidebarpanel   =  $('#' + id.replace("sidebar", "sidebarpanel"));  
+    sidebarpanel.removeClass("sb_none");    
+    sidebarpanel.addClass("sb_active");    
+ 
+    let sbmenus         = psidebarmenu.find('.sb_link');
+    $.each(sbmenus, function (index, menu) {
+        $(menu).removeClass("checked");
+    });
+
+    sidebarmenu.addClass("checked");
+
+    if (toresize) {
+        sb.resize(sb.interface);        
+    }
+}

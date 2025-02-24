@@ -571,7 +571,7 @@ function emv_treefielditem (entity, fieldname, option) {
      //   item: option.value,
         arrow: emv_type_leaf.includes (fieldname) ? true : false,
         class: 'treenode',
-        rootitem: emv_treenodetagitem(option.tag, option.value, entity.Code), 
+        rootitem: option.tag ? emv_treenodetagitem(option.tag, option.value, entity.Code) : emv_treenodenameitem (option.name, option.value, entity.Code, true) , 
         closed:  option.closed,
         items: [],
         attributes:{
@@ -761,6 +761,15 @@ function emv_project_create_treeaid (application, aid) {
     sb.tree_add_item (avn_treenode, avn_treepanel);   
     
     emv_avn_update(avn_treepanel,hexa_to_int(aid.ApplicationVersionNumber).toString()); 
+
+
+    let ap_treenode = emv_treefielditem(aid, 'ApplicationPriority', {tag: null,  name: 'Application Priority', value: aid.Priority, closed:true});  
+    let ap_treepanel   = emv_avnpanel('treepanel-ap-' + aid.Code, {class: 'treepanel', withbar:false, style: '', events: {onchange: "emv_update_treenode_value(this, event)"}});            
+    sb.tree_add_item (aid_treenode, ap_treenode);
+    sb.tree_add_item (ap_treenode, ap_treepanel);   
+    
+    emv_avn_update(ap_treepanel ,aid.Priority); 
+
 
     let tacdenial  = emv_treefielditem(aid, 'TerminalActionCodeDenial', {tag: 'DF57',   value: aid.TerminalActionCodeDenial.toUpperCase().padStart(10, '0'), closed:true}); 
     let bytepanel  = emv_bytepanel('treepanel-TerminalActionCodeDenial-' + aid.Code, 'DF57',   emv_TVR, {class: 'treepanel', withbar:false, style: '', events: {onchange: "emv_update_treenode_value(this, event)"}});

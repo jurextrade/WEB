@@ -19,7 +19,7 @@ function emv_init () {
 
     emv_ServerPanel_Update();
     emv_TLVParserPanel_Update(); 
- 
+
     setInterval(emv_timer, 300);         
 }
 
@@ -86,14 +86,14 @@ function emv_solution () {
                 let projectstruct = arraystructure[i];
 
                 if (!projectstruct.Name || !projectstruct.Path) continue;
-                if (this.userid == '0' && projectstruct.Name != "Demo_Project") continue;                    
+                if (values[0].userid == '0' && projectstruct.Name != "Demo_Project") continue;                    
                 let project = new emvproject(EMV_PLATFORM_PNAME, projectstruct.Name, projectstruct.Path)
                 project =  {...project, ...projectstruct}
                 solution.emv_Projects.push(project);
             }
         }
 
-        url_submit ('POST', url, param /*object {}*/, async, callback, [] , interfacecallback, par);
+        url_submit ('POST', url, param /*object {}*/, async, callback, [solution.user] , interfacecallback, par);
     }    
     solution.emv_GetProjectFromName = function (name) {
         for (var i = 0; i < this.emv_Projects.length; i++) {
@@ -122,6 +122,18 @@ function emv_solution () {
 
 
 function emv_timer () {
+
+    if (Tester.Reader.Statut == READER_PLAYING) {
+        $('#emv_tester_recordgroup #emv_tester_forward_button').attr('disabled','disabled');
+        $('#emv_tester_recordgroup #emv_tester_start_button').attr('disabled','disabled');   
+    } else {
+        if (Tester.Reader.Statut == READER_END) {
+            $('#emv_tester_recordgroup #emv_tester_forward_button').attr('disabled','disabled');
+        } else {
+            $('#emv_tester_recordgroup #emv_tester_forward_button').removeAttr('disabled');
+        }
+        $('#emv_tester_recordgroup #emv_tester_start_button').removeAttr('disabled');
+    }
     if (solution.emv_CurrentProject) {        
         $('#emv_projectsbar #emv_projectrename').css ('display', '');
         $('#emv_projectsbar #emv_projectremove').css ('display', '');
@@ -488,6 +500,8 @@ function onclick_apdu_tree_inspect (elt, event) {
 
 function emv_apdu_init () {
     sb.tree_removechildren ('emv_apdu_roottree');
+    emv_apdu_roottree.items = [];
+
 }
 
 function emv_apdu_closeall () {
@@ -576,7 +590,7 @@ function emv_rapduselect (roottag, index, scroll) {
     }      
 }
 
-function emv_capdu_update (capdu, index, item) {
+function emv_capdu_update (capdu, index, item, silentmode) {
     let cla     = capdu.cla;    
     let ins     = capdu.ins;
     let p1      = capdu.p1;
@@ -587,36 +601,62 @@ function emv_capdu_update (capdu, index, item) {
     
     
     let nodeitem  = {id: 'capdu' + '_' + index, item: 'C-APDU', type: 'tree',  class: 'capdu treenode ' + getcommandclassname(ins),  arrow: (lc == 0 ? false : true), events: apdu_default_node_events, closed: true,
-                    rootitem: emv_apdu_tree_bar(cla, getcommandname (ins) + ' CLA: ' + cla + ' INS: ' + ins + ' P1: ' + p1 + ' P2: ' + p2,  true)};        
-    
-    sb.tree_additem (item.id, nodeitem);
-    
+                    rootitem: emv_apdu_tree_bar(cla, getcommandname (ins) + ' CLA: ' + cla + ' INS: ' + ins + ' P1: ' + p1 + ' P2: ' + p2,  true), items:[]};           
+
+    if (silentmode) {
+        item.items.push(nodeitem)   
+    } else {
+        sb.tree_additem (item.id, nodeitem);
+    }
+
     if (lc != 0) {
-        sb.tree_additem (nodeitem.id,  emv_capdu_treepanelitem(ins, capdu.lc, df, index, false));    
+        let panelnodeitem =  emv_capdu_treepanelitem(ins, capdu.lc, df, index, false);
+        if (silentmode) {
+            nodeitem.items.push(panelnodeitem)   
+        } else {
+            sb.tree_additem (nodeitem.id, panelnodeitem);
+        }               
     }
 }
 
-function emv_rapdu_update (rapdu, index, value, item) {
+function emv_rapdu_update (rapdu, index, value, item, silentmode) {
     let sw1 = rapdu.sw1;    
     let sw2 = rapdu.sw2;
     let error = (sw1 != '90' || sw2 != '00')
 
     let nodeitem  = {id: 'rapdu' + '_' + index, item: 'R-APDU', type: 'tree',  class: 'rapdu treenode ' + gettagclassname(rapdu.tag) + (error ? ' rapduerror' : ''),  arrow: (error == true ? false : true), events: apdu_default_node_events, closed: true,
-                    rootitem: emv_apdu_tree_bar(sw2,  gettagname(rapdu.tag) + ' SW1: ' + sw1 + ' SW2: ' + sw2,  true)};        
+                    rootitem: emv_apdu_tree_bar(sw2,  gettagname(rapdu.tag) + ' SW1: ' + sw1 + ' SW2: ' + sw2,  true), items:[]};        
     
-    sb.tree_additem (item.id, nodeitem);
-
+    if (silentmode) {
+        item.items.push(nodeitem)   
+    } else {
+        sb.tree_additem (item.id, nodeitem);
+    }
+   
     let subvalue = gettagvalue_text(rapdu);
 
-
-    sb.tree_additem (nodeitem.id, emv_rapdu_treepanelitem('response', value, subvalue, index, false));    
-
+    if (error) {
+        let errordesciption = getapdu_error(sw1.concat(sw2)).description
+        let panelnodeitem = emv_rapdu_treepanelitem('response', errordesciption, null, index, false);
+        if (silentmode) {
+            nodeitem.items.push(panelnodeitem)   
+        } else {
+            sb.tree_additem (nodeitem.id, panelnodeitem);
+        }
+        return;
+    }   
     if (!error) {
-        emv_rapdu_update_tree(rapdu, index, nodeitem)
+        let panelnodeitem =  emv_rapdu_treepanelitem('response', value, subvalue, index, false)      
+        if (silentmode) {
+            nodeitem.items.push(panelnodeitem)   
+        } else {
+            sb.tree_additem (nodeitem.id, panelnodeitem);
+        }        
+        emv_rapdu_update_tree(rapdu, index, nodeitem, silentmode)
     }
 }
 
-function emv_rapdu_update_tree (rapdu, index, item) {
+function emv_rapdu_update_tree (rapdu, index, item, silentmode) {
     if (rapdu.length == 0) {
         return;
     }
@@ -631,23 +671,46 @@ function emv_rapdu_update_tree (rapdu, index, item) {
     if (!defined(children)) {
     
         nodeitem  = {id: 'treenode-' + tag + '_' + index,  item: tag, type: 'tree',  arrow: false, events: apdu_default_node_events, closed: true, 
-                     rootitem: emv_apdu_tree_bar(tag, name, false)};
+                     rootitem: emv_apdu_tree_bar(tag, name, false), items:[]}; 
     
-        sb.tree_additem (item.id, nodeitem);
-        sb.tree_additem (nodeitem.id, emv_rapdu_treepanelitem(tag, value, subvalue, index, false));        
+        if (silentmode) {
+            item.items.push(nodeitem)   
+        } else {
+            sb.tree_additem (item.id, nodeitem);
+        }
+                        
+       
+        let panelnodeitem =  emv_rapdu_treepanelitem(tag, value, subvalue, index, false)
+     
+        if (silentmode) {
+            nodeitem.items.push(panelnodeitem)   
+        } else {
+            sb.tree_additem (nodeitem.id, panelnodeitem);
+        }        
         return;
     
     }
     else {
         nodeitem  = {id: 'treenode-' + tag + '_' + index, item: tag, type: 'tree',  class: 'treenode',  arrow: true, events: apdu_default_node_events, closed: true,
-                     rootitem: emv_apdu_tree_bar(tag, name, true)};        
+                     rootitem: emv_apdu_tree_bar(tag, name, true), items:[]};         
     
-        sb.tree_additem (item.id, nodeitem);
-        sb.tree_additem (nodeitem.id, emv_rapdu_treepanelitem(tag, value, subvalue, index, true));
 
+        if (silentmode) {
+            item.items.push(nodeitem)   
+        } else {
+            sb.tree_additem (item.id, nodeitem);
+        }
+
+
+        let panelnodeitem = emv_rapdu_treepanelitem(tag, value, subvalue, index, true)        
+        if (silentmode) {
+            nodeitem.items.push(panelnodeitem)   
+        } else {
+            sb.tree_additem (nodeitem.id, panelnodeitem);
+        }   
 
         for (var i = 0; i < children.length; i++) {
-            emv_rapdu_update_tree(children[i],  index, nodeitem)
+            emv_rapdu_update_tree(children[i],  index, nodeitem, silentmode)
         }
     }
 }

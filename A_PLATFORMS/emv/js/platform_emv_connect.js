@@ -136,10 +136,10 @@ function emv_TreatInit(origin, reader, values, fromrouter) {
 
 function emv_TreatPlug (origin, reader, values, display, fromrouter) {
     let result;
-    console.log ('treatplug')
+  //  console.log ('treatplug')
     switch (origin) {
         case CARD:
-            console.log(values[2])
+         //   console.log(values[2])
             let cuser = solution.get('user')    
           
             if (!fromrouter) {
@@ -168,14 +168,14 @@ function onclick_selectcancel () {
 
 function onclick_selectbutton (elt, id) {
     let cuser       = solution.get('user')     
-    let selection   = elt.id.substring(15, 17)
+    let selection   = elt.id.replace('button_select_', '')
     RouterCom.Send(cuser.id + '*SELECT*' + selection + '*');
     $("#emv_card_modal").modal('hide');    
 }
 
 function emv_TreatSelect(origin, reader, values, display, fromrouter) {
     let result;
-
+    console.log ('--------------------------------------------------SELECT')
     switch (origin) {
         case CARD:
             let cuser = solution.get('user')    
@@ -218,7 +218,7 @@ function emv_TreatSelect(origin, reader, values, display, fromrouter) {
 }
 
 function emv_TreatInfo(origin, reader, values, display) {
-    console.log ('treatinfo')
+   // console.log ('treatinfo')
     switch (origin) {
         case CARD:
         break;
@@ -239,7 +239,7 @@ function emv_TreatInfo(origin, reader, values, display) {
 
 var card_waiting_response = 0;
 
-function emv_TreatTrace(origin, reader, values, display) {
+function emv_TreatTrace(origin, reader, values, silentmode, display) {
     let result;
     //if (card_waiting_response) {
     //    $("#emv_card_modal").modal('hide');    
@@ -257,15 +257,23 @@ function emv_TreatTrace(origin, reader, values, display) {
 //                    card_waiting_response = 1;
                     break;   
             }
-            Tester.card_write (values[2])
+            if (silentmode) {
+                reader.CTRACE += values[2]
+            } else {
+                Tester.card_write (values[2])
+            }
         break;
         case TERMINAL:
-            Tester.terminal_write (values[2])
+            if (silentmode) {            
+                reader.TTRACE += values[2]
+            } else {
+                Tester.terminal_write (values[2])
+            }
         break;
     }
 }
 
-function emv_TraceAPDU (data, dataSize, type, updateparserpanel, display) {
+function emv_TraceAPDU (data, dataSize, type, update, silentmode, display) {
     let strace = "";
     strace =  type + ':\n';
 	
@@ -276,8 +284,8 @@ function emv_TraceAPDU (data, dataSize, type, updateparserpanel, display) {
         strace += '    Body (optional) : ' + sdata  + '\n';
 		strace += '    Trailer (required) : SW1 ' + sw1 + ' SW2 ' + sw2 + '\n';
         
-        if (updateparserpanel) {
 
+        if (update) {
             let rapdu = TLVParse(sdata)[0];
             if (rapdu == null) {
                 rapdu = {}                
@@ -287,9 +295,13 @@ function emv_TraceAPDU (data, dataSize, type, updateparserpanel, display) {
             
             let rapdu_index = Tester.Reader.RAPDU.length;                
             Tester.Reader.RAPDU.push (rapdu);
-            emv_rapdu_update(rapdu, rapdu_index, sdata, emv_apdu_roottree)
-            emv_rapduselect (rapdu, rapdu_index, display)
+            emv_rapdu_update(rapdu, rapdu_index, sdata, emv_apdu_roottree, silentmode)
+
+            if (!silentmode) {            
+                emv_rapduselect (rapdu, rapdu_index, display)
+            }
         }
+
 	} else {
         let capdu = {};
         capdu.cla       = data.substring(0,2);
@@ -304,42 +316,40 @@ function emv_TraceAPDU (data, dataSize, type, updateparserpanel, display) {
         strace += '    Header (required) : CLA ' + capdu.cla + ' INS ' + capdu.ins + ' P1 ' + capdu.p1 + ' P2 ' + capdu.p2 + (lc == 0 ? '' : ' LC ' + capdu.lc) + '\n';
         strace += '    Body (optional) : ' + capdu.df  + '\n';      
           
-        if (updateparserpanel) {
+        if (update) {
             let capdu_index = Tester.Reader.CAPDU.length;            
             Tester.Reader.CAPDU.push (capdu);    
-            emv_capdu_update (capdu, capdu_index, emv_apdu_roottree)
-            emv_capduselect (capdu, capdu_index, display)
+            emv_capdu_update (capdu, capdu_index, emv_apdu_roottree, silentmode)
+            if (!silentmode) {
+                emv_capduselect (capdu, capdu_index, display)
+            }
         }
     }
 	return strace;
 }
 
-function emv_TreatAPDU(origin, reader, values, display, router) {
+function emv_TreatAPDU(origin, reader, values, silentmode, display, router) {
     
     let result, trace_hexa;
     let type    = values[0];
-
     switch (origin) {
         case CARD:
             result      = values[2]
-            trace_hexa  = emv_TraceAPDU(result, result.length, type, 0, display);
-        //    emv_TreatTrace(origin, reader, trace_hexa)
-            if (!router && !Tester.Reader.IgnoreTrace) {
-                Tester.card_write (trace_hexa)
-            }
+            trace_hexa  = emv_TraceAPDU(result, result.length, type, false, silentmode, display);
         break;
         case TERMINAL:
             result      = values[2]
-            trace_hexa  = emv_TraceAPDU(result, result.length, type, 1, display);
-            if (!router && !Tester.Reader.IgnoreTrace) {
-                Tester.terminal_write (trace_hexa)
-            }
+            trace_hexa  = emv_TraceAPDU(result, result.length, type, true, silentmode, display);
         break;
     }    
+    if (!router && !Tester.Reader.IgnoreTrace) {    
+        let apduvalues = ['TRACE', '', trace_hexa]
+        emv_TreatTrace(origin, reader, apduvalues, silentmode, display)
+    }
 }
 
 function emv_TreatTLV(origin, reader, values, display) {
-    
+    console.log ('---------------------------------------------------------------TLV');
     let result, trace_hexa;
     let type    = values[0];
     return;
@@ -358,16 +368,16 @@ function emv_TreatTLV(origin, reader, values, display) {
 
                 let tagname = gettagname (tags[i].tag);
                 if (tagname == "") {
-                    console.log ('NAME : not found');
+          //          console.log ('NAME : not found');
                 } else {
-                    console.log ('NAME : ' + gettagname (tags[i].tag))
+          //          console.log ('NAME : ' + gettagname (tags[i].tag))
                 }
 
                 asciivalue = hexa_to_ascii(tags[i].value);
                 isascii = /^[\x20-\x7F]+$/.test(asciivalue);   // ascii printable
 
                 if (isascii) {
-                    console.log ('ASCII : ' + asciivalue)
+           //         console.log ('ASCII : ' + asciivalue)
                 } else {
                     asciivalue = '';
                 }
@@ -375,7 +385,7 @@ function emv_TreatTLV(origin, reader, values, display) {
                 valuetext = gettagvalue_text(tags[i]) ;
                 
                 if (valuetext) {
-                    console.log('HTML yes')
+               //     console.log('HTML yes')
                 }  
             //    sb.table_addrow(emv_transactiontags_table, [tags[i].tag, tagname, tags[i].value, asciivalue, 'valuetext'])    
             }
@@ -385,15 +395,16 @@ function emv_TreatTLV(origin, reader, values, display) {
 }
 
 function emv_updatebarname (content, values) {
+    console.log('emv_updatebarname')
     let obj_response = JSON.parse(content);
     obj_response = obj_response.data[0];
     let vendor = obj_response.Vendor;
     let cardname = obj_response.Name;
     let id = values[0];
-    $('#' + id).html (vendor + '--' + cardname)
+    $('#' + id + ' label').html (vendor + '--' + cardname)
 }
 
-function emv_TreatTAG(origin, reader, values, display) {
+function emv_TreatTAG(origin, reader, values, silentmode, display) {
     
     let result, trace_hexa;
     let type    = values[0];
@@ -404,51 +415,59 @@ function emv_TreatTAG(origin, reader, values, display) {
         break;
         case TERMINAL:
             result      = values[2]
-            var tags    = TLVParse(result);       
-            for (var i = 0; i < tags.length; i++) {
+            let tags    = TLVParse(result);
+            if (tags.length == 0) {
+                return;
+            }
+            let stag = tags[0];       
 
-             //   console.log ('--------------------------------------- TAG : ' + tags[i].tag)
-                let isascii    = true;
-                let valuetext  = '';
-                let asciivalue = '';
+          //  console.log ('--------------------------------------- TAG : ' + stag.tag)
+            let isascii    = true;
+            let valuetext  = '';
+            let asciivalue = '';
 
-                let tagname = gettagname (tags[i].tag);
-                if (tagname == "") {
-                    console.log ('NAME : not found ' + tags[i].tag);
-                } else {
+            let tagname = gettagname (stag.tag);
+            if (tagname == "") {
+            //      console.log ('NAME : not found ' + tags[i].tag);
+            } else {
 
-               //     console.log ('NAME : ' + gettagname (tags[i].tag))
-                }
-
-                asciivalue = hexa_to_ascii(tags[i].value);
-                isascii = /^[\x20-\x7F]+$/.test(asciivalue);   // ascii printable
-
-                if (isascii) {
-              //      console.log ('ASCII : ' + asciivalue)
-                } else {
-                    asciivalue = '';
-                }
-
-                valuetext = gettagvalue_text(tags[i]) ;
-                
-                if (valuetext) {
-               //     console.log('HTML yes')
-                }  
-                var t = $('#emv_transactiontags_table').DataTable();
-                let row = t.row.add([tags[i].tag, tagname, tags[i].value, asciivalue, 'valuetext'])
-                row.draw(); 
-                let rownode = row.node();
-                $(rownode)[0].scrollIntoView();
-                if (tags[i].tag == "9F06") {
-                    emv_table_search_aidtable(tags[i].value, 'AID', emv_updatebarname, ['emv_tester_terminalbar_description'])
-                    console.log ('Application Selected')
-
-                }   
+            //     console.log ('NAME : ' + gettagname (tags[i].tag))
             }
 
+            asciivalue = hexa_to_ascii(stag.value);
+            isascii = /^[\x20-\x7F]+$/.test(asciivalue);   // ascii printable
+
+            if (isascii) {
+            //      console.log ('ASCII : ' + asciivalue)
+            } else {
+                asciivalue = '';
+            }
+
+            valuetext = gettagvalue_text(stag) ;
+            
+            if (valuetext) {
+            //     console.log('HTML yes')
+            }  
+            let row = [stag.tag, tagname, stag.value, asciivalue, 'valuetext'];
+
+            if (silentmode) {
+                reader.TAGS.push (row);
+            }
+            else {
+                let table   = $('#emv_transactiontags_table').DataTable();
+                let rownode = table.row.add(row).draw().node();    
+                if (display) {
+                    $(rownode)[0].scrollIntoView();
+                }
+            }
+            if (stag.tag == "9F06") {
+                emv_table_search_aidtable(stag.value, 'AID', emv_updatebarname, ['emv_tester_sidebarheader'])
+                //   console.log ('Application Selected')
+            }   
         break;
-    }    
-}
+    }  
+}  
+
 
 function emv_TreatStep(origin, reader, values, display, router) {
         
@@ -478,7 +497,7 @@ function emv_TreatSetTSI(origin, reader, values, display) {
 }
 
 function emv_TreatSetTVR(origin, reader, values, display) {
-    console.log ('TVR');
+   // console.log ('TVR');
     switch (origin) {
         case CARD:
         break;
@@ -573,7 +592,7 @@ function emv_TreatAUC(origin, reader, values, display) {
         break;
         case TERMINAL:
             let b = BigInt(values[2]);    
-            console.log('AUC')        
+       //     console.log('AUC')        
             emv_byte_update(emv_AUCPanel, b, display);
         break;
     }    
@@ -603,20 +622,28 @@ function emv_TreatCTQ(origin, reader, values, display) {
 }
 
 function emv_TreatCID(origin, reader, values, display) {
-        console.log ('CID ' + values[2])
+    switch (origin) {
+        case CARD:
+        break;
+        case TERMINAL:
+            let b = parseInt(values[2]);           
+            emv_cidbyte_update(emv_CIDPanel, b, display);
+        break;
+    }        
+  //      console.log ('CID ' + values[2])
 }
 
 function emv_TreatCRYPTO(origin, reader, values, display) {
-    console.log ('Crypto Type ' + values[2])
+  //  console.log ('Crypto Type ' + values[2])
 }
 
 function emv_TreatSC(origin, reader, values, display) {
-    console.log ('Service Code ' + values[2])
+  //  console.log ('Service Code ' + values[2])
 }
 
 
 function emv_TreatCVM(origin, reader, values, display) {
-    console.log ('CVM ' + values[2])
+//    console.log ('CVM ' + values[2])
 }
 
 
@@ -641,7 +668,7 @@ function ExportFileConfirm(title, callafter) {
 
 
 
-function emv_TreatCommand(origin, reader, Line, values, display, router) {
+function emv_TreatCommand(origin, reader, Line, values, silentmode, display, router) {
 
     switch (origin) {
         case CARD:
@@ -652,7 +679,6 @@ function emv_TreatCommand(origin, reader, Line, values, display, router) {
         break;
     }
     if (values[0] == "CONNECT") {
-
         emv_TreatConnect(origin, reader, values);
     } else
     if (values[0] == "LOGIN") {
@@ -671,17 +697,13 @@ function emv_TreatCommand(origin, reader, Line, values, display, router) {
         emv_TreatInfo(origin, reader, values, display);
     } else
     if (values[0] == "TRACE") {
-        emv_TreatTrace(origin, reader, values, display);
-    } else
-    if (values[0] == "TLV") {
-        emv_TreatTLV(origin, reader, values, display);
+        emv_TreatTrace(origin, reader, values, silentmode, display);
     } else
     if (values[0] == "TAG") {
-        emv_TreatTAG(origin, reader, values, display);
-
+        emv_TreatTAG(origin, reader, values, silentmode, display);
     } else    
     if (values[0] == "R-APDU" || values[0] == "C-APDU") {
-        emv_TreatAPDU(origin, reader, values, display, router);
+        emv_TreatAPDU(origin, reader, values, silentmode, display, router);
     } else
     if (values[0] == "STEP") {
         emv_TreatStep(origin, reader, values, display, router);
@@ -716,7 +738,6 @@ function emv_TreatCommand(origin, reader, Line, values, display, router) {
     if (values[0] == "TAC_Default") {
         emv_TreatTVR(origin, reader, values, display);
     } else          
-
     if (values[0] == "CTQ") {
         emv_TreatCTQ(origin, reader, values, display);
     } else         
@@ -744,13 +765,13 @@ function emv_TreatCommand(origin, reader, Line, values, display, router) {
     if (values[0] == "CVM") {
         emv_TreatCVM(origin, reader, values, display);
     }        
-
-    
 }
 
 
 function emv_TreatReception (reader, recmessage) {     
-    let fromrouter = 1;
+    let fromrouter = true;
+    let silentmode = false;
+    let display    = false;
 
     if (!recmessage) return;
     
@@ -792,6 +813,6 @@ function emv_TreatReception (reader, recmessage) {
         if (lines[j].length < 1) continue;
         var Line = lines[j];
         var values = Line.split('^');
-        emv_TreatCommand(origin, reader, Line, values, 0, fromrouter);
+        emv_TreatCommand(origin, reader, Line, values, silentmode, display, fromrouter);
     }
 }

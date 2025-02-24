@@ -77,34 +77,50 @@ function emv_byte_select (panel, id, scroll) {
         let bytepanelid = elt.closest('[role="tabpanel"]').attr('id')
         let bytetabid   = elt.closest('.sb_tabs' ).attr('id')
         $('#' + bytetabid +  ' #' + CSS.escape($('[data-bs-target="#' + bytepanelid + '"]').attr('id'))).tab('show');        
-        elt.closest ('.emvbyte')[0].scrollIntoView();  
+        elt.closest ('.bytepanel')[0].scrollIntoView();  
+        
+        let panelid = $('#' + panel.id).closest('.tester_sidebar').attr('id');   
+        let menuid = panelid.replace("sidebarpanel", "sidebar");
+        let psidebarpanel   = $('#emv_tester_sidebarpanel');         
+        trightsidebarpanel_select(psidebarpanel, menuid);        
     }    
     
     elt.html('1');    
     elt.parent().addClass('selected')
 } 
 
+
 function emv_byte_show (panel, id, show) { 
-    let scroll = true;
-
     let elt     = $('#' + panel.id + ' [byte="' + id + '"]');
-
-    if (scroll) {
-
+    console.log('show')
+    if (show) {    
+        $('#emv_tester_sidebarpanel .sb_tablerow').removeClass('marked')
+   
 
         let bytepanelid = elt.closest('[role="tabpanel"]').attr('id')        
         let bytetabid   = elt.closest('.sb_tabs' ).attr('id')
         $('#' + bytetabid +  ' #' + CSS.escape($('[data-bs-target="#' + bytepanelid + '"]').attr('id'))).tab('show');
 
-        elt.closest ('.emvbyte')[0].scrollIntoView();  
-    }    
+        let panelid = $('#' + panel.id).closest('.tester_sidebar').attr('id');   
+        let menuid = panelid.replace("sidebarpanel", "sidebar");
+        let psidebarpanel   = $('#emv_tester_sidebarpanel'); 
+        trightsidebarpanel_select(psidebarpanel, menuid);
+       // elt.closest ('.bytepanel')[0].scrollIntoView()
+        setTimeout (function essa (elt) {
+            elt.closest ('.bytepanel')[0].scrollIntoView() 
+        }, 3000, elt);  
 
- //   let eltdesc = $('#' + panel.id + ' #' + elt.attr('id').slice(0, -1) + '8');     
-    if (show) {    
         elt.parent().addClass('marked')
+
     } else {
         elt.parent().removeClass('marked')
+
+     //   let psidebarpanel   = $('#emv_tester_sidebarpanel'); 
+     //   if (!psidebarpanel.hasClass('pinned')) {    
+     //       rightsidebarpanel_hide(psidebarpanel);
+     //   }        
     }
+    event.stopPropagation();
 } 
  
 function onclick_byteflatpanel (elt, event) {
@@ -127,6 +143,160 @@ function onclick_byteflatpanel (elt, event) {
     }
 }
 
+//---------------------------------------------------------- CID TYPE PANEL -----------------------------------------------------------------
+function emv_cidbyte_init (panel) {
+
+    for (var i = 0; i < panel.struct.length; i++) {
+        for (var j = 0; j < panel.struct[i].length; j++) {
+            
+            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j).removeClass('selected')  
+
+            if (j < 4) {
+                for (var col = 0; col < 2; col++) {
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col). css ('background', 'var(--theme-hover-bg-color)')
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col). css ('color', 'var(--theme-hover-color)')
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col).attr('byte', j);    
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col).removeClass('selected')                                            
+                }
+            } else
+            if (j ==4) {
+                for (var col = 2; col < 4; col++) {
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col). css ('background', 'var(--theme-hover-bg-color)')
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col). css ('color', 'var(--theme-hover-color)')
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col).attr('byte',j); 
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col).removeClass('selected')                                               
+                }
+            } else 
+            if (j == 5 || j == 6) {
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + 4). css ('background', 'var(--theme-hover-bg-color)')
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + 4). css ('color', 'var(--theme-hover-color)')
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col).attr('byte',j);            
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col).removeClass('selected')                                    
+            } else
+            if (j > 6) {
+                for (var col = 5; col < 8; col++) {
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col). css ('background', 'var(--theme-hover-bg-color)')
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col). css ('color', 'var(--theme-hover-color)')
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col).attr('byte',j);            
+                    $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + col).removeClass('selected')                                    
+                }
+            } 
+        }
+    }
+    return panel;
+}
+
+
+function emv_cidbytepanel_init (panel) {
+    emv_cidbyte_init(panel)    
+    let index = panel.items.length -1;
+    sb.tab_select (panel.items[index], "BYTE 1")
+}
+
+function emv_cidbyte_update (panel, bytes, scroll, shift) {
+    console.log ('cid init')
+
+
+    let binarystr = '';    
+    let Shift = defined(shift) ? shift : 0;    
+    let Byte  = Shift;
+    let j = 0;
+    while (j < 8) {
+        let id = parseInt(bytes & BIT[j]);
+        (id == 0 ? binarystr += '0' : binarystr += '1');
+        j++;
+    }
+    j = 0;
+
+    if ((bytes & EMV_CRYPTO_TYPE_AAR) == EMV_CRYPTO_TYPE_AAR){
+        emv_cidbyte_select(panel, 3, scroll)
+    }	else
+    if ((bytes & EMV_CRYPTO_TYPE_ARQC) == EMV_CRYPTO_TYPE_ARQC) {
+        emv_cidbyte_select(panel, 2, scroll)
+    }	else
+    if ((bytes & EMV_CRYPTO_TYPE_TC) == EMV_CRYPTO_TYPE_TC) {
+        emv_cidbyte_select(panel, 1, scroll)
+    }	else {
+        emv_cidbyte_select(panel, 0, scroll);
+    }
+
+    if (bytes & EMV_CRYPTO_TYPE_PSS) {
+        emv_cidbyte_select(panel, 4, scroll);
+    }
+    
+    if (bytes & EMV_CRYPTO_AR) {
+        emv_cidbyte_select(panel, 6, scroll)
+    } else {
+        emv_cidbyte_select(panel, 5, scroll);
+    }
+        
+    if (bytes & EMV_CRYPTO_RFU) { 
+        emv_cidbyte_select(panel, 12, scroll);
+    }	else
+    if (bytes & EMV_CRYPTO_IAF) { 
+        emv_cidbyte_select(panel, 11, scroll);
+    }	else
+    if (bytes & EMV_CRYPTO_TLE) { 
+        emv_cidbyte_select(panel, 10, scroll);
+    }	else
+    if (bytes & EMV_CRYPTO_SNA) { 
+        emv_cidbyte_select(panel, 9, scroll);
+    } else {
+        emv_cidbyte_select(panel, 8, scroll);
+    }
+   
+    $('#' +  panel.id).attr ("value", binary_to_hexa(binarystr, panel.struct.length))     
+}
+
+function emv_cidbyte_select (panel, id, scroll) {
+    let elt =  $('#' + panel.id + ' [byte="' + id + '"]');
+    if (scroll) {
+
+        let bytepanelid = elt.closest('[role="tabpanel"]').attr('id')
+        let bytetabid   = elt.closest('.sb_tabs' ).attr('id')
+        $('#' + bytetabid +  ' #' + CSS.escape($('[data-bs-target="#' + bytepanelid + '"]').attr('id'))).tab('show');        
+        elt.closest ('.bytepanel')[0].scrollIntoView();  
+        
+        let panelid = $('#' + panel.id).closest('.tester_sidebar').attr('id');   
+        let menuid = panelid.replace("sidebarpanel", "sidebar");
+        let psidebarpanel   = $('#emv_tester_sidebarpanel');         
+        trightsidebarpanel_select(psidebarpanel, menuid);        
+    }    
+    
+ //   elt.html('1');    
+    elt.parent().addClass('selected')
+    elt.addClass('selected')
+} 
+
+function emv_cidbyte_show (panel, id, show) {
+    let elt =  $('#' + panel.id + ' [byte="' + id + '"]');
+    if (show) {
+        
+        $('#emv_tester_sidebarpanel .sb_tablerow').removeClass('marked')
+        $('#emv_tester_sidebarpanel .sb_tablecell').removeClass('marked') 
+        
+        
+        let bytepanelid = elt.closest('[role="tabpanel"]').attr('id')
+        let bytetabid   = elt.closest('.sb_tabs' ).attr('id')
+        $('#' + bytetabid +  ' #' + CSS.escape($('[data-bs-target="#' + bytepanelid + '"]').attr('id'))).tab('show');        
+        elt.closest ('.bytepanel')[0].scrollIntoView();  
+        
+        let panelid = $('#' + panel.id).closest('.tester_sidebar').attr('id');   
+        let menuid = panelid.replace("sidebarpanel", "sidebar");
+        let psidebarpanel   = $('#emv_tester_sidebarpanel');         
+        trightsidebarpanel_select(psidebarpanel, menuid);        
+        
+        elt.parent().addClass('marked')
+        elt.addClass('marked')        
+    } else {
+        
+        elt.parent().removeClass('marked')
+        elt.removeClass('marked')           
+    }   
+    
+  
+
+} 
 //---------------------------------------------------------- TERMINAL TYPE PANEL -----------------------------------------------------------------
 
 function onclick_emv_tt(elt, event) {
@@ -375,7 +545,6 @@ function C(e) {
 
 function g(tag) {
     if (!tag.value ) {
-        console.log ('rapdu return error sw1: ' + tag.sw1 + ', sw2: ' + tag.sw2)
         return;
     }
     let e = tag.value;
@@ -606,7 +775,7 @@ function getcommandclassname(e) {
         "1E": "APPLICATION_BLOCK",
         "18": "APPLICATION_UNBLOCK",
         "16": "CARD_BLOCK",
-        "AE": "GENERATE_APPLICATION_ CRYPTOGRAM",
+        "AE": "GENERATE_APPLICATION_CRYPTOGRAM",
         "A8": "GET_PROCESSING_OPTIONS",
         "24": "PERSONAL_IDENTIFICATION_NUMBER",
     }[e]) || ""        
@@ -1302,7 +1471,7 @@ function GetTVRControl(t, tag) {
     let content = sb.render(panel)
 
 
-    emv_byte_update(panel, hexaint) 
+    emv_byte_update(panel, BigInt(hexaint)) 
     return content;    
 /*    
     byte1 = GetBitmapControl(t.substr(0, 2), ["Offline data authentication was not performed", "SDA failed", "ICC data missing", "Card appears on terminal exception file", "DDA failed", "CDA failed", "SDA selected", "RFU"]),
@@ -1353,7 +1522,7 @@ function GetAUCControl(t) {
     let panel = emv_bytepanel('R_AUC', '9F07', emv_AUC, {withbar:false, editable:false})
     let content = sb.render(panel)
 
-    emv_byte_update(panel, haxaint) 
+    emv_byte_update(panel, BigInt(haxaint))
     return content;
 /*        
     byte1 = GetBitmapControl(t.substr(0, 2), ["Valid for domestic cash transactions", "Valid for international cash transactions", "Valid for domestic goods", "Valid for international goods", "Valid for domestic services", "Valid for international services", "Valid at ATMs", "Valid at terminals other than ATMs"]),
@@ -1372,6 +1541,7 @@ function GetAUCControl(t) {
         */
 }
 function getCVRuleControl(t, e, a) {
+    console.log ("getcvrule")
     first = 63 & parseInt(t.substr(0, 2), 16),
     action = 64 & parseInt(t.substr(0, 2), 16) ? "Apply succeeding CV Rule" : "Fail cardholder verification",
     second = parseInt(t.substr(2, 2), 16);
@@ -2169,6 +2339,212 @@ function decimalize(t) {
 }
 
 
-
+function getapdu_error (e) {
+    return errordescription = {
+    "6200" :	    {type:'W',        description:	    'No information given (NV-Ram not changed)'},
+    "6201" :	    {type:'W',        description:	    'NV-Ram not changed 1.'},
+    "6281" :	{type:'W',        description:	    'Part of returned data may be corrupted'},
+    "6282" :	{type:'W',        description:	    'End of file/record reached before reading Le bytes'},
+    "6283" :	{type:'W',        description:	    'Selected file invalidated'},
+    "6284" :	{type:'W',        description:	    'Selected file is not valid. FCI not formated according to ISO'},
+    "6285" :	{type:'W',        description:	    'No input data available from a sensor on the card. No Purse Engine enslaved for R3bc'},
+    "62A2" :	{type:'W',        description:	    'Wrong R-MAC'},
+    "62A4" :	{type:'W',        description:	    'Card locked (during reset( ))'},
+    "62CX" :	{type:'W',        description:	    'Counter with value x (command dependent)'},
+    "62F1" :	{type:'W',        description:	    'Wrong C-MAC'},
+    "62F3" :	{type:'W',        description:	    'Internal reset'},
+    "62F5" :	{type:'W',        description:	    'Default agent locked'},
+    "62F7" :	{type:'W',        description:	    'Cardholder locked'},
+    "62F8" :	{type:'W',        description:	    'Basement is current agent'},
+    "62F9" :	{type:'W',        description:	    'CALC Key Set not unblocked'},
+    "6300" :	    {type:'W',        description:	    'No information given (NV-Ram changed)'},
+    "6381" :	{type:'W',        description:	    'File filled up by the last write. Loading/updating is not allowed.'},
+    "6382" :	{type:'W',        description:	    'Card key not supported.'},
+    "6383" :	{type:'W',        description:	    'Reader key not supported.'},
+    "6384" :	{type:'W',        description:	    'Plaintext transmission not supported.'},
+    "6385" :	{type:'W',        description:	    'Secured transmission not supported.'},
+    "6386" :	{type:'W',        description:	    'Volatile memory is not available.'},
+    "6387" :	{type:'W',        description:	    'Non-volatile memory is not available.'},
+    "6388" :	{type:'W',        description:	    'Key number not valid.'},
+    "6389" :	{type:'W',        description:	    'Key length is not correct.'},
+    "63C0" :	{type:'W',        description:	    'Verify fail, no try left.'},
+    "63C1" :	{type:'W',        description:	    'Verify fail, 1 try left.'},
+    "63C2" :	{type:'W',        description:	    'Verify fail, 2 tries left.'},
+    "63C3" :	{type:'W',        description:	    'Verify fail, 3 tries left.'},
+    "63CX" :	{type:'W',        description:	    'The counter has reached the value \'x\' (0 = x = 15) (command dependent).'},
+    "63F1" :	{type:'W',        description:	    'More data expected.'},
+    "63F2" :	{type:'W',        description:	    'More data expected and proactive command pending.'},
+    "6400" :	    {type:'E',        description:	    'No information given (NV-Ram not changed)'},
+    "6401" :	    {type:'E',        description:	    'Command timeout. Immediate response required by the card.'},
+    "6500" :	    {type:'E',        description:	    'No information given'},
+    "6501" :	    {type:'E',        description:	    'Write error. Memory failure. There have been problems in writing or reading the EEPROM. Other hardware problems may also bring this error.'},
+    "6581" :	{type:'E',        description:	    'Memory failure'},
+    "6600" :     {type:'S',        description:	    'Error while receiving (timeout)'},
+    "6601" :     {type:'S',        description:	    'Error while receiving (character parity error)'},
+    "6602" :     {type:'S',        description:	    'Wrong checksum'},
+    "6603" :     {type:'S',        description:	    'The current DF file without FCI'},
+    "6604" :     {type:'S',        description:	    'No SF or KF under the current DF'},
+    "6669" :	{type:'S',        description:	    'Incorrect Encryption/Decryption Padding'},
+    "6700" :	    {type:'E',        description:	    'Wrong length'},
+    "6800" :	    {type:'E',        description:	    'No information given (The request function is not supported by the card)'},
+    "6881" :	{type:'E',        description:	    'Logical channel not supported'},
+    "6882" :	{type:'E',        description:	    'Secure messaging not supported'},
+    "6883" :	{type:'E',        description:	    'Last command of the chain expected'},
+    "6884" :	{type:'E',        description:	    'Command chaining not supported'},
+    "6900" :	    {type:'E',        description:	    'No information given (Command not allowed)'},
+    "6901" :	    {type:'E',        description:	    'Command not accepted (inactive state)'},
+    "6981" :	{type:'E',        description:	    'Command incompatible with file structure'},
+    "6982" :	{type:'E',        description:	    'Security condition not satisfied.'},
+    "6983" :	{type:'E',        description:	    'Authentication method blocked'},
+    "6984" :	{type:'E',        description:	    'Referenced data reversibly blocked (invalidated)'},
+    "6985" :	{type:'E',        description:	    'Conditions of use not satisfied.'},
+    "6986" :	{type:'E',        description:	    'Command not allowed (no current EF)'},
+    "6987" :	{type:'E',        description:	    'Expected secure messaging (SM) object missing'},
+    "6988" :	{type:'E',        description:	    'Incorrect secure messaging (SM) data object'},
+    "6996" :	{type:'E',        description:	    'Data must be updated again'},
+    "698D" :	{type:'	',        description:       'Reserved'},
+    "69E1" :	{type:'E',        description:	    'POL1 of the currently Enabled Profile prevents this action.'},
+    "69F0" :	{type:'E',        description:	    'Permission Denied'},
+    "69F1" :	{type:'E',        description:	    'Permission Denied - Missing Privilege'},
+    "6000" :	    {type:'E',        description:	    'No information given (Bytes P1 and/or P2 are incorrect)'},
+    "6A80" :	{type:'E',        description:	    'The parameters in the data field are incorrect.'},
+    "6A81" :	{type:'E',        description:	    'Function not supported'},
+    "6A82" :	{type:'E',        description:	    'File not found'},
+    "6A83" :	{type:'E',        description:	    'Record not found'},
+    "6A84" :	{type:'E',        description:	    'There is insufficient memory space in record or file'},
+    "6A85" :	{type:'E',        description:	    'Lc inconsistent with TLV structure'},
+    "6A86" :	{type:'E',        description:	    'Incorrect P1 or P2 parameter.'},
+    "6A87" :	{type:'E',        description:	    'Lc inconsistent with P1-P2'},
+    "6A88" :	{type:'E',        description:	    'Referenced data not found'},
+    "6A89" :	{type:'E',        description:	    'File already exists'},
+    "6A8A" :	{type:'E',        description:	    'DF name already exists.'},
+    "6AF0" :	{type:'E',        description:	    'Wrong parameter value'},
+    "6B00" :	    {type:'E',        description:	    'Wrong parameter(s) P1-P2'},
+    "6C00" :	    {type:'E',        description:	    'Incorrect P3 length.'},
+    "6D00" :	    {type:'E',        description:	    'Instruction code not supported or invalid'},
+    "6E00" :	    {type:'E',        description:	    'Class not supported'},
+    "6F00" :	    {type:'E',        description:	    'Command aborted - more exact diagnosis not possible (e.g., operating system error).'},
+    "6FFF" :	{type:'E',        description:	    'Card dead (overuse, ?)'},
+    "9000" :	    {type:'I',        description:	    'Command successfully executed (OK).'},
+    "9004" :	    {type:'W',        description:	    'PIN not succesfully verified, 3 or more PIN tries left'},
+    "9008" :	    {type:'	',        description:       'Key/file not found'},
+    "9080" :	{type:'W',        description:	    'Unblock Try Counter has reached zero'},
+    "9100" :	    {type:'	',         description:      'OK'},
+    "9101" :	    {type:'	',         description:      'States.activity, States.lock Status or States.lockable has wrong value'},
+    "9102" :	    {type:'	',         description:      'Transaction number reached its limit'},
+    "9140" :	{type:'	',         description:      'Invalid key number specified'},
+    "910C" :	{type:'	',         description:      'No changes'},
+    "910E" :	{type:'	',         description:      'Insufficient NV-Memory to complete command'},
+    "911C" :	{type:'	',         description:      'Command code not supported'},
+    "911E" :	{type:'	',         description:      'CRC or MAC does not match data'},
+    "917E" :	{type:'	',         description:      'Length of command string invalid'},
+    "919D" :	{type:'	',         description:      'Not allow the requested command'},
+    "919E" :	{type:'	',         description:      'Value of the parameter invalid'},
+    "91A0" :	{type:'	',         description:      'Requested AID not present on PICC'},
+    "91A1" :	{type:'	',         description:      'Unrecoverable error within application'},
+    "91AE" :	{type:'	',         description:      'Authentication status does not allow the requested command'},
+    "91AF" :	{type:'	',         description:      'Additional data frame is expected to be sent'},
+    "91BE" :	{type:'	',         description:      'Out of boundary'},
+    "91C1" :	{type:'	',         description:      'Unrecoverable error within PICC'},
+    "91CA" :	{type:'	',         description:      'Previous Command was not fully completed'},
+    "91CD" :	{type:'	',         description:      'PICC was disabled by an unrecoverable error'},
+    "91CE" :	{type:'	',         description:      'Number of Applications limited to 28'},
+    "91DE" :	{type:'	',         description:      'File or application already exists'},
+    "91EE" :	{type:'	',         description:      'Could not complete NV-write operation due to loss of power'},
+    "91F0" :	{type:'	',         description:      'Specified file number does not exist'},
+    "91F1" :	{type:'	',         description:      'Unrecoverable error within file'},
+    "9210" :	{type:'E',         description:	    'Insufficient memory. No more storage available.'},
+    "9240" :	{type:'E',         description:	    'Writing to EEPROM not successful.'},
+    "920x" :	{type:'I',         description:	    'Writing to EEPROM successful after \'x\' attempts.'},
+    "9301" :	    {type:'	',         description:      'Integrity error'},
+    "9302" :	    {type:'	',         description:      'Candidate S2 invalid'},
+    "9303" :	    {type:'E',         description:	    'Application is permanently locked'},
+    "9400" :	    {type:'E',         description:	    'No EF selected.'},
+    "9401" :	    {type:'	',        description:       'Candidate currency code does not match purse currency'},
+    "9402" :	    {type:'	',        description:       'Candidate amount too high'},
+    "9402" :	    {type:'E',        description:	    'Address range exceeded.'},
+    "9403" :	    {type:'	',        description:       'Candidate amount too low'},
+    "9404" :	    {type:'E',        description:	    'FID not found, record not found or comparison pattern not found.'},
+    "9405" :	    {type:'	',        description:       'Problems in the data field'},
+    "9406" :	    {type:'E',        description:	    'Required MAC unavailable'},
+    "9407" :	    {type:'	',        description:       'Bad currency : purse engine has no slot with R3bc currency'},
+    "9408" :	    {type:'	',        description:       'R3bc currency not supported in purse engine'},
+    "9408" :	    {type:'E',        description:	    'Selected file type does not match command.'},
+    "9580" :	{type:'	',        description:       'Bad sequence'},
+    "9681" :	{type:'	',        description:       'Slave not found'},
+    "9700" :	    {type:'	',        description:       'PIN blocked and Unblock Try Counter is 1 or 2'},
+    "9702" :	    {type:'	',        description:       'Main keys are blocked'},
+    "9704" :	    {type:'	',        description:       'PIN not succesfully verified, 3 or more PIN tries left'},
+    "9784" :	{type:'	',        description:       'Base key'},
+    "9785" :	{type:'	',        description:       'Limit exceeded - C-MAC key'},
+    "9786" :	{type:'	',        description:       'SM error - Limit exceeded - R-MAC key'},
+    "9787" :	{type:'	',        description:       'Limit exceeded - sequence counter'},
+    "9788" :	{type:'	',        description:       'Limit exceeded - R-MAC length'},
+    "9789" :	{type:'	',        description:       'Service not available'},
+    "9802" :	    {type:'E',        description:	    'No PIN defined.'},
+    "9804" :	    {type:'E',        description:	    'Access conditions not satisfied, authentication failed.'},
+    "9835" :	{type:'E',        description:	    'ASK RANDOM or GIVE RANDOM not executed.'},
+    "9840" :	{type:'E',        description:	    'PIN verification not successful.'},
+    "9850" :	{type:'E',        description:	    'INCREASE or DECREASE could not be executed because a limit has been reached.'},
+    "9862" :	{type:'E',        description:	    'Authentication Error, application specific (incorrect MAC)'},
+    "9900" :	    {type:'W',        description:	    '1 PIN try left'},
+    "9904" :	    {type:'E',        description:	    'PIN not succesfully verified, 1 PIN try left'},
+    "9985" :	{type:'E',        description:	    'Wrong status - Cardholder lock'},
+    "9986" :	{type:'E',        description:	    'Missing privilege'},
+    "9987" :	{type:'E',        description:	    'PIN is not installed'},
+    "9988" :	{type:'E',        description:	    'Wrong status - R-MAC state'},
+    "9A00" :	    {type:'E',        description:	    '2 PIN try left'},
+    "9A04" :	    {type:'E',        description:	    'PIN not succesfully verified, 2 PIN try left'},
+    "9A71" :	{type:'E',        description:	    'Wrong parameter value - Double agent AID'},
+    "9A72" :	{type:'E',        description:	    'Wrong parameter value - Double agent Type'},
+    "9D05" :	    {type:'E',        description:	    'Incorrect certificate type'},
+    "9D07" :	    {type:'E',        description:	    'Incorrect session data size'},
+    "9D08" :	    {type:'E',        description:	    'Incorrect DIR file record size'},
+    "9D09" :	    {type:'E',        description:	    'Incorrect FCI record size'},
+    "9D10" :	{type:'E',        description:	    'Insufficient memory to load application'},
+    "9D11" :	{type:'E',        description:	    'Invalid AID'},
+    "9D12" :	{type:'E',        description:	    'Duplicate AID'},
+    "9D13" :	{type:'E',        description:	    'Application previously loaded'},
+    "9D14" :	{type:'E',        description:	    'Application history list full'},
+    "9D15" :	{type:'E',        description:	    'Application not open'},
+    "9D17" :	{type:'E',        description:	    'Invalid offset'},
+    "9D18" :	{type:'E',        description:	    'Application already loaded'},
+    "9D19" :	{type:'E',        description:	    'Invalid certificate'},
+    "9D20" :	{type:'E',        description:	    'Application not loaded'},
+    "9D21" :	{type:'E',        description:	    'Invalid Open command data length'},
+    "9D30" :	{type:'E',        description:	    'Check data parameter is incorrect (invalid start address)'},
+    "9D31" :	{type:'E',        description:	    'Check data parameter is incorrect (invalid length)'},
+    "9D32" :	{type:'E',        description:	    'Check data parameter is incorrect (illegal memory check area)'},
+    "9D40" :	{type:'E',        description:	    'Invalid MSM Controls ciphertext'},
+    "9D41" :	{type:'E',        description:	    'MSM controls already set'},
+    "9D42" :	{type:'E',        description:	    'Set MSM Controls data length less than 2 bytes'},
+    "9D43" :	{type:'E',        description:	    'Invalid MSM Controls data length'},
+    "9D44" :	{type:'E',        description:	    'Excess MSM Controls ciphertext'},
+    "9D45" :	{type:'E',        description:	    'Verification of MSM Controls data failed'},
+    "9D50" :	{type:'E',        description:	    'Invalid MCD Issuer production ID'},
+    "9D51" :	{type:'E',        description:	    'Invalid MCD Issuer ID'},
+    "9D52" :	{type:'E',        description:	    'Invalid set MSM controls data date'},
+    "9D53" :	{type:'E',        description:	    'Invalid MCD number'},
+    "9D54" :	{type:'E',        description:	    'Reserved field error'},
+    "9D55" :	{type:'E',        description:	    'Reserved field error'},
+    "9D56" :	{type:'E',        description:	    'Reserved field error'},
+    "9D57" :	{type:'E',        description:	    'Reserved field error'},
+    "9D60" :	{type:'E',        description:	    'MAC verification failed'},
+    "9D61" :	{type:'E',        description:	    'Maximum number of unblocks reached'},
+    "9D62" :	{type:'E',        description:	    'Card was not blocked'},
+    "9D63" :	{type:'E',        description:	    'Crypto functions not available'},
+    "9D64" :	{type:'E',        description:	    'No application loaded'},
+    "9D0A" :	{type:'E',        description:	    'Incorrect code size'},
+    "9D1A" :	{type:'E',        description:	    'Invalid signature'},
+    "9D1B" :	{type:'E',        description:	    'Invalid KTU'},
+    "9D1D" :	{type:'E',        description:	    'MSM controls not set'},
+    "9D1E" :	{type:'E',        description:	    'Application signature does not exist'},
+    "9D1F" :	{type:'E',        description:	    'KTU does not exist'},
+    "9E00" :	    {type:'E',        description:	    'PIN not installed'},
+    "9E04" :	    {type:'E',        description:	    'PIN not succesfully verified, PIN not installed'},
+    "9F00" :	    {type:'E',        description:	    'PIN blocked and Unblock Try Counter is 3'},
+    "9F04" :	    {type:'E',        description:	    'PIN not succesfully verified, PIN blocked and Unblock Try Counter is 3'},
+    }[e] || ''
+}
 
 

@@ -119,6 +119,15 @@
     color: unset;
  }
 
+ .emvbyte td.selected {
+    color : var(--theme-emv-select) !important;
+    background: var(--theme-select-bg-color)!important;
+ }
+
+ .emvbyte td.marked {
+    color: black !important;
+    background: var(--theme-emv-select) !important;
+ }
 /*---------------------------------------------------------------- PROCESS DIAGRAM -----------------------------------------------------------*/
 /* All parameters */
 :root {
@@ -258,9 +267,6 @@
 
 /*--------------------------------------------------------------------------  STEPS & PRESENTATION CLASS STEP PANEL --------------------------------------------------------------------*/
 
-#emv_testerright_panel {
-
-}
 
 #emv_presentation_steps_bar .sb_link {
     width: 100%;;
@@ -274,7 +280,7 @@
 
 #emv_presentation_panel {
     padding-right: 3px;    
-    border:1px solid var(--theme-border-color);
+   /* border:1px solid var(--theme-border-color);"/
 }
 
 #emv_presentationpanel .card {
@@ -361,7 +367,7 @@
 }
 
 #emv_presentation_steppanels .related-primary.Info {
-    color:  rgb(255, 182, 132);
+    color:  var(--theme-platform-color);
     align-items: flex-start;
 }
 
@@ -841,6 +847,12 @@
 #emv_tester_cardbyteinfobar {
    /* background: var(--theme-platform-color); */
 }
+
+#emv_tester_sidebarpanel .emvbyte td:nth-child(9) {
+    width: 220px !important;
+    max-width: 220px;
+}
+
 /*----------------------------------------------------------------------------- ACCEPTOR SECTION -------------------------------------------------------------------------------*/
 
 #emv_acceptor_section {
@@ -925,3 +937,66 @@
 #102  {
     color:blue;
 }
+
+#emv_tester_sidebarheader label {
+    color:  var(--theme-platform-color);
+}
+
+/*----------------------------------------------------------------------------- RIGHT SIDE PANEL -------------------------------------------------------------------------------*/
+
+#emv_tester_maintop {
+    position:relative;
+}
+
+.emv_tester_sidebarpanel {
+
+    font-size: var(--theme-sfont-size);
+    position: absolute;
+    inset: -1px 0px 0px calc(100% - 50px);
+    transition: transform .3s cubic-bezier(0,0,.3,1);
+    border-radius: 10px 0px 0px 10px;
+    height: 100%;
+    width: 450px;
+    padding-left: 13px;
+    padding-right: 3px;
+    margin: 0px 0px 0px 0px;
+    border-top: 1px solid var(--theme-border-color);
+    border-bottom: 1px solid var(--theme-border-color);
+    color: var(--theme-color);
+    background: var(--theme-main-bg-color); 
+    z-index: 9;
+}
+
+.emv_tester_sidebarpanel.toggled {
+    display: flex;    
+    transition: transform .3s cubic-bezier(0,0,.3,1);
+    transform: translate(-450px, 0px);   
+}
+
+
+.emv_tester_sidebarpanel.pinned {
+    position: static;    
+    display: none;    
+    width: 450px;
+    padding-left: 3px;   
+    padding-right: 3px;       
+    overflow: hidden;  
+    flex-direction: column;
+    flex:none;  
+    height: unset;
+    border-radius: unset;
+    border-top: none;
+    border-bottom: none;    
+}
+
+.emv_tester_sidebarpanel.pinned .sb_rightsidebarheader {
+    border-radius:0px;
+    margin: -1px 0px 0px -4px;    
+}
+
+.emv_tester_sidebarpanel.toggled.pinned {
+    display: flex;    
+    transition: none;
+    transform: none;    
+}
+

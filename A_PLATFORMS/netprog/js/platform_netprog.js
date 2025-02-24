@@ -180,12 +180,12 @@ function netprog_solution () {
             for (var i = 0; i < arraystructure.length; i++) {
                 let projectname = arraystructure[i].name;
                 let projectpath = arraystructure[i].path;
-                if (this.userid == '0' && projectname != "Demo_Project") continue;
+                if (values[0].userid == '0' && projectname != "Demo_Project") continue;
                 solution.netprog_Projects.push(new npproject(NETPROG_PLATFORM_PNAME, projectname, projectpath));
             } 
         }
 
-        url_submit ('POST', url, param /*object {}*/, async, callback, [] , interfacecallback, par);
+        url_submit ('POST', url, param /*object {}*/, async, callback, [solution.user] , interfacecallback, par);
 
     }
 
@@ -1197,7 +1197,7 @@ function oncontextmenu_netprog_treenode (elt, event) {
         par : entity,
 
         onselect:function (elt, par) {
-            console.log ('select')
+       
             let entity = this.par;    
             switch (parseInt(elt.id)) {
                 case MENU_SITEVIEW_LAUNCH_ID :

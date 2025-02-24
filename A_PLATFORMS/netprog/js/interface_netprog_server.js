@@ -7,7 +7,7 @@ var netprog_server_localfilegroup = {
     items:
         [ 
             {id: 'exportlocal_serverjsscript',    icon: icon_export,      class: 'sb_right', item : 'Local Export', type:'link',  title: 'Save script on your local machine',   events: {onclick:'onclick_netprog_server_group(this, event)'}},           
-            {id: 'uploadserver_serverjscript',     icon: icon_download,    class: 'sb_right', item : 'Local Import', type:'link',  title: 'Load script from your local machine',  events: {onclick:'onclick_netprog_server_group(this, event)'}},  
+            {id: 'uploadlocal_serverjscript',     icon: icon_download,    class: 'sb_right', item : 'Local Import', type:'link',  title: 'Load script from your local machine',  events: {onclick:'onclick_netprog_server_group(this, event)'}},  
         ]    
 }
 
