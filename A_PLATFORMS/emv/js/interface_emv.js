@@ -105,7 +105,6 @@ var emv_toppanel = {
     ],
 }
 
-
 var emv_bottompanel = {
     id : 'emv_bottompanel',
     type: 'panel',

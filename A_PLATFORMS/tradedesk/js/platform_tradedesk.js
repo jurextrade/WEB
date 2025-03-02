@@ -155,7 +155,7 @@ function tradedesk_solution (pname) {
 
             }
         }
-        ServersPanel_Update();  
+        PlatformsPanel_Update();  
     
         sb.tree_additems ('tree_terminals', Menu_MT4Terminals);
     
@@ -3756,13 +3756,13 @@ function FramePanel(url) {
 
 //----------------------------------------------------------- SOCKET RELATED -------------------------------------------------------------
 
-function tradedesk_ServerPanel () {
+function tradedesk_PlatformsPanel () {
     var content = '';
     
     content = 
 '   <div class="sb_f_style_h6">Servers</div>' +
-'   <div id="serverstable" class="">'+       		            
-'       <table id="serverstable" class="sb_table table" >' +
+'   <div id="platformspanel" class="">'+       		            
+'       <table id="platformstable" class="sb_table table" >' +
 '           <thead>' +
 '               <tr>' +
 '                   <th title="" style="">Terminal</th>' +
@@ -3821,7 +3821,7 @@ function OnClickApplyServers (elt) {
     }
 }
 
-function ServersPanel_Update () {
+function PlatformsPanel_Update () {
     let tcontent = '';
     for (var i = 0; i < solution.Terminals.length; i++) {
         var terminal = solution.Terminals[i];    

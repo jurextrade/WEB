@@ -15,39 +15,14 @@ var trackertable = (id =>  {return {
 }})
 
 
-var trackerbar = {
-    id : 'trackerbar', 
-    type: 'bar',
-    class:'sb_transform',
-    items: 
-        [
-            { 
-                type: 'group',                        
-                items :
-                    [ 
-                        {id: 'trackerbar_addsignal', item: 'Select Signal', icon: icon_plus,  type:'button',  title: 'Select Signal',                   events: {onclick: 'onclick_tracker_selectindicator(this, event)'}},                 
-                        {id: 'trackerbar_addindicator',       item: 'Add Indicator', icon: icon_new,   type:'button',  title: 'Add Signal From new Indicator',   events: {onclick: "onclick_tracker_addindicator(this, event)"}}                 
-                    ]
-            },
-            { 
-                type: 'group',   
-                position: 'sb_end',                                     
-                items :
-                    [ 
-                        {id: 'trackerbar_reset',    icon: icon_trash,   type:'button',  title: 'clear content',  events: {onclick:'onclick_tracker_reset(this, event)'}},         
-                        {id: 'toolspanelheader_pin',  type: 'button',   toggle: true, class: '',   icon: sb_icons['icon_pin'],  events: {onclick: "onclick_toolspanelheaderpin(this, event)"}, title: 'Pin Window'},                 
-                    ]
-            }
 
-        ]
-} 
 
 var trackerpanel  = (id =>  {return {
     id: 'trackerpanel_' + id,
     type: 'panel',  
     class: 'sb_panel trackerpanel sb_main',
     items: [
-        trackerbar,        
+     //   trackerbar,        
         trackertable(id),
     ],
 }})

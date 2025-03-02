@@ -79,10 +79,12 @@ function solution_module_init (placement, initialisation) {
         let module = modules[i];
 //        console.log ('configuration modules ' + module.pname);
         let sattributes = {};
+        let load = 'dynamic';
         let visible    = 'sb_none';
 
         if  (module.active) {
             sattributes.checked = true
+            load = solution.dynamic ? 'dynamic' : 'static';
             visible = '';
         }
         
@@ -90,7 +92,7 @@ function solution_module_init (placement, initialisation) {
                 {id: 'modulename_' +  module.pname ,      type: 'label',  item: module.name ? module.name : module.pname, title: 'module name'},
                 {id: 'moduletype_' +  module.pname ,      type: 'label',  item: module.type,   title: 'module type'},
                 {id: 'moduleplacement_' +  module.pname , type: 'label',  item: placement,     title: 'module placement'},
-                {id: 'moduleload_' +  module.pname ,      type: 'label',  item: 'dynamic',     title: 'module load'},
+                {id: 'moduleload_' +  module.pname ,      type: 'label',  item: load,     title: 'module load'},
                 {id: 'moduleactive_' +  module.pname ,    type: 'switch', item: '',  attributes: sattributes,  events: {onclick:'onclick_moduleactive(this, event)'}},
                 {id: 'moduleloaded_' +  module.pname ,    type: 'link',   class: visible, icon: sb_icons['icon_check']}
 
@@ -136,15 +138,15 @@ function solution_module_init (placement, initialisation) {
                 if (solution.Get(solution.modules[placement], 'pname',  item)[0]) {
                     table[index][3].item = 'static/dynamic'    
                     table[index][5].class = ''    
-       //             console.log ('sb_element exist and loaded dynamically in ' + placement + ' program ' + item);
+    //             console.log ('sb_element exist and loaded dynamically in ' + placement + ' program ' + item);
 
                 } else {
                     table[index][3].item = 'static'    
                     table[index][5].class = ''    
                     table[index][4].attributes = {disabled: true}    
-         //           console.log ('sb_element exist and loaded statically in ' + placement + ' ' +  item);
+        //           console.log ('sb_element exist and loaded statically in ' + placement + ' ' +  item);
                 } 
-            }
+            } 
         }
     }
 
@@ -264,27 +266,7 @@ function onclick_solution_settings (event) {
     onclick_rightsidebarmenu('rightsidebar_solution')
 }
 
-function solution_serverpanel () {
-    var content = '';
-    
-    content = 
-    '<div id="serverstable" class="">'+       		            
-    '   <h6 class="sb_sidebarheader">NetProg Server</h6>' +
-    '   <div class="sb_formgroup">' +
-    '       <label>Adress</label>' +
-    '       <input id ="c" class="form-control" value=""/>' +
-    '   </div>' +     
-    '   <div class="sb_formgroup">' +
-    '       <label>Port</label>' +
-    '       <input id ="netprogserverport" class="form-control" value=""/>' +
-    '   </div>' +   
-    '   <div class="sb_buttongroup">' +
-    '       <button class="sb_button"  type="button" onclick="onclick_ResetNetProgServer(this, event)">Reset</button>' +        
-    '       <button class="sb_button"  type="button" onclick="onclick_ApplyNetProgServer(this, event)">Apply</button>' +
-    '   </div>' +      
-    '</div>';
-    return content
-}
+
 
 function solution_labelpanel () {
     var content = '';

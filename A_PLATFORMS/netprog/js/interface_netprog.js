@@ -473,16 +473,33 @@ var netprog_boxmanagerpanel = {
 
 //--------------------------
 
-var netprog_projects_headerpanel = {
-    id: 'netprog_projects_headerpanel',
+
+var netprog_projects_headerbar = {
+    id: 'netprog_projects_headerbar',
     type: 'bar',
-    class: 'sb_sidebarheader ',    
+    class: 'sb_sidebarheader ',
+    style:'z-index:10',            
     items : 
     [
         {id: '',                type: 'link',   item: 'Site Manager',  class: 'sb_sidebarheadertitle', events: {onclick: 'onclick_netprog_header(this, event)'}},                           
+        {id: 'label_server',    item: 'Netprog Server', type: 'link',  icon: icon_connection, events: {onclick: "onclick_button_server (this, event)"}, title: 'NETPROG SERVER'},
+        {id: 'button_server',   type: 'button', class: 'sb_roundbutton',   events: {onclick: "onclick_button_server (this, event)"}, title: 'NETPROG SERVER'},
         {id: 'header_load',     type: 'link',   class: 'sb_sidebarheaderinfo',   icon:  icon_file,  events: {onclick: "onclick_jsonloadfile(this, event)"}, title: 'link to documentation'},                 
     ]
 }
+
+var netprog_projects_headerpanel = {
+    id: 'netprog_projects_headerpanel',
+    type : 'panel',
+    class: 'sb_column',    
+    style:'position:relative',      
+    items : 
+    [
+        netprog_projects_headerbar,
+        modalserverpanel('netprog'),
+    ]
+}
+
 
 var netprog_projects_sidepanel = {
     id: 'netprog_projects_sidepanel',

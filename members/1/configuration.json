@@ -155,7 +155,9 @@
               "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js",
               "/C_TOOLS/js/script_aceeditor.js",
               "/C_TOOLS/js/ace/theme-sc_on_dark.js",
+              "/C_TOOLS/js/ace/mode-lisp.js",
               "/C_TOOLS/js/beautify.min.js",
+              "/js/progress.js",
               "/B_COMMON/js/interface_tracker.js",
               "/B_COMMON/js/platform_tracker.js",
               "/B_COMMON/js/interface_marker.js",
@@ -335,7 +337,7 @@
             "market",
             "news"
           ],
-          "active": false,
+          "active": true,
           "library": {
             "stylesheet": [
               "/C_TOOLS/css/quill.snow.css",

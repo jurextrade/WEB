@@ -46,8 +46,8 @@ var market_newsgroup = {
         ]
 }   
 
-var market_bar = {
-    id : 'market_bar',
+var marketbar = {
+    id : 'marketbar',
     type : 'bar',
     class: 'sb_bottom',
     items: [
@@ -57,7 +57,7 @@ var market_bar = {
         market_newsgroup,
         {id: 'market_forexgroup',  class: 'sb_row sb_marginleft',  type: 'ihtml',   content: 'forexmarket_panel()'},   
         {id: 'USMARKETS',    class: 'marketschedule', type: 'text', disabled: true},   
-        {id: 'slide',    type:'control',  class : 'box-btn-slide rotate-180',       events: {onclick: "onclick_tickertogglepanel (this, event)"}, title: 'Market Snapshot'},  
+        {id: 'slide',    type:'control',  class : 'box-btn-slide rotate-180',    style:"display:none",    events: {onclick: "onclick_tickertogglepanel (this, event)"}, title: 'Market Snapshot'},  
     ]
 }
 
@@ -85,10 +85,72 @@ var market_snapshot = {
 
 }
 
+var markergroup = {
+    id: 'markergroup',
+    type: 'group',         
+    direction:'row',
+    items : [
+        {id: 'markers',     item: 'Markers',        type: 'button',   icon: icon_sort, events: {onclick: 'onclick_markers(this, event)'},      title: 'Select Existing Marker'},
+        {id: 'clearmarkers',item: 'Clear Markers',  type: 'button',  events: {onclick: 'onclick_clearmarkers(this, event)'}, title: 'Clear Markers'}, 
+        ]
+}
+
+var trackerbar = {
+    id : 'trackerbar', 
+    type: 'bar',
+    class:'sb_transform',
+    items: 
+        [
+          //  { 
+          //      type: 'group',                        
+          //      items :
+          //          [ 
+          //              {id: 'trackerbar_addsignal', item: 'Select Signal', icon: icon_plus,  type:'button',  title: 'Select Signal',                   events: {onclick: 'onclick_tracker_selectindicator(this, event)'}},                 
+          //              {id: 'trackerbar_addindicator',       item: 'Add Indicator', icon: icon_new,   type:'button',  title: 'Add Signal From new Indicator',   events: {onclick: "onclick_tracker_addindicator(this, event)"}}                 
+          //          ]
+          //  },
+            { 
+                type: 'group',   
+                position: 'sb_end',                                     
+                items :
+                    [ 
+                        {id: 'trackerbar_reset',    icon: icon_trash,   type:'button',  title: 'clear content',  events: {onclick:'onclick_tracker_reset(this, event)'}},         
+                    ]
+            }
+
+        ]
+} 
+
+var toolsbar = {
+    id: 'toolsbar', 
+    type: 'bar',    
+    items: 
+        [
+            markergroup,
+            markereditor_bar('market'),
+            { 
+                type: 'group',   
+                position: 'sb_end',                                     
+                items :
+                    [ 
+                        {id: 'trackerbar_reset',    icon: icon_trash,   type:'button',  title: 'clear content',  events: {onclick:'onclick_tracker_reset(this, event)'}},         
+                    ]
+            },            
+            { 
+                type: 'group',   
+                position: 'sb_end',                                     
+                items :
+                    [ 
+                        {id: 'toolspanelheader_pin',  type: 'button',   toggle: true, class: '',   icon: sb_icons['icon_pin'],  events: {onclick: "onclick_toolspanelheaderpin(this, event)"}, title: 'Pin Window'},                 
+                    ]
+            }            
+        ]
+}
+
 var toolspanel = {
     id : 'toolspanel',
     type : 'panel',
-    class: 'sb_panel sb_row',
+    class: 'sb_panel sb_main sb_row',
     items: [
         markerpanel('market'),       
         {id: '', type:'drag', class:'', direction:'vertical', dragid: 'markerpanel_market'},    
@@ -96,11 +158,12 @@ var toolspanel = {
     ]
 }                
 
-var tools_panel = {
-    id : 'tools_panel',
+var marketmain = {
+    id : 'marketmain',
     type : 'panel',
-    class: 'sb_panel sb_tools_panel',
+    class: 'sb_panel',
     items: [
+        toolsbar,        
         toolspanel,        
     ]    
 }
@@ -113,8 +176,8 @@ var marketpanel = {
     init: 'market_init()',
     end: 'market_end',
     items: [
-        market_bar,
-        market_snapshot,        
-        tools_panel,         
+        marketbar,
+  //      market_snapshot,        
+        marketmain,         
     ]
 }

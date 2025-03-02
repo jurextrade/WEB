@@ -348,16 +348,34 @@ var emv_tester_recordgroup  = {
         ]    
 }
 
-var emv_tester_headerpanel = {
-    id: 'emv_tester_headerpanel',
+
+
+var emv_tester_headerbar = {
+    id: 'emv_tester_headerbar',
     type: 'bar',
-    class: 'sb_sidebarheader ',    
+    class: 'sb_sidebarheader ', 
+    style:'z-index:10',        
     items : 
     [
         {id: '',                type: 'link',    item: 'EMV Tester',  class: 'sb_sidebarheadertitle'},     
-        {id: 'label_router',    item: 'Router', type: 'link',  icon: icon_connection, title: 'ROUTER'},
-        {id: 'button_router',   type: 'button', class: 'sb_roundbutton',   events: {onclick: "onclick_button_router (this, event)"}, title: 'ROUTER'},
+        {id: 'label_router',    item: 'Router', type: 'link',  icon: icon_connection, events: {onclick: "onclick_button_server  (this, event)"}, title: 'ROUTER'},
+        {id: 'button_router',   type: 'button', class: 'sb_roundbutton',   events: {onclick: "onclick_button_server  (this, event)"}, title: 'ROUTER'},
         {id: 'header_load',     type: 'link',   class: 'sb_sidebarheaderinfo',   icon:  icon_file,  events: {onclick: "onclick_jsonloadfile(this, event)"}, title: 'link to documentation'},                 
+    ]
+}
+
+
+
+
+var emv_tester_headerpanel = {
+    id: 'emv_tester_headerpanel',
+    type : 'panel',
+    class: 'sb_column',  
+    style:'position:relative',  
+    items : 
+    [
+        emv_tester_headerbar,
+        modalserverpanel('emv'),
     ]
 }
 
@@ -752,6 +770,7 @@ var emv_tester_bottompanel = {
     id:'emv_tester_bottompanel',
     type: 'tabs',    
     label: 'emvtabs',   
+
     tabevents: {ondblclick: "ondblclick_testertabs(this, event)"}, 
     items:
         [ 
@@ -801,7 +820,7 @@ var emv_tester_main = {
 
     items: [
         emv_tester_maintop,
-       {id: '',  class: '', type:'drag', direction:'horizontal', dragid: 'emv_tester_bottompanel'},             
-        emv_tester_bottompanel
+//       {id: '',  class: '', type:'drag', direction:'horizontal', dragid: 'emv_tester_bottompanel'},             
+//        emv_tester_bottompanel
     ]
 }

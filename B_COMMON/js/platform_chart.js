@@ -407,6 +407,10 @@ function oncontextmenu_chartcanvas(event, itempos, yValue, mouseXY, fullData, st
 
 function onclick_chartcanvas(event, itempos, yValue, mouseXY, fullData, state) {
     event.stopPropagation();
+    }
+
+function onmousedown_chartcanvas(event, itempos, yValue, mouseXY, fullData, state) {
+    event.stopPropagation();
 
     var PG = solution.GetPGFromTerminal ();
     if (!PG) {
@@ -430,6 +434,10 @@ function onclick_chartcanvas(event, itempos, yValue, mouseXY, fullData, state) {
         default:
             break;
     }
+}
+
+function onclick_chartcanvas(canvas, event) {
+    event.stopPropagation();
 }
 
 function ondrop_chartcanvas(canvas, event) {
@@ -1620,7 +1628,8 @@ function ReactConstructor (_React$Component) {
                 onMouseMove:    onmousemove_chartcanvas, 
                 onContextMenu:  oncontextmenu_chartcanvas, 
                 onDoubleClick:  ondblclick_chartcanvas, 
-                onMouseDown:    onclick_chartcanvas 
+                onClick:        onclick_chartcanvas,                 
+                onMouseDown:    onmousedown_chartcanvas,
             };
                         
 

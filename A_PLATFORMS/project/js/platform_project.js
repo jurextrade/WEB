@@ -8,13 +8,16 @@ var CurrentStrategy         = null;
 
 function project_init() {
     project_solution('project');
+
+    DeployConnect(solution.DeployServer_Address, solution.DeployServer_Port);  
+
     project_editors_init('project');   
     project_gse_init(); 
   // console.log ('project assitant init')
   //project_assistant_init ();
     project_assistant_select (projectplatform.strategyview == STRATEGY_ASSISTANT_VIEW); 
   //console.log ('project init')
-    
+    ServerPanel_Update('project');
     DistributePanel_Update();    
     setInterval(project_timer, 300);         
 
@@ -64,8 +67,10 @@ function project_solution (pname) {
 
     solution.Projects       = [];
     solution.CurrentProject = null;
+    solution.DeployServer_Protocol   = site.protocol;    
 
-    if (site.protocol == 'http:') { //PROJECT=2
+
+    if (site.protocol == 'http:') {                                 //PROJECT=2
         solution.DeployServer_Address   = site.hostname;   
         solution.DeployServer_Port     =  2080;     
     }

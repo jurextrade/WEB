@@ -17,7 +17,7 @@ function emv_init () {
 //    emv_loadproject()    
     emv_tester_init();
 
-    emv_ServerPanel_Update();
+    ServerPanel_Update('emv');
     emv_TLVParserPanel_Update(); 
 
     setInterval(emv_timer, 300);         
@@ -60,6 +60,7 @@ function emv_solution () {
 
     solution.emv_Projects       = [];
     solution.emv_CurrentProject = null;
+    solution.EMVRouter_Protocol   = site.protocol;            
 
     if (site.protocol == 'http:') {  //EMV = 5
         solution.EMVRouter_Address   = site.hostname;    
@@ -246,7 +247,7 @@ function emv_drawproject(project, open) {
         sb.box_toggle('emv_boxapplicationspanel', true);        
 
 
-        emv_ServerPanel_Update();
+        ServerPanel_Update('emv');
   
     } else {
         solution.emv_CurrentProject = null; 
@@ -257,7 +258,7 @@ function emv_drawproject(project, open) {
         
      //   sb.tab_delete(emv_maintabs, 'emv_tester_tab');   
 
-        emv_ServerPanel_Update();
+        ServerPanel_Update('emv');
         BottomPanel_Flat(platform, true, true);         
         AnimationDisplay('emv_main', 'Goodbye');             
     }   
@@ -342,6 +343,7 @@ function emv_searchtag (tag, event) {
     event.preventDefault();  
     event.stopPropagation();
 */
+    onclick_sidebarmenu ('sidebar_emvtestermanager', true);   
     emv_table_searchtag(tag, event);
     emv_apdu_searchtag(tag, event);    
 }
@@ -891,66 +893,7 @@ function emv_presentation_form (stepnbr) {
 } 
 
 
-//----------------------------------------------------   SERVER PANEL    ------------------------------------------------ 
 
-function emv_ServerPanel_Update () {
-    let server = solution.EMVRouter_Address;
-    let port   = solution.EMVRouter_Port;
-
-    if (solution.emv_CurrentProject) {
-        server = solution.emv_CurrentProject.Server;
-        port   = solution.emv_CurrentProject.Port;
-    }
-
-
-    $('#nodeserveradress').val(server);
-    $('#nodeserverport').val(port);
-}
-
-function onclick_ResetEMVServer (elt, event) {
-    let server = solution.EMVRouter_Address;
-    let port   = solution.EMVRouter_Port;
-
-    if (solution.emv_CurrentProject) {
-        server = solution.emv_CurrentProject.Server;
-        port   = solution.emv_CurrentProject.Port;
-    }
-
-    $('#nodeserveradress').val(server);
-    $('#nodeserverport').val(port);
-}
-
-function onclick_ApplyEMVServer (elt, event) {
-    let newadress  =   $('#nodeserveradress').val();
-    let newport    =   $('#nodeserverport').val();
-    RouterCom.Com.Close ();
-    
-    EMVConnect(newadress, newport);
-
-}
-
-function emv_ServerPanel () {
-    var content = '';
-    
-    content = 
-'   <div id="serverstable" class="">'+       		            
-'   <div class="sb_f_style_h6">EMV Router Server</div>' +
-'   <div class="sb_formgroup">' +
-    '       <label>Address</label>' +
-    '       <input id ="nodeserveradress" class="form-control" value=""/>' +
-    '   </div>' +     
-    '   <div class="sb_formgroup">' +
-    '       <label>Port</label>' +
-    '       <input id ="nodeserverport" class="form-control" value=""/>' +
-    '   </div>' +   
-    '   <div class="sb_buttongroup">' +
-    '       <button class="sb_button"  type="button" onclick="onclick_ResetEMVServer(this, event)">Reset</button>' +        
-    '       <button class="sb_button"  type="button" onclick="onclick_ApplyEMVServer(this, event)">Apply</button>' +
-    '   </div>' +       
-'   </div>';
-
-    return content
-}
 
 //------------------------------------------------------------ EMV BOTTOM PANEL ----------------------------------------------------------
 

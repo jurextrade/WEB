@@ -112,9 +112,8 @@ class SOLUTION {
         }  
 
 
-        let path =  this.user.id != 0 ? '/members/' +  this.user.id : '/members/1';
-  
-        this.user.send({Name: 'scandir_r',Values: this.user.is_admin () ? ['.', ''] : [path  + '/NetProg', '.']}, false,  function (content, values) {
+ 
+        this.user.send({Name: 'scandir_r',Values: this.user.is_admin () ? ['.', ''] : [this.user.path  + '/NetProg', '.']}, false,  function (content, values) {
             let dirstruct = JSON.parse (content);
             values[0].fileexplorer = dirstruct.Values[0]}, [this.user])
         

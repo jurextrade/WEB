@@ -17,6 +17,8 @@ function netprog_init () {
     netprog_jseditor_init ('netprog_jseditor_input', 'netprog_jseditor_output');
     netprog_gse_init('gsecanvas_netprog');
     netprog_filemanager_init();
+
+    ServerPanel_Update('netprog');    
     setInterval(netprog_timer, 300);     
 }
 
@@ -50,8 +52,8 @@ class npproject {
         this.Path                    = path;
         this.Manager                 = null;   
         this.Loaded                  = 0; 
-        this.Server                 = solution.DeployServer_Address;
-        this.Port                   = solution.DeployServer_Port;    
+        this.Server                 = solution.NetProgServer_Address;
+        this.Port                   = solution.NetProgServer_Port;    
     }
     Create = function () {
         return SubmitProjectRequest('NetProg',this.Folder, this.Name, '', 'php/create_project.php', SYNCHRONE);
@@ -117,6 +119,16 @@ function netprog_solution () {
     solution.netprog_CurrentProject = null;
 
     solution.NetprogServers = [];
+    solution.NetprogServer_Protocol   = site.protocol;            
+
+    if (site.protocol == 'http:') {  //EMV = 5
+        solution.NetprogServer_Address   = site.hostname;    
+        solutionNetprogServer_Port     =  4080;     
+    }
+    else {
+        solution.NetprogServer_Address   =  site.hostname;    
+        solution.NetprogServer_Port     =  4443;    
+    }
 
     solution.Files   = [];
     solution.Folders = [];
@@ -2166,47 +2178,6 @@ function netprog_ToolsSection_Panel () {
     return content;
 }
 
-function netprog_ServerPanel () {
-    var content = '';
-    
-    content = 
-    '<div id="serverstable" class="">'+       		            
-    '   <div class="sb_f_style_h6">NetProg Server</div>' +
-    '   <div class="sb_formgroup">' +
-    '       <label>Adress</label>' +
-    '       <input id ="c" class="form-control" value=""/>' +
-    '   </div>' +     
-    '   <div class="sb_formgroup">' +
-    '       <label>Port</label>' +
-    '       <input id ="netprogserverport" class="form-control" value=""/>' +
-    '   </div>' +   
-    '   <div class="sb_buttongroup">' +
-    '       <button class="sb_button"  type="button" onclick="onclick_ResetNetProgServer(this, event)">Reset</button>' +        
-    '       <button class="sb_button"  type="button" onclick="onclick_ApplyNetProgServer(this, event)">Apply</button>' +
-    '   </div>' +      
-    '</div>';
-    return content
-}
-
-function netprog_ServerPanel_Update () {
-    let protocol = solution.get('site').protocol + '//';
-
-    $('#netprogserveradress').val(solution.MT4Server_Address);
-    $('#netprogserverport').val(solution.MT4Server_Port);
-}
-
-function onclick_ResetNetProgServer (elt, event) {
-    $('#netprogserveradress').val(solution.MT4Server_Address);
-    $('#netprogserverport').val(solution.MT4Server_Port);
-}
-
-function onclick_ApplyNetProgServer (elt, event) {
-    let newadress  =   $('#netprogserveradress').val();
-    let newport    =   $('#netprogserverport').val();
-//    Tester.Reader.Com.Close ();
-//    EMVConnect(Tester.Reader, newadress, newport);
-
-}
 
 //------------------------------------------------------------ NETPROG BOTTOM PANEL ----------------------------------------------------------
 
@@ -2229,48 +2200,4 @@ function ondblclick_netprogtabs(elt, event) {
 
     BottomPanel_Flat (platform, undefined, true);
 } 
-
-//------------------------------------------------------------ NETPROG SETTINGS PANEL ----------------------------------------------------------
-
-function netprog_ServerPanel () {
-    var content = '';
-    
-    content = 
-    '<div id="serverstable" class="">'+       		            
-    '   <div class="sb_f_style_h6">NetProg Server</div>' +
-    '   <div class="sb_formgroup">' +
-    '       <label>Address</label>' +
-    '       <input id ="c" class="form-control" value=""/>' +
-    '   </div>' +     
-    '   <div class="sb_formgroup">' +
-    '       <label>Port</label>' +
-    '       <input id ="netprogserverport" class="form-control" value=""/>' +
-    '   </div>' +   
-    '   <div class="sb_buttongroup">' +
-    '       <button class="sb_button"  type="button" onclick="onclick_ResetNetProgServer(this, event)">Reset</button>' +        
-    '       <button class="sb_button"  type="button" onclick="onclick_ApplyNetProgServer(this, event)">Apply</button>' +
-    '   </div>' +      
-    '</div>';
-    return content
-}
-
-function netprog_ServerPanel_Update () {
-    let protocol = solution.get('site').protocol + '//';
-
-    $('#netprogserveradress').val(solution.MT4Server_Address);
-    $('#netprogserverport').val(solution.MT4Server_Port);
-}
-
-function onclick_ResetNetProgServer (elt, event) {
-    $('#netprogserveradress').val(solution.MT4Server_Address);
-    $('#netprogserverport').val(solution.MT4Server_Port);
-}
-
-function onclick_ApplyNetProgServer (elt, event) {
-    let newadress  =   $('#netprogserveradress').val();
-    let newport    =   $('#netprogserverport').val();
-//    Tester.Reader.Com.Close ();
-//    EMVConnect(Tester.Reader, newadress, newport);
-
-}
 

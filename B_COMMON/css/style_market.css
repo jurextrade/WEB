@@ -6,7 +6,7 @@
 
 /*--------------------------------------------------------- HEADER MARKET PANEL -----------------------------------------------------------*/
 
-#market_bar {
+#marketbar {
     height: 40px;
     font-size: var(--theme-sfont-size);
     color: var(--theme-header-color);    
@@ -14,7 +14,7 @@
 }
 
 
-#market_bar .sb_mbutton {
+#marketbar .sb_mbutton {
     font-size:inherit;
     width:150px;
     margin-left: 5px;
@@ -22,25 +22,25 @@
     min-width: 150px;
 }
 
-#market_bar #market_markersgroup {
+#marketbar #market_markersgroup {
     font-size: 13px;    
 }
 
-#market_bar #market_indicatorsgroup {
+#marketbar #market_indicatorsgroup {
     font-size: 13px;    
 }
 
-#market_bar #market_searchgroup {
+#marketbar #market_searchgroup {
     min-width:400px;
     margin-left: 15px;    
     font-size: 13px;    
 }
 
-#market_bar #search_quote {
+#marketbar #search_quote {
     padding: 5px 5px;
 }
 
-#market_bar .sb_label {
+#marketbar .sb_label {
     font-weight: 400;
     color: var(--theme-main-color);
     text-transform: uppercase;
@@ -50,7 +50,7 @@
 
 /*----------------------------------------------------------------- NEWS----------------------------------------------------*/
 
-#market_bar #market_newsgroup {
+#marketbar #market_newsgroup {
     margin-left: 15px;    
     text-align: center;
     display: flex;    
@@ -58,7 +58,7 @@
 }
 
 
-#market_bar #newslink {
+#marketbar #newslink {
     color: var(--theme-main-color) !important;
     background: transparent;
     margin-right: 5px;
@@ -73,22 +73,22 @@
 
 /*--------------------------------------------------------- MARKET  PANEL -----------------------------------------------------------*/
 
-#market_bar #market_forexgroup {
+#marketbar #market_forexgroup {
     height: 100%;
     flex-wrap:wrap;
     flex:none;
     align-items: center;    
 }
 
-#market_bar #market_forexgroup .forexcontent {
+#marketbar #market_forexgroup .forexcontent {
     margin-left: auto;    
 }
 
-#market_bar #market_forexgroup .forexcontent .sb_formgroup {
+#marketbar #market_forexgroup .forexcontent .sb_formgroup {
     padding-bottom: 0;
 }
 
-#market_bar #market_forexgroup .forexcontent .form-control {
+#marketbar #market_forexgroup .forexcontent .form-control {
     width: 50px;
     padding-top: 0px;
     padding-bottom: 0px;    
@@ -97,7 +97,7 @@
     text-align: left;    
 }
 
-#market_bar #market_forexgroup .forexcontent label {
+#marketbar #market_forexgroup .forexcontent label {
     white-space: nowrap;
     padding-top: 0px;
     padding-bottom: 0px;    
@@ -174,7 +174,7 @@
 
 /* --------------------TOOLS PANEL --------------------------------*/
 
-#tools_panel {
+#marketmain {
     font-size: var(--theme-sfont-size);
     position: absolute;
     width: calc(100% - 100px);
@@ -190,13 +190,13 @@
     border-radius: 0px 0px 10px 10px;
 }
 
-#tools_panel.toggled {
+#marketmain.toggled {
     display: flex;
     transition: transform .3s cubic-bezier(0,0,.3,1);
     transform: translate(50px, 46px);
 }
 
-#tools_panel.pinned {
+#marketmain.pinned {
     position: static;
     display: none;
     overflow: hidden;
@@ -206,7 +206,7 @@
     width:100%;
 }
 
-#tools_panel.toggled.pinned {
+#marketmain.toggled.pinned {
     display: flex;
     transition: none;
     transform: none;

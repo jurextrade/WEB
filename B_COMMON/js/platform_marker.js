@@ -334,12 +334,12 @@ function marker_update (signaltype, onclick) {
     }
 
     let markername  = $(elt).find('label').html();
-    let editorelt   = $(elt).closest ('.markereditor');
+    let editorelt   = $(elt).closest ('.sb_panel');
 
     let marketpanel = 'market';
   //  $('#markereditor_' + platform.pname + ' #name_marker').val(markername); 
 
-    $('#markereditor_' + marketpanel + ' #name_marker').val(markername);   
+    $('#name_marker').val(markername);   
     let inputeditor = GetEditorFromId('markereditor_input_' + marketpanel);                   
     var PG = solution.GetPGFromTerminal ();
     if (!PG) {
@@ -416,8 +416,8 @@ function onclick_radiomarker(elt, event) {
 }
 
 function onclick_markereditor_group (elt, event) {
-    let editorelt    = $(elt).closest ('.markereditor');
-    let aceeditors   = editorelt.find ('.aceeditor') 
+    let editorelt    = $(elt).closest ('.sb_panel');
+  
     let inputelt     = editorelt.find ('.markereditor_input') 
     let outputelt    = editorelt.find ('.markereditor_output') 
 
@@ -479,24 +479,7 @@ function Marker_ParseError  (str, hash) {
     
     let markereditor = null;
     markereditor = markereditor_market;     
-/*
-    if (platform) {
-        switch (platform.pname) {
-            case 'option':
-                markereditor = markereditor_option;        
-            break;
-            case 'home':
-                markereditor = markereditor_home;        
-            break;
-            case 'tradedesk':
-                markereditor = markereditor_tradedesk;
-            break;
-            case 'project':
-                markereditor = markereditor_project;        
-            break;                     
-        }
-    }     
-    */
+
     var textarea = "\n";
 
     var textarea = "";
@@ -542,24 +525,7 @@ function MarkerEditor_Update (marker) {
     
     let markereditor = null;
     markereditor = markereditor_market;    
-/*    
-    if (platform) {
-        switch (platform.pname) {
-            case 'option':
-                markereditor = markereditor_option;        
-            break;
-            case 'home':
-                markereditor = markereditor_home;        
-            break;
-            case 'tradedesk':
-                markereditor = markereditor_tradedesk;
-            break;
-            case 'project':
-                markereditor = markereditor_project;        
-            break;                     
-        }
-    }      
-*/    
+
     if (markereditor) {
         markereditor.input.removeAllMarkers ();        
         $('#markereditor_' + markereditor.id + ' #name_marker').val(marker.Name);                
@@ -577,24 +543,7 @@ function Marker_ChartType (id) {
     
     let markereditor = null;
     markereditor = markereditor_market;    
-/*    
-    if (platform) {
-        switch (platform.pname) {
-            case 'option':
-                markereditor = markereditor_option;        
-            break;
-            case 'home':
-                markereditor = markereditor_home;        
-            break;
-            case 'tradedesk':
-                markereditor = markereditor_tradedesk;
-            break;
-            case 'project':
-                markereditor = markereditor_project;        
-            break;                     
-        }
-    }
-*/      
+  
      return $('#markereditor_' + markereditor.id + ' #' + id + '_' +  markereditor.id).prop('checked')       
 }
 

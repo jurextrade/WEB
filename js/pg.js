@@ -856,7 +856,7 @@ function pgproject (pname, name, path) {
         strategy.Rule = rule;
         return strategy;
     }
-    DeployConnect(this, this.Server, this.Port)
+  //  DeployConnect(this, this.Server, this.Port)
 }
 
 function pgterminal (pname, type, main) {

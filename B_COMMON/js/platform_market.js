@@ -47,21 +47,21 @@ function market_end () {
 //----------------------------------------------------   TOOLS PANEL    ------------------------------------------------   
 
 function onclick_toolspanelheaderpin (elt, event) {
-    let $tools_panel = $('#tools_panel');   
+    let $marketmain = $('#marketmain');   
 
     if ($(elt).hasClass ('checked')) {
-        $tools_panel.removeClass ('pinned')
-        $tools_panel.css ({'transition':'none'});
+        $marketmain.removeClass ('pinned')
+        $marketmain.css ({'transition':'none'});
         tools_panel_hide();
         
     } else {
-        $tools_panel.addClass ('pinned')
+        $marketmain.addClass ('pinned')
     }
     sb.resize(sb.interface);              
 }
 
 function onclick_markettogglepanel (elt, event) {
-    let show = !$('#tools_panel').hasClass('toggled');   
+    let show = !$('#marketmain').hasClass('toggled');   
     if (show == 1) {
         tools_panel_select();    
     }    
@@ -71,10 +71,10 @@ function onclick_markettogglepanel (elt, event) {
 }
 
 function tools_panel_select () {
-    let tools_panel = $('#tools_panel');   
-    let toresize     = tools_panel.hasClass ('pinned');    
+    let marketmain = $('#marketmain');   
+    let toresize     = marketmain.hasClass ('pinned');    
     
-    tools_panel.addClass('toggled')
+    marketmain.addClass('toggled')
   
     if (toresize) {
         sb.resize(sb.interface);        
@@ -82,12 +82,12 @@ function tools_panel_select () {
 }
 
 function tools_panel_hide () {
-    let tools_panel = $('#tools_panel');   
-    let toresize     = tools_panel.hasClass ('pinned');    
+    let marketmain = $('#marketmain');   
+    let toresize     = marketmain.hasClass ('pinned');    
     
-    tools_panel.css ({'transition':''});
+    marketmain.css ({'transition':''});
 
-    tools_panel.removeClass('toggled')
+    marketmain.removeClass('toggled')
 
     if (toresize) {
         sb.resize(sb.interface);        
@@ -95,8 +95,8 @@ function tools_panel_hide () {
 }
 
 function tools_panel_remove () {
-    let tools_panel = $('#tools_panel');   
-    if (tools_panel.hasClass ('pinned') || !tools_panel.hasClass('toggled'))  {
+    let marketmain = $('#marketmain');   
+    if (marketmain.hasClass ('pinned') || !marketmain.hasClass('toggled'))  {
         return;
     }    
     $('#marketpanel .box-btn-slide').click ()

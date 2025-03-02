@@ -1,4 +1,38 @@
 //----------------------------------------------------SERVERS PANEL------------------------------------------------ 
+
+
+const DEPLOYSERVER           = "DEPLOYSERVER";
+var DeployCom          = null;
+
+function DeployConnect(adress, port) {
+
+    if (DeployCom && DeployCom.Socket.connected == true) 
+        return;
+//    console.log ('deply connect')
+    DeployCom = new connect (adress, port, 
+        {
+            onconnectfunction:  function (com) {
+
+                HighlightTerminal (DEPLOYSERVER, null, 1,  theme_on)
+
+
+            },
+            onmessagefunction: function (com, data) {
+              //  let project = solution.GetProjectFromCom(com)
+                TreatReception (solution.CurrentProject, data);
+            },    
+            ondisconnectfunction:     function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
+            onclosefunction:          function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
+            onerrorfunction:          function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },   
+            onupdatefunction:         function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
+            onconnect_errorfunction:  function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
+            onconnect_failedfunction: function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },    
+        }
+    )
+
+    return DeployCom.Socket;
+}
+
 //---------------------------------------------------- IP ADDRESS-----------------------------------------------   
 
 function HighlightTerminal (origin, project, connect, color) {
@@ -13,38 +47,6 @@ function HighlightTerminal (origin, project, connect, color) {
     }  
 }    
 
-const DEPLOYSERVER           = "DEPLOYSERVER";
-
-
-function DeployConnect(project, adress, port) {
-
-    if (project.Com && project.Com.Socket.connected == true) 
-        return;
-//    console.log ('deply connect')
-    project.Com = new connect (adress, port, 
-        {
-            onconnectfunction:  function (com) {
-
-                HighlightTerminal (DEPLOYSERVER, null, 1,  theme_on)
-
-
-            },
-            onmessagefunction: function (com, data) {
-                let project = solution.GetProjectFromCom(com)
-                TreatReception (project, data);
-            },    
-            ondisconnectfunction:     function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
-            onclosefunction:          function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
-            onerrorfunction:          function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },   
-            onupdatefunction:         function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
-            onconnect_errorfunction:  function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
-            onconnect_failedfunction: function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },    
-        }
-    )
-
-    return project.Com.Socket;
-}
-
 
 function TreatReception (project, recmessage) {        
     if (!recmessage) return;
@@ -58,25 +60,25 @@ function TreatReception (project, recmessage) {
     var symbolname = recmessage.substring(1, index);
      
     project.LastRunningTime = Date.now();
+   
     var output;
     var length = message.length;
  
-    if (project[symbolname] !== undefined) {
+    if (project.Buffer !== undefined) {
         if (message[length - 1] != "*") {
-            project[symbolname] = project[symbolname] + message;
+            reader.Buffer  = project.Buffer + message;
             return;
         } else {
-            output = project[symbolname] + message;
+            output = project.Buffer + message;
         }
     } else {
-        if (symbolname != "______") {
-            project[symbolname] = message;
-        }
+        project.Buffer = message;
         output = message;
     }
-    if (project[symbolname]) {
-        project[symbolname] =  "";
-    } 
+
+    if (project.Buffer) {
+        project.Buffer = "";
+    }
 
     var lines = output.split('*');
     length = lines.length;
@@ -239,13 +241,16 @@ function OnCompileProject(project, filename, content, langtype, terminaltype) {
         return;
     }
     var sorder = "*COMPILE*" + project.Folder + "*" + filename + "*" + langtype + "*" + terminaltype + "*" + content;
-    project.Com.Send(solution.UserId + sorder);
+    DeployCom.Send(solution.UserId + sorder);
 }
 
 //-------------------------------------------------- COMPILE STRATEGY ---------------------------------------------
 
 
 function onclick_project_strategycompile(elt, event) {
+    let ui       = solution.get('ui') 
+    let platform = ui.currentplatform;    
+  //  BottomPanel_Flat(platform, false);    
     SelectCompileStrategy (solution.CurrentProject, CurrentStrategy, 'MQL4')
 }
 
@@ -261,7 +266,7 @@ function SelectCompileStrategy (project, strategy, langtype) {
         loopBeginLoopComplete(strategy);
     }else {
         BottomPanel_Flat (projectplatform, false);         
-        sb.tab_select(project_bottomtabs, 'tab-error');        
+        sb.tab_select(project_bottomtabs, 'tab-error');         
     }
     CompileStrategy(project, strategy, langtype);
 }
@@ -331,7 +336,7 @@ function OnCompileStrategy (project, strategyname, content, langtype) {
     }
 
     var sorder = "*COMPILE*" + project.Folder + "*" + strategyname + "*" + langtype + "*" + "Terminal" + "*" + content;
-    project.Com.Send(solution.UserId + sorder);
+    DeployCom.Send(solution.UserId + sorder);
 }
 
 var loopBeginLoopComplete = function(strategy) {

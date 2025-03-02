@@ -732,18 +732,32 @@ var currenciespanel = {
 
 //--------------------------
 
-var tradedesk_terminals_headerpanel = {
-    id: 'tradedesk_terminals_headerpanel',
+var tradedesk_terminals_headerbar = {
+    id: 'tradedesk_terminals_headerbar',
     type: 'bar',
-    class: 'sb_sidebarheader ',    
+    class: 'sb_sidebarheader ',
+    style:'z-index:10',            
     items : 
     [
         {id: '',                type: 'link',    item: 'MT4 TERMINAL',  class: 'sb_sidebarheadertitle'},   
-        {id: 'label_server',    item: 'MT4 Server', type: 'link',  icon: icon_connection, title: 'MT4 SERVER'},
+        {id: 'label_server',    item: 'MT4 Server', type: 'link',  icon: icon_connection, events: {onclick: "onclick_button_server (this, event)"}, title: 'MT4 SERVER'},
         {id: 'button_server',   type: 'button', class: 'sb_roundbutton',   events: {onclick: "onclick_button_server (this, event)"}, title: 'MT4 SERVER'},
         {id: 'header_load',     type: 'link',   class: 'sb_sidebarheaderinfo',   icon:  icon_file,  events: {onclick: "onclick_jsonloadfile(this, event)"}, title: 'link to documentation'},                 
     ]
 }
+
+var tradedesk_terminals_headerpanel = {
+    id: 'tradedesk_terminals_headerpanel',
+    type : 'panel',
+    class: 'sb_column',    
+    style:'position:relative',      
+    items : 
+    [
+        tradedesk_terminals_headerbar,
+        modalserverpanel('tradedesk'),
+    ]
+}
+
 
 var tradedesk_terminals_sidepanel = {
     id: 'tradedesk_terminals_sidepanel',

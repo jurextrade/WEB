@@ -10,6 +10,7 @@ var netprog_file_headerpanel = {
 }
 
 
+
 var netprog_filemanager = {
     id: 'netprog_filemanager',       
     type: 'tree',       

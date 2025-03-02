@@ -773,3 +773,6 @@ function trightsidebarpanel_select (psidebarpanel, id) {
         sb.resize(sb.interface);        
     }
 }
+
+
+

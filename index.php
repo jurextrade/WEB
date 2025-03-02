@@ -31,7 +31,9 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"          rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"   rel="stylesheet">  
     
+        
         <link href="/B_COMMON/css/style_solution.css" 											                      rel="stylesheet">      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js"                           type="text/javascript"></script>    
         <script src="https://www.google.com/recaptcha/api.js"                                           type="text/javascript"></script> 
         <script src="/C_TOOLS/js/script_solution.js"                                                    type="text/javascript"></script>  
     
@@ -49,7 +51,7 @@ function loadgen($userid = '0', $appli) {
     $cwd  = getcwd();
 
     if ($userid == "0") {
-        $dir = $cwd . '/conf';
+        $dir = $cwd . '/members/' . '1';
     } else {
         $dir = $cwd . '/members/' . $userid;
     }

@@ -80,28 +80,13 @@ var markereditor = (id =>  {return {
     class: 'sb_panel markereditor',
      items:
     [
-        markereditor_bar(id),
+   //     markereditor_bar(id),
         markereditor_input(id),
         markereditor_output(id),
     ]   
 }})
 
-var markergroup = {
-    id: 'markergroup',
-    type: 'group',         
-    direction:'row',
-    items : [
-        {id: 'markers',     item: 'Markers',        type: 'button',   icon: icon_sort, events: {onclick: 'onclick_markers(this, event)'},      title: 'Select Existing Marker'},
-        {id: 'clearmarkers',item: 'Clear Markers',  type: 'button',  events: {onclick: 'onclick_clearmarkers(this, event)'}, title: 'Clear Markers'}, 
-        ]
-}
 
-var markerbar = {
-    id: 'markerbar', 
-    type: 'bar',    
-    items: 
-        [markergroup]
-}
 
 var markerpanel = (id => {return {
     id: 'markerpanel_' + id,
@@ -109,7 +94,6 @@ var markerpanel = (id => {return {
     class: 'sb_panel markerpanel',
     closed: true,
     items: [
-        markerbar,
         markereditor(id),
     ],
     catchresize: true,

@@ -136,12 +136,6 @@ var solution_treepanel = {
     ]
 }
 
-var solution_serverpanel = {
-    id: 'solution_serverpanel',
-    type: 'html',
-    content: "solution_serverpanel()",
-}
-
 var solution_configurationtable  = (placement =>  {return {
     id: 'solution_configurationtable_' + placement,
     type: 'table',           
@@ -162,31 +156,7 @@ var solution_configurationpanel= (placement =>  {return {
 }})
 
 
-var serverstable  = {
-    id: 'serverstable',
-    type: 'panel',
-    items: [
-        {id: '', type: 'label',  class:'sb_f_style_h6', item: 'NetProg Server'},
-        {id: '', type: 'group',  form: true, 
-         items: [
-            {id: 'solution_configurationtitle', type: 'label', item: 'Adress'},
-            {id: 'anythig', type: 'text'}
-         ] 
-        },
-        {id: '', type: 'group',  form: true, 
-         items: [
-            {id: 'solution_configurationtitle', type: 'label', item: 'Port'},
-            {id: 'netprogserverport', type: 'text'}
-         ] 
-        },
-        {id: '', type: 'group',  form: true,  class: "sb_buttongroup",
-         items: [
-            {id: 'solution_configurationtitle', type: 'button',  class: 'sb_button', item: 'Reset', events: { onclick: "onclick_ResetNetProgServer(this, event)"}},
-            {id: 'netprogserverport',           type: 'button',  class: 'sb_button', item: 'Apply', events: { onclick: "onclick_ResetNetProgServer(this, event)"}}
-         ] 
-        },
-    ] 
-}
+
 
 
 var  solution_headerPanel   = solution_configurationpanel('header');

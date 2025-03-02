@@ -730,17 +730,30 @@ var project_boxstrategiespanel = {
 
 // ---------------------------------
 
-var project_projects_headerpanel = {
-    id: 'project_projects_headerpanel',
+var project_projects_headerbar = {
+    id: 'project_projects_headerbar',
     type: 'bar',
     class: 'sb_sidebarheader ',    
+    style:'z-index:10',           
     items : 
     [
         {id: '',                type: 'link',    item: 'PROJECTS EXPLORER',  class: 'sb_sidebarheadertitle'}, 
-        {id: 'label_server',    item: 'Deploy Server', type: 'link',  icon: icon_connection, title: 'DEPLOY SERVER'},
+        {id: 'label_server',    item: 'Deploy Server', type: 'link',  icon: icon_connection, events: {onclick: "onclick_button_server (this, event)"}, title: 'DEPLOY SERVER'},
         {id: 'button_server',   type: 'button', class: 'sb_roundbutton',   events: {onclick: "onclick_button_server (this, event)"}, title: 'DEPLOY SERVER'},
         {id: 'header_load',     type: 'link',   class: 'sb_sidebarheaderinfo',   icon:  icon_file,  events: {onclick: "onclick_jsonloadfile(this, event)"}, title: 'link to documentation'},                 
         //<a href="/Documentation/_build/html/" title="link to documentation" target="_blank" class="sb_sidebarheaderinfo"><i aria-hidden="true" class="fas fa-book"></i></a>
+    ]
+}
+
+var project_projects_headerpanel = {
+    id: 'project_projects_headerpanel',
+    type : 'panel',
+    class: 'sb_column',    
+    style:'position:relative',      
+    items : 
+    [
+        project_projects_headerbar,
+        modalserverpanel('project'),
     ]
 }
 

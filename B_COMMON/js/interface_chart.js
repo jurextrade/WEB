@@ -110,6 +110,7 @@ var chartmain = (pname => {return {
         onmouseenter: "onmouseenter_chartmain(this, event)",
         onmouseleave: "onmouseleave_chartmain(this, event)",      
         onmouseover:  "onmouseover_chartmain(this, event)",      
+        onclick:       "onclick_chartcanvas (this, event)",        
     },
     items: [
         {

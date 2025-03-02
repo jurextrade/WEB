@@ -857,19 +857,28 @@ const emv_Steps  = [
         <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('GET_PROCESSING_OPTIONS', event)">Structure of the C-ADPU Command GET PROCESSING OPTIONS</label></u>
         <br><br>
         
-        The card responds with a Response Message Template Format 1 <label class="emv_button_show" onmousedown="emv_searchtag('80', event)">(tag 80)</label>, 
+        The card responds with a Response Message Template Format 1 <label class="emv_button_show" onmousedown="emv_searchtag('80', event)">(tag 80)</label>, or a Response Message Template Format 2 <label class="emv_button_show" onmousedown="emv_searchtag('77', event)">(tag 77)</label>
 
-        <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('RESPONSE_MESSAGE_TEMPLATE_FORMAT_1', event)">Structure of the R-ADPU to the Command GET PROCESSING OPTIONS</u>
+       
         <br><br>
+        
+        Format 1 : The value of the response contains 2 records that will be read sequently <mark>without their associated tags</mark>
+        <br><br>
+        <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('RESPONSE_MESSAGE_TEMPLATE_FORMAT_1', event)">Structure of the R-ADPU to the Command GET PROCESSING OPTIONS Format 1</u>                
+        <br><br>
+        Format 2 : The data object returned in the response message is a constructed
+        data object with tag equal to '77'. The value field may contain several BERTLV coded objects, but shall always include the AIP and the AFL. The
+        utilisation and interpretation of proprietary data objects which may be included in this response message are outside the scope of these
+        specifications.
+        <br><br>	        
+        <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('RESPONSE_MESSAGE_TEMPLATE_FORMAT_2', event)">Structure of the R-ADPU to the Command GET PROCESSING OPTIONS Format 2</u>        
 
-        the value of the response contains 2 records that will be read sequently <mark>without their associated tags</mark>
-        <br><br>
-        The AIP (Application Interchange Profile tag 82)
+        <br><br>	        
+        The AIP (Application Interchange Profile) <label class="emv_button_show" onmousedown="emv_searchtag('82', event)">(tag 82)</label>
         <br><br>
         <li>The AIP is a 2-byte bit array that indicates the types of functions supported by the card. We will explain this tag in Step : Data Authentification.</li> 
         <br>        
         The AFL (Application File Locator <label class="emv_button_show" onmousedown="emv_searchtag('94', event)">(tag 94)</label>
-        
         <br><br>
         <li>The AFL is essentially a list of records the terminal should read from the card in order to use these functions.</li>
         <br><br>
@@ -877,7 +886,6 @@ const emv_Steps  = [
         <br>
         The first byte contains the Short File Indicator (SFI). <mark>The five most significant bits represents the SFI.</mark>
         The SFI is a reference to a file on the card. Every file have one or more records.<label class="emv_button_show" onmousedown="emv_searchtag('88', event)">(tag 88)</label>
-        
         <br>
         The second and third bytes are the first and last record to read. 
         <br>
@@ -889,9 +897,10 @@ const emv_Steps  = [
         <br><br>								
         After the AFL is returned the terminal issues one or more Read Record commands. 
         <br><br>
+        <br><br>        
         In the next step we explain the reading of the AFL entries.	
-        <br><br> ${sb.render(emv_presentation_flags(EMV_SUBSTEP_GET_PROCESSING_OPTIONS, 'Flags', ['AIP', 'AFL']))}   
-       
+        <br><br> 
+        ${sb.render(emv_presentation_flags(EMV_SUBSTEP_GET_PROCESSING_OPTIONS, 'Flags', ['AIP', 'AFL']))}   
         </div>`  
         },
     ],
@@ -1234,8 +1243,8 @@ const emv_Steps  = [
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             <p>Both the card and the terminal have an application version number.
             <br>
-            The payment system assigns version numbers on 2 Bytes to both the card application in the Application Version Number tag 9F08, 
-            and to the terminal application in the Application Version Number tag 9F09.
+            The payment system assigns version numbers on 2 Bytes to both the card application in the Application Version  <label class="emv_button_show" onmousedown="emv_searchtag('9F08', event)">(tag 9F08)</label>, 
+            and to the terminal application in the Application Version <label class="emv_button_show" onmousedown="emv_searchtag('9F09', event)">(tag 9F09)</label>.
             <br><br> 
             The encoding of these numbers is proprietary to the payment system.            
             <br><br>
@@ -1306,9 +1315,9 @@ const emv_Steps  = [
             If Terminal Type is not an ATM Terminal: Check that bit 1 ("Valid at terminals other than ATMs") equals 1 in byte 1 of the AUC.
             <br><br>
             
-            <p>if Issuer Country Code is present in the EMV heap tag 5F28 = V2
+            <p>if Issuer Country Code is present in the EMV heap <label class="emv_button_show" onmousedown="emv_searchtag('5F28', event)">(tag 5F28)</label> = V2
             <br>
-            Terminal Country Code tag 9F1A = V3
+            Terminal Country Code <label class="emv_button_show" onmousedown="emv_searchtag('9F1A', event)">(tag 9F1A)</label> = V3
 
             <br><br>
 
@@ -1345,14 +1354,14 @@ const emv_Steps  = [
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             Sometimes a card is issued that is not valid yet at the moment of issuing.
             <br><br>
-            This can be set on the card in the Application Effective Date record tag 5F25.
+            This can be set on the card in the Application Effective Date record <label class="emv_button_show" onmousedown="emv_searchtag('5F25', event)">(tag 5F25)</label>.
             <br>
             If the card has an Application Effective Date and it is after the current date, the
             <label class="emv_button_show" onmousedown= "emv_byte_show(emv_TVRPanel, Application_not_yet_effective, 1)" onmouseup= "emv_byte_show(emv_TVRPanel, Application_not_yet_effective, 0)">
             Application not yet effective
             </label> bit in the TVR is set to 1. Otherwise nothing is set.
             <br><br>
-            The card has also an expiration date tag 5F24.
+            The card has also an expiration date <label class="emv_button_show" onmousedown="emv_searchtag('5F24', event)">(tag 5F24)</label>.
             <br>
             The card gives the Application Expiration Date to the terminal during the Read application data step.
             <br>
