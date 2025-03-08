@@ -82,6 +82,9 @@ function  onclick_emv_tester_commandgroup (elt, event) {
        //     console.log('play')
             if (Tester.Reader.Statut != READER_PLAYING) {
                 let silentmode = false;
+                if (Tester.Reader.RecordIndex ==  Tester.Reader.Records.length) {
+                    Tester.Reader.firststep();
+                }
                 Tester.Reader.play (silentmode);
                 $('#emv_tester_play_button ' + 'i').attr('class', icon_pause);
             } else {
@@ -106,6 +109,12 @@ function  onclick_emv_tester_commandgroup (elt, event) {
         case 'emv_tester_pause_button'   :
         break;
         case 'emv_tester_upload_transaction' :
+
+            if (!solution.emv_CurrentProject) {
+                TreatOperation('Load a project to see related transactions')
+                onclick_sidebarmenu ('sidebar_emvprojectmanager', true);                  
+                return;
+            }
             let cuser = solution.user;
 
             let file_path        = cuser.path + '/EMV/' + solution.emv_CurrentProject.Folder
@@ -134,6 +143,7 @@ function  onclick_emv_tester_commandgroup (elt, event) {
                                         let message = JSON.parse (content);
                                         Tester.Reader.RecordBuffer = message.Values[0].Content
                                         Tester.Reader.save_record();
+                                        Tester.Reader.firststep();
                                     }, 
                                     []);                          
                     },
@@ -624,6 +634,9 @@ class CardReader {
     load_transaction (){
 
     }
+    timer () {
+
+    }
    
 }
 
@@ -662,13 +675,20 @@ function onclick_testertogglepanel(elt, event) {
     }   
 }
 
+function emv_tester_fullscreenpanel (idpanel, fullscreen) {
+    let panel = $('#' + idpanel);
+    emv_tester_toggle_all (0)    
+    if (!panel.hasClass('toggled')) {
+        panel.addClass('toggled')
+        panel.find('.box-btn-slide').addClass('rotate-180')          
+    }
+    sb.resize(emv_tester_sidepanel); 
+}
+
 
 function onclick_testerfspanel (elt, event) {
     let parentpanel        = $(elt.parentElement.parentElement.parentElement);
-     emv_tester_toggle_all (0)
-     parentpanel.addClass('toggled')
-     parentpanel.find('.box-btn-slide').addClass('rotate-180')       
-     sb.resize(emv_tester_sidepanel);        
+    emv_tester_fullscreenpanel (parentpanel.attr('id'));     
 }
 
 function onclick_testercspanel (elt, event) {
@@ -688,9 +708,6 @@ function emv_tester_toggle_all (open) {
         }
     }
 }
-
-
-
 
 //------------------------------------------------------------------- MAIN SIDEBAR---------------------------------------------------------------------
 
@@ -742,7 +759,7 @@ function trightsidebarpanel_select (psidebarpanel, id) {
     let sidebarmenu         = $('#' + id);    
     let psidebarmenu    = psidebarpanel.next(); 
     let toresize        = psidebarpanel.hasClass ('pinned')
-    console.log ('tester select right');
+
         
     let sbpanels = psidebarpanel.children ();
     $.each(sbpanels, function (index, panel) {

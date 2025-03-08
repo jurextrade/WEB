@@ -367,7 +367,7 @@
 }
 
 #emv_presentation_steppanels .related-primary.Info {
-    color:  var(--theme-platform-color);
+    color:  rgb(255, 182, 132) !important;
     align-items: flex-start;
 }
 
@@ -694,6 +694,11 @@
     display:none;
 }
 
+#emv_apdu_roottree .treenode .sb_link[step^="3"] {
+    background: var(--theme-bg-color);
+   
+ } 
+
 .emv_apdutreeclass label {
     width: 40px;
     padding: 0px 0px;
@@ -931,7 +936,7 @@
 
 #emv_root .treenode {
     text-transform: uppercase;
-    color: var(--theme-main-color);
+   /* color: var(--theme-main-color); */
 }
 
 #102  {
@@ -939,7 +944,10 @@
 }
 
 #emv_tester_sidebarheader label {
-    color:  var(--theme-platform-color);
+    font-size: 12px;
+    color: rgb(255, 182, 132) !important;
+    background: var(--theme-hover-bg-color) !important; 
+    border: 0px solid #5e4037 !important; 
 }
 
 /*----------------------------------------------------------------------------- RIGHT SIDE PANEL -------------------------------------------------------------------------------*/

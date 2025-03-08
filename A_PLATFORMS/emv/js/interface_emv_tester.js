@@ -51,7 +51,7 @@ var emv_tree_steps_bar = {
     type: 'group',
 
     items: [
-        {id: 'emv_tree_steps_button',  type: 'link',  toggle: true, icon: icon_structure, title: 'Show or Hide Tree Steps', events: {onclick: "onclick_tree_step_button(this, event)"}},   
+        {id: 'emv_tree_steps_button',  type: 'button',  toggle: true, icon: icon_structure, title: 'Show or Hide Tree Steps', events: {onclick: "onclick_tree_step_button(this, event)"}},   
     ]
 }
 
@@ -295,10 +295,10 @@ var emv_tester_commandgroup = {
    // style: 'display:none',
     items:
         [    
-            {id: 'emv_tester_upload_transaction',  icon: icon_download,  class: 'sb_right', item : 'Load Transaction', type:'link',  title: 'Load transaction',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},  
-            {id: 'emv_tester_play_button' ,    /*item: 'Run',*/       icon: icon_play,      type:'button',  class: 'sb_sbutton', title: 'replay',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
-            {id: 'emv_tester_start_button' ,   /*item: 'Start',*/     icon: icon_backward,    type:'button',  class: 'sb_sbutton', title: 'go to start',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
-            {id: 'emv_tester_forward_button' , /*item: 'Forward',*/ icon: icon_forwardstep,   type:'button',  class: 'sb_sbutton', title: 'step Forward',   events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
+            {id: 'emv_tester_upload_transaction',  icon: icon_download,  class: 'sb_right', item : 'Load Transaction', type:'button',  title: 'Load transaction',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},  
+            {id: 'emv_tester_play_button' ,    /*item: 'Run',*/       icon: icon_play,       type:'button',  class: 'sb_sbutton', title: 'play',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
+            {id: 'emv_tester_start_button' ,   /*item: 'Start',*/     icon: icon_backward,   type:'button',  class: 'sb_sbutton', title: 'go to start',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
+            {id: 'emv_tester_forward_button' , /*item: 'Forward',*/ icon: icon_forwardstep,  type:'button',  class: 'sb_sbutton', title: 'step Forward',   events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
 
 //         {id: 'emv_tester_stop_button' ,    item: 'Stop',    icon: icon_stop,      type:'button',  class: 'sb_sbutton', title: 'stop',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
 //         {id: 'emv_tester_back_button' ,    item: 'Back',    icon: icon_backwardstep,  type:'button',  class: 'sb_sbutton', title: 'step backward',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            

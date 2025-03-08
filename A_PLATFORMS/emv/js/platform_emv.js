@@ -30,7 +30,6 @@ function emv_end () {
     }   
 }
 
-
 function emv_beforeunload () {
     onclick_selectcancel();
 }
@@ -124,16 +123,28 @@ function emv_solution () {
 
 function emv_timer () {
 
-    if (Tester.Reader.Statut == READER_PLAYING) {
-        $('#emv_tester_recordgroup #emv_tester_forward_button').attr('disabled','disabled');
-        $('#emv_tester_recordgroup #emv_tester_start_button').attr('disabled','disabled');   
-    } else {
-        if (Tester.Reader.Statut == READER_END) {
-            $('#emv_tester_recordgroup #emv_tester_forward_button').attr('disabled','disabled');
-        } else {
-            $('#emv_tester_recordgroup #emv_tester_forward_button').removeAttr('disabled');
+    if (Tester.Reader.Statut == READER_PLAYING || Tester.Reader.Records.length == 0) {
+        $('#emv_tester_recordgroup #emv_tester_forward_button').attr('disabled',true);
+        $('#emv_tester_recordgroup #emv_tester_start_button').attr('disabled',true);   
+        if (Tester.Reader.Records.length == 0) {
+            $('#emv_tester_recordgroup #emv_tester_play_button').attr('disabled',true);         
         }
-        $('#emv_tester_recordgroup #emv_tester_start_button').removeAttr('disabled');
+    } else {
+        if (Tester.Reader.RecordIndex ==  Tester.Reader.Records.length) {
+            $('#emv_tester_recordgroup #emv_tester_forward_button').attr('disabled',true);
+            $('#emv_tester_play_button ' + 'i').attr('class', icon_repeat);   
+            $('#emv_tester_recordgroup #emv_tester_start_button').removeAttr('disabled');   
+            $('#emv_tester_recordgroup #emv_tester_play_button').removeAttr('disabled');                                     
+        } else 
+        if (Tester.Reader.RecordIndex == 0) {
+            $('#emv_tester_recordgroup #emv_tester_start_button').attr('disabled',true);
+            $('#emv_tester_recordgroup #emv_tester_forward_button').removeAttr('disabled');   
+            $('#emv_tester_recordgroup #emv_tester_play_button').removeAttr('disabled');              
+        } else {
+            $('#emv_tester_recordgroup #emv_tester_play_button').removeAttr('disabled');  
+            $('#emv_tester_recordgroup #emv_tester_forward_button').removeAttr('disabled');
+            $('#emv_tester_recordgroup #emv_tester_start_button').removeAttr('disabled');
+        }
     }
     if (solution.emv_CurrentProject) {        
         $('#emv_projectsbar #emv_projectrename').css ('display', '');
@@ -343,7 +354,6 @@ function emv_searchtag (tag, event) {
     event.preventDefault();  
     event.stopPropagation();
 */
-    onclick_sidebarmenu ('sidebar_emvtestermanager', true);   
     emv_table_searchtag(tag, event);
     emv_apdu_searchtag(tag, event);    
 }
@@ -399,6 +409,7 @@ function emv_table_searchtag (tag, event) {
 
 function emv_apdu_searchtag (name, event) {
 
+
     let tags = [];
 
     if (!name || name.length == 0) return;
@@ -410,6 +421,9 @@ function emv_apdu_searchtag (name, event) {
         }
     }
     if (tags.length != 0) {
+        onclick_sidebarmenu ('sidebar_emvtestermanager', true);           
+        emv_tester_fullscreenpanel('emv_apdupanel');
+
         $('#emv_apdu_roottree_ref *').removeClass ('searchtag');
 
         for (var i = 0; i < tags.length; i++) {
@@ -592,7 +606,7 @@ function emv_rapduselect (roottag, index, scroll) {
     }      
 }
 
-function emv_capdu_update (capdu, index, item, silentmode) {
+function emv_capdu_update (origin, capdu, index, item, silentmode) {
     let cla     = capdu.cla;    
     let ins     = capdu.ins;
     let p1      = capdu.p1;
@@ -602,8 +616,8 @@ function emv_capdu_update (capdu, index, item, silentmode) {
     let lc   = parseInt(capdu.lc, 16)
     
     
-    let nodeitem  = {id: 'capdu' + '_' + index, item: 'C-APDU', type: 'tree',  class: 'capdu treenode ' + getcommandclassname(ins),  arrow: (lc == 0 ? false : true), events: apdu_default_node_events, closed: true,
-                    rootitem: emv_apdu_tree_bar(cla, getcommandname (ins) + ' CLA: ' + cla + ' INS: ' + ins + ' P1: ' + p1 + ' P2: ' + p2,  true), items:[]};           
+    let nodeitem  = {id: 'capdu' + '_' + index, item: 'C-APDU', type: 'tree',  attributes: {step: capdu.step}, class: 'capdu treenode ' + getcommandclassname(ins),  arrow: (lc == 0 ? false : true), events: apdu_default_node_events, closed: true,
+        rootitem: emv_apdu_tree_bar(cla, getcommandname (ins) + ' CLA: ' + cla + ' INS: ' + ins + ' P1: ' + p1 + ' P2: ' + p2,  true), items:[]};           
 
     if (silentmode) {
         item.items.push(nodeitem)   
@@ -621,12 +635,12 @@ function emv_capdu_update (capdu, index, item, silentmode) {
     }
 }
 
-function emv_rapdu_update (rapdu, index, value, item, silentmode) {
+function emv_rapdu_update (origin, rapdu, index, value, item, silentmode) {
     let sw1 = rapdu.sw1;    
     let sw2 = rapdu.sw2;
     let error = (sw1 != '90' || sw2 != '00')
 
-    let nodeitem  = {id: 'rapdu' + '_' + index, item: 'R-APDU', type: 'tree',  class: 'rapdu treenode ' + gettagclassname(rapdu.tag) + (error ? ' rapduerror' : ''),  arrow: (error == true ? false : true), events: apdu_default_node_events, closed: true,
+    let nodeitem  = {id: 'rapdu' + '_' + index, item: 'R-APDU', type: 'tree',   attributes: {step: rapdu.step}, class: 'rapdu treenode ' + gettagclassname(rapdu.tag) + (error ? ' rapduerror' : ''),  arrow: (error == true ? false : true), events: apdu_default_node_events, closed: true,
                     rootitem: emv_apdu_tree_bar(sw2,  gettagname(rapdu.tag) + ' SW1: ' + sw1 + ' SW2: ' + sw2,  true), items:[]};        
     
     if (silentmode) {

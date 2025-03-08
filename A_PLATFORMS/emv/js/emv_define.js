@@ -863,6 +863,14 @@ const emv_Steps  = [
         <br><br>
         
         Format 1 : The value of the response contains 2 records that will be read sequently <mark>without their associated tags</mark>
+        <br><br>	        
+        The AIP (Application Interchange Profile) <label class="emv_button_show" onmousedown="emv_searchtag('82', event)">(tag 82)</label>
+        <br><br>
+        <li>The AIP is a 2-byte bit array that indicates the types of functions supported by the card. We will explain this tag in Step : Data Authentification.</li> 
+        <br>        
+        The AFL (Application File Locator <label class="emv_button_show" onmousedown="emv_searchtag('94', event)">(tag 94)</label>
+        <li>The AFL is essentially a list of records the terminal should read from the card in order to use these functions.</li>
+        <br><br>
         <br><br>
         <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('RESPONSE_MESSAGE_TEMPLATE_FORMAT_1', event)">Structure of the R-ADPU to the Command GET PROCESSING OPTIONS Format 1</u>                
         <br><br>
@@ -871,16 +879,8 @@ const emv_Steps  = [
         utilisation and interpretation of proprietary data objects which may be included in this response message are outside the scope of these
         specifications.
         <br><br>	        
+        <br><br>
         <u><label class="emv_button_show" onmousedown="emv_apdu_searchcommand('RESPONSE_MESSAGE_TEMPLATE_FORMAT_2', event)">Structure of the R-ADPU to the Command GET PROCESSING OPTIONS Format 2</u>        
-
-        <br><br>	        
-        The AIP (Application Interchange Profile) <label class="emv_button_show" onmousedown="emv_searchtag('82', event)">(tag 82)</label>
-        <br><br>
-        <li>The AIP is a 2-byte bit array that indicates the types of functions supported by the card. We will explain this tag in Step : Data Authentification.</li> 
-        <br>        
-        The AFL (Application File Locator <label class="emv_button_show" onmousedown="emv_searchtag('94', event)">(tag 94)</label>
-        <br><br>
-        <li>The AFL is essentially a list of records the terminal should read from the card in order to use these functions.</li>
         <br><br>
         Every entry on the AFL list has 4 bytes. That is why the length of the AFL bytestring has to be a multiple of 4. 
         <br>
@@ -1526,10 +1526,8 @@ const emv_Steps  = [
             Terminal may have a Transaction Log of approved transactions
             <br>    
             Transaction Log contains (at least) for each approved transaction:
-            Card s PAN
-            <br>    
-            Amount
-            <br>    
+            Card PAN Amount
+            <br><br>   
             Terminal checks if Log contains approved transactions for the same PAN with which current transaction is performed.
             <br>    
             The terminal adds the Amount for current transaction to amount stored in the log for that PAN and checks if sum >= Terminal Floor Limit.
@@ -1537,7 +1535,7 @@ const emv_Steps  = [
             If sum >= Terminal Floor Limit, terminal sets the  Transaction exceeds floor limit  bit in TVR (Terminal Verification Results, Tag 95) to 1
             <br>    
             An effective security measure against attempts to overspend is to check that the amount involved in a transaction does not exceed a floor limit established by the acquirer, referred to as the Terminal Floor Limit.				
-            <br>    
+            <br><br>    
             However, if the cardholder colludes with the shopkeeper , an amount over the floor limit needed to buy one expensive item can be split into two distinct amounts below the floor limit, which are authorized in two separate transactions with the same card at the same terminal. This kind of threat is called a split sale.				
             <br>    
             If the acquirer is willing to provide security protection against split sales, the terminal has to have enough storage space to accommodate a transaction log like that presented in Table 6.7.				
@@ -1552,21 +1550,22 @@ const emv_Steps  = [
             <br>                                
             Transaction 1,000	PAN1	Amount 2	PAN Seq1	10/5/2001
             <br>                    
-            The processing performed by the terminal for each new EMV ¢ transaction is described by the following actions.				
+            The processing performed by the terminal for each new EMV transaction is described by the following actions.				
+            <br><br>    
+            <li>1. Use the Application PAN and optionally the Application PAN Sequence Number of the card involved in the current transaction to search for an existing record in the transaction log.			
             <br>    
-            1. Use the Application PAN and optionally the Application PAN Sequence Number of the card involved in the current transaction to search for an existing record in the transaction log.				
-            <br>    
-            2. If there is such a record, add the value of the Amount, Authorized field in the current transaction (Amount 2) with the Amount, Authorized field in the most recent transaction (Amount 1) with the same Application PAN/PAN sequence number. 				
+            <li>2. If there is such a record, add the value of the Amount, Authorized field in the current transaction (Amount 2) with the Amount, Authorized field in the most recent transaction (Amount 1) with the same Application PAN/PAN sequence number. 				
             <br>    
             The cumulated value of the two transactions represents the total.				
             <br>    
             If the value of total is greater than or equal to the value field of the Terminal Floor Limit data object with tag 9F1B in the terminal, then set bit 8, "Transaction exceeds floor limit", in byte 4 of the TVR.				
             <br>    
-            Record the new transaction (e.g., at index 1,000) within the transaction log and end the processing.				
+            Record the new transaction (e.g., at index 1,000) within the transaction log and end the processing.</li>					
             <br>    
-            3. In case there is no such record in the transaction log, or the terminal does not keep a transaction log, the terminal checks whether the value of the Amount, Authorized in the current transaction is greater than or equal to the value field of the Terminal Floor Limit.				
+            <li>3. In case there is no such record in the transaction log, or the terminal does not keep a transaction log, 
+            the terminal checks whether the value of the Amount, Authorized in the current transaction is greater than or equal to the value field of the Terminal Floor Limit.</li>				
             <br>    
-            If this is true, the terminal sets bit 8, "Transaction exceeds floor limit", in byte 4 of the TVR.</div>				
+            If this is true, the terminal sets bit 8, "Transaction exceeds floor limit", in byte 4 of the TVR.</div></li>				
             <br>    
             `}, 
             {id: EMV_SUBSTEP_RANDOM_TRANSACTION_SELECTION, info: '',  item: 'Random Transaction Selection', substeps: [],
@@ -2059,25 +2058,37 @@ const emv_Steps  = [
         The data field of the response message consists of a BER-TLV coded data object.
         The coding of the data object shall be according to one of the following two
         formats.
-        • Format 1: The data object returned in the response message is a primitive data object with tag equal to '80'.
+        <br><br>
+        • Format 1: The data object returned in the response message is a primitive data object with <label class="emv_button_show" onmousedown="emv_searchtag('80', event)">(tag 80)</label>.
+        <br>        
         The value field consists of the concatenation without delimiters (tag and length) of the value fields of the data objects
         specified in Table 13 of EMV Book 3:
+        
         Value Presence
+        <br><br>
+
         <li>Cryptogram Information Data (CID) Mandatory <label class="emv_button_show" onmousedown="emv_searchtag('9F27', event)">(tag 9F27)</label></li>
         <li>Application Transaction Counter (ATC) Mandatory  <label class="emv_button_show" onmousedown="emv_searchtag('9F36', event)">(tag 9F36)</label></li> 
         <li>Application Cryptogram (AC) Mandatory <label class="emv_button_show" onmousedown="emv_searchtag('9F26', event)">(tag 9F26)</label></li>
         <li>Issuer Application Data (IAD) Optional <label class="emv_button_show" onmousedown="emv_searchtag('9F10', event)">(tag 9F10)</label></li>
+        <br><br>
+
+        Format 2: The data object returned in the response message is a constructed data object with <label class="emv_button_show" onmousedown="emv_searchtag('77', event)">(tag 77)</label>.. 
+        <br>        
+        The value field may contain several BERTLV coded objects, but shall always include:
+        <br><br>        
+
+        <li>the Cryptogram Information Data,</li> 
+        <li>the Application Transaction Counter, and </li>
+        <li>the cryptogram computed by the ICC (either an AC or a proprietary cryptogram).</li> 
         
-        Format 2: The data object returned in the response message is a constructed
-        data object with tag equal to '77'. The value field may contain several BERTLV coded objects, but shall always include the Cryptogram Information
-        Data, the Application Transaction Counter, and the cryptogram computed by
-        the ICC (either an AC or a proprietary cryptogram). The utilisation and
-        interpretation of proprietary data objects which may be included in this
-        response message are outside the scope of these specifications.
-        Format 2 shall be used if the response is being returned in a signature as
-        specified for the CDA function described in section 6.6 of Book 2. The required
-        data elem
-        
+        <br><br>
+        The utilisation and interpretation of proprietary data objects which may be included in this response message are outside the scope of these specifications.
+        Format 2 shall be used if the response is being returned in a signature as specified for the CDA function described in section 6.6 of Book 2. 
+        <br>        
+        The required data elem
+        <br>        
+       
         This result is communicated using a cryptogram.
         <br>
 
@@ -2085,7 +2096,7 @@ const emv_Steps  = [
         The card will generate one of three possible cryptograms:
         <br><br>
         <li>Transaction approved: Transaction Certificate<label class="emv_button_show"  type="button" onmousedown= "emv_cidbyte_show(emv_CIDPanel, CID_TC, 1)" onmouseup= "emv_cidbyte_show(emv_CIDPanel, CID_TC, 0)">(TC)</label></li>
-        <li>Request online approval: Authorization ReQuest Cryptogram <label class="emv_button_show"  type="button" onmousedown= "emv_cidbyte_show(emv_CIDPanel, CID_ARQC, 1)" onmouseup= "emv_cidbyte_show(emv_CIDPanel, CID_ARQC, 0)">(ARQC)</label></li>
+        <li>Request online approval: Authorization Request Cryptogram <label class="emv_button_show"  type="button" onmousedown= "emv_cidbyte_show(emv_CIDPanel, CID_ARQC, 1)" onmouseup= "emv_cidbyte_show(emv_CIDPanel, CID_ARQC, 0)">(ARQC)</label></li>
         <li>Transaction declined: Application Authentication Cryptogram <label class="emv_button_show"  type="button" onmousedown= "emv_cidbyte_show(emv_CIDPanel, CID_AAC, 1)" onmouseup= "emv_cidbyte_show(emv_CIDPanel, CID_AAC, 0)">(AAC)</label></li>
         <br><br>
         At the end of this step the card provides a TC, ARQC or AAC to the terminal together with the transaction data used to generate the cryptogram.

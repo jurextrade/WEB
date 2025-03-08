@@ -273,55 +273,81 @@ function emv_TreatTrace(origin, reader, values, silentmode, display) {
     }
 }
 
-function emv_TraceAPDU (data, dataSize, type, update, silentmode, display) {
+function emv_TraceAPDU (origin, data, dataSize, type, update, silentmode, display) {
+    let headersize = 10;
+    let apdu = {};
+    apdu.cla       = data.substring(0,2);
+    apdu.ins       = data.substring(2,4);
+    apdu.p1        = data.substring(4,6);
+    apdu.p2        = data.substring(6,8);
+    apdu.lc        = parseInt(data.substring(8,10), 16);
+    apdu.df        = data.substring(10);
+
     let strace = "";
     strace =  type + ':\n';
-	
+
+    apdu.step =  Tester.Reader.CurrentStep.toString();
+
     if (type ==  'R-APDU') {
-        let sw1       = data.substring(data.length - 4, data.length - 2)
-        let sw2       = data.substring(data.length - 2);        
-        let sdata     = data.substring (0, data.length - 4)
-        strace += '    Body (optional) : ' + sdata  + '\n';
-		strace += '    Trailer (required) : SW1 ' + sw1 + ' SW2 ' + sw2 + '\n';
         
+        apdu.sw1       = data.substring(data.length - 4, data.length - 2)
+        apdu.sw2       = data.substring(data.length - 2);      
+
+        let sdata     = data.substring (10, data.length - 4)
+
+        strace += '    Body (optional) : ' + sdata  + '\n';
+		strace += '    Trailer (required) : SW1 ' + apdu.sw1 + ' SW2 ' + apdu.sw2 + '\n';
 
         if (update) {
-            let rapdu = TLVParse(sdata)[0];
-            if (rapdu == null) {
-                rapdu = {}                
-            }
-            rapdu.sw1 = sw1;
-            rapdu.sw2 = sw2;
+            apdu = {...apdu, ...TLVParse(sdata)[0]};
+ 
+            if (apdu.tag  == "80") {
+                 if (apdu.ins == 'A8') {   // GPO   
+                 let childtag82 = apdu.value.substring (0,4)
+                 let childtag94 = apdu.value.substring (4);
+                 apdu.child = [ {tag: "82", value: childtag82}, {tag: "94", value: childtag94}]
+                } else
+                if (apdu.ins == 'AE') {   // Generate AC   
+                    let childtag9F27 = apdu.value.substring (0,2)
+                    let childtag9F36 = apdu.value.substring (2,6);
+                    let childtag9F26 = apdu.value.substring (6,22);
+                    let childtag9F10 = apdu.value.substring (22);
+
+                    apdu.child = [ {tag: "9F27", value: childtag9F27}, {tag: "9F36", value: childtag9F36},  {tag: "9F26", value: childtag9F26}]
             
+                    if (childtag9F10 != "") {
+                        apdu.child.push ({tag: "9F10", value: childtag9F10})
+                    }
+                }
+            }
+
             let rapdu_index = Tester.Reader.RAPDU.length;                
-            Tester.Reader.RAPDU.push (rapdu);
-            emv_rapdu_update(rapdu, rapdu_index, sdata, emv_apdu_roottree, silentmode)
+            
+            Tester.Reader.RAPDU.push (apdu);
+
+            emv_rapdu_update(origin, apdu, rapdu_index, sdata, emv_apdu_roottree, silentmode)
 
             if (!silentmode) {            
-                emv_rapduselect (rapdu, rapdu_index, display)
+                emv_rapduselect (apdu, rapdu_index, display)
             }
         }
 
 	} else {
-        let capdu = {};
-        capdu.cla       = data.substring(0,2);
-        capdu.ins       = data.substring(2,4);
-        capdu.p1        = data.substring(4,6);
-        capdu.p2        = data.substring(6,8);
-        capdu.lc        = data.substring(8,10);
-        capdu.df        = data.substring(10);
         
-        let lc          = parseInt(capdu.lc, 16)
-        
-        strace += '    Header (required) : CLA ' + capdu.cla + ' INS ' + capdu.ins + ' P1 ' + capdu.p1 + ' P2 ' + capdu.p2 + (lc == 0 ? '' : ' LC ' + capdu.lc) + '\n';
-        strace += '    Body (optional) : ' + capdu.df  + '\n';      
+        strace += '    Header (required) : CLA ' + apdu.cla + ' INS ' + apdu.ins + ' P1 ' + apdu.p1 + ' P2 ' + apdu.p2 + (apdu.lc == 0 ? '' : ' LC ' + apdu.lc) + '\n';
+        strace += '    Body (optional) : ' + apdu.df  + '\n';      
           
         if (update) {
+            apdu.step =  Tester.Reader.CurrentStep.toString();            
+
             let capdu_index = Tester.Reader.CAPDU.length;            
-            Tester.Reader.CAPDU.push (capdu);    
-            emv_capdu_update (capdu, capdu_index, emv_apdu_roottree, silentmode)
+            
+            Tester.Reader.CAPDU.push (apdu);    
+            
+            emv_capdu_update (origin, apdu, capdu_index, emv_apdu_roottree, silentmode)
+
             if (!silentmode) {
-                emv_capduselect (capdu, capdu_index, display)
+                emv_capduselect (apdu, capdu_index, display)
             }
         }
     }
@@ -335,14 +361,14 @@ function emv_TreatAPDU(origin, reader, values, silentmode, display, router) {
     switch (origin) {
         case CARD:
             result      = values[2]
-            trace_hexa  = emv_TraceAPDU(result, result.length, type, false, silentmode, display);
+            trace_hexa  = emv_TraceAPDU(origin, result, result.length, type, true, silentmode, display);
         break;
         case TERMINAL:
             result      = values[2]
-            trace_hexa  = emv_TraceAPDU(result, result.length, type, true, silentmode, display);
+            trace_hexa  = emv_TraceAPDU(origin, result, result.length, type, false, silentmode, display);
         break;
     }    
-    if (!router && !Tester.Reader.IgnoreTrace) {    
+    if (!Tester.Reader.IgnoreTrace) {    
         let apduvalues = ['TRACE', '', trace_hexa]
         emv_TreatTrace(origin, reader, apduvalues, silentmode, display)
     }
@@ -427,12 +453,7 @@ function emv_TreatTAG(origin, reader, values, silentmode, display) {
             let asciivalue = '';
 
             let tagname = gettagname (stag.tag);
-            if (tagname == "") {
-            //      console.log ('NAME : not found ' + tags[i].tag);
-            } else {
 
-            //     console.log ('NAME : ' + gettagname (tags[i].tag))
-            }
 
             asciivalue = hexa_to_ascii(stag.value);
             isascii = /^[\x20-\x7F]+$/.test(asciivalue);   // ascii printable
@@ -443,11 +464,11 @@ function emv_TreatTAG(origin, reader, values, silentmode, display) {
                 asciivalue = '';
             }
 
-            valuetext = gettagvalue_text(stag) ;
-            
-            if (valuetext) {
-            //     console.log('HTML yes')
-            }  
+         //   valuetext = gettagvalue_text(stag) ;
+         //   
+         //   if (valuetext) {
+         //   //     console.log('HTML yes')
+         //   }  
             let row = [stag.tag, tagname, stag.value, asciivalue, 'valuetext'];
 
             if (silentmode) {

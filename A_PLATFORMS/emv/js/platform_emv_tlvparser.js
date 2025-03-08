@@ -108,7 +108,7 @@ function emv_byte_show (panel, id, show) {
        // elt.closest ('.bytepanel')[0].scrollIntoView()
         setTimeout (function essa (elt) {
             elt.closest ('.bytepanel')[0].scrollIntoView() 
-        }, 3000, elt);  
+        }, 300, elt);  
 
         elt.parent().addClass('marked')
 
@@ -1261,8 +1261,11 @@ function gettagvalue_text(e) {
         return GetTVRControl(e.value, e.tag);
     if ("9F10" === e.tag)
         return GetIADControl(e.value);
-    if ("82" === e.tag && 4 === e.value.length)
-        return GetAIPControl(e.value);
+    if ("82" === e.tag) {
+        if (4 === e.value.length) {
+            return GetAIPControl(e.value);
+        }
+    }
     if ("9F33" == e.tag && 6 === e.value.length)
         return GetTermCapControl(e.value);
     if ("9F34" === e.tag && 6 === e.value.length)
@@ -1362,13 +1365,13 @@ function gettagvalue_text(e) {
         a = (new Date).getTime().toString(16),
         result = `<nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-            <button class="nav-link active" id="i ${a}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${a}-nav-byte1" type="button" role="tab" aria-controls="i ${a}-nav-byte1" aria-selected="true">Byte 1</button>
-            <button class="nav-link disabled" id="i ${a}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${a}-nav-byte2" type="button" role="tab" aria-controls="i ${a}-nav-byte2" aria-selected="true" aria-disabled="true">Byte 2 (RFU)</button>
+            <button class="nav-link active" id="i${a}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${a}-nav-byte1" type="button" role="tab" aria-controls="i${a}-nav-byte1" aria-selected="true">Byte 1</button>
+            <button class="nav-link disabled" id="i${a}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${a}-nav-byte2" type="button" role="tab" aria-controls="i${a}-nav-byte2" aria-selected="true" aria-disabled="true">Byte 2 (RFU)</button>
         </div>
         </nav>
         <div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-        <div class="tab-pane show active" id="i ${a}-nav-byte1" role="tabpanel" aria-labelledby="i ${a}-nav-byte1-tab">${byte1}</div>
-        <div class="tab-pane" id="i ${a}-nav-byte2" role="tabpanel" aria-labelledby="i ${a}-nav-byte2-tab"></div>
+        <div class="tab-pane show active" id="i${a}-nav-byte1" role="tabpanel" aria-labelledby="i${a}-nav-byte1-tab">${byte1}</div>
+        <div class="tab-pane" id="i${a}-nav-byte2" role="tabpanel" aria-labelledby="i${a}-nav-byte2-tab"></div>
         </div>`) : "9F6C" === e.tag && 4 === e.value.length ? GetCTQControl(e.value) : "9F66" === e.tag && 8 === e.value.length ? GetTTQControl(e.value) : "9F40" === e.tag && 10 === e.value.length ? Get9F40Control(e.value) : "9F69" === e.tag && 14 === e.value.length ? (i = (a = e.value).substr(0, 2),
         s = a.substr(2, 8),
         a = a.substr(10, 4),
@@ -1427,6 +1430,31 @@ function gettagvalue_text(e) {
     </tbody>
     </table>` : void 0
 }
+function GetCVRByte1Control(t, e) {
+    return SECONDAC = {
+        "00": "AAC",
+        "01": "TC",
+        10: "not requested",
+        11: "RFU"
+    },
+    FIRSTAC = {
+        "00": "AAC",
+        "01": "TC",
+        10: "ARQC",
+        11: "RFU"
+    },
+    `<table class="bitmap">
+<tbody><tr><th>b8</th><th>b7</th><th>b6</th><th>b5</th><th>b4</th><th>b3</th><th>b2</th><th>b1</th><th>Meaning</th></tr>
+<tr><td><span class="bgset2">${(bits = hex2bin(t))[0]}</span></td><td><span class="bgset2">${bits[1]}</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="bgunset">${e[0]} (${SECONDAC[bits[0] + bits[1]]})</span></td></tr>
+<tr><td></td><td></td><td><span class="bgset2">${bits[2]}</span></td><td><span class="bgset2">${bits[3]}</span></td><td></td><td></td><td></td><td></td><td><span class="bgunset">${e[1]} (${FIRSTAC[bits[2] + bits[3]]})</span></td></tr>
+<tr><td></td><td></td><td></td><td></td><td><span>${bits[4]}</span></td><td></td><td></td><td></td><td><span class="${"1" === bits[4] ? "bgset" : "bgunset"}">${e[2]}</span></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td><span>${bits[5]}</span></td><td></td><td></td><td><span class="${"1" === bits[5] ? "bgset" : "bgunset"}">${e[3]}</span></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td><span>${bits[6]}</span></td><td></td><td><span class="${"1" === bits[6] ? "bgset" : "bgunset"}">${e[4]}</span></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span>${bits[7]}</span></td><td><span class="${"1" === bits[7] ? "bgset" : "bgunset"}">${e[5]}</span></td></tr>
+</tbody>
+</table>`
+}
+
 
 function GetCVRByte3Control(t, e) {
     return bits = hex2bin(t),
@@ -1482,46 +1510,55 @@ function GetTVRControl(t, tag) {
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true">Byte 1</button>
-			<button class="nav-link" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 2</button>
-			<button class="nav-link" id="i ${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte3" type="button" role="tab" aria-controls="i ${t}-nav-byte3" aria-selected="true">Byte 3</button>
-			<button class="nav-link" id="i ${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte4" type="button" role="tab" aria-controls="i ${t}-nav-byte4" aria-selected="true">Byte 4</button>
-			<button class="nav-link" id="i ${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte5" type="button" role="tab" aria-controls="i ${t}-nav-byte5" aria-selected="true">Byte 5</button>
+			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1</button>
+			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2</button>
+			<button class="nav-link" id="i${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte3" type="button" role="tab" aria-controls="i${t}-nav-byte3" aria-selected="true">Byte 3</button>
+			<button class="nav-link" id="i${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte4" type="button" role="tab" aria-controls="i${t}-nav-byte4" aria-selected="true">Byte 4</button>
+			<button class="nav-link" id="i${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte5" type="button" role="tab" aria-controls="i${t}-nav-byte5" aria-selected="true">Byte 5</button>
 		</div>
 		</nav>
 		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i ${t}-nav-byte1" role="tabpanel" flattitle="TVR Byte 1 (Leftmost):" aria-labelledby="i ${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane show" id="i ${t}-nav-byte2" role="tabpanel" flattitle="TVR Byte 2:" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
-		<div class="tab-pane show" id="i ${t}-nav-byte3" role="tabpanel" flattitle="TVR Byte 3:" aria-labelledby="i ${t}-nav-byte3-tab">${byte3}</div>
-		<div class="tab-pane show" id="i ${t}-nav-byte4" role="tabpanel" flattitle="TVR Byte 4:" aria-labelledby="i ${t}-nav-byte4-tab">${byte4}</div>
-		<div class="tab-pane show" id="i ${t}-nav-byte5" role="tabpanel" flattitle="TVR Byte 5 (Rightmost):" aria-labelledby="i ${t}-nav-byte5-tab">${byte5}</div>
+		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" flattitle="TVR Byte 1 (Leftmost):" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
+		<div class="tab-pane show" id="i${t}-nav-byte2" role="tabpanel" flattitle="TVR Byte 2:" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
+		<div class="tab-pane show" id="i${t}-nav-byte3" role="tabpanel" flattitle="TVR Byte 3:" aria-labelledby="i${t}-nav-byte3-tab">${byte3}</div>
+		<div class="tab-pane show" id="i${t}-nav-byte4" role="tabpanel" flattitle="TVR Byte 4:" aria-labelledby="i${t}-nav-byte4-tab">${byte4}</div>
+		<div class="tab-pane show" id="i${t}-nav-byte5" role="tabpanel" flattitle="TVR Byte 5 (Rightmost):" aria-labelledby="i${t}-nav-byte5-tab">${byte5}</div>
 		</div>`
 */        
 }
 
 function GetAIPControl(t) {
-    byte1 = GetBitmapControl(t.substr(0, 2), ["RFU", "SDA Supported", "DDA Supported", "Cardholder verification is supported", "Terminal risk management is to be performed", "Issuer authentication is supported", "RFU", "CDA Supported"]),
+
+    let panel = emv_bytepanel('R_AIP', '82',   emv_AIP, {withbar:false, editable:false})  
+    let content = sb.render(panel)      
+    
+    let hexaarray = hexa_to_array(t)    
+    let haxaint   = array_to_int(hexaarray)
+    emv_byte_update(panel, BigInt(haxaint))
+    return content;
+
+    /*byte1 = GetBitmapControl(t.substr(0, 2), ["RFU", "SDA Supported", "DDA Supported", "Cardholder verification is supported", "Terminal risk management is to be performed", "Issuer authentication is supported", "RFU", "CDA Supported"]),
     byte2 = GetBitmapControl(t.substr(2, 2), ["EMV Mode has been selected", "RFU / OTA capable mobile device", "RFU", "RFU", "RFU", "RFU", "RFU", "RFU"]);
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true">Byte 1</button>
-			<button class="nav-link" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 2</button>
+			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1</button>
+			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2</button>
 		</div>
 		</nav>
 		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i ${t}-nav-byte1" role="tabpanel" flattitle="AIP Byte 1 (Leftmost):" aria-labelledby="i ${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte2" role="tabpanel" flattitle="AIP Byte 2 (Rightmost):" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
+		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" flattitle="AIP Byte 1 (Leftmost):" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
+		<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" flattitle="AIP Byte 2 (Rightmost):" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
 		</div>`
+        */
 }
+
 function GetAUCControl(t) {
-
-    let hexaarray = hexa_to_array(t)    
-    let haxaint   = array_to_int(hexaarray)
-
     let panel = emv_bytepanel('R_AUC', '9F07', emv_AUC, {withbar:false, editable:false})
     let content = sb.render(panel)
 
+    let hexaarray = hexa_to_array(t)    
+    let haxaint   = array_to_int(hexaarray)
     emv_byte_update(panel, BigInt(haxaint))
     return content;
 /*        
@@ -1530,13 +1567,13 @@ function GetAUCControl(t) {
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true">Byte 0</button>
-			<button class="nav-link" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 1</button>
+			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 0</button>
+			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 1</button>
 		</div>
 		</nav>
 		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i ${t}-nav-byte1" role="tabpanel" aria-labelledby="i ${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte2" role="tabpanel" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
+		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
+		<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
 		</div>`
         */
 }
@@ -1591,15 +1628,15 @@ function GetTermCapControl(t) {
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true">Byte 1 - Card Data Input Capability</button>
-			<button class="nav-link" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 2 - CVM Capability</button>
-			<button class="nav-link" id="i ${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte3" type="button" role="tab" aria-controls="i ${t}-nav-byte3" aria-selected="true">Byte 3 - Security Capability</button>
+			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1 - Card Data Input Capability</button>
+			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2 - CVM Capability</button>
+			<button class="nav-link" id="i${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte3" type="button" role="tab" aria-controls="i${t}-nav-byte3" aria-selected="true">Byte 3 - Security Capability</button>
 		</div>
 		</nav>
 		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i ${t}-nav-byte1" flattitle="Byte 1 - Card Data Input Capability:" role="tabpanel" aria-labelledby="i ${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte2" role="tabpanel" flattitle="Byte 2 - CVM Capability:" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte3" role="tabpanel" flattitle="Byte 3 - Security Capability:" aria-labelledby="i ${t}-nav-byte3-tab">${byte3}</div>
+		<div class="tab-pane show active" id="i${t}-nav-byte1" flattitle="Byte 1 - Card Data Input Capability:" role="tabpanel" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
+		<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" flattitle="Byte 2 - CVM Capability:" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
+		<div class="tab-pane" id="i${t}-nav-byte3" role="tabpanel" flattitle="Byte 3 - Security Capability:" aria-labelledby="i${t}-nav-byte3-tab">${byte3}</div>
 		</div>`
 }
 function GetCVMRControl(t) {
@@ -1690,19 +1727,19 @@ function Get9F40Control(t) {
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 			<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-				<button class="nav-link active" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true">Byte 1</button>
-				<button class="nav-link" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 2</button>
-				<button class="nav-link" id="i ${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte3" type="button" role="tab" aria-controls="i ${t}-nav-byte3" aria-selected="true">Byte 3</button>
-				<button class="nav-link" id="i ${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte4" type="button" role="tab" aria-controls="i ${t}-nav-byte4" aria-selected="true">Byte 4</button>
-				<button class="nav-link" id="i ${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte5" type="button" role="tab" aria-controls="i ${t}-nav-byte5" aria-selected="true">Byte 5</button>
+				<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1</button>
+				<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2</button>
+				<button class="nav-link" id="i${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte3" type="button" role="tab" aria-controls="i${t}-nav-byte3" aria-selected="true">Byte 3</button>
+				<button class="nav-link" id="i${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte4" type="button" role="tab" aria-controls="i${t}-nav-byte4" aria-selected="true">Byte 4</button>
+				<button class="nav-link" id="i${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte5" type="button" role="tab" aria-controls="i${t}-nav-byte5" aria-selected="true">Byte 5</button>
 			</div>
 			</nav>
 			<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-			<div class="tab-pane show active" id="i ${t}-nav-byte1" role="tabpanel" flattitle="Byte 1 (Leftmost):" aria-labelledby="i ${t}-nav-byte1-tab">${byte1}</div>
-			<div class="tab-pane" id="i ${t}-nav-byte2" role="tabpanel" flattitle="Byte 2:" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
-			<div class="tab-pane" id="i ${t}-nav-byte3" role="tabpanel" flattitle="Byte 3:" aria-labelledby="i ${t}-nav-byte3-tab">${byte3}</div>
-			<div class="tab-pane" id="i ${t}-nav-byte4" role="tabpanel" flattitle="Byte 4:" aria-labelledby="i ${t}-nav-byte4-tab">${byte4}</div>
-			<div class="tab-pane" id="i ${t}-nav-byte5" role="tabpanel" flattitle="Byte 5 (Rightmost):" aria-labelledby="i ${t}-nav-byte5-tab">${byte5}</div>
+			<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" flattitle="Byte 1 (Leftmost):" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
+			<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" flattitle="Byte 2:" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
+			<div class="tab-pane" id="i${t}-nav-byte3" role="tabpanel" flattitle="Byte 3:" aria-labelledby="i${t}-nav-byte3-tab">${byte3}</div>
+			<div class="tab-pane" id="i${t}-nav-byte4" role="tabpanel" flattitle="Byte 4:" aria-labelledby="i${t}-nav-byte4-tab">${byte4}</div>
+			<div class="tab-pane" id="i${t}-nav-byte5" role="tabpanel" flattitle="Byte 5 (Rightmost):" aria-labelledby="i${t}-nav-byte5-tab">${byte5}</div>
 			</div>`
 }
 
@@ -1714,22 +1751,30 @@ function GetTTQControl(t) {
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true">Byte 1</button>
-			<button class="nav-link" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 2</button>
-			<button class="nav-link" id="i ${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte3" type="button" role="tab" aria-controls="i ${t}-nav-byte3" aria-selected="true">Byte 3</button>
-			<button class="nav-link" id="i ${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte4" type="button" role="tab" aria-controls="i ${t}-nav-byte4" aria-selected="true">Byte 4</button>
+			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1</button>
+			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2</button>
+			<button class="nav-link" id="i${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte3" type="button" role="tab" aria-controls="i${t}-nav-byte3" aria-selected="true">Byte 3</button>
+			<button class="nav-link" id="i${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte4" type="button" role="tab" aria-controls="i${t}-nav-byte4" aria-selected="true">Byte 4</button>
 		</div>
 		</nav>
 		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i ${t}-nav-byte1" role="tabpanel" flattitle="Byte 1:" aria-labelledby="i ${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte2" role="tabpanel" flattitle="Byte 2:" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte3" role="tabpanel" flattitle="Byte 3:" aria-labelledby="i ${t}-nav-byte3-tab">${byte3}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte4" role="tabpanel" flattitle="Byte 4:" aria-labelledby="i ${t}-nav-byte4-tab">${byte4}</div>
+		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" flattitle="Byte 1:" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
+		<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" flattitle="Byte 2:" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
+		<div class="tab-pane" id="i${t}-nav-byte3" role="tabpanel" flattitle="Byte 3:" aria-labelledby="i${t}-nav-byte3-tab">${byte3}</div>
+		<div class="tab-pane" id="i${t}-nav-byte4" role="tabpanel" flattitle="Byte 4:" aria-labelledby="i${t}-nav-byte4-tab">${byte4}</div>
 		</div>`
 }
 
 function GetIADControl(t) {
-    return 64 === t.length && "0F" === t.substr(0, 2) && "0F" === t.substr(32, 2) ? GetIADCCDCompliant(t) : 14 <= t.length && "06" == t.substr(0, 2) && "03" == t.substr(6, 2) || "1F" == t.substr(0, 2) && 64 == t.length ? GetIADVisa(t) : 36 === t.length || 40 === t.length || 52 === t.length || 56 === t.length ? GetIADMastercardMChip(t) : void 0
+    return  (
+        64 === t.length && "0F" === t.substr(0, 2) && "0F" === t.substr(32, 2) ? 
+        GetIADCCDCompliant(t) : 
+        14 <= t.length && "06" == t.substr(0, 2) && "03" == t.substr(6, 2) || "1F" == t.substr(0, 2) && 64 == t.length ? 
+        GetIADVisa(t) : 
+        36 === t.length || 40 === t.length || 52 === t.length || 56 === t.length ? 
+        GetIADMastercardMChip(t) : 
+        void 0
+        )
 }
 
 function GetCTQControl(t) {
@@ -1738,13 +1783,13 @@ function GetCTQControl(t) {
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true">Byte 1</button>
-			<button class="nav-link" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 2</button>
+			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1</button>
+			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2</button>
 		</div>
 		</nav>
 		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i ${t}-nav-byte1" role="tabpanel" flattitle="Byte 1:" aria-labelledby="i ${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte2" role="tabpanel" flattitle="Byte 2:" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
+		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" flattitle="Byte 1:" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
+		<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" flattitle="Byte 2:" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
 		</div>`
 }
 
@@ -1758,15 +1803,15 @@ function GetCVRBasicControl(t) {
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true">Byte 1</button>
-			<button class="nav-link" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 2</button>
-			<button class="nav-link" id="i ${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte3" type="button" role="tab" aria-controls="i ${t}-nav-byte3" aria-selected="true">Byte 3</button>
+			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1</button>
+			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2</button>
+			<button class="nav-link" id="i${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte3" type="button" role="tab" aria-controls="i${t}-nav-byte3" aria-selected="true">Byte 3</button>
 		</div>
 		</nav>
 		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i ${t}-nav-byte1" role="tabpanel" aria-labelledby="i ${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte2" role="tabpanel" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte3" role="tabpanel" aria-labelledby="i ${t}-nav-byte3-tab">${byte3}</div>
+		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
+		<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
+		<div class="tab-pane" id="i${t}-nav-byte3" role="tabpanel" aria-labelledby="i${t}-nav-byte3-tab">${byte3}</div>
 		</div>`
 }
 function GetCVRIADFormat2Control(t) {
@@ -1777,19 +1822,19 @@ function GetCVRIADFormat2Control(t) {
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link disabled" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true" aria-disabled="true">Byte 1 (RFU)</button>
-			<button class="nav-link active" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 2</button>
-			<button class="nav-link" id="i ${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte3" type="button" role="tab" aria-controls="i ${t}-nav-byte3" aria-selected="true">Byte 3</button>
-			<button class="nav-link" id="i ${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte4" type="button" role="tab" aria-controls="i ${t}-nav-byte4" aria-selected="true">Byte 4</button>
-			<button class="nav-link" id="i ${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte5" type="button" role="tab" aria-controls="i ${t}-nav-byte5" aria-selected="true">Byte 5</button>
+			<button class="nav-link disabled" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true" aria-disabled="true">Byte 1 (RFU)</button>
+			<button class="nav-link active" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2</button>
+			<button class="nav-link" id="i${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte3" type="button" role="tab" aria-controls="i${t}-nav-byte3" aria-selected="true">Byte 3</button>
+			<button class="nav-link" id="i${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte4" type="button" role="tab" aria-controls="i${t}-nav-byte4" aria-selected="true">Byte 4</button>
+			<button class="nav-link" id="i${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte5" type="button" role="tab" aria-controls="i${t}-nav-byte5" aria-selected="true">Byte 5</button>
 		</div>
 		</nav>
 		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane" id="i ${t}-nav-byte1" role="tabpanel" aria-labelledby="i ${t}-nav-byte1-tab"></div>
-		<div class="tab-pane show active" id="i ${t}-nav-byte2" role="tabpanel" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte3" role="tabpanel" aria-labelledby="i ${t}-nav-byte3-tab">${byte3}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte4" role="tabpanel" aria-labelledby="i ${t}-nav-byte4-tab">${byte4}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte5" role="tabpanel" aria-labelledby="i ${t}-nav-byte5-tab">${byte5}</div>
+		<div class="tab-pane" id="i${t}-nav-byte1" role="tabpanel" aria-labelledby="i${t}-nav-byte1-tab"></div>
+		<div class="tab-pane show active" id="i${t}-nav-byte2" role="tabpanel" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
+		<div class="tab-pane" id="i${t}-nav-byte3" role="tabpanel" aria-labelledby="i${t}-nav-byte3-tab">${byte3}</div>
+		<div class="tab-pane" id="i${t}-nav-byte4" role="tabpanel" aria-labelledby="i${t}-nav-byte4-tab">${byte4}</div>
+		<div class="tab-pane" id="i${t}-nav-byte5" role="tabpanel" aria-labelledby="i${t}-nav-byte5-tab">${byte5}</div>
 		</div>`
 }
 function GetIAD4CVRByte1Control(t) {
@@ -1959,17 +2004,17 @@ function FFIVisa(t) {
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true">Byte 1 - Form Factor</button>
-			<button class="nav-link" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 2 - Device Features</button>
-			<button class="nav-link disabled" id="i ${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte3" type="button" role="tab" aria-controls="i ${t}-nav-byte3" aria-selected="true" aria-disabled="true">Byte 3 - RFU</button>
-			<button class="nav-link" id="i ${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte4" type="button" role="tab" aria-controls="i ${t}-nav-byte4" aria-selected="true">Byte 4 - Technology</button>
+			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1 - Form Factor</button>
+			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2 - Device Features</button>
+			<button class="nav-link disabled" id="i${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte3" type="button" role="tab" aria-controls="i${t}-nav-byte3" aria-selected="true" aria-disabled="true">Byte 3 - RFU</button>
+			<button class="nav-link" id="i${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte4" type="button" role="tab" aria-controls="i${t}-nav-byte4" aria-selected="true">Byte 4 - Technology</button>
 		</div>
 		</nav>
 		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i ${t}-nav-byte1" role="tabpanel" aria-labelledby="i ${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte2" role="tabpanel" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte3" role="tabpanel" aria-labelledby="i ${t}-nav-byte3-tab">${byte3}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte4" role="tabpanel" aria-labelledby="i ${t}-nav-byte4-tab">${byte4}</div>
+		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
+		<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
+		<div class="tab-pane" id="i${t}-nav-byte3" role="tabpanel" aria-labelledby="i${t}-nav-byte3-tab">${byte3}</div>
+		<div class="tab-pane" id="i${t}-nav-byte4" role="tabpanel" aria-labelledby="i${t}-nav-byte4-tab">${byte4}</div>
 		</div>`
 }
 function GetFFI(t) {
@@ -1986,21 +2031,21 @@ function GetCVRIADFormat4Control(t) {
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true">Byte 1</button>
-			<button class="nav-link" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 2</button>
-			<button class="nav-link" id="i ${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte3" type="button" role="tab" aria-controls="i ${t}-nav-byte3" aria-selected="true">Byte 3</button>
-			<button class="nav-link" id="i ${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte4" type="button" role="tab" aria-controls="i ${t}-nav-byte4" aria-selected="true">Byte 4</button>
-			<button class="nav-link" id="i ${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte5" type="button" role="tab" aria-controls="i ${t}-nav-byte5" aria-selected="true">Byte 5</button>
-			<button class="nav-link disabled" id="i ${t}-nav-byte6-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte6" type="button" role="tab" aria-controls="i ${t}-nav-byte6" aria-selected="true" aria-disabled="true">Byte 6 (RFU)</button>
+			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1</button>
+			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2</button>
+			<button class="nav-link" id="i${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte3" type="button" role="tab" aria-controls="i${t}-nav-byte3" aria-selected="true">Byte 3</button>
+			<button class="nav-link" id="i${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte4" type="button" role="tab" aria-controls="i${t}-nav-byte4" aria-selected="true">Byte 4</button>
+			<button class="nav-link" id="i${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte5" type="button" role="tab" aria-controls="i${t}-nav-byte5" aria-selected="true">Byte 5</button>
+			<button class="nav-link disabled" id="i${t}-nav-byte6-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte6" type="button" role="tab" aria-controls="i${t}-nav-byte6" aria-selected="true" aria-disabled="true">Byte 6 (RFU)</button>
 		</div>
 		</nav>
 		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i ${t}-nav-byte1" role="tabpanel" aria-labelledby="i ${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte2" role="tabpanel" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte3" role="tabpanel" aria-labelledby="i ${t}-nav-byte3-tab">${byte3}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte4" role="tabpanel" aria-labelledby="i ${t}-nav-byte4-tab">${byte4}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte5" role="tabpanel" aria-labelledby="i ${t}-nav-byte5-tab">${byte5}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte6" role="tabpanel" aria-labelledby="i ${t}-nav-byte6-tab"></div>
+		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
+		<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
+		<div class="tab-pane" id="i${t}-nav-byte3" role="tabpanel" aria-labelledby="i${t}-nav-byte3-tab">${byte3}</div>
+		<div class="tab-pane" id="i${t}-nav-byte4" role="tabpanel" aria-labelledby="i${t}-nav-byte4-tab">${byte4}</div>
+		<div class="tab-pane" id="i${t}-nav-byte5" role="tabpanel" aria-labelledby="i${t}-nav-byte5-tab">${byte5}</div>
+		<div class="tab-pane" id="i${t}-nav-byte6" role="tabpanel" aria-labelledby="i${t}-nav-byte6-tab"></div>
 		</div>`
 }
 function getDateFromHours(t) {
@@ -2088,21 +2133,21 @@ function GetCVRMastercardMChip(t, e) {
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true">Byte 1</button>
-			<button class="nav-link" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 2</button>
-			<button class="nav-link" id="i ${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte3" type="button" role="tab" aria-controls="i ${t}-nav-byte3" aria-selected="true">Byte 3</button>
-			<button class="nav-link" id="i ${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte4" type="button" role="tab" aria-controls="i ${t}-nav-byte4" aria-selected="true">Byte 4</button>
-			<button class="nav-link" id="i ${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte5" type="button" role="tab" aria-controls="i ${t}-nav-byte5" aria-selected="true">Byte 5</button>
-			<button class="nav-link" id="i ${t}-nav-byte6-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte6" type="button" role="tab" aria-controls="i ${t}-nav-byte6" aria-selected="true">Byte 6</button>
+			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1</button>
+			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2</button>
+			<button class="nav-link" id="i${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte3" type="button" role="tab" aria-controls="i${t}-nav-byte3" aria-selected="true">Byte 3</button>
+			<button class="nav-link" id="i${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte4" type="button" role="tab" aria-controls="i${t}-nav-byte4" aria-selected="true">Byte 4</button>
+			<button class="nav-link" id="i${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte5" type="button" role="tab" aria-controls="i${t}-nav-byte5" aria-selected="true">Byte 5</button>
+			<button class="nav-link" id="i${t}-nav-byte6-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte6" type="button" role="tab" aria-controls="i${t}-nav-byte6" aria-selected="true">Byte 6</button>
 		</div>
 		</nav>
 		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i ${t}-nav-byte1" role="tabpanel" aria-labelledby="i ${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte2" role="tabpanel" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte3" role="tabpanel" aria-labelledby="i ${t}-nav-byte3-tab">${byte3}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte4" role="tabpanel" aria-labelledby="i ${t}-nav-byte4-tab">${byte4}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte5" role="tabpanel" aria-labelledby="i ${t}-nav-byte5-tab">${byte5}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte6" role="tabpanel" aria-labelledby="i ${t}-nav-byte5-tab">${byte6}</div>
+		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
+		<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
+		<div class="tab-pane" id="i${t}-nav-byte3" role="tabpanel" aria-labelledby="i${t}-nav-byte3-tab">${byte3}</div>
+		<div class="tab-pane" id="i${t}-nav-byte4" role="tabpanel" aria-labelledby="i${t}-nav-byte4-tab">${byte4}</div>
+		<div class="tab-pane" id="i${t}-nav-byte5" role="tabpanel" aria-labelledby="i${t}-nav-byte5-tab">${byte5}</div>
+		<div class="tab-pane" id="i${t}-nav-byte6" role="tabpanel" aria-labelledby="i${t}-nav-byte5-tab">${byte6}</div>
 		</div>`
 }
 
@@ -2155,19 +2200,19 @@ function GetCVRCCD(t) {
     t = (new Date).getTime().toString(16);
     return result = `<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i ${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte1" type="button" role="tab" aria-controls="i ${t}-nav-byte1" aria-selected="true">Byte 1</button>
-			<button class="nav-link" id="i ${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte2" type="button" role="tab" aria-controls="i ${t}-nav-byte2" aria-selected="true">Byte 2</button>
-			<button class="nav-link" id="i ${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte3" type="button" role="tab" aria-controls="i ${t}-nav-byte3" aria-selected="true">Byte 3</button>
-			<button class="nav-link" id="i ${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte4" type="button" role="tab" aria-controls="i ${t}-nav-byte4" aria-selected="true">Byte 4</button>
-			<button class="nav-link disabled" id="i ${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i ${t}-nav-byte5" type="button" role="tab" aria-controls="i ${t}-nav-byte5" aria-selected="true" aria-disabled="true">Byte 5 (RFU)</button>
+			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1</button>
+			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2</button>
+			<button class="nav-link" id="i${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte3" type="button" role="tab" aria-controls="i${t}-nav-byte3" aria-selected="true">Byte 3</button>
+			<button class="nav-link" id="i${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte4" type="button" role="tab" aria-controls="i${t}-nav-byte4" aria-selected="true">Byte 4</button>
+			<button class="nav-link disabled" id="i${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte5" type="button" role="tab" aria-controls="i${t}-nav-byte5" aria-selected="true" aria-disabled="true">Byte 5 (RFU)</button>
 		</div>
 		</nav>
 		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i ${t}-nav-byte1" role="tabpanel" aria-labelledby="i ${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte2" role="tabpanel" aria-labelledby="i ${t}-nav-byte2-tab">${byte2}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte3" role="tabpanel" aria-labelledby="i ${t}-nav-byte3-tab">${byte3}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte4" role="tabpanel" aria-labelledby="i ${t}-nav-byte4-tab">${byte4}</div>
-		<div class="tab-pane" id="i ${t}-nav-byte5" role="tabpanel" aria-labelledby="i ${t}-nav-byte5-tab"></div>
+		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
+		<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
+		<div class="tab-pane" id="i${t}-nav-byte3" role="tabpanel" aria-labelledby="i${t}-nav-byte3-tab">${byte3}</div>
+		<div class="tab-pane" id="i${t}-nav-byte4" role="tabpanel" aria-labelledby="i${t}-nav-byte4-tab">${byte4}</div>
+		<div class="tab-pane" id="i${t}-nav-byte5" role="tabpanel" aria-labelledby="i${t}-nav-byte5-tab"></div>
 		</div>`
 }
 function GetIADCCDCompliant(t) {
@@ -2176,15 +2221,15 @@ function GetIADCCDCompliant(t) {
       , a = (new Date).getTime().toString(16);
     return result = `<nav>
 			<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-				<button class="nav-link active" id="i ${a}-general-tab" data-bs-toggle="tab" data-bs-target="#i ${a}-general" type="button" role="tab" aria-controls="i ${a}-general" aria-selected="true">General</button>
-				<button class="nav-link" id="i ${a}-cvr-tab" data-bs-toggle="tab" data-bs-target="#i ${a}-cvr" type="button" role="tab" aria-controls="i ${a}-cvr" aria-selected="true">CVR</button>
+				<button class="nav-link active" id="i${a}-general-tab" data-bs-toggle="tab" data-bs-target="#i${a}-general" type="button" role="tab" aria-controls="i${a}-general" aria-selected="true">General</button>
+				<button class="nav-link" id="i${a}-cvr-tab" data-bs-toggle="tab" data-bs-target="#i${a}-cvr" type="button" role="tab" aria-controls="i${a}-cvr" aria-selected="true">CVR</button>
 			</div>
 			</nav>
 			<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px; height:250px; ">
-			<div class="tab-pane show active" id="i ${a}-general" role="tabpanel" aria-labelledby="i ${a}-general-tab">
+			<div class="tab-pane show active" id="i${a}-general" role="tabpanel" aria-labelledby="i${a}-general-tab">
 			<div style="overflow:auto; border:1px solid #ced4da; padding: .25rem .5rem; border-radius: 0.2rem;">${e}</div>
 			</div>
-			<div class="tab-pane" id="i ${a}-cvr" role="tabpanel" aria-labelledby="i ${a}-cvr-tab">${t}</div>
+			<div class="tab-pane" id="i${a}-cvr" role="tabpanel" aria-labelledby="i${a}-cvr-tab">${t}</div>
 			</div>`
 }
 
@@ -2194,15 +2239,15 @@ function GetIADMastercardMChip(t) {
       , a = (new Date).getTime().toString(16);
     return result = `<nav>
 			<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-				<button class="nav-link active" id="i ${a}-general-tab" data-bs-toggle="tab" data-bs-target="#i ${a}-general" type="button" role="tab" aria-controls="i ${a}-general" aria-selected="true">General</button>
-				<button class="nav-link" id="i ${a}-cvr-tab" data-bs-toggle="tab" data-bs-target="#i ${a}-cvr" type="button" role="tab" aria-controls="i ${a}-cvr" aria-selected="true">CVR</button>
+				<button class="nav-link active" id="i${a}-general-tab" data-bs-toggle="tab" data-bs-target="#i${a}-general" type="button" role="tab" aria-controls="i${a}-general" aria-selected="true">General</button>
+				<button class="nav-link" id="i${a}-cvr-tab" data-bs-toggle="tab" data-bs-target="#i${a}-cvr" type="button" role="tab" aria-controls="i${a}-cvr" aria-selected="true">CVR</button>
 			</div>
 			</nav>
 			<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px; height:250px; ">
-			<div class="tab-pane show active" id="i ${a}-general" role="tabpanel" aria-labelledby="i ${a}-general-tab">
+			<div class="tab-pane show active" id="i${a}-general" role="tabpanel" aria-labelledby="i${a}-general-tab">
 			<div style="overflow:auto; border:1px solid #ced4da; padding: .25rem .5rem; border-radius: 0.2rem;">${e}</div>
 			</div>
-			<div class="tab-pane" id="i ${a}-cvr" role="tabpanel" aria-labelledby="i ${a}-cvr-tab">${t}</div>
+			<div class="tab-pane" id="i${a}-cvr" role="tabpanel" aria-labelledby="i${a}-cvr-tab">${t}</div>
 			</div>`
 }
 
@@ -2212,15 +2257,15 @@ function GetIADVisa(t) {
       , n = (new Date).getTime().toString(16);
     return e = t ? `<nav>
 			<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-				<button class="nav-link active" id="i ${n}-general-tab" data-bs-toggle="tab" data-bs-target="#i ${n}-general" type="button" role="tab" aria-controls="i ${n}-general" aria-selected="true">General</button>
-				<button class="nav-link" id="i ${n}-cvr-tab" data-bs-toggle="tab" data-bs-target="#i ${n}-cvr" type="button" role="tab" aria-controls="i ${n}-cvr" aria-selected="true">CVR</button>
+				<button class="nav-link active" id="i${n}-general-tab" data-bs-toggle="tab" data-bs-target="#i${n}-general" type="button" role="tab" aria-controls="i${n}-general" aria-selected="true">General</button>
+				<button class="nav-link" id="i${n}-cvr-tab" data-bs-toggle="tab" data-bs-target="#i${n}-cvr" type="button" role="tab" aria-controls="i${n}-cvr" aria-selected="true">CVR</button>
 			</div>
 			</nav>
 			<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px; height:250px;">
-			<div class="tab-pane show active" id="i ${n}-general" role="tabpanel" aria-labelledby="i ${n}-general-tab">
+			<div class="tab-pane show active" id="i${n}-general" role="tabpanel" aria-labelledby="i${n}-general-tab">
 			<div style="overflow:auto; border: 1px solid #ced4da;padding: .25rem .5rem;border-radius: 0.2rem;">${t}</div>
 			</div>
-			<div class="tab-pane" id="i ${n}-cvr" role="tabpanel" aria-labelledby="i ${n}-cvr-tab">${a}</div>
+			<div class="tab-pane" id="i${n}-cvr" role="tabpanel" aria-labelledby="i${n}-cvr-tab">${a}</div>
 			</div>` : e
 }
 
