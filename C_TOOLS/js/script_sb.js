@@ -579,7 +579,8 @@ class SB {
         (defined(html.attributes) ?  this.stringify(html.attributes) : '') +        
         (defined(html.events) ? this.stringify(html.events) : '') + '>' + 
 
-            (defined (html.content)  ?  eval(html.content) : ''); 
+            (defined (html.content)  ?  eval(html.content) : '') + 
+            (defined (html.html)  ?  html.html : ''); 
         
         content += '</' + (defined(html.container) ? html.container : 'div') + '>';
 
@@ -1797,6 +1798,7 @@ class SB {
                         (defined(item.iconfile) ?  ' <img class="sb_iconfile" src="' + item.iconfile + '" ></img>' : '') +                     
                         (defined(item.item) ?      ' <label class="sb_label">' + item.item + '</label>' : '') +                
                         (defined(item.content) ?   eval(item.content) : '') +
+                        (defined (item.html)  ?  item.html : '');                         
                     '</span>'; 
                 break;
 

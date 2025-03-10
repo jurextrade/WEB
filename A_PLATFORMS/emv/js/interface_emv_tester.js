@@ -23,6 +23,8 @@ var emv_IACDefaultPanel = emv_bytepanel('IAC_Default', '9F0D', emv_TVR, {editabl
 var emv_CTQPanel = emv_bytepanel('CTQ', '9F6C', emv_CTQ, {editable:false})
 
 var emv_CIDPanel = emv_bytepanel('CID', '9F27', emv_CID, {editable:false, bytetable: emv_cidbytetable})
+var emv_CVMPanel = emv_cvmpanel('CVM', {editable:false})
+
 
 //--------------------------------------------------------------------- EMV TREE Steps Panel --------------------------------------------------------------------
 
@@ -288,6 +290,7 @@ var emv_apdupanel  = ((toggled) =>  {return {
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
 var emv_tester_commandgroup = {
     id: 'emv_tester_commandgroup',  
     class: 'sb_transform',
@@ -299,7 +302,7 @@ var emv_tester_commandgroup = {
             {id: 'emv_tester_play_button' ,    /*item: 'Run',*/       icon: icon_play,       type:'button',  class: 'sb_sbutton', title: 'play',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
             {id: 'emv_tester_start_button' ,   /*item: 'Start',*/     icon: icon_backward,   type:'button',  class: 'sb_sbutton', title: 'go to start',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
             {id: 'emv_tester_forward_button' , /*item: 'Forward',*/ icon: icon_forwardstep,  type:'button',  class: 'sb_sbutton', title: 'step Forward',   events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
-
+   
 //         {id: 'emv_tester_stop_button' ,    item: 'Stop',    icon: icon_stop,      type:'button',  class: 'sb_sbutton', title: 'stop',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
 //         {id: 'emv_tester_back_button' ,    item: 'Back',    icon: icon_backwardstep,  type:'button',  class: 'sb_sbutton', title: 'step backward',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
 //         {id: 'emv_tester_pause_button' ,   item: 'Pause',   icon: icon_pause,     type:'button',  class: 'sb_sbutton', title: 'pause',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},                        
@@ -593,7 +596,8 @@ var emv_tester_cardbyteinfo = {
     items: [
         emv_AIPPanel, 
         emv_AUCPanel, 
-        emv_CIDPanel,        
+        emv_CIDPanel,
+        emv_CVMPanel,
     ]
 }
 

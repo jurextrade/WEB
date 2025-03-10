@@ -664,7 +664,7 @@ function emv_TreatSC(origin, reader, values, display) {
 
 
 function emv_TreatCVM(origin, reader, values, display) {
-//    console.log ('CVM ' + values[2])
+    emv_cvm_update(emv_CVMPanel, values[2]);
 }
 
 

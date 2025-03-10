@@ -26,13 +26,16 @@ function onclick_emv_byte(elt, event) {
     }
 }
 
+
+
+
 function emv_byte_init (panel) {
     for (var i = 0; i < panel.struct.length; i++) {
         for (var j = 0; j < panel.struct[i].length; j++) {
 //            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + j).removeClass('selected')                
             $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + j).attr('byte', panel.struct[i][j].id);      
             $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_' + j).html('0');          
-            $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_8').html(panel.struct[i][j].item)
+         //   $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j + '_8').html(panel.struct[i][j].item)
             $('#' + panel.id + ' #emv_bytetable_' + i + '_' + j).removeClass('selected')      
               
         }
@@ -46,24 +49,27 @@ function emv_bytepanel_init (panel) {
     sb.tab_select (panel.items[index], "BYTE 1")
 }
 
-function emv_byte_update (panel, bytes, scroll, shift) {
+function emv_byte_update (panel, bytes, scroll) {
+
     emv_byte_init (panel)    
 
     let binarystr = '';    
-    let Shift = defined(shift) ? shift : 0;    
-    let Byte  = Shift;
+    let Byte  = 0;
 
-    let bytesint = bytes; //parseInt(bytes);
+    let bytesint = bytes; 
+    
     for (var i = panel.struct.length - 1; i >= 0; i--) {
+    
         let byte = (bytesint >> BigInt(i * 8));
         for (var j = 0; j < panel.struct[i].length; j++) {
+            
             let id = parseInt(byte & BigInt(BIT[j]));
             if (id == 0) {
                 binarystr += '0';                
                 continue;
             }
             binarystr += '1';
-            emv_byte_select(panel, (Byte << 8) |id, scroll);
+            emv_byte_select(panel, (Byte << 8) | id, scroll);
         }
         Byte++;
     }
@@ -143,7 +149,35 @@ function onclick_byteflatpanel (elt, event) {
     }
 }
 
+function GetAUCControl(t) {
+    let hexaarray = hexa_to_array(t)    
+    let hexaint   = array_to_int(hexaarray)    
+
+    let panel = emv_bytepanel('R_AUC', '9F07', emv_AUC, {withbar:false, editable:false, bytetable: emv_htmlbytetable, value:  BigInt(hexaint)})  
+    let content = sb.render(panel)
+    return content;
+}
+
+function GetTVRControl(t, tag) {
+    let hexaarray = hexa_to_array(t)    
+    let hexaint   = array_to_int(hexaarray)
+
+    let panel = emv_bytepanel((tag ? tag + '_TVR' : 'TVR'), (tag ? tag : '9F07'), emv_TVR, {withbar: false, editable:false, bytetable: emv_htmlbytetable, value:  BigInt(hexaint)})
+    let content = sb.render(panel)
+    return content;    
+}
+
+function GetAIPControl(t) {
+    let hexaarray = hexa_to_array(t)    
+    let hexaint   = array_to_int(hexaarray)
+
+    let panel = emv_bytepanel('R_AIP', '82',   emv_AIP, {withbar:false, editable:false, bytetable: emv_htmlbytetable, value:  BigInt(hexaint)})  
+    let content = sb.render(panel)      
+    return content;
+}
+
 //---------------------------------------------------------- CID TYPE PANEL -----------------------------------------------------------------
+
 function emv_cidbyte_init (panel) {
 
     for (var i = 0; i < panel.struct.length; i++) {
@@ -293,10 +327,65 @@ function emv_cidbyte_show (panel, id, show) {
         elt.parent().removeClass('marked')
         elt.removeClass('marked')           
     }   
-    
-  
-
 } 
+
+// ------------------------------------------------------------- CVM PANEL ------------------------------------------------------------------------------------
+
+function emv_cvm_rule(t, e, a) {
+    first = 63 & parseInt(t.substr(0, 2), 16),
+    action = 64 & parseInt(t.substr(0, 2), 16) ? "Apply succeeding CV Rule" : "Fail cardholder verification",
+    second = parseInt(t.substr(2, 2), 16);
+    var rule = {
+        0: "Fail CVM processing",
+        1: "Plaintext PIN verification performed by ICC",
+        2: "Enciphered PIN verified online",
+        3: "Plaintext PIN verification performed by ICC and signature (paper)",
+        4: "Enciphered PIN verification performed by ICC",
+        5: "Enciphered PIN verification performed by ICC and signature (paper)",
+        30: "Signature (paper)",
+        31: "No CVM required"
+    }[first]
+      , i = (void 0 === rule && (n = "Unrecognized"),
+    {
+        0: "Always",
+        1: "If unattended cash",
+        2: "If not unattended cash and not manual cash and not purchase with cashback",
+        3: "If terminal supports the CVM",
+        4: "If manual cash",
+        5: "If purchase with cashback",
+        6: "If transaction is in the application currency and is under %X% value (implicit decimal point)",
+        7: "If transaction is in the application currency and is over %X% value (implicit decimal point)",
+        8: "If transaction is in the application currency and is under %Y% value (implicit decimal point)",
+        9: "If transaction is in the application currency and is over %Y% value (implicit decimal point)"
+    }[second]), 
+    condition =  (void 0 === i ? "RFU or Reserved for use by individual payment systems" : i).replace("%X%", e).replace("%Y%", a);
+    return emv_cvm_panel(rule, t, condition, action);
+}
+
+function emv_cvm_update (panel, val) {
+    let e; 
+    let a = parseInt(val.substr(0, 8), 16);
+    let n = parseInt(val.substr(8, 8), 16);
+    let content = "";
+    for (e of val.substr(16).match(/.{4}/g))
+       content += emv_cvm_rule(e, a, n);
+
+    $('#emv_' + panel.id + '_container').html(content);    
+
+    $('#' +  panel.id).attr ("value", val)       
+}
+
+function GetCVMLControl(t) {
+    var e, 
+    a = parseInt(t.substr(0, 8), 16), 
+    n = parseInt(t.substr(8, 8), 16);
+    
+    buf = '<div class="sb_row sb_widget-container" >';
+    for (e of t.substr(16).match(/.{4}/g))
+        buf += emv_cvm_rule(e, a, n);
+    return buf += "</div>"
+}
+
 //---------------------------------------------------------- TERMINAL TYPE PANEL -----------------------------------------------------------------
 
 function onclick_emv_tt(elt, event) {
@@ -531,6 +620,7 @@ function emv_ai_update (panel, val) {
 }
 
 //---------------------------------------------------------- OUTSIDE -----------------------------------------------------------------
+
 
 function o(e) {
     return {
@@ -1491,136 +1581,6 @@ function GetTVRByte5Control(t) {
 </table>`
 }
 
-function GetTVRControl(t, tag) {
-    let hexaarray = hexa_to_array(t)    
-    let hexaint   = array_to_int(hexaarray)
-
-    let panel = emv_bytepanel((tag ? tag + '_TVR' : 'TVR'), (tag ? tag : '9F07'), emv_TVR, {withbar: false, editable:false})
-    let content = sb.render(panel)
-
-
-    emv_byte_update(panel, BigInt(hexaint)) 
-    return content;    
-/*    
-    byte1 = GetBitmapControl(t.substr(0, 2), ["Offline data authentication was not performed", "SDA failed", "ICC data missing", "Card appears on terminal exception file", "DDA failed", "CDA failed", "SDA selected", "RFU"]),
-    byte2 = GetBitmapControl(t.substr(2, 2), ["ICC and terminal have different application versions", "Expired application", "Application not yet effective", "Service not allowed for card product", "New card", "RFU", "RFU", "RFU"]),
-    byte3 = GetBitmapControl(t.substr(4, 2), ["Cardholder verification was not successful", "Unrecognized CVM", "PIN Try Limit exceeded", "PIN entry required and PIN pad not present or not working", "PIN entry required, PIN pad present, but PIN was not entered", "Online PIN entered", "RFU", "RFU"]),
-    byte4 = GetBitmapControl(t.substr(6, 2), ["Transaction exceeds floor limit", "Lower consecutive offline limit exceeded", "Upper consecutive offline limit exceeded", "Transaction selected randomly for online processing", "Merchant forced transaction online", "RFU", "RFU", "RFU"]),
-    byte5 = GetTVRByte5Control(t.substr(8, 2));
-    t = (new Date).getTime().toString(16);
-    return result = `<nav>
-		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1</button>
-			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2</button>
-			<button class="nav-link" id="i${t}-nav-byte3-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte3" type="button" role="tab" aria-controls="i${t}-nav-byte3" aria-selected="true">Byte 3</button>
-			<button class="nav-link" id="i${t}-nav-byte4-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte4" type="button" role="tab" aria-controls="i${t}-nav-byte4" aria-selected="true">Byte 4</button>
-			<button class="nav-link" id="i${t}-nav-byte5-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte5" type="button" role="tab" aria-controls="i${t}-nav-byte5" aria-selected="true">Byte 5</button>
-		</div>
-		</nav>
-		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" flattitle="TVR Byte 1 (Leftmost):" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane show" id="i${t}-nav-byte2" role="tabpanel" flattitle="TVR Byte 2:" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
-		<div class="tab-pane show" id="i${t}-nav-byte3" role="tabpanel" flattitle="TVR Byte 3:" aria-labelledby="i${t}-nav-byte3-tab">${byte3}</div>
-		<div class="tab-pane show" id="i${t}-nav-byte4" role="tabpanel" flattitle="TVR Byte 4:" aria-labelledby="i${t}-nav-byte4-tab">${byte4}</div>
-		<div class="tab-pane show" id="i${t}-nav-byte5" role="tabpanel" flattitle="TVR Byte 5 (Rightmost):" aria-labelledby="i${t}-nav-byte5-tab">${byte5}</div>
-		</div>`
-*/        
-}
-
-function GetAIPControl(t) {
-
-    let panel = emv_bytepanel('R_AIP', '82',   emv_AIP, {withbar:false, editable:false})  
-    let content = sb.render(panel)      
-    
-    let hexaarray = hexa_to_array(t)    
-    let haxaint   = array_to_int(hexaarray)
-    emv_byte_update(panel, BigInt(haxaint))
-    return content;
-
-    /*byte1 = GetBitmapControl(t.substr(0, 2), ["RFU", "SDA Supported", "DDA Supported", "Cardholder verification is supported", "Terminal risk management is to be performed", "Issuer authentication is supported", "RFU", "CDA Supported"]),
-    byte2 = GetBitmapControl(t.substr(2, 2), ["EMV Mode has been selected", "RFU / OTA capable mobile device", "RFU", "RFU", "RFU", "RFU", "RFU", "RFU"]);
-    t = (new Date).getTime().toString(16);
-    return result = `<nav>
-		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 1</button>
-			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 2</button>
-		</div>
-		</nav>
-		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" flattitle="AIP Byte 1 (Leftmost):" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" flattitle="AIP Byte 2 (Rightmost):" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
-		</div>`
-        */
-}
-
-function GetAUCControl(t) {
-    let panel = emv_bytepanel('R_AUC', '9F07', emv_AUC, {withbar:false, editable:false})
-    let content = sb.render(panel)
-
-    let hexaarray = hexa_to_array(t)    
-    let haxaint   = array_to_int(hexaarray)
-    emv_byte_update(panel, BigInt(haxaint))
-    return content;
-/*        
-    byte1 = GetBitmapControl(t.substr(0, 2), ["Valid for domestic cash transactions", "Valid for international cash transactions", "Valid for domestic goods", "Valid for international goods", "Valid for domestic services", "Valid for international services", "Valid at ATMs", "Valid at terminals other than ATMs"]),
-    byte2 = GetBitmapControl(t.substr(2, 2), ["Domestic cashback allowed", "International cashback allowed", "RFU", "RFU", "RFU", "RFU", "RFU", "RFU"]);
-    t = (new Date).getTime().toString(16);
-    return result = `<nav>
-		<div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 10px; font-size: 0.9rem;">
-			<button class="nav-link active" id="i${t}-nav-byte1-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte1" type="button" role="tab" aria-controls="i${t}-nav-byte1" aria-selected="true">Byte 0</button>
-			<button class="nav-link" id="i${t}-nav-byte2-tab" data-bs-toggle="tab" data-bs-target="#i${t}-nav-byte2" type="button" role="tab" aria-controls="i${t}-nav-byte2" aria-selected="true">Byte 1</button>
-		</div>
-		</nav>
-		<div class="tab-content" id="nav-tabContent" style="margin-bottom: 20px;">
-		<div class="tab-pane show active" id="i${t}-nav-byte1" role="tabpanel" aria-labelledby="i${t}-nav-byte1-tab">${byte1}</div>
-		<div class="tab-pane" id="i${t}-nav-byte2" role="tabpanel" aria-labelledby="i${t}-nav-byte2-tab">${byte2}</div>
-		</div>`
-        */
-}
-function getCVRuleControl(t, e, a) {
-    console.log ("getcvrule")
-    first = 63 & parseInt(t.substr(0, 2), 16),
-    action = 64 & parseInt(t.substr(0, 2), 16) ? "Apply succeeding CV Rule" : "Fail cardholder verification",
-    second = parseInt(t.substr(2, 2), 16);
-    var n = {
-        0: "Fail CVM processing",
-        1: "Plaintext PIN verification performed by ICC",
-        2: "Enciphered PIN verified online",
-        3: "Plaintext PIN verification performed by ICC and signature (paper)",
-        4: "Enciphered PIN verification performed by ICC",
-        5: "Enciphered PIN verification performed by ICC and signature (paper)",
-        30: "Signature (paper)",
-        31: "No CVM required"
-    }[first]
-      , i = (void 0 === n && (n = "Unrecognized"),
-    {
-        0: "Always",
-        1: "If unattended cash",
-        2: "If not unattended cash and not manual cash and not purchase with cashback",
-        3: "If terminal supports the CVM",
-        4: "If manual cash",
-        5: "If purchase with cashback",
-        6: "If transaction is in the application currency and is under %X% value (implicit decimal point)",
-        7: "If transaction is in the application currency and is over %X% value (implicit decimal point)",
-        8: "If transaction is in the application currency and is under %Y% value (implicit decimal point)",
-        9: "If transaction is in the application currency and is over %Y% value (implicit decimal point)"
-    }[second]);
-    return `<div class="sb_widget list-group-item-action ">
-			<div class="sb_widget-title d-flex w-100 justify-content-between">
-			<h6 class="mb-1">${n}</h6>
-			<small class="text-muted">${t}</small>
-			</div>
-			<p class="mb-1">Condition: ${i = (i = void 0 === i ? "RFU or Reserved for use by individual payment systems" : i).replace("%X%", e).replace("%Y%", a)}</p>
-			<small class="text-muted">If unsuccessful: ${action}</small>
-		</div>`
-}
-function GetCVMLControl(t) {
-    var e, a = parseInt(t.substr(0, 8), 16), n = parseInt(t.substr(8, 8), 16);
-    buf = '<div class="sb_row sb_widget-container" >';
-    for (e of t.substr(16).match(/.{4}/g))
-        buf += getCVRuleControl(e, a, n);
-    return buf += "</div>"
-}
 function GetTermCapControl(t) {
     byte1 = GetBitmapControl(t.substr(0, 2), ["Manual key entry", "Magnetic stripe", "IC with contacts", "RFU", "RFU", "RFU", "RFU", "RFU"]),
     byte2 = GetBitmapControl(t.substr(2, 2), ["Plaintext PIN for offline ICC verification", "Enciphered PIN for online verification", "Signature (paper)", "Enciphered PIN for offline verification", "No CVM Required", "RFU", "RFU", "RFU"]),
