@@ -1,0 +1,503 @@
+{
+  "title": "JurexTrade",
+  "icon": "/res/jurextrade.svg",
+  "global_library": {
+    "stylesheet": [
+      "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+    ],
+    "javascript": [
+      "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js",
+      "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+    ]
+  },
+  "tools_library": {
+    "stylesheet": [
+      "/C_TOOLS/css/style_sb.css"
+    ],
+    "javascript": [
+      "/C_TOOLS/js/script_sound.js",
+      "/C_TOOLS/js/script_recognition.js",
+      "/C_TOOLS/js/script_openai.js",
+      "/C_TOOLS/js/script_translation.js",
+      "/C_TOOLS/js/script_clock.js",
+      "/C_TOOLS/js/script_tools.js",
+      "/C_TOOLS/js/script_sb.js",
+      "/C_TOOLS/js/icons.js",
+      "/C_TOOLS/js/cookie_banner.js"
+    ]
+  },
+  "common_library": {
+    "stylesheet": [
+      "/B_COMMON/css/style_common.css"
+    ],
+    "javascript": [
+      "/B_COMMON/js/interface_solution.js",
+      "/B_COMMON/js/platform_solution.js",
+      "/B_COMMON/js/platform_login.js",
+      "/C_TOOLS/js/d3.min.js",
+      "/C_TOOLS/js/js-date-format.min.js",
+      "/C_TOOLS/js/anime.min.js",
+      "/B_COMMON/js/platforms.js",
+      "/B_COMMON/js/interface_settings.js",
+      "/B_COMMON/js/platform_settings.js",
+      "/B_COMMON/js/platform_header.js",
+      "/B_COMMON/js/platform_common.js",
+      "/B_COMMON/js/interface_common.js",
+      "/B_COMMON/js/interface.js"
+    ]
+  },
+  "body": {
+    "library": {
+      "stylesheet": [],
+      "javascript": [
+        "/js/VueApp_init.js"
+      ]
+    },
+    "header": {
+      "brand": {
+        "title": "Jurextrade",
+        "logo": "/res/jurextrade.svg",
+        "events": {
+          "onclick": ""
+        }
+      },
+      "modules": []
+    },
+    "footer": {
+      "modules": [
+        {
+          "pname": "date",
+          "type": "panel",
+          "active": true,
+          "library": {
+            "stylesheet": [
+              "/B_COMMON/css/style_date.css"
+            ],
+            "javascript": [
+              "/B_COMMON/js/interface_date.js",
+              "/B_COMMON/js/platform_date.js"
+            ]
+          }
+        }
+      ]
+    },
+    "right": {
+      "modules": [
+        {
+          "pname": "speech",
+          "type": "panel",
+          "active": false,
+          "iconfile": "/res/openai.svg",
+          "library": {
+            "stylesheet": [
+              "/B_COMMON/css/style_speech.css"
+            ],
+            "javascript": [
+              "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js",
+              "/C_TOOLS/js/script_aceeditor.js",
+              "/C_TOOLS/js/pinyin.js",
+              "/C_TOOLS/js/script_pinyin.js",
+              "/B_COMMON/js/interface_speech.js",
+              "/B_COMMON/js/platform_speech.js"
+            ]
+          }
+        },
+        {
+          "pname": "news",
+          "type": "panel",
+          "active": true,
+          "icon": "fas fa-calendar-alt",
+          "title": "Calendar & Forex News",
+          "library": {
+            "stylesheet": [
+              "/B_COMMON/css/style_news.css"
+            ],
+            "javascript": [
+              "/B_COMMON/js/interface_news.js",
+              "/B_COMMON/js/platform_news.js"
+            ]
+          }
+        },
+        {
+          "pname": "solution",
+          "type": "panel",
+          "active": false,
+          "library": {
+            "stylesheet": [
+              "/B_COMMON/css/style_solution.css"
+            ],
+            "javascript": [
+              "/B_COMMON/js/interface_solution.js",
+              "/B_COMMON/js/platform_solution.js"
+            ]
+          }
+        }
+      ]
+    },
+    "left": {},
+    "main": {
+      "modules": [
+        {
+          "pname": "market",
+          "type": "panel",
+          "active": true,
+          "index": 0,
+          "library": {
+            "stylesheet": [
+              "/B_COMMON/css/style_market.css",
+              "/B_COMMON/css/style_tracker.css",
+              "/B_COMMON/css/style_marker.css"
+            ],
+            "javascript": [
+              "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js",
+              "/C_TOOLS/js/script_aceeditor.js",
+              "/C_TOOLS/js/ace/theme-sc_on_dark.js",
+              "/C_TOOLS/js/ace/mode-lisp.js",
+              "/C_TOOLS/js/beautify.min.js",
+              "/js/progress.js",
+              "/B_COMMON/js/interface_tracker.js",
+              "/B_COMMON/js/platform_tracker.js",
+              "/B_COMMON/js/interface_marker.js",
+              "/B_COMMON/js/platform_marker.js",
+              "/B_COMMON/js/interface_market.js",
+              "/B_COMMON/js/platform_market.js"
+            ]
+          }
+        },
+        {
+          "id": "home_root",
+          "pname": "home",
+          "name": "Home",
+          "type": "root",
+          "index": 1,
+          "active": true,
+          "library": {
+            "stylesheet": [
+              "/B_COMMON/css/style-assistant.css",
+              "/A_PLATFORMS/home/css/style_home.css"
+            ],
+            "javascript": [
+              "/C_TOOLS/js/jquery.steps.js",
+              "/A_PLATFORMS/home/js/interface_home.js",
+              "/A_PLATFORMS/home/js/platform_home.js"
+            ]
+          }
+        },
+        {
+          "id": "emv_root",
+          "pname": "emv",
+          "name": "EMV",
+          "type": "root",
+          "active": true,
+          "index": 2,
+          "header": {
+            "title": "EMV",
+            "logo": "/A_PLATFORMS/emv/res/emv.svg",
+            "events": {
+              "onclick": "onclick_headerbrand(this, event)"
+            }
+          },
+          "library": {
+            "stylesheet": [
+              "/B_COMMON/css/style-assistant.css",
+              "/A_PLATFORMS/emv/css/style_emv.css"
+            ],
+            "javascript": [
+              "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js",
+              "/C_TOOLS/js/script_aceeditor.js",
+              "/C_TOOLS/js/jquery.steps.js",
+              "/C_TOOLS/js/datatables.js",
+              "/C_TOOLS/js/tlv.js",
+              "/A_PLATFORMS/emv/js/emv.js",
+              "/A_PLATFORMS/emv/js/emv_define.js",
+              "/A_PLATFORMS/emv/js/platform_emv_connect.js",
+              "/A_PLATFORMS/emv/js/interface_emv_tlvparser.js",
+              "/A_PLATFORMS/emv/js/platform_emv_tlvparser.js",
+              "/A_PLATFORMS/emv/js/interface_emv_project.js",
+              "/A_PLATFORMS/emv/js/platform_emv_project.js",
+              "/A_PLATFORMS/emv/js/interface_emv_tools.js",
+              "/A_PLATFORMS/emv/js/interface_emv_database.js",
+              "/A_PLATFORMS/emv/js/platform_emv_database.js",
+              "/A_PLATFORMS/emv/js/platform_emv_tester.js",
+              "/A_PLATFORMS/emv/js/interface_emv_tester.js",
+              "/A_PLATFORMS/emv/js/interface_emv_home.js",
+              "/A_PLATFORMS/emv/js/platform_emv_home.js",
+              "/A_PLATFORMS/emv/js/platform_emv.js",
+              "/A_PLATFORMS/emv/js/interface_emv.js"
+            ]
+          }
+        },
+        {
+          "id": "netprog_root",
+          "pname": "netprog",
+          "name": "NetProg",
+          "type": "root",
+          "active": false,
+          "header": {
+            "title": "NETPROG",
+            "logo": "/A_PLATFORMS/netprog/res/netprog.svg",
+            "events": {
+              "onclick": "onclick_headerbrand(this, event)"
+            }
+          },
+          "library": {
+            "stylesheet": [
+              "/B_COMMON/css/style-assistant.css",
+              "/A_PLATFORMS/netprog/css/style_netprog.css"
+            ],
+            "javascript": [
+              "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js",
+              "/C_TOOLS/js/script_aceeditor.js",
+              "/C_TOOLS/js/jquery.steps.js",
+              "/C_TOOLS/js/script_gse.js",
+              "/A_PLATFORMS/netprog/js/netprog/mxdialogs.js",
+              "/A_PLATFORMS/netprog/js/netprog/mxmanager.js",
+              "/A_PLATFORMS/netprog/js/netprog/mxmanager_class.js",
+              "/B_COMMON/js/platform_gse.js",
+              "/B_COMMON/js/interface_gse.js",
+
+              "/A_PLATFORMS/netprog/js/platform_netprog_gse.js",
+              "/A_PLATFORMS/netprog/js/platform_netprog_jsoneditor.js",
+              "/A_PLATFORMS/netprog/js/interface_netprog_jsoneditor.js",
+              "/A_PLATFORMS/netprog/js/platform_netprog_home.js",
+              "/A_PLATFORMS/netprog/js/interface_netprog_home.js",            
+              "/A_PLATFORMS/netprog/js/platform_netprog_server.js",
+              "/A_PLATFORMS/netprog/js/interface_netprog_server.js",
+              "/A_PLATFORMS/netprog/js/platform_netprog_jseditor.js",
+              "/A_PLATFORMS/netprog/js/interface_netprog_jseditor.js",
+              "/A_PLATFORMS/netprog/js/platform_netprog_filemanager.js",
+              "/A_PLATFORMS/netprog/js/interface_netprog_filemanager.js",
+              "/A_PLATFORMS/netprog/js/platform_netprog.js",
+              "/A_PLATFORMS/netprog/js/interface_netprog.js"
+            ]
+          }
+        },
+        {
+          "id": "chinese_root",
+          "pname": "chinese",
+          "name": "Learn Chinese",
+          "type": "root",
+          "active": false,
+          "dependency": [
+            "speech"
+          ],          
+          "header": {
+            "title": "Learn Chinese",
+            "events": {
+              "onclick": "onclick_headerbrand(this, event)"
+            }
+          },
+          "library": {
+            "stylesheet": [
+              "/A_PLATFORMS/chinese/css/style_chinese.css"
+            ],
+            "javascript": [
+              "/C_TOOLS/js/pinyin.js",
+              "/C_TOOLS/js/datatables.js",
+              "/C_TOOLS/js/hanzi-writer.js",
+              "/C_TOOLS/js/script_hanzistroke.js",
+              "/A_PLATFORMS/chinese/js/platform_chinese.js",
+              "/A_PLATFORMS/chinese/js/interface_chinese.js"
+            ]
+          }
+        },
+        {
+          "id": "constructor_root",
+          "pname": "constructor",
+          "name": "Interface Constructor",
+          "type": "root",
+          "active": false,
+          "header": {
+            "title": "INTERFACE",
+            "logo": "/A_PLATFORMS/netprog/res/netprog.svg",
+            "events": {
+              "onclick": "onclick_headerbrand(this, event)"
+            }
+          },
+          "library": {
+            "stylesheet": [
+              "/A_PLATFORMS/constructor/css/style_constructor.css"
+            ],
+            "javascript": [
+              "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js",
+              "/C_TOOLS/js/script_aceeditor.js",
+              "/C_TOOLS/js/script_gse.js",
+              "/A_PLATFORMS/constructor/js/platform_constructor_gse.js",
+              "/A_PLATFORMS/constructor/js/interface_constructor_gse.js",
+              "/A_PLATFORMS/constructor/js/platform_constructor_jsoneditor.js",
+              "/A_PLATFORMS/constructor/js/interface_constructor_jsoneditor.js",
+              "/A_PLATFORMS/constructor/js/platform_constructor.js",
+              "/A_PLATFORMS/constructor/js/interface_constructor.js"
+            ]
+          }
+        },
+        {
+          "id": "project_root",
+          "pname": "project",
+          "name": "Strategy Creator",
+          "type": "root",
+          "dependency": [
+            "market",
+            "news"
+          ],
+          "active": true,
+          "library": {
+            "stylesheet": [
+              "/C_TOOLS/css/quill.snow.css",
+              "/B_COMMON/css/style-assistant.css",
+              "/A_PLATFORMS/project/css/style_project.css"
+            ],
+            "javascript": [
+              "https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.js",
+              "https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-dom.js",
+              "/C_TOOLS/js/react-stockcharts.js",
+              "/C_TOOLS/js/quill.min.js",
+              "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js",
+              "/C_TOOLS/js/script_aceeditor.js",
+              "/C_TOOLS/js/ace/theme-sc_on_dark.js",
+              "/C_TOOLS/js/ace/mode-lisp.js",
+              "/C_TOOLS/js/beautify.min.js",
+              "/C_TOOLS/js/jquery.steps.js",
+              "/C_TOOLS/js/script_gse.js",
+              "/B_COMMON/js/platform_indicator.js",
+              "/B_COMMON/js/platform_chart.js",
+              "/B_COMMON/js/interface_chart.js",
+              "/B_COMMON/js/platform_gse.js",
+              "/B_COMMON/js/interface_gse.js",
+              "/B_COMMON/js/interface_currency.js",
+              "/B_COMMON/js/platform_currency.js",
+              "/js/pl.js",
+              "/js/pg.js",
+              "/js/interface_pg_common.js",
+              "/js/platform_pg_common.js",
+              "/js/platform_pg_gse.js",
+              "/js/plparser.js",
+              "/js/plgeneration.js",
+              "/js/progress.js",
+              "/js/interface_progress.js",
+              "/js/expert_signals.js",
+              "/js/expert.js",
+              "/js/MT4-indicators.js",
+              "/A_PLATFORMS/project/js/interface_project_home.js",          
+              "/A_PLATFORMS/project/js/platform_project_home.js",                   
+              "/A_PLATFORMS/project/js/interface_project_assistant.js",
+              "/A_PLATFORMS/project/js/platform_project_assistant.js",
+              "/A_PLATFORMS/project/js/platform_project_connect.js",
+              "/A_PLATFORMS/project/js/interface_project.js",
+              "/A_PLATFORMS/project/js/platform_project.js"
+            ]
+          }
+        },
+        {
+          "id": "option_root",
+          "pname": "option",
+          "name": "Yahoo Market",
+          "type": "root",
+          "dependency": [
+            "market",
+            "news"
+          ],
+          "active": false,
+          "library": {
+            "stylesheet": [
+              "/B_COMMON/css/style_currency.css",
+              "/A_PLATFORMS/option/css/style_option_calculator.css",
+              "/A_PLATFORMS/option/css/style_option.css"
+            ],
+            "javascript": [
+              "https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.js",
+              "https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-dom.js",
+              "/C_TOOLS/js/react-stockcharts.js",
+              "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js",
+              "/C_TOOLS/js/script_aceeditor.js",
+              "/C_TOOLS/js/ace/theme-sc_on_dark.js",
+              "/C_TOOLS/js/ace/mode-lisp.js",
+              "/C_TOOLS/js/beautify.min.js",
+              "/B_COMMON/js/platform_indicator.js",
+              "/B_COMMON/js/platform_chart.js",
+              "/B_COMMON/js/interface_chart.js",
+              "/B_COMMON/js/platform_gse.js",
+              "/B_COMMON/js/interface_gse.js",
+              "/B_COMMON/js/interface_currency.js",
+              "/B_COMMON/js/platform_currency.js",
+              "/js/pl.js",
+              "/js/pg.js",
+              "/js/interface_pg_common.js",
+              "/js/platform_pg_common.js",
+              "/js/platform_pg_gse.js",
+              "/js/plparser.js",
+              "/js/plgeneration.js",
+              "/js/progress.js",
+              "/js/interface_progress.js",
+              "/js/expert_signals.js",
+              "/js/expert.js",
+              "/js/MT4-indicators.js",
+              "/A_PLATFORMS/option/js/interface_option_calculator.js",
+              "/A_PLATFORMS/option/js/platform_option_calculator.js",
+              "/A_PLATFORMS/option/js/interface_option.js",
+              "/A_PLATFORMS/option/js/platform_option.js"
+            ]
+          }
+        },
+        {
+          "id": "tradedesk_root",
+          "pname": "tradedesk",
+          "name": "MT4 Terminal",
+          "type": "root",
+          "dependency": [
+            "market",
+            "news"
+          ],
+          "active": false,
+          "library": {
+            "stylesheet": [
+             "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css",                
+              "/A_PLATFORMS/tradedesk/css/style_tradedesk.css",
+              "/B_COMMON/css/style_currency.css"
+            ],
+            "javascript": [
+              "https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.js",
+              "https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-dom.js",
+              "/C_TOOLS/js/react-stockcharts.js",
+              "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js",
+              "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js",
+              "/C_TOOLS/js/script_aceeditor.js",
+              "/C_TOOLS/js/ace/theme-sc_on_dark.js",
+              "/C_TOOLS/js/ace/mode-lisp.js",
+              "/C_TOOLS/js/beautify.min.js",
+              "/C_TOOLS/js/script_gse.js",
+              "/B_COMMON/js/interface_media.js",
+              "/B_COMMON/js/platform_media.js",
+              "/B_COMMON/js/platform_indicator.js",
+              "/B_COMMON/js/platform_chart.js",
+              "/B_COMMON/js/interface_chart.js",
+              "/B_COMMON/js/platform_gse.js",
+              "/B_COMMON/js/interface_gse.js",
+              "/js/pl.js",
+              "/js/pg.js",
+              "/js/interface_pg_common.js",
+              "/js/platform_pg_common.js",
+              "/js/platform_pg_gse.js",
+              "/js/plparser.js",
+              "/js/plgeneration.js",
+              "/js/progress.js",
+              "/js/interface_progress.js",
+              "/js/expert_signals.js",
+              "/js/expert.js",
+              "/js/MT4-indicators.js",
+              "/A_PLATFORMS/tradedesk/js/interface_tradedesk_home.js",          
+              "/A_PLATFORMS/tradedesk/js/platform_tradedesk_home.js",                  
+              "/A_PLATFORMS/tradedesk/js/platform_tradedesk_connect.js",
+              "/A_PLATFORMS/tradedesk/js/interface_tradedesk.js",
+              "/A_PLATFORMS/tradedesk/js/platform_tradedesk.js"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "theme": "dark"
+}

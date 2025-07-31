@@ -4141,7 +4141,6 @@ int B_start(int session) {
                 if (engine == -1) {
                     if (B_StartOnRule[session] == R_MANUAL)
                         if (B_BuySellAutomatic[session]) {
-                            Send_Manual(_Symbol, session, OP_BUY, B_BuyLot[session], B_BuyLotSL[session], B_BuyLotTP[session], 1);
                             B_BuyNow[session] = false;
                         }
                     else
@@ -4158,9 +4157,6 @@ int B_start(int session) {
             }
         } else {
             if (engine == -1) {
-                if (B_StartOnRule[session] == R_MANUAL)
-                    if (B_BuySellAutomatic[session])
-                        Send_Manual(_Symbol, session, OP_BUY, B_BuyLot[session], B_BuyLotSL[session], B_BuyLotTP[session], 0);
             }
         }
         if (B_SellNow[session] == true) {
@@ -4171,7 +4167,6 @@ int B_start(int session) {
                 if (engine == -1) {
                     if (B_StartOnRule[session] == R_MANUAL)
                         if (B_BuySellAutomatic[session]) {
-                            Send_Manual(_Symbol, session, OP_SELL, B_SellLot[session], B_SellLotSL[session], B_SellLotTP[session], 1);
                             B_SellNow[session] = false;
                         }
                     else
@@ -4189,9 +4184,6 @@ int B_start(int session) {
             }
         } else {
             if (engine == -1) {
-                if (B_StartOnRule[session] == R_MANUAL)
-                    if (B_BuySellAutomatic[session])
-                        Send_Manual(_Symbol, session, OP_SELL, B_SellLot[session], B_SellLotSL[session], B_SellLotTP[session], 0);
             }
         }
 
@@ -6312,6 +6304,7 @@ double sar(int x, int Object, int shift = 0) {
         SETSIGNAL(shift, ObjectId, S_BELOW, x, P_SIGNAL);
         SETSIGNAL(shift, ObjectId, S_BEAR, x, P_SIGNAL);
     }
+    SETSIGNAL(shift, ObjectId, S_DISTANCE, x, P_SIGNAL, LastClose[shift][x] - price);    
     SETSIGNAL(shift, ObjectId, S_NBRBARS, x, P_SIGNAL, GetSarNbrBars(x, Object, shift));
     return (price);
 }
@@ -6325,13 +6318,13 @@ int GetSarNbrBars(int x, int Object, int from = 0) {
     int SarNbrBars = 0;
 
     if (price < _Bid)
-        while (price < iClose(NULL, PeriodIndex[x], i)) {
+        while (iTime(NULL, PeriodIndex[x], 0) && price < iClose(NULL, PeriodIndex[x], i)) {
             SarNbrBars += 1;
             i++;
             price = iSAR(_Symbol, PeriodIndex[x], ObjStep[Object], ObjMaximum[Object], i);
         }
     else
-        while (price > iClose(NULL, PeriodIndex[x], i)) {
+        while (iTime(NULL, PeriodIndex[x], 0) && price > iClose(NULL, PeriodIndex[x], i)) {
             SarNbrBars += 1;
             i++;
             price = iSAR(_Symbol, PeriodIndex[x], ObjStep[Object], ObjMaximum[Object], i);

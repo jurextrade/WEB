@@ -150,7 +150,7 @@ var emv_htmlbytetable = ((id, bytestruct, value) =>  {
     for (var j = 0; j < struct.length; j++) {
         content += `<tr id="emv_bytetable_${id}_${j}" class="sb_tablerow${value && parseInt(byte & BigInt(BIT[j])) != 0 ? ' selected' : ''} title="${struct[j].item}" onclick="onclick_emv_byte(this, event)" style="">`
         for (var k = 0; k < 9; k++) {
-            content += `<td id="emv_bytetable_${id}_${j}_${k}" class="sb_tablecell" ${j == k ? 'byte=' + struct[j].id : ''}>${k == 8 ? struct[j].item : value && parseInt(byte & BigInt(BIT[j])) != 0 ? 1 : 0}</td>`
+            content += `<td id="emv_bytetable_${id}_${j}_${k}" class="sb_tablecell" ${j == k ? 'byte=' + struct[j].id : ''}>${k == 8 ? struct[j].item : k== j && value && parseInt(byte & BigInt(BIT[j])) != 0 ? 1 : 0}</td>`
         }
         content += '</tr>';
     }

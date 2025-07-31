@@ -24,3 +24,4 @@ var signalnotificationpanel = {
     type: 'html',
     content : "AlertNotificationPanel()",
 }
+

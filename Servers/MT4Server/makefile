@@ -1,4 +1,4 @@
-OBJ= ./Compile/C/Files/output/Strategies.o
+OBJ= ./Compile/C/Files/output/DemoProject.o
 EXEC= ./Compile/C/Files/output/PG_EntryRules.dll
 TEXEC= ./Compile/C/Files/output/PG_TEntryRules.dll
 

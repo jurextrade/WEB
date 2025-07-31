@@ -109,7 +109,13 @@ function onclick_export_file() {
     cuser.send ({Name: 'savefile',  Values: [file_path + $('#export_filename').val(), netprogserver.Input.getValue()]},
                 false,  
                 function (content, values) {
-                    let message = JSON.parse (content);
+                    let message;    
+                    try {
+                        message = JSON.parse(content);
+                    } catch(e) {
+                        return console.error(e); 
+                    }                        
+
                     $("#exportserver_filename").modal('hide');                       
                 },
                 [this])
@@ -301,7 +307,12 @@ function onclick_netprog_server_group (elt, event) {
                         let menu = this.par;
                         cuser.send ({Name: 'readfile', Values: [file_path + menu[elt.id].text]}, false, 
                                     function (content, values) {
-                                        let message = JSON.parse (content);
+                                        let message;    
+                                        try {
+                                            message = JSON.parse(content);
+                                        } catch(e) {
+                                            return console.error(e); 
+                                        }      
                                         server.Output.setValue(message.Values[0].Content)
              
                                     }, 

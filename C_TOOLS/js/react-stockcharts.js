@@ -22967,7 +22967,7 @@ var MACDTooltip = function (_Component) {
 //GABRIEL
                     __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 						"tspan",
-						{ fill: 'pink', onClick: onClose },
+						{ fill: 'var(--theme-select-color)', onClick: onClose },
 						 " X "
 					),
 
@@ -23592,7 +23592,7 @@ var RSITooltip = function (_Component) {
 
                     __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 						"tspan",
-						{ fill: 'pink', onClick: onClose },
+						{ fill: 'var(--theme-select-color)', onClick: onClose },
 						 " X "
 					),
 
@@ -23741,7 +23741,7 @@ var SingleValueTooltip = function (_Component) {
 
 				    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 						"tspan",
-						{ fill: 'pink', onClick: onClose },
+						{ fill: 'var(--theme-select-color)', onClick: onClose },
 						 " X "
 					),
 
@@ -23897,7 +23897,7 @@ var StochasticTooltip = function (_Component) {
 					
                     __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 						"tspan",
-						{ fill: 'pink', onClick: onClose },
+						{ fill: 'var(--theme-select-color)', onClick: onClose },
 						 " X "
 					),
 					

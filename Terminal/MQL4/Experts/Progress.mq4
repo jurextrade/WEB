@@ -3,9 +3,9 @@
 //|                      Copyright © 2014, MetaQuotes Software Corp. |
 //|                                        http://www.metaquotes.net |
 //+---------------------------------------------------------------------------------------------------------------+
-#property copyright   "Copyright 2022,JurexTrade Author: Gabriel Jureidini"
+#property copyright   "Copyright 2025,JurexTrade Author: Gabriel Jureidini"
 #property link        "http://www.jurextrade.com"
-#property version     "500.000"                                                      // Version
+#property version     "600.000"                                                      // Version
 #property description "Running Expert Advisors created in Strategy Creator" // Description (line 1)
 #property description "Interactive Monitoring of Strategies"         // Description (line 2)
 #property icon        "\\Images\\Progress.ico";   
@@ -21,8 +21,17 @@
 
 extern string UserName          = "";
 extern string UserPassword      = "";
-extern string NodeServer        = "217.112.89.92"; 
-extern string HTTPServerName    = "www.jurextrade.com";   
+extern string NodeServer        = "127.0.0.1"; 
+extern string HTTPServerName    = "jurextrade.com";   
+extern string FTPServerName     = "jurextrade.com";     //"ftp.mt4-progress.com";   //ssh.mt4-progress.com
+extern bool   FTPMODE           = false;
+
+bool          C_COMPILE         = true;
+
+string        FTPUserName       = "uk4ibca5";           //"mt4-progress.com";   //Your username for a ftp session
+string        FTPPassword       = "]!42fksf14)]";       //Your password for a ftp session //jurex456 sftp
+int           FTPPort           = 21;                   //22
+
 
 
 bool   TestModeGraphic          = true;
@@ -81,15 +90,9 @@ string        SYS_SYMBOL;
 
 
 
-int    NewsKeepTime       = 30;      //30 minutes
-int    NewsAlertTime      = 360;    // 6 hours
-bool          C_COMPILE          = true;
-bool          FTPMODE            = false;
+int           NewsKeepTime       = 30;      //30 minutes
+int           NewsAlertTime      = 360;    // 6 hours
 
-string        FTPServerName      = "ftp.mt4-progress.com";   //ssh.mt4-progress.com
-string        FTPUserName        = "mt4-progress.com";   //Your username for a ftp session
-string        FTPPassword        = "jurex123";           //Your password for a ftp session //jurex456 sftp
-int           FTPPort            = 21;  //22
 
 string        UserPath           = "";
 string        DataFolder         = "";
@@ -164,7 +167,7 @@ double        S_LastCloseTime[NBR_RULES + 1][3];
 #define		  NBR_SYSOBJECTS     45  // level = 5 * nbr_periods = 9
 
 
-bool		  ObjUsed[NBR_OBJECTS];
+bool		     ObjUsed[NBR_OBJECTS];
 int           ObjId[NBR_OBJECTS];
 string        ObjName[NBR_OBJECTS];  
 int           ObjType[NBR_OBJECTS];
@@ -1535,7 +1538,7 @@ int ConnectNodeServer() {
             }
             
 //            HTTPUploadHistoryFile(_Symbol, 0);
-
+//            Reload_EntryRules_DLL ("PG_EntryRules.dll");
             TCP_SetBlockingMode(NodeSocket, 0);
             Send_Init(NodeSocket, NodePort);
         }
@@ -1770,7 +1773,7 @@ int init() {
     PG_Print(TYPE_INFO, "________________________________________________________________________  PROGRESS START INITIALISATION  ________________________________________________________________________");
 
     PG_Print(TYPE_INFO, "________________________________________________________________________           Running in " + ((C_COMPILE == true) ? " C MODE " : " MQ4 MODE ") + "          ________________________________________________________________________");
-
+/*
     for (int i = 0; i < NBR_PERIODS; i++) {
     	while(!IsStopped()) {
             ResetLastError();
@@ -1780,7 +1783,7 @@ int init() {
             break;
         }
     }
-    
+ */   
 
     AttemptToReconnect = 0;
     AttemptToReloadDLL = 0;
@@ -7996,7 +7999,7 @@ void Send_History(string symbol, int x, int from, int to) {
         time = iTime(symbol, PeriodIndex[x], i);
         if (time == 0) {
            error = GetLastError();
-           Print ("error after gethistory " + x + " bar " + i + " " + error);        
+         //  Print ("error after gethistory " + x + " bar " + i + " " + error);        
            continue;
         }
         s = s + "^";
@@ -21604,13 +21607,13 @@ int FTPDownloadLibrary(string filename, string tofilename = NULL) {
     string LocalFile;
 
     ServerFile = UserPath + "/MQL4/Libraries/" + filename;
-    LocalFile = TerminalInfoString(TERMINAL_DATA_PATH) +  "\\MQL4\\Libraries\\" + ((tofilename != NULL) ? tofilename : filename);
+    LocalFile  = TerminalInfoString(TERMINAL_DATA_PATH) +  "\\MQL4\\Libraries\\" + ((tofilename != NULL) ? tofilename : filename);
 
     hIntObj = hSession(true);
     if (hIntObj > 0) {
         hIntObjConn = InternetConnectW(hIntObj, FTPServerName, FTPPort, FTPUserName, FTPPassword, INTERNET_SERVICE_FTP, 0, 0);
         if (hIntObjConn > 0) {
-            success = FtpGetFileW(hIntObjConn, ServerFile, LocalFile, false, 128, INTERNET_FLAG_RELOAD, NULL);
+            success = FtpGetFileW(hIntObjConn, ServerFile, LocalFile, FALSE, 128, FTP_TRANSFER_TYPE_BINARY, NULL);
         } else
             printf("login failed. %d", hIntObjConn);
     }
@@ -21730,7 +21733,7 @@ void HTTPDownloadFile(string filename, string tofilename = NULL) {
         return -1;
     }
     string acceptTypes[1] = {"*/*"};    
-    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
+    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", "/php/load_url.php?url=" + ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
     if (hRequest == 0) {
         InternetCloseHandle(hIntObjConn);     
         InternetCloseHandle(handler);        
@@ -21778,9 +21781,14 @@ int HTTPDownloadLibrary(string filename, string tofilename = NULL) {
     string ServerFile;
     string LocalFile;
 
-    
+   
+   
     ServerFile  = UserPath + "/MQL4/Libraries/" + filename;
     LocalFile   = TerminalInfoString(TERMINAL_DATA_PATH) +  "\\MQL4\\Libraries\\" + ((tofilename != NULL) ? tofilename : filename);
+
+    //string url      = "/php/load_url.php?url=" + ServerFile;
+   
+    
 
     Print("DOWNLOADING ", ServerFile);
     string headers = "Content-Type: application/x-www-form-urlencoded";
@@ -21794,7 +21802,7 @@ int HTTPDownloadLibrary(string filename, string tofilename = NULL) {
         return -1;
     }
     string acceptTypes[1] = {"*/*"};    
-    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
+    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", "/php/load_url.php?url=" + ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
     if (hRequest == 0) {
         InternetCloseHandle(hIntObjConn);     
         InternetCloseHandle(handler);        
@@ -21813,6 +21821,7 @@ int HTTPDownloadLibrary(string filename, string tofilename = NULL) {
 //    int response     = InternetOpenUrlW(handler, ServerFile, headers,StringLen(headers), INTERNET_FLAG_NEED_FILE | INTERNET_FLAG_RELOAD | INTERNET_FLAG_RESYNCHRONIZE |INTERNET_FLAG_KEEP_CONNECTION |INTERNET_FLAG_PRAGMA_NOCACHE |INTERNET_FLAG_NO_CACHE_WRITE );
 
     int file_handle = CreateFileW(LocalFile, 0x40000000 /* GENERIC_WRITE */, 0, 0,  2 /* CREATE_ALWAYS */, 0, 0); 
+    
     if (file_handle == -1) {
         Print("Downloading error ", LocalFile);
         InternetCloseHandle(hIntObjConn);     
@@ -21825,8 +21834,12 @@ int HTTPDownloadLibrary(string filename, string tofilename = NULL) {
     uchar TabChar[128];
     int dwBytes;
     int BytesWritten[1] = {0};
+    
+    string httpresponse = "";
+    
     while (InternetReadFile(hRequest, TabChar, 128, dwBytes)) {
         if (dwBytes <= 0) break;
+//        httpresponse = CharArrayToString(TabChar, 0, dwBytes);       
         WriteFile(file_handle, TabChar, dwBytes, BytesWritten, 0);
     }
     InternetCloseHandle(hIntObjConn);      
@@ -21862,7 +21875,7 @@ void HTTPDownloadIndicator(string filename) {
         return -1;
     }
     string acceptTypes[1] = {"*/*"};    
-    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
+    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", "/php/load_url.php?url=" + ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
     if (hRequest == 0) {
         InternetCloseHandle(hIntObjConn);     
         InternetCloseHandle(handler);        

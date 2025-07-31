@@ -7,7 +7,9 @@ var emv_treenodetagitem = ((tag, value, index, update) => {
         items: [
                 {id: 'emv_' + tag + '_name',         type: 'label',    style: 'min-width:220px', item: gettagname (tag),  class: '', title: 'Tag: ' + tag},
                 {id: 'emv_' + tag + '_value',        type: 'text',      icon: '', value: value, disabled: true,  style: 'min-width:150px', attributes: {placeholder: ""}, events: {onchange: "onchange_emv_treenode_value(this)"}, title: 'Tag Value'},  
-                {id: 'emv_' + tag + '_tag',          type: 'label',    class: 'emv_button_show', item: tag, events :{onmousedown: "emv_searchtag('" + tag + "', event)"} },                 
+                {id: 'emv_' + tag + '_tag',          type: 'label',    class: 'emv_button_show', item: tag, events :{onmousedown: "emv_searchtag('" + tag + "', event)",onclick: "event.stopPropagation()", onmouseup: " $('#overlay_tag').remove(); "
+
+                } },                 
         ] 
     }
     if (update) { 

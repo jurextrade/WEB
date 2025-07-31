@@ -1,4 +1,5 @@
 function ondblclick_header () {
+ //   return
     if (!solution) return;
     let ui  = solution.get('ui')    
     ui.platform_expand ();
@@ -133,13 +134,3 @@ function UserProfileMenu () {
     return content;
 }
 
-function openPopupContact () {
-    sb.render ({
-        header: 'Contact', 
-        id:'popupcontact',
-        type:'modal',
-        resizable: true,
-        body: ContactPanel(),
-        footer: '<button data-bs-dismiss="modal" class="sb_mbutton">Close</button>',
-    });
-}

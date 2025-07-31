@@ -36,6 +36,13 @@ function StrategyPanel () {
     return content;                             
 }
 
+function movehtml (fromid, toid) {
+    var content = $("#" + fromid).html(); 
+    $("#" + fromid).html(''); 
+    $("#" + toid).html(content); 
+}
+
+
 function onclick_assistantmode (elt) {
     if ($(elt).hasClass("checked"))   {
         projectplatform.strategyview = STRATEGY_TAB_VIEW        
@@ -43,34 +50,49 @@ function onclick_assistantmode (elt) {
     else {
         projectplatform.strategyview = STRATEGY_ASSISTANT_VIEW        
     }
+
     project_assistant_select (projectplatform.strategyview == STRATEGY_ASSISTANT_VIEW);
 }
 
-function project_assistant_select (assistant) {
 
-    let quilleditor = assistant ? '#strategy_assistant_quill' : '#strategydescriptionpanel';    
+function project_assistant_select (assistant) {
+    console.log ('projectASSISTANT')
+    let quilleditor = assistant ? '#assistantquillpanel' : '#strategyquillpanel';    
     
     if (assistant)  {
-        $("#strategy_assistant").addClass("checked");
-        $("#strategy_assistant").html('<i class="fas fa-hands-helping"></i><label class="sb_label">Assistant View</label>');
-        $('#strategy_assistant').prop('title', 'Switch to Classic View'); 
+        $("#strategy_assistant_button").addClass("checked");
+        $("#strategy_assistant_button").html('<label class="sb_label">Switch to Classic View</label>');
+        $('#strategy_assistant_button').prop('title', 'Switch to Classic View'); 
         $('#classicviewbox').css ('display', 'none'); 
         $('#assistantviewbox').css ('display', 'flex'); 
-      //  $(quilleditor).html($('#strategydescriptionpanel').html());        
+       
+        let fileeditor = $("#strategyfilepanel");
+        fileeditor.appendTo("#assistant_fileppanel");
+
+
+        let editor = $("#strategyquillpanel .ql-editor");
+        let toolbar = $("#strategydescriptionpanel .ql-toolbar");
+        editor.appendTo("#assistantquillpanel"); 
+        toolbar.prependTo("#assistantdescriptionpanel"); 
+
     }
     else {
-        $("#strategy_assistant").removeClass("checked")
-        $("#strategy_assistant").html('<i class="fas fa-fist-raised"></i><label class="sb_label">Classic View</label>');
-        $('#strategy_assistant').prop('title', 'Switch to Assistant View');         
+        $("#strategy_assistant_button").removeClass("checked")
+        $("#strategy_assistant_button").html('<label class="sb_label">Switch to Assistant View</label>');
+        $('#strategy_assistant_button').prop('title', 'Switch to Assistant View');         
         $('#classicviewbox').css ('display', 'flex'); 
         $('#assistantviewbox').css ('display', 'none'); 
-        $(quilleditor).html($('#strategy_assistant_quill').html());        
+
+        let fileeditor = $("#strategyfilepanel");
+        fileeditor.appendTo("#role_tab_strategyfile");
+
+   
+        let editor = $("#assistantquillpanel .ql-editor");
+        let toolbar = $("#assistantdescriptionpanel .ql-toolbar");
+        editor.appendTo("#strategyquillpanel"); 
+        toolbar.prependTo("#strategydescriptionpanel");    
 
     }
-
-    if (solution.CurrentProject && !CurrentStrategy) {
-//        RefreshStrategy(CurrentStrategy);
-    }    
 }
 
 
@@ -137,7 +159,11 @@ function project_assistant_panel (strategy) {
     '                       <div class="sb_formgroup">' +
     '                           <label></label>' +    
     '                           <div id="strategy_assistant_addedindicators"></div>' +       
-    '                       </div>' +                             
+    '                       </div>' +  
+    '                       <label class="sb_widget-title">Description</label>' +    
+    '                       <div class="sb_formgroup sb_pane">' +
+                                sb.render (assistantdescriptionpanel) +
+    '                       </div>' +                                 
     '                   </div>' +
     '               </div>' +    
     '           </div>' +    
@@ -206,8 +232,9 @@ function project_assistant_panel (strategy) {
     '               <div class="card col-4 sb_right">' +
                         StrategyAssistantGuidePanel (STEP_STRATEGYRULES) +     
     '               </div>' +
-    '               <div class="col-8">' +
-                        TableRulePanel () +
+    '               <div id = "assistant_fileppanel", class="col-8">' +
+                  //      TableRulePanel () +
+                       // sb.render (strategyfilepanel) +
     '               </div>' +     
     '           </div>' +     
     '       </section>' +
@@ -342,7 +369,6 @@ function project_assistant_init() {
      });
      return;
 }
-
 
 
 //----------------------------------------------------ASSISTANT PANEL------------------------------------------------
@@ -767,52 +793,6 @@ function StrategyCreatorStrategyPanel () {
 //----------------------------------------------------  STRATEGY PANEL  2 - DESCRIPTION------------------------------------------------
 
 
-
-function OnStrategyInitialBalanceChange (elt) {
-    AccountInitialBalance =    parseInt(elt.value);
-    CurrentStrategy.InitialBalance = elt.value;
-}
-
-function StrategyAssistantInitialBalance (strategy) {
-    var content =     
-    '   <div  class="sb_formgroup" >' +
-    '       <label>Initial balance*</label>' +
-    '       <span class="sb_link">' + 
-    '           <input id="strategy_assistant_initialbalance" class="required form-control" type="number" name="strategyinitialbalance" onchange="onchange_default_sb_item(this);OnStrategyInitialBalanceChange (this)" ' + 
-    '               value="' +  (strategy ? strategy.InitialBalance  : AccountInitialBalance) + '" min="100"  step="100" autocomplete="off" title="The Initial Balance is required in case you do not precise the size of your orders for your strategy, it will be 2% of your account balance">' +
-    '       </span>' +
-    '   </div>';
-    return content;
-}
-
-function OnStrategyTimeFrameChange (elt) {
-    CurrentStrategy.TimeFrame = elt.value;
-    
-    
-    var symbolcanvas = solution.GetCanvasFromTerminal();
-    if (!symbolcanvas) return;                
-
-    if (elt.value != 'ANY') {
-        clearInterval(Interval_selectchart);
-        Interval_selectchart = setInterval(SelectChart, 300, PeriodName.indexOf(elt.value));   
-    }
-}
-
-function StrategyAssistantTimeFrame (strategy) {
-    var content =     
-    '   <div  class="sb_formgroup">' +
-    '       <label>Time Frame</label>' +
-    '       <span class="sb_link">' + 
-    '           <select  id="strategy_assistant_timeframe" class="custom-select form-control" onchange="OnStrategyTimeFrameChange (this);onchange_default_sb_item(this)" data-toggle="tooltip" data-placement="right" title="' + '' + '">';
-                    for (var j = 0; j < PeriodName.length; j++) {
-                        content += '<option ' + (strategy && strategy.TimeFrame == PeriodName[j] ? 'selected' : '') + '>' + PeriodName[j] + '</option>'; 
-                    }
-                    content += '<option ' +  (strategy &&  strategy.TimeFrame == "ANY" ? 'selected' : '') + '>' + 'ANY' + '</option>' + 
-    '       </span>';
-    content += '</select></div>';
-    
-    return content;
-}
 
 function onchange_AssistantStrategyName (elt) {
   

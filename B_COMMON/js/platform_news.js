@@ -229,25 +229,31 @@ function ReadForexNews (news) {
 }
 
 function ResultReadForexNews(response) {
-    let news = this;
-    var arr = response;
-    var doc = new DOMParser().parseFromString(arr, "text/html");
-    var lpostedOnes = doc.getElementById('newsWidgetTable').childNodes;
-    var insertpos = 0;
+    let news        = this;
+    let arr         = response;
+    let doc         = new DOMParser().parseFromString(arr, "text/html");
+    let table       = doc.getElementById('newsWidgetTable')
+    if (!table) {
+        return;
+    }
+    let lpostedOnes = table.children;
+    let insertpos   = 0;
     
    // console.log ('read forex news')
     for (var i = lpostedOnes.length - 1; i >= 0 ; i--) {
-        if (lpostedOnes[i].innerHTML) {
-            let time     = lpostedOnes[i].children[2].attributes[1].nodeValue;
-            let newsline = lpostedOnes[i].children[1].innerText + lpostedOnes[i].children[2].outerText;
-            let href     = lpostedOnes[i].children[1].href;
-            let date     = new Date();
-            let fnews    = '<a href="' + href + '" target="_blank">' + newsline + '</a>';
 
-            date.setTime(time);
-            if (FxNewsReceived (news.newsarray, href) != -1) continue;
-            news.newsarray.unshift ({id: news.newsarray.length, fxnews: lpostedOnes[i], news: fnews, time: date, href : href});
-        }
+        let lposted  = lpostedOnes[i];
+        let id       = lposted.id;
+        let href     = $(doc.querySelector('#' + id + ' a')).attr('href');
+        let time     = $(doc.querySelector('#' + id + ' span')).attr('time');
+        let newsline = $(doc.querySelector('#' + id + ' a')).html();
+        let date     = new Date();
+        let fnews    = '<a href="' + href + '" target="_blank">' + newsline + '</a>';
+
+        date.setTime(time);
+        if (FxNewsReceived (news.newsarray, href) != -1) continue;
+        news.newsarray.unshift ({id: news.newsarray.length, fxnews: lpostedOnes[i], news: fnews, time: date, href : href});
+
     }
 }
 

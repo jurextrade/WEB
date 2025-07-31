@@ -70,7 +70,7 @@ function onclick_theme (elt, event) {
 
         switch (id) {
             case 'tradedesk' :
-                return tradedesk_PlatformsPanel();   
+                return ServerPanel(id, 'MT4 Server'); //tradedesk_PlatformsPanel();   
             break;
             case 'emv' :
                 return ServerPanel(id, 'EMV Router Server');  
@@ -109,6 +109,11 @@ function ServerPanel_Update (id) {
             port     = solution.NetProgServer_Port;
             protocol = solution.NetProgServer_Protocol;
         break;
+        case 'tradedesk' :
+            server   = solution.MT4Server_Address;
+            port     = solution.MT4Server_Port;
+            protocol = solution.MT4Server_Protocol;
+        break;
     }
    
     
@@ -120,6 +125,10 @@ function ServerPanel_Update (id) {
 
 function onclick_ResetServer (id, elt, event) {
     ServerPanel_Update(id);
+}
+
+function onclick_CloseServer (id, elt, event) {
+    onclick_button_server()    
 }
 
 function onclick_ApplyServer (id, elt, event) {
@@ -158,6 +167,19 @@ function onclick_ApplyServer (id, elt, event) {
             solution.NetProgServer_Port     = newport;
             solution.NetProgServer_Protocol = protocol;
         break;
+        case 'tradedesk' :
+            solution.MT4Server_Address   = newadress;
+            solution.MT4Server_Port      = newport;
+            solution.MT4Server_Protocol  = protocol;
+            for (var j = 0; j < solution.Terminals.length; j++) {
+
+                var terminal = solution.Terminals[j];
+                if (terminal.Type == 'Terminal' || terminal.Type == 'Tester') {
+                    terminal.Com.Close ();
+                    MT4Connect(terminal, protocol + '//' + newadress, newport);
+                }            
+            }            
+        break;        
     }
 
     onclick_button_server()    
@@ -167,19 +189,22 @@ function onclick_RadioServer(id, http) {
     let port, sport
     switch (id) {
 
-        case 'emv' :
-            port = 5080;
-            sport = 5440;
-        
-        break;
         case 'project' :
-            port = 2080;
-            sport = 2443;
+            port = 3080;
+            sport = 3443;
         
        break;
+        case 'tradedesk' :
+            port = 2080;
+            sport = 2443;
+        break;        
         case 'netprog' :
             port = 4080;
-            sport = 4440;
+            sport = 4443;
+        break;
+        case 'emv' :
+            port = 5080;
+            sport = 5443;
         break;
     }    
     switch (http) {
@@ -199,8 +224,12 @@ function ServerPanel (id, name) {
 
     
     content = 
-   `<div id="serverpanel_${id}"  class="">       		            
+   `<div id="serverpanel_${id}" >       		            
         <div class="sb_f_style_h6">${name}</div>
+        
+        <div class="sb_bar sb_column">
+            <button  title="Close" class="sb_sbutton"><i class="fas fa-times" aria-hidden="true" onclick="onclick_CloseServer('${id}', this, event)"></i></span>        
+        </div>
         <div id="" class="sb_bargroup ">
         <span class="sb_check  custom-control custom-radio ">
             <input id="secureradio_${id}" type="radio" class="custom-control-input" checked="" name="radio_http" onclick="onclick_RadioServer('${id}', \'secure\'); onclick_default_radio_item(this,event)" onchange="onchange_default_sb_item(this);" oninput="onchange_default_sb_item(this);">
@@ -217,7 +246,7 @@ function ServerPanel (id, name) {
         </div>     
         <div class="sb_formgroup">
         <label>Port</label>
-        <input id ="nodeserverport_${id}" class="form-control" readonly value=""/>
+        <input id ="nodeserverport_${id}" class="form-control" value=""/>
         </div>   
         <div class="sb_buttongroup">
         <button class="sb_button"  type="button" onclick="onclick_ResetServer('${id}', this, event)">Reset</button>        

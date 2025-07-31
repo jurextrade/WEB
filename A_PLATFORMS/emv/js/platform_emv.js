@@ -19,7 +19,7 @@ function emv_init () {
 
     ServerPanel_Update('emv');
     emv_TLVParserPanel_Update(); 
-
+    sidebarpanel_select(emvplatform, "sidebarpanel_emvprojectmanager");       
     setInterval(emv_timer, 300);         
 }
 
@@ -47,7 +47,8 @@ function emv_select (name) {
     ui.platform_expand(name, true);
 
     if (!solution.emv_CurrentProject) {
-        onclick_sidebarmenu ('sidebar_emvprojectmanager', true);    
+      //  onclick_sidebarmenu ('sidebar_emvprojectmanager', true);    
+        DisplayOperation("Select a project or create one", true, 'operationpanel', 'var(--theme-platform-color)');
     }    
 }
 
@@ -81,7 +82,12 @@ function emv_solution () {
         }
 
         let callback = function (responsetext, values) {
-            let arraystructure =  JSON.parse(responsetext);
+            let arraystructure;    
+            try {
+                arraystructure = JSON.parse(responsetext);
+            } catch(e) {
+                return console.error(e); 
+            }    
             for (var i = 0; i < arraystructure.length; i++) {
                 let projectstruct = arraystructure[i];
 
@@ -180,7 +186,7 @@ function emv_loadedproject (project) {
 
 function emv_selectproject(project, forcedisplay) {
     if (!project) {
-        return;
+        return null;
     }
     if (project == solution.emv_CurrentProject) {
         return project;
@@ -206,6 +212,7 @@ function emv_selectproject(project, forcedisplay) {
       //  emv_project_updateterminal(project)              
         emv_drawproject(project, true);        
     }    
+    return project;
 }
 
 function emv_closeproject (project) {
@@ -271,7 +278,7 @@ function emv_drawproject(project, open) {
 
         ServerPanel_Update('emv');
         BottomPanel_Flat(platform, true, true);         
-        AnimationDisplay('emv_main', 'Goodbye');             
+        AnimationDisplay('emv', 'Goodbye', 'emv_toppanel');             
     }   
 }
 

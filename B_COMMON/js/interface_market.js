@@ -95,31 +95,7 @@ var markergroup = {
         ]
 }
 
-var trackerbar = {
-    id : 'trackerbar', 
-    type: 'bar',
-    class:'sb_transform',
-    items: 
-        [
-          //  { 
-          //      type: 'group',                        
-          //      items :
-          //          [ 
-          //              {id: 'trackerbar_addsignal', item: 'Select Signal', icon: icon_plus,  type:'button',  title: 'Select Signal',                   events: {onclick: 'onclick_tracker_selectindicator(this, event)'}},                 
-          //              {id: 'trackerbar_addindicator',       item: 'Add Indicator', icon: icon_new,   type:'button',  title: 'Add Signal From new Indicator',   events: {onclick: "onclick_tracker_addindicator(this, event)"}}                 
-          //          ]
-          //  },
-            { 
-                type: 'group',   
-                position: 'sb_end',                                     
-                items :
-                    [ 
-                        {id: 'trackerbar_reset',    icon: icon_trash,   type:'button',  title: 'clear content',  events: {onclick:'onclick_tracker_reset(this, event)'}},         
-                    ]
-            }
 
-        ]
-} 
 
 var toolsbar = {
     id: 'toolsbar', 
@@ -130,7 +106,7 @@ var toolsbar = {
             markereditor_bar('market'),
             { 
                 type: 'group',   
-                position: 'sb_end',                                     
+      //          position: 'sb_end',                                     
                 items :
                     [ 
                         {id: 'trackerbar_reset',    icon: icon_trash,   type:'button',  title: 'clear content',  events: {onclick:'onclick_tracker_reset(this, event)'}},         
@@ -172,6 +148,7 @@ var marketpanel = {
     id : 'marketpanel',
     pname: 'market',
     type : 'panel',
+    style: 'position:relative',
     class: 'sb_column',
     init: 'market_init()',
     end: 'market_end',

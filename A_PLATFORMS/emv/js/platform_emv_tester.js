@@ -86,6 +86,7 @@ function  onclick_emv_tester_commandgroup (elt, event) {
                     Tester.Reader.firststep();
                 }
                 Tester.Reader.play (silentmode);
+                $('#emv_tester_play_button').removeAttr('disabled');                     
                 $('#emv_tester_play_button ' + 'i').attr('class', icon_pause);
             } else {
                 Tester.Reader.pause ();
@@ -120,7 +121,13 @@ function  onclick_emv_tester_commandgroup (elt, event) {
             let file_path        = cuser.path + '/EMV/' + solution.emv_CurrentProject.Folder
 
             cuser.send({Name: 'scandir_r',Values: [file_path  + '/Transactions', '.']}, false,  function (content, values) {
-                let dirstruct = JSON.parse (content);
+                let dirstruct;    
+                try {
+                    dirstruct = JSON.parse(content);
+                } catch(e) {
+                    return console.error(e); 
+                }                
+
                 let menu = [];
                 
                 for (var i = 0; i < dirstruct.Values[0].Files.length; i++) {
@@ -136,16 +143,18 @@ function  onclick_emv_tester_commandgroup (elt, event) {
                     pageY:   event.pageY + 20,
                     par: menu,
                     onselect:function (elt, par) {
-                        console.log ('select')
+                        
                         let menu = this.par;
-                        cuser.send ({Name: 'readfile', Values: [cuser.fileexplorer.Root + '/' + file_path + '/Transactions/' + menu[elt.id].text]}, false, 
-                                    function (content, values) {
-                                        let message = JSON.parse (content);
-                                        Tester.Reader.RecordBuffer = message.Values[0].Content
-                                        Tester.Reader.save_record();
-                                        Tester.Reader.firststep();
-                                    }, 
-                                    []);                          
+                        Tester.Reader.load_transaction(menu[elt.id].text)
+                    //    cuser.send ({Name: 'readfile', Values: [cuser.fileexplorer.Root + '/' + file_path + '/Transactions/' + menu[elt.id].text]}, false, 
+                    //                function (content, values) {
+                    //                    let message = JSON.parse (content);
+                    //                    Tester.Reader.RecordBuffer = message.Values[0].Content
+                    //                    Tester.Reader.save_record();
+                    //                    Tester.Reader.firststep();
+                    //                    $('#emv_tester_play_button ' + 'i').attr('class', icon_play); 
+                    //                }, 
+                    //                []);                          
                     },
                     html: sb.menu (menu)
                 })}, 
@@ -631,7 +640,20 @@ class CardReader {
         [name + '.trs']);  
     }
     
-    load_transaction (){
+    load_transaction (filename)    {
+        let cuser = solution.get('user'); 
+        let file_path        = cuser.path + '/EMV/' + solution.emv_CurrentProject.Folder
+        cuser.send ({Name: 'readfile', Values: [cuser.fileexplorer.Root + '/' + file_path + '/Transactions/' + filename]}, false, 
+                    function (content, values) {
+                        
+                        let message = JSON.parse (content);
+                        Tester.Reader.RecordBuffer = message.Values[0].Content
+                        Tester.Reader.save_record();
+                        Tester.Reader.firststep();
+                        $('#emv_tester_play_button ' + 'i').attr('class', icon_play); 
+                    }, 
+        []);      
+
 
     }
     timer () {
@@ -662,36 +684,36 @@ function onclick_emv_resetterminalinput(elt, event) {
 }
 
 
-function onclick_testertogglepanel(elt, event) {
+function onclick_testertogglepanel(elt, event, panel) {
     let s_testerpanel = $(elt).closest('.sb_panel');
 
     if (s_testerpanel.hasClass('toggled')) {
         s_testerpanel.removeClass('toggled');
-        sb.resize(emv_tester_sidepanel);        
+        sb.resize(panel);        
     }
     else {
         s_testerpanel.addClass('toggled');
-        sb.resize(emv_tester_sidepanel);        
+        sb.resize(panel);        
     }   
 }
 
-function emv_tester_fullscreenpanel (idpanel, fullscreen) {
+function emv_tester_fullscreenpanel (idpanel, sidepanel) {
     let panel = $('#' + idpanel);
     emv_tester_toggle_all (0)    
     if (!panel.hasClass('toggled')) {
         panel.addClass('toggled')
         panel.find('.box-btn-slide').addClass('rotate-180')          
     }
-    sb.resize(emv_tester_sidepanel); 
+    sb.resize(sidepanel); 
 }
 
 
-function onclick_testerfspanel (elt, event) {
+function onclick_testerfspanel (elt, event, panel) {
     let parentpanel        = $(elt.parentElement.parentElement.parentElement);
-    emv_tester_fullscreenpanel (parentpanel.attr('id'));     
+    emv_tester_fullscreenpanel (parentpanel.attr('id'), panel);     
 }
 
-function onclick_testercspanel (elt, event) {
+function onclick_testercspanel (elt, event, panel) {
     
 }
 

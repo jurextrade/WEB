@@ -170,6 +170,7 @@ function TreatUpload(project, values, Line) {
                         };
                 
             sb.tree_additems ('project_tree_experts', [item])
+            onclick_sidebarmenu('sidebar_deploy', 1);
             sb.box_toggle('project_boxexpertspanel', true);            
             sb.tree_selectitem ('project_tree_experts', strategyname);                
         }        

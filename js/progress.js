@@ -743,7 +743,7 @@ function numDecimals(x) {
 }
 
 
-var iTime = function(symbol, period, shift) {   //returns the last ticker value time
+var iTime = function(symbol, period, shift) {   //returns the last ticker value time in seconds
     
     if (!symbol) {
         let symbolcanvas = solution.GetCanvasFromTerminal();
@@ -767,7 +767,7 @@ var iTime = function(symbol, period, shift) {   //returns the last ticker value 
     return chartData[period][currentbarindex].date.getTime() / 1000;
 }
 
-var TimeCurrent = function() {
+var TimeCurrent = function() {        // returns the current time in seconds
     var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;     
    
@@ -2093,9 +2093,10 @@ var OrderTrade = function(price, mode, Lots, comment, MagicNumber, PipStopLoss, 
     }
     if (ticket <= 0) ticket = OrderSend(symbolcanvas.CurrentSymbol, mode, Lots, price, SYS_SLIPPAGE, 0, 0, comment, MagicNumber, 0);
     if (ticket > 0) {
-        PG_Print(TYPE_INFO, ticket + " " + OpName[mode] + "["  + Lots.toFixed(2)  + ", "  + price + "] Opened");
+
         if (StopLoss !== 0 || TakeProfit !== 0) {
-            if (OrderSelect(ticket, SELECT_BY_TICKET) === false || OrderModify(OrderTicket(), OrderOpenPrice(), StopLoss, TakeProfit, 0) === false) {
+            if (OrderSelect(ticket, SELECT_BY_TICKET) === false || 
+                OrderModify(OrderTicket(), OrderOpenPrice(), StopLoss, TakeProfit, 0) === false) {
                 PG_Print(TYPE_ERROR, ticket + " OrderModify failed: " + OpName[mode] + " : " + ErrorDescription(error));
                 error = -1;
             } else {
@@ -2201,7 +2202,6 @@ var B_ReturnFreeSession = function() {
 var AccountEquity = function () {
     return AccountInitialBalance - AccountTotalProfit;
 }
-
 
 var AccountFreeMargin = function () {
     return 10000;
@@ -2319,7 +2319,7 @@ var InitSessionFromEngine = function(session, engine) {
 }
 var B_init = function(session) {
 
-    PG_Print(TYPE_INFO, "B_Init " + session);
+    //PG_Print(TYPE_INFO, "B_Init " + session);
     
     B_FreeSession[session] = false;
     B_InitSession[session] = true;
@@ -2389,7 +2389,7 @@ var B_init = function(session) {
     B_BuyMinProfit[session] = B_TakeProfit[session] * B_ILot[session];    //B_SessionProfit * B_ILot[session];
     B_SellMinProfit[session] = B_TakeProfit[session] * B_ILot[session];    //B_SessionProfit * B_ILot[session];
 
-    PG_Print(TYPE_INFO, "***************************************************    Start Session " + session);
+    PG_Print(TYPE_INFO, "--START Session " + session + "\n");
 
     B_InitGraphics(session);
     B_NbrSession += 1;
@@ -2546,27 +2546,39 @@ var B_start = function(session) {
     // CLOSING AND EXITING IN SESSION
     //----------------------------------------
     if (B_CloseBuy[session] === true && B_BuyNbrTrade[session] > 0) {
-        PG_Print(TYPE_INFO, "++++++++++++++++++++++++++++++++++++++++++   CLOSE BUY SESSION  : " + session + " Rule " + RuleName[B_StartOnRule[session]] + " profit : " + B_BuyProfit[session].toFixed(2));
+        PG_Print(TYPE_INFO, "**CLOSE BUY Session : " + session + 
+            " profit : " + B_BuyProfit[session].toFixed(2)) +
+             " Rule " + RuleName[B_StartOnRule[session]]; 
         CloseOrders(B_MagicNumber[session], OP_BUY);
         return 0;
     }
     if (B_CloseSell[session] === true && B_SellNbrTrade[session] > 0) {
-        PG_Print(TYPE_INFO, "+++++++++++++++++++++++++++++++++++++++++++   CLOSE SELL SESSION  : " + session + " Rule " + RuleName[B_StartOnRule[session]] + " profit : " + B_SellProfit[session].toFixed(2));
+        PG_Print(TYPE_INFO, "**CLOSE SELL Session : " + session + 
+            " profit : " + B_SellProfit[session].toFixed(2)) +
+            " Rule " +  RuleName[B_StartOnRule[session]]; 
         CloseOrders(B_MagicNumber[session], OP_SELL);
         return 0;
     }
     if (B_ExitBuy[session] === true && B_BuyNbrTrade[session] > 0) {
-        PG_Print(TYPE_INFO, "++++++++++++++++++++++++++++++++++++++++++   EXIT BUY SESSION : " + session + " Rule " + RuleName[B_StartOnRule[session]] + " profit : " + B_BuyProfit[session].toFixed(2));
+        PG_Print(TYPE_INFO, "**EXIT BUY Session : " +  session + 
+            " profit : " + B_BuyProfit[session].toFixed(2)) +
+            " Rule " + RuleName[B_StartOnRule[session]]; 
         CloseOrders(B_MagicNumber[session], OP_BUY, -1, -1, -1, 1);
         return 0;
     }
     if (B_ExitSell[session] === true && B_SellNbrTrade[session] > 0) {
-        PG_Print(TYPE_INFO, "+++++++++++++++++++++++++++++++++++++++++++   EXIT SELL SESSION   : " + session + " Rule " + RuleName[B_StartOnRule[session]] + " profit : " + B_SellProfit[session].toFixed(2));
+        PG_Print(TYPE_INFO, "**EXIT SELL Session : " + session + 
+            " profit : " + B_SellProfit[session].toFixed(2)) +
+            " Rule " + RuleName[B_StartOnRule[session]]; 
+            
         CloseOrders(B_MagicNumber[session], OP_SELL, -1, -1, -1, 1);
         return 0;
     }
     if (B_ExitBuy[session] === true && B_ExitSell[session] === true && B_HedgeNbrLots[session] + B_BuyNbrTrade[session] + B_SellNbrTrade[session] === 0) {
-        PG_Print(TYPE_INFO, "************************************************ End Session " + session + " Rule " + RuleName[B_StartOnRule[session]] + " profit : " + B_SessionProfit[session].toFixed(2) + " Time Elapsed : " + TimeCurrent() - B_StartDate[session]);
+        PG_Print(TYPE_INFO, "--EXIT Session : "  + session + 
+            " profit : " +  B_SessionProfit[session].toFixed(2) + 
+            " Rule " + RuleName[B_StartOnRule[session]] + 
+            " Time Elapsed : " +  ReturnElapsedTime((TimeCurrent() - B_StartDate[session]) * 1000, true) + "\n");
         B_NbrSession -= 1;
         B_deinit(session);
         return 0;
@@ -2738,7 +2750,7 @@ var B_start = function(session) {
 }
 //+------------------------------------------------------------------+ INIT
 var B_deinit = function(session) {
-    PG_Print(TYPE_INFO, "B_deinit" + session);
+//    PG_Print(TYPE_INFO, "B_deinit " + session);
     B_ExitBuy[session] = false;
     B_ExitSell[session] = false;
     B_CloseBuy[session] = false;
@@ -3877,7 +3889,13 @@ var OrderClose = function(ticket, lots, price, slippage) {
         Orders[index].removed = 1;
         OrdersHistory.push(Orders[index]);
        // Orders.splice(index, 1);
-        PG_Print(TYPE_INFO, ticket + " Close ["  + order.Lots.toFixed(2)  + ", "  + price + "]  Profit : " + profit.toFixed(2));
+        PG_Print(TYPE_INFO, ticket + " CLOSE ["  + order.Lots.toFixed(2)  + ", "  + price + "]  Profit : " + profit.toFixed(2));
+        
+        
+        if ($('#pause_close').prop('checked')) {
+            Engine_Pause (CurrentEngine, true)
+        } 
+
         return true;
 
     } else {
@@ -3901,6 +3919,8 @@ var OrderDelete = function(ticket) {
     return false;
 }
 
+
+
 var OrderSend = function(symbol, operation, lots, price, slippage, stoploss, takeprofit, comment, magicnumber, expiration) {
     switch (arguments.length) {
         case 6:
@@ -3912,6 +3932,17 @@ var OrderSend = function(symbol, operation, lots, price, slippage, stoploss, tak
     }
     order = new Order(symbol, operation, lots, comment, price, magicnumber, stoploss, takeprofit);
     Orders.push(order);
+    
+    PG_Print(TYPE_INFO, order.Ticket + " " + OpName[operation] + "["  + lots.toFixed(2)  + ", "  + price + "] Opened");
+    
+    if ($('#pause_buy').prop('checked') && operation == OP_BUY) {
+        Engine_Pause (CurrentEngine, true)
+    }  
+    if ($('#pause_sell').prop('checked') && operation == OP_SELL) {
+        Engine_Pause (CurrentEngine, true)
+    }  
+
+
     return order.Ticket;
 }
 
@@ -4052,110 +4083,47 @@ function TraceCommentEditor(value, add) {
     CommentEditor.setValue(value + (add == 1 ? "\r\n" + CommentEditor.getValue() : ""), -1);
 }
 
-var PG_Comment = function() {
+var PG_Comment = function(engine) {
     
     var symbolcanvas = solution.GetCanvasFromTerminal(solution.CurrentProject);
     if (!symbolcanvas) return;      
     let PG = symbolcanvas.PG;
 
     var legend = "";
-
-
-    
+   
     var startdate = new Date(StartDate * 1000);
     legend +=  "Start Tester Date = " + startdate.toString() + "\n";
-
-    var nowdate = new Date(TimeCurrent() * 1000);
-    legend +=  "Current Date = " + nowdate.toString() + "\n";
-    
-    legend +=  ReturnElapsedTime(TimeCurrent() * 1000 - StartDate * 1000) + "\n";
+    legend +=  "Current Date = " + new Date(TimeCurrent() * 1000).toString() + "\n";
+    legend +=  "Ellapsed Time = " + (TimeCurrent() * 1000 - StartDate * 1000, true) + "\n";
    
     var profit = 0;
 //    for (var j = 0; j < NBR_RULES; j++) {  // OPTIMIZED
     
-        var j = RuleOrder[0];
-        
-        profit       = ReturnClosedProfit(-1, j);
-        var bengine  = GetEngine(j, OP_BUY);
-        var sengine  = GetEngine(j, OP_BUY);
-        var bsengine = GetEngine(j, OP_BUYSELL);
+    var j = RuleOrder[0];
     
-        if (bengine === -1 && sengine === -1 && bsengine === -1) 
-            return;
-        
-        let enginename = "";
+    profit       = ReturnClosedProfit(-1, j);
+    var bengine  = GetEngine(j, OP_BUY);
+    var sengine  = GetEngine(j, OP_BUY);
+    var bsengine = GetEngine(j, OP_BUYSELL);
 
-        if (bengine !== -1)         enginename = PG.Engines[bengine].Name;
-        else 
-        if (sengine !== -1)         enginename = PG.Engines[sengine].Name;
-        else 
-        enginename = PG.Engines[bsengine].Name;
-
-        legend = legend + enginename + " =   " + profit.toFixed(2);
-        if (bengine !== -1) legend = legend + " Buy  (" + S_NbrRuleStart[j][OP_BUY].toString() + "," + S_NbrRuleStartD[j][OP_BUY].toString() + ")";
-        if (sengine !== -1) legend = legend + " Sell  (" + S_NbrRuleStart[j][OP_SELL].toString() + "," + S_NbrRuleStartD[j][OP_SELL].toString() + ")";
-        if (bsengine !== -1) legend = legend + " BuySell  (" + S_NbrRuleStart[j][OP_BUYSELL].toString() + "," + S_NbrRuleStartD[j][OP_BUYSELL].toString() + ")";
-        legend += "\n";
+    if (bengine === -1 && sengine === -1 && bsengine === -1) 
+        return;
+    
+    let enginename = "";
+    if (bengine !== -1)         enginename = PG.Engines[bengine].Name;
+    enginename = engine.Name;
+    legend = legend + enginename + " Profit = " + profit.toFixed(2);
+    if (bengine !== -1) legend = legend + " Buy = (" + S_NbrRuleStart[j][OP_BUY].toString() + "," + S_NbrRuleStartD[j][OP_BUY].toString() + ")";
+    if (sengine !== -1) legend = legend + " Sell = (" + S_NbrRuleStart[j][OP_SELL].toString() + "," + S_NbrRuleStartD[j][OP_SELL].toString() + ")";
+    if (bsengine !== -1) legend = legend + " BuySell = (" + S_NbrRuleStart[j][OP_BUYSELL].toString() + "," + S_NbrRuleStartD[j][OP_BUYSELL].toString() + ")";
+    legend += "\n";
 //    }
   
   
     legend += "\n";    
-    let engine;
 
-    if (ExpandComment) {
-        legend += "----------------------------------------------" + "\n";
-/*        
-        legend += "Account Name: "          + AccountName   + "\n";
-        legend += "Account Number: "        + AccountNumber + "\n"; 
-        legend += "Account Initial Balance: "+ AccountInitialBalance + "\n"; 
-        legend += "Account Profit: "        + AccountProfit + "\n"; 
-        legend += "Account Total Profit: "  + AccountTotalProfit.toFixed(2) + "\n"; 
-        legend += "Account Balance: "       + AccountBalance + "\n";
-        legend += "Account Min Free Margin: "+ AccountMinFreeMargin + "\n"; 
-        legend += "Account Free Margin: "   + AccountFreeMargin() + "\n"; 
-        legend += "NbrLots: "               + AccountNbrLots.toFixed(2) + "\n"; 
-    
-        legend += "Total Point (min, max) = (" + B_MinPoint.toFixed(symbolcanvas.CurrentSymbol.Digits) + ", " + B_MaxPoint.toFixed(symbolcanvas.CurrentSymbol.Digits) + ")\n";
-  
-        legend = legend + "\n\n";   
- */       
-        for (var i = 0; i < B_MaxSessions; i++) {
-            if (B_FreeSession[i] === true) continue;
-            engine = GetEngine(B_StartOnRule[i], B_Operation[i]);
 
-            legend += "Strategy Name: " + (engine === -1 ? "Manual": PG.Engines[engine].Name) + "\n";
-            legend += "Rule: "                  + RuleName[B_StartOnRule[i]] + "\n";
-            legend += "Operation:"              + OperationName[B_Operation[i]] + "\n";
-    
-            legend += "Direction: "             + DirectionName[B_Direction[i]] + "\n";
-            legend += "Direction Type: "        + DirectionTypeName[B_DirectionType[i]] + "\n";
-            legend += "Order Type: "            + OrderTypeName[B_OrderType[i]] + "\n";
-            legend += "Recovery Mode: "         + RecoveryModeName[B_RecoveryMode[i]] + "\n";
-            legend += "Recovery Value: "        + B_RecoveryValue[i] + "\n";
-            legend += "Initial Lot: "           + B_ILot[i].toFixed(2) + "\n";
-            legend += "Maximum Lot: "           + B_MaxLot[i].toFixed(2) + "\n";
-            legend += "Max Count: "             + B_MaxCount[i] + "\n";
-            legend += "Pip Step: "              + B_PipStep[i] + "\n";
-            legend += "Time Step: "             + B_TimeStep[i] + "\n";
-    
-            legend += "TP: "                    + B_TakeProfit[i].toFixed(2) + "\n";
-            legend += "TS: "                    + B_TrailingStop[i].toFixed(2) + "\n";
-            legend += "SL: "                    + B_StopLoss[i].toFixed(2) + "\n";
-            legend += "B TP: "                  + B_BuyTakeProfit[i].toFixed(2) + "\n";
-            legend += "B TS: "                  + B_BuyTrailingStop[i].toFixed(2) + "\n";
-            legend += "B SL: "                  + B_BuyStopLoss[i].toFixed(2) + "\n";
-            legend += "S TP: "                  + B_SellTakeProfit[i].toFixed(2) + "\n";
-            legend += "S TS: "                  + B_SellTrailingStop[i].toFixed(2) + "\n";
-            legend += "S SL: "                  + B_SellStopLoss[i].toFixed(2) + "\n";
-            legend += "B LotTP: "               + B_BuyLotTP[i].toFixed(2) + "\n";
-            legend += "B LotTS: "               + B_BuyLotTS[i].toFixed(2) + "\n";
-            legend += "B LotSL: "               + B_BuyLotSL[i].toFixed(2) + "\n";
-            legend += "S LotTP: "               + B_SellLotTP[i].toFixed(2) + "\n";
-            legend += "S LotTS: "               + B_SellLotTS[i].toFixed(2) + "\n";
-            legend += "S LotSL: "               + B_SellLotSL[i].toFixed(2) + "\n";
-    
-        }    
-    }    
+      
     for (var i = 0; i < B_MaxSessions; i++) {
         if (B_FreeSession[i] === true) continue;
         engine = GetEngine(B_StartOnRule[i], B_Operation[i]);
@@ -4192,6 +4160,93 @@ var PG_Comment = function() {
         if (B_Suspend[i] || !B_BuySellAutomatic[i] || B_KeepBuySell[i] || B_Hedged[i]) legend = legend + "\n";
     }
     legend = legend + "\n";
+    
+    
+    if (ExpandComment) {
+        legend += "----------------------------------------------" + "\n";
+/*        
+        legend += "Account Name: "          + AccountName   + "\n";
+        legend += "Account Number: "        + AccountNumber + "\n"; 
+        legend += "Account Initial Balance: "+ AccountInitialBalance + "\n"; 
+        legend += "Account Profit: "        + AccountProfit + "\n"; 
+        legend += "Account Total Profit: "  + AccountTotalProfit.toFixed(2) + "\n"; 
+        legend += "Account Balance: "       + AccountBalance + "\n";
+        legend += "Account Min Free Margin: "+ AccountMinFreeMargin + "\n"; 
+        legend += "Account Free Margin: "   + AccountFreeMargin() + "\n"; 
+        legend += "NbrLots: "               + AccountNbrLots.toFixed(2) + "\n"; 
+    
+        legend += "Total Point (min, max) = (" + B_MinPoint.toFixed(symbolcanvas.CurrentSymbol.Digits) + ", " + B_MaxPoint.toFixed(symbolcanvas.CurrentSymbol.Digits) + ")\n";
+  
+        legend = legend + "\n\n";   
+ */       
+        for (var i = 0; i < B_MaxSessions; i++) {
+            if (B_FreeSession[i] === true) continue;
+           
+
+            legend += "Strategy Name: " + (engine === -1 ? "Manual": engine.Name) + "\n";
+            legend += "Rule: "                  + RuleName[B_StartOnRule[i]] + "\n";
+
+            legend += "---------BUY/SELL Properties \n";
+            
+            legend += "Max Count: "             + B_MaxCount[i] + "\n";
+            legend += "Order Type: "            + OrderTypeName[B_OrderType[i]] + "\n";
+
+            legend += "Initial Lot: "           + B_ILot[i].toFixed(2) + "\n";
+            legend += "Maximum Lot: "           + B_MaxLot[i].toFixed(2) + "\n";
+
+            legend += "Recovery Mode: "         + RecoveryModeName[B_RecoveryMode[i]] + "\n";
+            legend += "Recovery Value: "        + B_RecoveryValue[i] + "\n";
+            
+            legend += "Operation:"              + OperationName[B_Operation[i]] + "\n";
+            legend += "One Order PerBar"        + B_OneOrderPerBar[i] + "\n";
+                
+            legend += "Direction: "             + DirectionName[B_Direction[i]] + "\n";
+            legend += "Direction Type: "        + DirectionTypeName[B_DirectionType[i]] + "\n";
+           
+            legend += "Pip Step: "              + B_PipStep[i] + "\n";
+            legend += "Time Step: "             + B_TimeStep[i] + "\n";
+
+            legend += "Hedge Weight: "           + B_HedgeMagnitude[i] + "\n";
+    
+            legend += "---------Profit SL/TP/TS  Properties \n";
+
+            legend += "---------Order Profit  Properties \n";
+
+            legend += "B LotTP: "               + B_BuyLotTP[i].toFixed(2) + "\n";
+            legend += "B LotTS: "               + B_BuyLotTS[i].toFixed(2) + "\n";
+            legend += "B LotSL: "               + B_BuyLotSL[i].toFixed(2) + "\n";
+
+            legend += "S LotTP: "               + B_SellLotTP[i].toFixed(2) + "\n";
+            legend += "S LotTS: "               + B_SellLotTS[i].toFixed(2) + "\n";
+            legend += "S LotSL: "               + B_SellLotSL[i].toFixed(2) + "\n";
+
+            legend += "---------Expert Profit  Properties \n";
+            legend += "TP: "                    + B_TakeProfit[i].toFixed(2) + "\n";
+            legend += "TS: "                    + B_TrailingStop[i].toFixed(2) + "\n";
+            legend += "SL: "                    + B_StopLoss[i].toFixed(2) + "\n";
+
+            legend += "B TP: "                  + B_BuyTakeProfit[i].toFixed(2) + "\n";
+            legend += "B TS: "                  + B_BuyTrailingStop[i].toFixed(2) + "\n";
+            legend += "B SL: "                  + B_BuyStopLoss[i].toFixed(2) + "\n";
+
+            legend += "S TP: "                  + B_SellTakeProfit[i].toFixed(2) + "\n";
+            legend += "S TS: "                  + B_SellTrailingStop[i].toFixed(2) + "\n";
+            legend += "S SL: "                  + B_SellStopLoss[i].toFixed(2) + "\n";
+
+            legend += "---------ExitProperties \n";
+
+            legend += "MinProfit: "           + B_MinProfit[i].toFixed(2) + "\n";
+            legend += "BuyMinProfit: "        + B_BuyMinProfit[i].toFixed(2) + "\n";
+            legend += "SellMinProfit: "       + B_SellMinProfit[i].toFixed(2) + "\n";
+
+            legend += "KeepBuySell: "          + B_KeepBuySell[i] + "\n";            
+            legend += "ExitMode: "             + ExitModeName[B_ExitMode[i]] + "\n";            
+            legend += "MaxTime: "              + B_MaxTime[i] + "\n";            
+
+
+        }    
+    }
+
     TraceCommentEditor(legend);
 }
 

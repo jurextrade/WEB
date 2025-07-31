@@ -360,7 +360,7 @@ function pg_solution () {
         }
     }
     solution.InitPL();
-    AnimationInit(); 
+   // AnimationInit(); 
 }
 
 
@@ -561,7 +561,6 @@ function pgproject (pname, name, path) {
     this.PG                      = new pg(this.pname);
     this.PG.Canvas.ShowLeftAxis  = false;          
 
-
     this.CurrentStrategy         = null;
 
     this.Create = function () {
@@ -594,6 +593,8 @@ function pgproject (pname, name, path) {
         
         this.PG.SaveSchedules(this.Folder);
     	this.PG.SaveConditions(this.Folder);
+        this.PG.SaveMarkers (this, 'project');        
+        
 
         /*    	
                 this.PG.SaveAlerts(solution.SiteAdress + rootproject + "input/ss/PG_Alerts.ss", this.Folder);	 
@@ -612,6 +613,7 @@ function pgproject (pname, name, path) {
         this.PG.LoadConditions(site.address + rootproject + "input/ss/",   ASYNCHRONE,       UpdateProjectConditions, this);
         this.PG.LoadAlerts(site.address + rootproject,  ASYNCHRONE);
         this.PG.LoadExperts(solution,  site.address + "/php/read_experts.php",this.Folder,       ASYNCHRONE, UpdateProjectExperts, this);
+        this.PG.LoadMarkers(site.address + rootproject,  ASYNCHRONE);        
     }
 
     this.Distribute = function (terminalfolder, terminaltype) {
@@ -914,6 +916,7 @@ function pgterminal (pname, type, main) {
             this.PG.LoadPanel(site.address + rootterminal,    ASYNCHRONE,   UpdatePanel,    this);
             this.PG.LoadProfile(site.address + rootterminal,  ASYNCHRONE,   UpdateProfile,  this);
             this.PG.LoadMarkers(site.address + rootterminal,  ASYNCHRONE);
+            
 
         //    this.PG.LoadSystemObjects(site.address + rootterminal + "input/ss/", true);
 
@@ -944,6 +947,7 @@ function pgterminal (pname, type, main) {
         if (this.Type == 'Terminal' || this.Type == 'Tester') {
             var rootproject = this.Type == 'Terminal' ? user.path + "/Terminal/" + this.Folder + "/MQL4/Files/" : user.path + "/Terminal/" + this.Folder + "/tester/files/";
             this.PG.SaveProfile(this);            
+            this.PG.SaveMarkers (this);                   
         }
         else {
             var rootterminal = user.path + "/Terminal/" + this.Folder + "/Files/" ;
@@ -954,7 +958,8 @@ function pgterminal (pname, type, main) {
             //this.PG.SaveAlerts(this);
             this.PG.SaveSymbols(this);
             //this.PG.SaveTObjects(this);
-            this.PG.SaveProfile(this);            
+            this.PG.SaveProfile(this);         
+            this.PG.SaveMarkers (this);                   
         }    
     }    
  
@@ -1387,46 +1392,7 @@ function pg (pname) {
         xhttp.send();
     }    
 
-    this.LoadMarkers = function (url, async, interfacecallback, par) {               //mo depends
-
-        if (!async) async = false;
-        
-        var xhttp = new XMLHttpRequest();
-        xhttp.PG = this;
-        xhttp.url = url;
-        xhttp.onreadystatechange = function () {
-            var PG = this.PG;
-            var url = this.url;
-            PG.Markers = [];
-            
-            if (this.readyState == 4 && this.status == 200) {
-                let data     = this.responseText;
-                let PL       = solution.PL;
-                let no_defun = true;
-
-                PL.Parse(PG, data);
-
-                for (var i = 0; i < PL.ListSections.length; i++) {
-                    let sccontent =  PL.SCFromSection(PL.ListSections[i], no_defun);  
-                    sccontent = js_beautify(sccontent,  {
-                                        indent_size: 4,
-                                        brace_style: 'collapse',
-                                        max_preserve_newlines: -1
-                                    });
-                    let marker = new pgmarker(PG, PL.ListSections[i].Name, sccontent, PL.ListSections[i]);
-                    PG.Markers.push(marker);
-                }
-                if (interfacecallback) interfacecallback (par);                       
-            }
-           
-            if (this.readyState == 4 && this.status == 404) {
-                console.log ('Erreur in Reading Request LoadMarkers ' + this.readyState);
-                if (interfacecallback)  interfacecallback (par, '');                 
-            }                   
-        }
-        xhttp.open("GET", url + "PG_Markers.sc", async);
-        xhttp.send();
-    }  
+   
 
     this.LoadObjects = function (solution, url, async, interfacecallback, par) {        // no depends
         if (!async) async = false;
@@ -2138,17 +2104,56 @@ function pg (pname) {
         SubmitTerminalRequest(terminal.Folder, terminal.Type, line, 'php/save_orders.php', ASYNCHRONE);
         return line;
     }       
-    this.SaveMarkers = function (terminal) {
+    this.SaveMarkers = function (terminal, terminaltype) {
         var line= "";
         for (var k = 0; k < this.Markers.length; k++) {
             let marker = this.Markers[k];
             if (!marker) continue;
             line += '(defun ' + marker.Name + ' () ' + marker.SCContent + ')\n';
         }
-        SubmitProjectRequest('Projects',terminal.Folder, terminal.Type, line, 'php/save_markers.php', ASYNCHRONE);
+        SubmitProjectRequest('Projects',terminal.Folder, terminaltype ? terminaltype : terminal.Type, line, 'php/save_markers.php', ASYNCHRONE);
         return line;
     }
+    this.LoadMarkers = function (url, async, interfacecallback, par) {               //mo depends
 
+        if (!async) async = false;
+        
+        var xhttp = new XMLHttpRequest();
+        xhttp.PG = this;
+        xhttp.url = url;
+        xhttp.onreadystatechange = function () {
+            var PG = this.PG;
+            var url = this.url;
+            PG.Markers = [];
+            
+            if (this.readyState == 4 && this.status == 200) {
+                let data     = this.responseText;
+                let PL       = solution.PL;
+                let no_defun = true;
+
+                PL.Parse(PG, data);
+
+                for (var i = 0; i < PL.ListSections.length; i++) {
+                    let sccontent =  PL.SCFromSection(PL.ListSections[i], no_defun);  
+                    sccontent = js_beautify(sccontent,  {
+                                        indent_size: 4,
+                                        brace_style: 'collapse',
+                                        max_preserve_newlines: -1
+                                    });
+                    let marker = new pgmarker(PG, PL.ListSections[i].Name, sccontent, PL.ListSections[i]);
+                    PG.Markers.push(marker);
+                }
+                if (interfacecallback) interfacecallback (par);                       
+            }
+           
+            if (this.readyState == 4 && this.status == 404) {
+                console.log ('Erreur in Reading Request LoadMarkers ' + this.readyState);
+                if (interfacecallback)  interfacecallback (par, '');                 
+            }                   
+        }
+        xhttp.open("GET", url + "PG_Markers.sc", async);
+        xhttp.send();
+    }  
     this.SaveEngineInString = function (engine) {
         var line = '';
             line += engine.Name + ',';
@@ -3844,7 +3849,7 @@ function pgsolution () {
                 for (var i = 0; i < arraystructure.length; i++) {
                     let projectname = arraystructure[i].name;
                     let projectpath = arraystructure[i].path;
-                    if (this.userid == '0' && projectname != "Demo_Project") continue;
+                    if (this.userid == '0' && projectname != "DemoProject") continue;
                     solution.Projects.push(new pgproject(PROJECT_PLATFORM_PNAME, projectname, projectpath));
                 }   
                 if (interfacecallback)  interfacecallback (par);            

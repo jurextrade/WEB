@@ -1,8 +1,0 @@
-(IF (AndS STO_BB S_SELL P_M15)
- (START)
- (SELL)
-)
-(IF (AndS STO_BB S_BUY P_M15)
- (START)
- (BUY)
-)

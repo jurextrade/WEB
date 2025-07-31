@@ -130,7 +130,7 @@ var Marker_Run = function (marker) {
     } else {
         Symbol_Select(solution.CurrentTerminal, symbol, marker.CurrentPeriod, true, true);      
     }
-    let all = Marker_ChartType('complete_marker') == true ? 1 : 0;
+    let all = Marker_ChartType('complete_marker_market') == true ? 1 : 0;
     markerStartAsync = setInterval(FindIdxStartBar, 1, marker, symbol, marker.CurrentPeriod, marker.MaxPeriod, MARKER_CONTEXT, all);
     return marker;
 }
@@ -412,6 +412,12 @@ function markereditor_resize() {
 }
 
 function onclick_radiomarker(elt, event) {
+    switch (elt.id) {
+        case 'complete_marker_market' :
+        break;
+        case 'visible_marker_market' :
+        break;        
+    }
 
 }
 
@@ -456,6 +462,9 @@ function onclick_markereditor_group (elt, event) {
         
           let markername = $('#' + editorelt[0].id + ' #name_marker').val();      
           if (markername == '') {
+            $('#' + editorelt[0].id + ' #name_marker').focus();
+            DisplayOperation("Give a name to this marker", true, 'operationpanel');       
+            markername = 'markername';
             return;
           }        
           input_eval (markername, input_getcontent (inputeditor), outputeditor);   
@@ -528,9 +537,10 @@ function MarkerEditor_Update (marker) {
 
     if (markereditor) {
         markereditor.input.removeAllMarkers ();        
-        $('#markereditor_' + markereditor.id + ' #name_marker').val(marker.Name);                
+        $('#markereditor_localfilegroup_market' + ' #name_marker').val(marker.Name);                
         markereditor.input.setValue (marker.SCContent);    
         markereditor.output.setValue ('');   
+
     }       
 }
 
@@ -540,11 +550,8 @@ function Marker_ChartType (id) {
     if (!platform) {
         return;
     }
-    
-    let markereditor = null;
-    markereditor = markereditor_market;    
   
-     return $('#markereditor_' + markereditor.id + ' #' + id + '_' +  markereditor.id).prop('checked')       
+     return $('#markereditor_localfilegroup_market' + ' #' + id).prop('checked')       
 }
 
 class MarkerEditor {

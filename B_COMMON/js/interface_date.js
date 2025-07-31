@@ -13,10 +13,10 @@ var datepanel = {
     form: true,                     
     items :
         [ 
-            {id: 'dayname',    class: 'sb_space',  type: 'ihtml',   attributes: {tag: 'dayname',},  title: ''},  
-            {id: 'localdate',  class: 'sb_space',  type: 'ihtml',   attributes: {tag: 'localdate'}, title: ''},  
-            {id: 'gmttime',    class: 'sb_space',  type: 'ihtml',   attributes: {tag: 'gmttime'},   title: ''},
-            {id: 'localtime',  class: 'sb_space',  type: 'ihtml',   attributes: {tag: 'localtime'}, title: ''}  
+            {id: 'dayname',    class: 'sb_space',  type: 'ihtml',   attributes: {tag: 'dayname'},  title: 'day'},  
+            {id: 'localdate',  class: 'sb_space',  type: 'ihtml',   attributes: {tag: 'localdate'}, title: 'date'},  
+            {id: 'gmttime',    class: 'sb_space',  type: 'ihtml',   attributes: {tag: 'gmttime'},   title: 'gmt'},
+            {id: 'localtime',  class: 'sb_space',  type: 'ihtml',   attributes: {tag: 'localtime'}, title: 'time'}  
         ],
     init: 'date_init()',        
 }

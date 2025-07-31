@@ -648,7 +648,6 @@ function ReturnElapsedTime(time, formattext) {
     
     time = time / 1000;
     if (formattext) {
-        s = day + " Day(s) " + hour + " Hour(s) " + minute + " Minute(s)";
         var day = Math.floor(time / (24 * 60 * 60));
         
         var remain = time % (24 * 60 * 60);

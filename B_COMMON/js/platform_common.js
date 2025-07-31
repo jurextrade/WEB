@@ -99,55 +99,74 @@ function DisplayOperation(line, withsound, id, bgcolor, opcount) {
     return content;
 }
 
-function AnimationInit() {
-    var iAnimation = document.createElement('div');
-    var iMain = document.body;
-    iMain.appendChild(iAnimation);
-    iAnimation.id               = 'animation';
-    iAnimation.style.position   = "fixed";
-    iAnimation.style.visibility = 'hidden';
+function AnimationInit(pname, pageid) {
+    let iAnimation = document.createElement('div');
+    iAnimation.id               = pname + '_animation';
+    iAnimation.style.position   = "relative";
+   // iAnimation.style.visibility = 'hidden';
+     let root;
     
+    if (pageid) {
+        root = document.getElementById(pageid);        
+    } else {
+        root = document.body;
+    }
+  
+
+    root.prepend(iAnimation);
+    let animationid = '#' + pname + '_animation';    
+    $(animationid).css ('width',  $(pageid).width());
+    $(animationid).css ('height', $(pageid).height());  
+    $(animationid).css ('top',    '50%');    
     iAnimation.innerHTML = AnimationPanel ('');
     
 }
+
 function AnimationReset (id) {
+  return;
   var els = document.querySelectorAll( '#' + id + ' .ml_1 .letter');
   for (var i = 0; i < els.length; i++) {
     els[i].parentElement.removeChild(els[i]);
   }
 }
 
-function AnimationDisplay (id, text, keep) {
-   // console.log ('AnimationDisplay')
-    var animationid = 'animation';
+function AnimationDisplay (pname, text, rootid, keep) {
+    let animationid = '#' + pname + '_animation';
+    $(animationid).remove();             
 
-    var rect = $('#' + id).offset();
 
-    KEEP = keep;
 
-    $('#animation').css ('top', rect.top);
-    $('#animation').css ('left', rect.left);
-    $('#animation').css ('width', $('#' + id).width());
-    $('#animation').css ('height', $('#' + id).height());
+   // let rootid = id.replace('main', 'root');
 
+    AnimationInit(pname, rootid);
+    
+    
+   //$(animationid).css ('top',    rect.top);
+   //$(animationid).css ('left',   rect.left);
+   //$(animationid).css ('width',  $(pageid).width());
+   //$(animationid).css ('height', $(pageid).height());
+
+    $(animationid)[0].keep = keep ? keep : false;
     
 
-    $('#animation').html(AnimationPanel (''))
-    $('#animation').css ('visibility', 'visible');
+   // $('#animation').html(AnimationPanel (''))
+   // $('#animation').css ('visibility', 'visible');
     
-    $('#animation' + ' .letters_1').html (text.replace(/\S/g, "<span class='letter'>$&</span>"));
+    $(animationid + ' .letters_1').html (text.replace(/\S/g, "<span class='letter'>$&</span>"));
                 
 
     var opacity = 0.7;
     var loop    = false;
     anime.timeline({loop: (loop ? true :false)})
-        .add({targets: '#animation .ml_1 .letter', scale: [0.3,1], opacity: [0,1], translateZ: 0, easing: "easeOutExpo", duration: 700, delay: (el, i) => 10 * (i+1)})
-        .add({targets: '#animation .ml_1 .line', scaleX: [0,1], opacity: [0.5,1], easing: "easeOutExpo", duration: 700, offset: '-=875', delay: (el, i, l) => 10 * (l - i)})
-        .add({targets: '#animation .ml_1', opacity: opacity, duration: 100, easing: "easeOutExpo", delay: 10,
+        .add({targets: animationid + ' .ml_1 .letter', scale: [0.3,1], opacity: [0,1], translateZ: 0, easing: "easeOutExpo", duration: 700, delay: (el, i) => 10 * (i+1)})
+        .add({targets: animationid + ' .ml_1 .line', scaleX: [0,1], opacity: [0.5,1], easing: "easeOutExpo", duration: 700, offset: '-=875', delay: (el, i, l) => 10 * (l - i)})
+        .add({targets: animationid + ' .ml_1', opacity: opacity, duration: 100, easing: "easeOutExpo", delay: 10, hide: keep ? false : true,
             begin: function () {
             },
             complete: function (par) {
-                $('#animation').css ('visibility', 'hidden');             
+                if ($(animationid).length != 0 && !$(animationid)[0].keep) {
+                    $(animationid).remove();             
+                }
             }
         });    
 }

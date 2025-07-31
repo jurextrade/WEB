@@ -107,7 +107,7 @@ function AddSelectItem (selectid, name) {
 
 //------------------------------------------------------------------- TREE SIDEBAR---------------------------------------------------------------------
 
-function selector_select (selector, name) {
+function selector_select (selector, name, type) {
     switch (selector) {
         case 'selectindicator' :
             var indicatorname =name;
@@ -145,36 +145,31 @@ function selector_select (selector, name) {
         case 'project_selectstrategy' :
             var strategyname =name;
             var strategy = solution.CurrentProject.PG.GetStrategyFromName(strategyname);
-            if (strategy == CurrentStrategy) return;
-            SelectStrategy(strategy);
-            break;
+            if (strategy == CurrentStrategy) return strategy;
+            return SelectStrategy(strategy);
 
         case 'project_selectproject' :
             var projectname =name;
             var project = solution.project_GetProjectFromName(projectname);
-            if (project == solution.CurrentProject) return;
-            project_selectproject(project);
-            break;
+            if (project == solution.CurrentProject) return project;
+            return project_selectproject(project);
 
         case 'netprog_selectproject' :
             var projectname =name;
             var project = solution.netprog_GetProjectFromName(projectname);
-            if (project == solution.netprog_CurrentProject) return;
-            netprog_selectproject(project);
-            break;
+            if (project == solution.netprog_CurrentProject) return project;
+            return netprog_selectproject(project);
     
         case 'emv_selectproject' :
             var projectname =name;
             var project = solution.emv_GetProjectFromName(projectname);
-            if (project == solution.emv_CurrentProject) return;
-            emv_selectproject(project);
-            break;            
+            if (project == solution.emv_CurrentProject) return project;
+            return emv_selectproject(project);
 
         case 'tradedesk_selectterminal' :
-            var terminaltype = TradedeskTypePanel_Type();
+            var terminaltype = 'Terminal';
             var terminal = solution.GetTerminalFromNameType (name, terminaltype);
-            tradedesk_selectterminal(terminal);
-            break;
+            return tradedesk_selectterminal(terminal);
 
         case 'option_selectterminal' :
             var terminals = solution.GetTerminalsFromName (name);
@@ -183,9 +178,7 @@ function selector_select (selector, name) {
                 if (terminals[i].DataPath == '//Main') continue;
                 terminal = terminals[i];   // terminal has priority
             }
-            option_selectterminal(terminal);
-        break;
-            
+            return option_selectterminal(terminal);
     }
 }
 
@@ -382,5 +375,41 @@ function onclick_assistant_nextprev(elt, event) {
         event.preventDefault();            
         $('#' + assistantid + '-t-' + prevstep).trigger('click');                                
     }
+}
+
+function ProfilePanel () {
+    var content =    
+'       <div id="profilepanel" class="sb_column">' +
+            ContactPanel () +
+'       </div>';
+    return content;
+}
+
+
+function ContactPanel () {
+    var content =    
+       `<div>This site is still under development</div> 
+       <div>I can assist you in software developments</div> 
+       <div>You can check other developements 
+            <button id="Platforms" class="sb_sbutton sb_link" onclick="onclick_rightsidebarmenu('rightsidebar_solution', 1);event.stopPropagation()" title="See other Platforms"> <i class="fas fa-download"></i> <label class="sb_label">Platforms</label></button>       
+       </div>
+       <br>
+       <div>Please feel free to contact me 
+       </div>
+       <br><p>JUREXTRADE<br><span style="line-height: 1.5;">Gabriel Jureidini</span><br><span style="line-height: 1.5;">Paris-France</span></p>
+       <label><i class="fas fa-envelope"></i> Email<br><span style="line-height: 1.5;">contact@jurextrade.com</span></label>`
+
+    return content;
+}
+
+function openPopupContact () {
+    sb.render ({
+        header: 'Contact', 
+        id:'popupcontact',
+        type:'modal',
+        resizable: true,
+        body: ContactPanel(),
+        footer: '<button data-bs-dismiss="modal" class="sb_mbutton">Close</button>',
+    });
 }
 

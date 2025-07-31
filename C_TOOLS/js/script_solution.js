@@ -111,8 +111,6 @@ class SOLUTION {
 
         }  
 
-
- 
         this.user.send({Name: 'scandir_r',Values: this.user.is_admin () ? ['.', ''] : [this.user.path  + '/NetProg', '.']}, false,  function (content, values) {
             let dirstruct = JSON.parse (content);
             values[0].fileexplorer = dirstruct.Values[0]}, [this.user])
@@ -1677,6 +1675,10 @@ class machine {
 
 
 //------------------------------------------------------------------- HEADER BAR ---------------------------------------------------------------------
+
+function onclick_headerlogo (elt, event) {
+    
+}
 
 function onclick_headerbaritems (elt, event) {
     let attr     = $(elt).attr('rootpname');

@@ -3,9 +3,9 @@
 //|                      Copyright © 2014, MetaQuotes Software Corp. |
 //|                                        http://www.metaquotes.net |
 //+---------------------------------------------------------------------------------------------------------------+
-#property copyright   "Copyright 2022,JurexTrade Author: Gabriel Jureidini"
+#property copyright   "Copyright 2025,JurexTrade Author: Gabriel Jureidini"
 #property link        "http://www.jurextrade.com"
-#property version     "500.000"                                                      // Version
+#property version     "600.000"                                                      // Version
 #property description "Running Expert Advisors created in Strategy Creator" // Description (line 1)
 #property description "Interactive Monitoring of Strategies"         // Description (line 2)
 #property icon        "\\Images\\Progress.ico";   
@@ -21,8 +21,17 @@
 
 extern string UserName          = "";
 extern string UserPassword      = "";
-extern string MT4Server        = "217.112.89.92"; 
-extern string HTTPServerName    = "www.jurextrade.com";   
+extern string NodeServer        = "127.0.0.1"; 
+extern string HTTPServerName    = "jurextrade.com";   
+extern string FTPServerName     = "jurextrade.com";     //"ftp.mt4-progress.com";   //ssh.mt4-progress.com
+extern bool   FTPMODE           = false;
+
+bool          C_COMPILE         = true;
+
+string        FTPUserName       = "uk4ibca5";           //"mt4-progress.com";   //Your username for a ftp session
+string        FTPPassword       = "]!42fksf14)]";       //Your password for a ftp session //jurex456 sftp
+int           FTPPort           = 21;                   //22
+
 
 
 bool   TestModeGraphic          = true;
@@ -81,15 +90,9 @@ string        SYS_SYMBOL;
 
 
 
-int    NewsKeepTime       = 30;      //30 minutes
-int    NewsAlertTime      = 360;    // 6 hours
-bool          C_COMPILE          = true;
-bool          FTPMODE            = false;
+int           NewsKeepTime       = 30;      //30 minutes
+int           NewsAlertTime      = 360;    // 6 hours
 
-string        FTPServerName      = "ftp.mt4-progress.com";   //ssh.mt4-progress.com
-string        FTPUserName        = "mt4-progress.com";   //Your username for a ftp session
-string        FTPPassword        = "jurex123";           //Your password for a ftp session //jurex456 sftp
-int           FTPPort            = 21;  //22
 
 string        UserPath           = "";
 string        DataFolder         = "";
@@ -164,7 +167,7 @@ double        S_LastCloseTime[NBR_RULES + 1][3];
 #define		  NBR_SYSOBJECTS     45  // level = 5 * nbr_periods = 9
 
 
-bool		  ObjUsed[NBR_OBJECTS];
+bool		     ObjUsed[NBR_OBJECTS];
 int           ObjId[NBR_OBJECTS];
 string        ObjName[NBR_OBJECTS];  
 int           ObjType[NBR_OBJECTS];
@@ -190,12 +193,10 @@ string        SysObjDependency[NBR_OBJECTS][NBR_SYSOBJECTS];
 
 //======================================
 //minutes
-double AlertMinTime       = 3600;  // seconds
 
-
-bool   AlertOnStartRule   = false;
-bool   ShellTrace         = true;
-bool   FileTrace          = false;
+bool          AlertOnStartRule   = false;
+bool          ShellTrace         = true;
+bool          FileTrace          = false;
 
 
 
@@ -443,13 +444,7 @@ string        DirectionTypeName[]  = {"MINMAX", "LEVEL"};
 string        ExitModeName[]       = {"EXITBUYFIRST", "EXITSELLFIRST", "EXITANY"};
 string        OrderTypeName[]      = {"MONO", "HEDGE"};
 
-
-
-
-
 //================================================= SYSTEMS ==========================================
-
-
 
 int           SymbolCode_NOSIGNAL      = 110;  
 
@@ -584,6 +579,8 @@ string        AlertMailSubject[NBR_ALERTS];
 string	      AlertMailContent[NBR_ALERTS];   
 
 datetime      AlertTime[NBR_ALERTS];
+datetime      AlertMinTime[NBR_ALERTS];
+int           AlertLast[NBR_ALERTS];
 
 
 
@@ -622,11 +619,6 @@ string        FieldName[]      = {"OPERATION","START","STATUS","RULE","KEEPBUYSE
 ,"HEDGED","HASBEENHEDGED","HEDGEPROFIT","HEDGEBUYPROFIT","HEDGESELLPROFIT","BUYNBRTRADE","SELLNBRTRADE","BUYNBRLOTS","SELLNBRLOTS"
 ,"LASTORDEROPENTIME","LASTORDERCLOSETIME","LASTORDEROPENPRICE", "LASTORDERCLOSEPRICE", "LASTORDERCLOSEPROFIT","T_LASTORDERCLOSETYPE"
 ,"FIRSTODEROPENTIME", "FIRSTODERCLOSETIME", "FIRSTORDEROPENPRICE", "FIRSTORDERCLOSEPRICE", "LEVELPOINT", "LASTORDERTYPE"};
-
-
-
-
-
 
 //=============================================SESSIONS==========================================
 
@@ -845,10 +837,7 @@ int           Length            = 3;
 int           MajorCycle        = 2;
 int           alertsExtreme     = 3;
 
-
-
 //============================================= ASSISTANT ==========================================
-
 
 #define      NBR_COMMENTS         30
 
@@ -899,24 +888,14 @@ string       MTerm_Comments[NBR_COMMENTS];
 string       STerm_Comments[NBR_COMMENTS];
 
 
-
-
-
 double D_BuySell          = 0.0007;
 double D_StayOut          = 0.0079;
-
-
-
 
 //============================================= GENERAL ==========================================
 
 // SIGNALS    for signals and rules 
 
-
 double        AlertDistance[NBR_PERIODS];
-
-
-
 
 // FRACTALS
 
@@ -973,8 +952,6 @@ double        LastSupport1[NBR_SHIFT][NBR_PERIODS];
 double        LastSupport2[NBR_SHIFT][NBR_PERIODS];
 
 // END PIVOT
-
-
 
 #define       VER                "MT4-PROGRESS"                                          
 #define       EA                 " Gabriel Jureidini"
@@ -1096,9 +1073,7 @@ string        ForecastNewsToday[MAXNBRNEWS];
 string        PreviousNewsToday[MAXNBRNEWS];
 color         ColorNewsToday[MAXNBRNEWS];
 
-
 //============================================= NEWS ==========================================
-
 
 color         NeutralColor     = LightGray;
 color         BullColor        = MediumSeaGreen;
@@ -1209,7 +1184,24 @@ int    CurrencyPort[NBR_SYMBOLS];
 double _Ask;   
 double _Bid;
 
+//============================================= TCP MAIN ========================================
 
+void PG_Recv(int& socket) {
+    string receive_buffer;
+
+    if (TCP_recv(socket, receive_buffer) > 0) {
+        TreatRecv(socket, receive_buffer);
+	}
+}
+
+void PG_Send(int& socket, string s) {
+    if (socket == -1) return;
+    TCP_send(socket, s, 0);
+}
+
+void PG_SendBuffer(int & socket, char buffer[], int buffersize) {
+    TCP_sendBuffer(socket, buffer, buffersize, 0);
+}
 
 //=============================================RESET ALL ========================================
 
@@ -1305,9 +1297,8 @@ void ResetEngines(int first = -1) {
     }
 }
 
-
-
 //=============================================INIT ========================================
+
 string GetTextPeriod(int period, int format = -1) {
     string sresult = "";
     if (format == -1)
@@ -1344,11 +1335,10 @@ int GetWeek (datetime TimeCurrent) {
         day -= 7;
     }
     return (oday);
-
 }
 
 int GetDay (datetime TimeCurrent) {
-   
+ 
 	return TimeDay (TimeCurrent);
 }
 
@@ -1365,7 +1355,6 @@ int GetMinutes (datetime TimeCurrent) {
 datetime ReturnTime (string sTime) {
     return 0;
 }
-
 
 datetime ReturnDate (string sDate) {
     return 0;
@@ -1465,7 +1454,7 @@ void Send_Operation(string reply) {
     s = s + "^";
     s = s + reply;
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void PG_Print(int Type, string s, int nowarning = -1) {
@@ -1523,7 +1512,7 @@ int InitMarketInfo() {
 int ConnectNodeServer() {
     if (SiteConnection && NodeSocket == -1 && (TimeCurrent() - AttemptToReconnect) > 60) {
 
-         NodeSocket = TCP_connect(MT4Server, NodePort);
+         NodeSocket = TCP_connect(NodeServer, NodePort);
         if (NodeSocket < 0) {
             PG_Print(TYPE_ERROR, "NO SYNCHRONISATION WITH NODE CENTER ON PORT : " + NodePort, NO_SEND);
             AttemptToReconnect = 0;
@@ -1547,6 +1536,9 @@ int ConnectNodeServer() {
             else {
                 UserPath = MembersPath + receive_buffer + "/Terminal/" + DataFolder;
             }
+            
+//            HTTPUploadHistoryFile(_Symbol, 0);
+//            Reload_EntryRules_DLL ("PG_EntryRules.dll");
             TCP_SetBlockingMode(NodeSocket, 0);
             Send_Init(NodeSocket, NodePort);
         }
@@ -1567,20 +1559,20 @@ int Load_WinExtension_DLL(string filename) {
         // Handle to DLL
         if (HMOD != 0) {
 
-            printf("Library ALREADY Loaded  **********************************************************************, %s", filename);
+            Print("Library " +  filename + " ALREADY Loaded");
             return 1;
         }
         
-        printf("NEED EXTENSION LIBRARY ********************************************");
+        Print("NEED EXTENSION LIBRARY ********************************************");
 
         int returnvalue = DownloadLibrary(filename);
 
         if (returnvalue < 0) {
-            printf("CAN NOT GET DLL  ********************************************************************** %s", filename);
+            Print("CAN NOT GET DLL " + filename);
             AttemptToReloadDLL = 0;
             return -1;
         } else
-            printf("GET DLL SUCCEED !!!! ********************************************************************** %s", filename);
+            Print("GET DLL SUCCEED " + filename);
         
 
         int ret = MessageBoxW (0, "Running Progress For the first time ,  You need to restart your terminal", "PROGRESS INITIALISATION", MB_YESNO|MB_ICONQUESTION|MB_TOPMOST); 
@@ -1597,11 +1589,11 @@ int Load_WinExtension_DLL(string filename) {
         int hDLL = LoadLibraryW(LocalFile);
 
         if (!hDLL) {
-            printf("CAN NOT LOAD DLL  ********************************************************************** %s", filename);
+            Print("CAN NOT LOAD DLL " + filename);
             AttemptToReloadDLL = 0;
             return -1;
         } else {
-            printf("LOAD DLL  SUCCEED********************************************************************** %s", filename);
+            Print("LOAD DLL  SUCCEED " + filename);
         }
         
     }
@@ -1636,7 +1628,7 @@ int Load_EntryRules_DLL1(string filename) {
     if (HMOD == 0) {
           HMOD = LoadLibraryW(filename);
           if (HMOD != 0) {
-			    printf("CAN NOT LOAD LIBRARY  **********************************************************************");              
+			    Print("CAN NOT LOAD LIBRARY " + filename);              
 			    return -2;
 			 } else {
              int returnvalue = MT4_GetProcAddress(HMOD, TestMode);
@@ -1648,10 +1640,9 @@ int Load_EntryRules_DLL1(string filename) {
     return returnvalue;
 }
 
-
 int Load_EntryRules_DLL(string filename) {
     
-    printf("MT4_LoadDLL before***************************************************************, %s", filename);
+    Print("START loading EntryRules_DLL " +  filename);
   //  int hDLL = LoadLibraryW(LocalFile);
     int hModule = MT4_LoadDLL(filename, TestMode);
     printf("MT4_LoadDLL after***************************************************************, %d", hModule);
@@ -1678,15 +1669,15 @@ int Reload_EntryRules_DLL(string filename) {
     // Handle to DLL
     if (HMOD != 0) {
     
-        printf("Library ALREADY Loaded  **********************************************************************, %s", LocalFile);
+        Print("Library ALREADY Loaded : Action Free Library " +  LocalFile);
     
         returnvalue = FreeLibrary(HMOD);
     
         if (returnvalue) {
-            printf("Library is free **********************************************************************, %s", LocalFile);
+            Print("Library Free OK " + LocalFile);
     
         } else {
-            printf("ERROR Library is free **********************************************************************, %s", LocalFile);;
+            Print("Library Free ERROR " + LocalFile);;
             return -1;
         }
     }
@@ -1695,14 +1686,15 @@ int Reload_EntryRules_DLL(string filename) {
         returnvalue = DownloadLibrary(filename, tofilename);
     
         if (returnvalue < 0) {
-            printf("CAN NOT GET DLL  ********************************************************************** %s", filename);
+            Print("GET DLL ERROR " +  filename);
             return 1;
         } else
-            printf("GET DLL SUCCEED !!!! ********************************************************************** %s", filename);
+            Print("GET DLL OK " + filename);
     }
     return Load_EntryRules_DLL(LocalFile);
 
 }
+
 int ReloadProject(string s) {
 
     int length = StringLen(s); //"abc" = 3;
@@ -1715,14 +1707,14 @@ int ReloadProject(string s) {
     }
 
     PG_Print(TYPE_INFO, "Reload Project " + platform, NO_SEND);
-    
+
 
     string dllfile = "";
-    
+
     if ((platform == "Tester" && !TestMode) ||
         (platform == "Terminal" && TestMode))
         return;
-   
+
     if (TestMode)
         dllfile = "PG_TEntryRules.dll";
     else
@@ -1733,7 +1725,7 @@ int ReloadProject(string s) {
 
     if (Reload_EntryRules_DLL(dllfile) < 0)
         return -1;
-    
+
 
     DeleteGraphics();
 
@@ -1748,19 +1740,19 @@ int ReloadProject(string s) {
     LoadFilters();
     LoadMM();
 
-    return 1;
+	return 1;
 }
 
 string ExtractDataFolder (string stringfile) {
     int pos = 0;
     int last_pos = -1;
-    
+
     while(pos>=0)    {
-      pos = StringFind(stringfile,"\\",pos+1);
-      if(pos>=0)
-         last_pos = pos;
-      else
-         break;
+        pos = StringFind(stringfile,"\\",pos+1);
+        if(pos>=0)
+            last_pos = pos;
+        else
+            break;
     }  
     if (last_pos >= 0) {
         return StringSubstr(stringfile,last_pos + 1, 0);
@@ -1768,11 +1760,30 @@ string ExtractDataFolder (string stringfile) {
     return "";
 }
 
+bool is_error(){
+    if(GetLastError() != ERR_NO_ERROR){
+        Sleep(10);
+        return true;
+    }
+    return false;
+}
+
 int init() {
 
     PG_Print(TYPE_INFO, "________________________________________________________________________  PROGRESS START INITIALISATION  ________________________________________________________________________");
 
     PG_Print(TYPE_INFO, "________________________________________________________________________           Running in " + ((C_COMPILE == true) ? " C MODE " : " MQ4 MODE ") + "          ________________________________________________________________________");
+/*
+    for (int i = 0; i < NBR_PERIODS; i++) {
+    	while(!IsStopped()) {
+            ResetLastError();
+            int n = iBars(_Symbol, PeriodIndex[i]);
+            bool error = is_error();
+            if(!error && n > 0)
+            break;
+        }
+    }
+ */   
 
     AttemptToReconnect = 0;
     AttemptToReloadDLL = 0;
@@ -1869,13 +1880,13 @@ int start() {
     }
     if (C_COMPILE) {
         if (AttemptToReloadDLL == 0) {
-    
+
             PG_Print(TYPE_INFO, "______________________________________________________________  PROGRESS  WAITING FOR DOWNLOADING EXT_FUNCIONS DLL IN START INITIALISATION     ________________________________________________________");
             Send_Operation("PROGRESS  WAITING FOR DOWNLOADING EXTENSION ON CURRENCY " + _Symbol);
             Load_WinExtension_DLL("PG_ExtFunctions.dll");
             return 0;
         }
-    
+
         if (AttemptToLoadEntryRules == 0) {
             PG_Print(TYPE_INFO, "______________________________________________________________  PROGRESS  WAITING FOR DOWNLOADING ENTRY RULES DLL IN START INITIALISATION    ________________________________________________________");
             Send_Operation("PROGRESS WAITING FOR DOWNLOADING ENTRY RULES ON CURRENCY " + _Symbol);
@@ -1974,7 +1985,7 @@ int start() {
         DrawGraphics();
     }
 
-//    CalculateGAverage();
+    //    CalculateGAverage();
 
     AccountNbrLots = ReturnAccountNbrLots();
 
@@ -2017,9 +2028,11 @@ int start() {
 //+------------------------------------------------------------------+ END 
 
 int deinit() {
+
     printf("PROGRESS END PROCESSING BYE BYE  **********************************************************************");
     PG_Print(TYPE_INFO, "________________________________________________________________________ PROGRESS END PROCESSING  ________________________________________________________________________");
     Send_Operation("PROGRESS END PROCESSING ON CURRENCY " + _Symbol);
+
     ObjectsDeleteAll();
 
     if (CSocket > 0)
@@ -2037,7 +2050,7 @@ int deinit() {
 
     if (SymbolRunning != -1)
         FileClose(SymbolRunning);
-    
+
     return (0);
 }
 
@@ -2269,6 +2282,7 @@ int AndPS(int Object, int signaltype, int period, int period1 = -1, int period2 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 double RValue(int Operation, int OperationType, int rule) {
     return (RuleTabValue[Operation][OperationType][rule]);
 }
@@ -2339,6 +2353,7 @@ double MaxPV(int Object, int signaltype, int period, int period1 = -1, int perio
     return (result);
 
 }
+
 double MinPV(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     double result = EMPTY_VALUE;
     if (period != -1) result = SPValue(Object, signaltype, period);
@@ -2737,6 +2752,7 @@ int AndV_GEq(int Object, int signaltype, double value, int period, int period1 =
 
     return ((result) ? rperiod : 0);
 }
+
 int AndPV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     bool result = 1;
     int rperiod = 0;
@@ -2993,6 +3009,7 @@ int OrV_Eq(int Object, int signaltype, double value, int period, int period1 = -
 
     return ((result) ? rperiod : 0);
 }
+
 int OrV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     bool result = 0;
     int rperiod = 0;
@@ -3035,6 +3052,7 @@ int OrV_L(int Object, int signaltype, double value, int period, int period1 = -1
 
     return ((result) ? rperiod : 0);
 }
+
 int OrV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     bool result = 0;
     int rperiod = 0;
@@ -3077,6 +3095,7 @@ int OrV_LEq(int Object, int signaltype, double value, int period, int period1 = 
 
     return ((result) ? rperiod : 0);
 }
+
 int OrV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     bool result = 0;
     int rperiod = 0;
@@ -3205,6 +3224,7 @@ int OrPV_Eq(int Object, int signaltype, double value, int period, int period1 = 
 
     return ((result) ? rperiod : 0);
 }
+
 int OrPV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     bool result = 0;
     int rperiod = 0;
@@ -3247,6 +3267,7 @@ int OrPV_L(int Object, int signaltype, double value, int period, int period1 = -
 
     return ((result) ? rperiod : 0);
 }
+
 int OrPV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     bool result = 0;
     int rperiod = 0;
@@ -3332,6 +3353,7 @@ int OrPV_G(int Object, int signaltype, double value, int period, int period1 = -
 
     return ((result) ? rperiod : 0);
 }
+
 int OrPV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     bool result = 0;
     int rperiod = 0;
@@ -3379,18 +3401,22 @@ int AndBV_Eq(int Object, int signaltype, double value, int period, int period1 =
     return (AndV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !AndPV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool AndBV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (AndV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !AndPV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool AndBV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (AndV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !AndPV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool AndBV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (AndV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !AndPV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool AndBV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (AndV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !AndPV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
@@ -3400,28 +3426,32 @@ bool OrBV_Eq(int Object, int signaltype, double value, int period, int period1 =
     return (OrV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !OrPV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool OrBV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (OrV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !OrPV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool OrBV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (OrV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !OrPV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool OrBV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (OrV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !OrPV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool OrBV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (OrV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !OrPV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
-
 //TICK
 bool AndTV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (AndV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !AndPV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool AndTV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (AndV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !AndPV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
@@ -3430,10 +3460,12 @@ bool AndTV_L(int Object, int signaltype, double value, int period, int period1 =
     return (AndV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !AndPV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool AndTV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (AndV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !AndPV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool AndTV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (AndV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !AndPV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
@@ -3443,18 +3475,22 @@ bool OrTV_Eq(int Object, int signaltype, double value, int period, int period1 =
     return (OrV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !OrPV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool OrTV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (OrV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !OrPV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool OrTV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (OrV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !OrPV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool OrTV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (OrV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !OrPV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 bool OrTV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (OrV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
         !OrPV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
@@ -3467,6 +3503,7 @@ int AngleAbove(int Object, double value, int period, int period1 = -1, int perio
 int AngleBelow(int Object, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
     return (AndV_L(Object, S_ANGLE, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
 }
+
 int AngleDivergence(int Object, int period) {
     return ((AndS(Object, S_UP, period) && AngleBelow(Object, 0, period)) ||
         (AndS(Object, S_DOWN, period) && AngleAbove(Object, 0, period)));
@@ -3870,6 +3907,7 @@ void IfShouldClose() {
 }
 
 //+------------------------------------------------------------------+
+
 int LoadBrokers() {
     InitBrokers();
     DownloadFile("PG_Brokers.csv");
@@ -4241,8 +4279,6 @@ void DrawGraphics() {
             Patterns_DrawGraphics(k);
     }
 }
-
-
 
 //****************************************************************************************************************************************
 
@@ -4842,6 +4878,7 @@ int B_LoadSession(int magicNumber, int session) {
 
     return (session);
 }
+
 void ReadSessions() {
     for (int i = 0; i < B_MaxSessions; i++)
         B_LoadSession(B_IMagicNumber, i);
@@ -4860,6 +4897,7 @@ void B_SaveSessions() {
         }
     FileClose(handle);
 }
+
 int B_ReadInfo(int session, string saveinfo, int withsessnbr = -1) {
     int from = 0;
     int i = 0;
@@ -4889,8 +4927,6 @@ int B_ReadInfo(int session, string saveinfo, int withsessnbr = -1) {
     from = from + i;
     return from;
 }
-
-
     
 string B_SaveInfo(int session, int withsessnbr = -1) {
     string save_info = "";
@@ -4968,6 +5004,7 @@ void B_ReadRemainingInfo(int session, string saveinfo, int start) {
     from = from + i;  i = 3; B_SellLotTS[session] =          StrToInteger(B_ReadSInfo(saveinfo, from, i));
     from = from + i;  i = 3; B_SellLotSL[session] =          StrToInteger(B_ReadSInfo(saveinfo, from, i));
 }
+
 string B_SaveRemainingInfo(int session) {
     string save_info = "";
     string s = "";    
@@ -5001,8 +5038,6 @@ string B_SaveRemainingInfo(int session) {
     return (save_info);    
 }
   
-
-
 string B_ReadSInfo(string info, int Pos, int length) {
     return (StringSubstr(info, Pos, length));
 }
@@ -5060,8 +5095,7 @@ int B_ProcessTrade(int session, double price, int mode, double Lots, double B_Bu
     return (0);
 }
 
-int B_HedgeProcessTrade(int session, int operation, double StopLoss = -1) // operation = OP_BUY OP_SELL only
-{
+int B_HedgeProcessTrade(int session, int operation, double StopLoss = -1) { // operation = OP_BUY OP_SELL only
     int ticket, h_mode;
     double nbrlots = 0;
     double price;
@@ -5118,8 +5152,7 @@ int B_HedgeProcessTrade(int session, int operation, double StopLoss = -1) // ope
     return (ticket);
 }
 
-int B_HedgeCloseTrade(int session, int operation = -1) // operation = OP_BUY, OP_SELL, OP_BUYSELL
-{
+int B_HedgeCloseTrade(int session, int operation = -1) { // operation = OP_BUY, OP_SELL, OP_BUYSELL
     int ticket, h_mode;
     double nbrlots;
 
@@ -5361,8 +5394,7 @@ void B_KeepBuySellSession(int session, int operation) {
         B_KeepBuySell[session] = operation;
 }
 
-void B_HedgeSession(int session, int hedge, int operation = OP_BUYSELL) // hedge true ==>hedge   false unhedge operation to hedge BUY is sell
-{
+void B_HedgeSession(int session, int hedge, int operation = OP_BUYSELL) {  // hedge true ==>hedge   false unhedge operation to hedge BUY is sell
     int ret = -1;
 
     if ((B_Operation[session] == OP_BUY && operation == OP_SELL) ||
@@ -7084,7 +7116,7 @@ void TreatProfit(string s) {
     s = s + "] ";
     s = s + "*";
     Print("Finish Sending " + _Symbol);
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void TreatRuleData(string s) {
@@ -7154,7 +7186,7 @@ void TreatExpert(string s) {
     int i = 0;
     string count = "";
     string expertfile = "";
-    string x = "";
+
 
     while (StringGetCharacter(s, i) != StringGetCharacter("*", 0)) {
         expertfile = expertfile + CharToString(StringGetCharacter(s, i));
@@ -7168,13 +7200,40 @@ void TreatInit(string s) {
     Send_Init(CSocket, CPort);
 }
 
+void TreatHistoryFile (string s) {
+    int i = 0;
+    string symbol = "";
+    string period = "";
+
+
+    while (StringGetCharacter(s, i) != StringGetCharacter("*", 0)) {
+        while (StringGetCharacter(s, i) != 32) {
+            symbol = symbol + CharToString(StringGetCharacter(s, i));
+            i++;
+        }
+        i++;
+        i++;
+        i++;
+        i++; // skip " = ["
+
+        while (StringGetCharacter(s, i) != StringGetCharacter("]", 0)) {
+            period = period + CharToString(StringGetCharacter(s, i));
+            i++;
+        }
+        i++;    
+        i++; // skip "] "    
+    }
+
+    Send_HistoryFile(symbol, StrToInteger(period));            
+}
+
 void TreatHistory(string s) {
     int i = 0;
     string to = "";
     string from = "";
 
     string symbol = "";
-    string x = "";
+    string period = "";
 
     while (StringGetCharacter(s, i) != StringGetCharacter("*", 0)) {
         while (StringGetCharacter(s, i) != 32) {
@@ -7187,7 +7246,7 @@ void TreatHistory(string s) {
         i++; // skip " = ["
 
         while (StringGetCharacter(s, i) != 32) {
-            x = x + CharToString(StringGetCharacter(s, i));
+            period = period + CharToString(StringGetCharacter(s, i));
             i++;
         }
         i++;
@@ -7206,7 +7265,7 @@ void TreatHistory(string s) {
         i++; // skip "] "
 
     }
-    Send_History(symbol, StrToInteger(x), StrToInteger(from), StrToInteger(to));
+    Send_History(symbol, StrToInteger(period), StrToInteger(from), StrToInteger(to));
 
 }
 
@@ -7578,6 +7637,9 @@ void TreatCommand(string Command, string request) {
     if (Command == "GET_HISTORY") {
         TreatHistory(request);
     } else
+    if (Command == "GET_HISTORYFILE") {
+        TreatHistoryFile(request);
+    } else
     if (Command == "PAUSE") {
         doPauseTest ();
     } else
@@ -7807,7 +7869,7 @@ void Send_Signal(int Object, int signaltype, int type = 0) {
     else
         s = s + DoubleToString(TSignalTab[Object][signaltype], 0);
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void Send_Signal_Value(int Object, int signaltype, int digits = -1) {
@@ -7831,7 +7893,7 @@ void Send_Signal_Value(int Object, int signaltype, int digits = -1) {
             s = s + DoubleToString(SValue(Object, signaltype, k));
     }
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void Send_Signal_Time(int Object, int signaltype) {
@@ -7851,7 +7913,7 @@ void Send_Signal_Time(int Object, int signaltype) {
         s = s + DoubleToString(STime(Object, signaltype, k));
     }
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void Send_Symbol(string symbol, int x) {
@@ -7879,7 +7941,50 @@ void Send_Symbol(string symbol, int x) {
     s = s + "^";
     s = s + DoubleToString(iVolume(symbol, PeriodIndex[x], 0), 0);
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
+}
+
+void Send_HistoryFile (string symbol, int x) {
+    string LocalFile = symbol + PeriodIndex[x] + ".hst";
+
+    int handle = FileOpenHistory(LocalFile, FILE_BIN|FILE_READ);
+
+    if (handle < 1) {
+        Print("Cannot open file " +  LocalFile);
+        return;
+    }
+    int    filesize = FileSize(handle);
+    string content = "*HISTORYFILE";
+    content = content + "^";
+    content = content + symbol;
+    content = content + "^";
+    content = content + x;
+    content = content + "^";
+    content = content + filesize;
+    content = content + "^";    
+    
+ 
+    int    totalsize = filesize + StringLen(content) + 1;
+    
+    char   filecontent[]; 
+    ArrayResize(filecontent, totalsize);
+
+	Print (ArraySize(filecontent));
+    Print ("Sending History File " + LocalFile);
+
+
+	StringToCharArray(content, filecontent, 0, StringLen(content));
+	
+    if (FileReadArray (handle, filecontent, StringLen(content)) != filesize) {
+         FileClose(handle);
+         Print("Error reading the file \""+ LocalFile + "\"");
+         return;
+    }
+    FileClose(handle);
+	filecontent[totalsize -1] = "*";
+	
+    PG_SendBuffer(CSocket, filecontent, filesize + StringLen(content));
+  //  PG_Send(NodeSocket, "*");
 }
 
 void Send_History(string symbol, int x, int from, int to) {
@@ -7894,7 +7999,7 @@ void Send_History(string symbol, int x, int from, int to) {
         time = iTime(symbol, PeriodIndex[x], i);
         if (time == 0) {
            error = GetLastError();
-           Print ("error after gethistory " + x + " bar " + i + " " + error);        
+         //  Print ("error after gethistory " + x + " bar " + i + " " + error);        
            continue;
         }
         s = s + "^";
@@ -7912,20 +8017,18 @@ void Send_History(string symbol, int x, int from, int to) {
         k++;
     }
 
-
+    s = s + "*";
     string content = "*HISTORY";
     content = content + "^";
     content = content + symbol;
     content = content + "^";
     content = content + x;
     content = content + "^";
-    
     content = content + from ;
     content = content + "^";
     content = content + k ;
-    content = content + "*";
     
-    PG_Send(CSocket, content + s);
+    PG_Send(NodeSocket, content + s);
 }
 
 void Send_Alert(string symbol, int AlertId, int AlertPeriod) {
@@ -7941,10 +8044,8 @@ void Send_Alert(string symbol, int AlertId, int AlertPeriod) {
     s = s + "^";    
     s = s + AlertPeriod;
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
-
-
 
 void Send_MM() {
     if (NoConnection()) return;
@@ -7992,7 +8093,7 @@ void Send_MM() {
     s = s + "^";
     s = s + DoubleToString(MMWeeklyPercentStopLoss, 2);
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void Send_EngineFlags() {
@@ -8008,7 +8109,7 @@ void Send_EngineFlags() {
         s = s + EngineTab[i][1];
     }
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void Send_RuleFlags() {
@@ -8026,7 +8127,7 @@ void Send_RuleFlags() {
         s = s + RuleTab[i][T_STATUS];
     }
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void Send_Command(int number, int sessionnumber, int engine, int start, double buyprofit, double sellprofit, double profit, double totalprofit, int nbrbuy, int nbrsell, double buylot, double selllot, int hedgetype, double hedgebuyprofit, double hedgesellprofit, double buyaverage, double sellaverage, double min, double max) {
@@ -8103,7 +8204,7 @@ void Send_Command(int number, int sessionnumber, int engine, int start, double b
         s = s + AccountCurrency();        
     }
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 void Send_Session(int i) {
     if (NoConnection()) return;
@@ -8193,7 +8294,7 @@ void Send_Session(int i) {
     s = s + "^";
     s = s + DoubleToString(B_SellLotSL[i], 2);
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void Send_Data(int session = -1, int mode = -1, int engine = -1) {
@@ -8321,7 +8422,7 @@ void Send_Data(int session = -1, int mode = -1, int engine = -1) {
             }
         }
     s = s + "*";
-    PG_Send(CSocket, s); // for
+    PG_Send(NodeSocket, s); // for
     return;
 }
 
@@ -8353,7 +8454,7 @@ void Send_Profit(int rule, int operation, datetime RuleStartDate, datetime RuleE
     s = s + "^";
     s = s + DoubleToString(RuleProfit, 2);
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 void Send_Data_From_Rule(int rule, int operation, datetime fromdate, int closed = 1) {
     if (NoConnection()) return;
@@ -8426,7 +8527,7 @@ void Send_Data_From_Rule(int rule, int operation, datetime fromdate, int closed 
     }
     if (sent == 0) s = s + "] ";
     s = s + "*";
-    PG_Send(CSocket, s); // for
+    PG_Send(NodeSocket, s); // for
     return;
 }
 
@@ -8449,7 +8550,7 @@ void Send_Mail(int Object, int Signal, int period, string sFrom, string sTo, str
     s = s + "] ";
     s = s + "*";
 
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void Send_Sound(string symbol, int Object, int Signal, int period, string sSound) {
@@ -8465,7 +8566,7 @@ void Send_Sound(string symbol, int Object, int Signal, int period, string sSound
     s = s + "] ";
     s = s + "*";
 
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 void Send_Pivot(string symbol, int period) {
     if (NoConnection()) return;
@@ -8495,7 +8596,7 @@ void Send_Pivot(string symbol, int period) {
     }
     s = s + "] ";
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 void Send_News(string DateNewsToday, string DescNewsToday, string CurrNewsToday, string ImportanceNewsToday, string ActualNewsToday, string ForecastNewsToday, string PreviousNewsToday) {
 
@@ -8526,7 +8627,7 @@ void Send_News(string DateNewsToday, string DescNewsToday, string CurrNewsToday,
     s = s + snews;
     s = s + "] ";
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void Send_CProperties() {
@@ -8587,7 +8688,7 @@ void Send_CProperties() {
     s = s + Get_Property("GraphicCS");
     s = s + "] ";
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 
@@ -8625,7 +8726,7 @@ int Send_Manual(string symbol, int session, int operation, double nbrlots, doubl
     s = s + "] ";
 
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
     return 1;
 }
 
@@ -8651,7 +8752,7 @@ void Send_OrderModifyResult(int Session, int Order, int Error, string Descriptio
     s = s + " ";
     s = s + "] ";
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void Send_System(string reply) {
@@ -8664,7 +8765,7 @@ void Send_System(string reply) {
     s = s + " ";
     s = s + "] ";
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void Send_Download(string file) {
@@ -8676,7 +8777,7 @@ void Send_Download(string file) {
     s = s + " ";
     s = s + "] ";
     s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 
@@ -8759,83 +8860,6 @@ void Send_Profits(int rule, int operation, datetime fromdate, datetime todate) {
 
 }
 
-
-
-
-
-
-//////////////////////////END OF COMMAND TCP
-
-void Send_Principal_Signals(int conn_socket) {
-    if (conn_socket == -1) return;
-
-    string s = "*SIGNALS ";
-    for (int i = 5; i < 10; i++) {
-        s = s + ObjName[i];
-        s = s + " = [";
-        for (int j = 0; j < NBR_SIGNALS; j++) {
-            s = s + DoubleToString(SignalTab[i][j], 0);
-            s = s + " ";
-        }
-        s = s + "] ";
-    }
-    s = s + "*";
-    PG_Send(conn_socket, s);
-}
-
-void Send_Principal_Signal_Values(int conn_socket) {
-    if (conn_socket == -1) return;
-
-    string s = "*SIGNALS_VALUE ";
-    for (int i = 5; i < 10; i++) {
-        s = s + ObjName[i];
-        s = s + " = [";
-        for (int j = 0; j < NBR_SIGNALS; j++) {
-            s = s + SignalName[j];
-            s = s + " = [";
-            for (int k = 0; k < NBR_PERIODS; k++) {
-                s = s + DoubleToString(SValue(i, j, k), _Digits);
-                s = s + " ";
-            }
-            s = s + "] ";
-        }
-        s = s + "] ";
-    }
-    s = s + "*";
-    PG_Send(conn_socket, s);
-}
-
-void Send_NbrBars() {
-
-    if (NoConnection()) return;
-    string s = "*NBRBARS ";
-    s = s + "RES";
-    s = s + " = [";
-    for (int i = 0; i < O_NbrObject; i++) {
-        s = s + DoubleToString(SValue(RESISTANCE, S_NBRBARS, i), 0);
-        s = s + " ";
-    }
-    s = s + "] ";
-
-    s = s + "SUP";
-    s = s + " = [";
-    for (i = 0; i < O_NbrObject; i++) {
-        s = s + DoubleToString(SValue(SUPPORT, S_NBRBARS, i), 0);
-        s = s + " ";
-    }
-    s = s + "] ";
-
-    s = s + "SAR";
-    s = s + " = [";
-    for (i = 0; i < O_NbrObject; i++) {
-        s = s + DoubleToString(SValue(SAR, S_NBRBARS, i), 0);
-        s = s + " ";
-    }
-    s = s + "] ";
-    s = s + "*";
-    PG_Send(CSocket, s);
-}
-
 void Send_Properties() {
 
     if (NoConnection()) return;
@@ -8847,68 +8871,15 @@ void Send_Properties() {
         s = s + "] ";
     }
     s = s + "*";
-    PG_Send(CSocket, s);
-}
-
-void Send_GetProperties() {
-
-    if (NoConnection()) return;
-    string s = "*GET_PROPERTIES ";
-    s = s + "*";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
 
 void Send_Close() {
 
     if (NoConnection()) return;
     string s = "*CLOSE *";
-    PG_Send(CSocket, s);
+    PG_Send(NodeSocket, s);
 }
-
-
-void Send_BNbrSessions() {
-    if (NoConnection()) return;
-
-    string s = "*BNBRSESSIONS ";
-    int activesessions = B_ReturnNbrActiveSession();
-    s = s + "ActiveSessions";
-    s = s + " = [";
-    s = s + activesessions;
-    s = s + "] ";
-    for (int i = 0; i < B_MaxSessions; i++) {
-        if (B_FreeSession[i] == true) continue;
-
-        s = s + "StartDate";
-        s = s + " = [";
-        s = s + DoubleToString(B_StartDate[i], 0);
-        s = s + "] ";
-    }
-    s = s + "*";
-    PG_Send(CSocket, s);
-}
-
-void Send_CloseSession(int session, int type) {
-
-    if (NoConnection()) return;
-    string s = "*CLOSESESSION";
-    s = s + "SessionNumber";
-    s = s + " = [";
-    s = s + session;
-    s = s + "] ";
-    s = s + "Type";
-    s = s + " = [";
-    s = s + type;
-    s = s + "] ";
-    s = s + "B_TotalProfit";
-    s = s + " = [";
-    s = s + B_SessionProfit[session];
-    s = s + "] ";
-    s = s + "*";
-    PG_Send(CSocket, s);
-}
-
-
-
 
 void SetProperty(string Name, string Value) {
     int result = Set_Property(Name, Value);
@@ -9683,21 +9654,7 @@ int OrderTrade(double price, int mode, double Lots, string comment, int MagicNum
     return (error);
 }
 
-void PG_Recv(int & socket) {
-    string receive_buffer;
-    if (TCP_recv(socket, receive_buffer) > 0)
-        TreatRecv(socket, receive_buffer);
-}
 
-void PG_Send(int & socket, string s) {
-    if (SiteConnection && NodeSocket != -1)
-        TCP_send(NodeSocket, s);
-
-    if (socket == -1 || socket == NodeSocket) return;
-
-    TCP_send(socket, s);
-
-}
 
 /////////////////////////////////// ENGINE ////////////////////////////////
 
@@ -11081,6 +11038,8 @@ void TreatAlerts() {
 
         if (!flag) {
             AlertTime[i] = 0;
+            AlertMinTime[i] = 0;
+            AlertLast[i] = 0;
             continue;
         }
         
@@ -11099,25 +11058,29 @@ void TreatAlerts() {
             ObjectSetText("Alert_" + ObjName + "_ " + SignalName[Signal] + periode + Op, CharToString(AlertGraphicCode[i]), AlertGraphicSize[i], "WingDings", AlertGraphicColor[i]);
         }
 
-        if (AlertResult && AlertTime[i] != 0) {
-            if (AlertResult & P_M1) AlertMinTime = PERIOD_M1 * 60;  //60 Seconds
-            else
-            if (AlertResult & P_M5) AlertMinTime = PERIOD_M5 * 60;
-            else
-            if (AlertResult & P_M15) AlertMinTime = PERIOD_M15 * 60;
-            else
-            if (AlertResult & P_M30) AlertMinTime = PERIOD_M30 * 60;
-        } else
-            AlertMinTime = PERIOD_H1 * 60;                          // 1 hour !!!
+      
+        if (AlertLast[i] != AlertResult) {
+            AlertMinTime[i] = 0;
+            AlertLast[i] = AlertResult;            
+        }
         
 
-        
         double elapsed_time = TimeCurrent() - AlertTime[i];
 
-        if (elapsed_time >= AlertMinTime) {
+        if (elapsed_time >= AlertMinTime[i]) {
             AlertTime[i] = TimeCurrent();
             Send_Alert(_Symbol, AlertId, AlertResult);
-            
+
+            if (AlertResult & P_M1) AlertMinTime[i]  = PERIOD_M1 * 60;  //60 Seconds
+            else
+            if (AlertResult & P_M5) AlertMinTime[i]  = PERIOD_M5 * 60;
+            else
+            if (AlertResult & P_M15) AlertMinTime[i] = PERIOD_M15 * 60;
+            else
+            if (AlertResult & P_M30) AlertMinTime[i] = PERIOD_M30 * 60;
+            else
+                AlertMinTime[i] = PERIOD_H1 * 60;                          // 1 hour !!!
+
             if (AlertMail[i])
                 Send_Mail(Object, Signal, k, AlertMailFromName[i], AlertMailFromAdress[i], AlertMailToAdress[i], AlertMailCcAdress[i], AlertMailSubject[i], AlertMailContent[i]);
 
@@ -21644,13 +21607,13 @@ int FTPDownloadLibrary(string filename, string tofilename = NULL) {
     string LocalFile;
 
     ServerFile = UserPath + "/MQL4/Libraries/" + filename;
-    LocalFile = TerminalInfoString(TERMINAL_DATA_PATH) +  "\\MQL4\\Libraries\\" + ((tofilename != NULL) ? tofilename : filename);
+    LocalFile  = TerminalInfoString(TERMINAL_DATA_PATH) +  "\\MQL4\\Libraries\\" + ((tofilename != NULL) ? tofilename : filename);
 
     hIntObj = hSession(true);
     if (hIntObj > 0) {
         hIntObjConn = InternetConnectW(hIntObj, FTPServerName, FTPPort, FTPUserName, FTPPassword, INTERNET_SERVICE_FTP, 0, 0);
         if (hIntObjConn > 0) {
-            success = FtpGetFileW(hIntObjConn, ServerFile, LocalFile, false, 128, INTERNET_FLAG_RELOAD, NULL);
+            success = FtpGetFileW(hIntObjConn, ServerFile, LocalFile, FALSE, 128, FTP_TRANSFER_TYPE_BINARY, NULL);
         } else
             printf("login failed. %d", hIntObjConn);
     }
@@ -21666,6 +21629,83 @@ int FTPDownloadLibrary(string filename, string tofilename = NULL) {
 
 
 // HTTP
+void HTTPUploadHistoryFile(string symbol, int period) {
+
+    if (TestMode) {
+        return;
+    }
+    string url      = "/php/save_history.php";
+   
+    string LocalFile = symbol + PeriodIndex[period] + ".hst";
+
+    int handle = FileOpenHistory(LocalFile, FILE_BIN|FILE_READ);
+
+    if (handle < 1) {
+        Print("Cannot open file " +  LocalFile);
+        return -1;
+    }
+
+    char   filecontent[]; 
+    if (FileReadArray (handle, filecontent) != FileSize(handle)) {
+         FileClose(handle);
+         Print("Error reading the file \""+ LocalFile + "\"");
+         return -1;
+    }
+
+    FileClose(handle);
+
+    Print ("UPLOADIND ", LocalFile);
+
+    int handler     = hSession(1);
+
+    int hIntObjConn = InternetConnectW(handler, HTTPServerName, 80, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 1);
+      
+    if (hIntObjConn == 0) {
+        InternetCloseHandle(handler);        
+        return -1;
+    }
+    
+    string acceptTypes[1] = {"*/*"};    
+    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", url, NULL, NULL, acceptTypes, 0, 1);
+
+    if (hRequest == 0) {
+        InternetCloseHandle(handler);        
+        InternetCloseHandle(hIntObjConn);     
+        return -1;
+    }
+
+    string headers  = "Content-Type: application/x-www-form-urlencoded";
+   
+    string params   = "content=" + CharArrayToString(filecontent) + "&userpath=" + UserPath + "&filename=" + LocalFile;
+
+
+    int response    = HttpSendRequestW(hRequest, headers, StringLen(headers),  params,  StringLen(params));
+    if (!response) {
+        InternetCloseHandle(handler);        
+        InternetCloseHandle(hIntObjConn);     
+        InternetCloseHandle(hRequest); 
+        return -1;
+    }
+    
+    uchar TabChar[128];
+    int dwBytes;
+    int BytesWritten[1] = {0};
+
+    while (InternetReadFile(hRequest, TabChar, 128, dwBytes)) {
+        if (dwBytes <= 0) break;
+        Print ("OOOOOOOOOOOOOOOOOOOO " + CharArrayToString(TabChar, 0, dwBytes));
+    }
+
+
+    InternetCloseHandle(handler);    
+    InternetCloseHandle(hIntObjConn);      
+    InternetCloseHandle(hRequest);
+    InternetCloseHandle(response);
+    
+    Print ("Uploading OK ", LocalFile);
+    return 1;
+}
+
 void HTTPDownloadFile(string filename, string tofilename = NULL) {
     string LocalFile;
     string ServerFile;
@@ -21681,7 +21721,7 @@ void HTTPDownloadFile(string filename, string tofilename = NULL) {
         LocalFile = TerminalInfoString(TERMINAL_DATA_PATH) + "\\MQL4\\Files\\" + ((tofilename != NULL) ? tofilename : filename);
 
     
-    printf("DOWNLOADING %s", ServerFile);
+    Print("DOWNLOADING ", ServerFile);
     string headers = "Content-Type: application/x-www-form-urlencoded";
     int handler     = hSession(1);
 
@@ -21693,7 +21733,7 @@ void HTTPDownloadFile(string filename, string tofilename = NULL) {
         return -1;
     }
     string acceptTypes[1] = {"*/*"};    
-    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
+    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", "/php/load_url.php?url=" + ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
     if (hRequest == 0) {
         InternetCloseHandle(hIntObjConn);     
         InternetCloseHandle(handler);        
@@ -21713,7 +21753,7 @@ void HTTPDownloadFile(string filename, string tofilename = NULL) {
 
     int file_handle = CreateFileW(LocalFile, 0x40000000 /* GENERIC_WRITE */, 0, 0,  2 /* CREATE_ALWAYS */, 0, 0); 
     if (file_handle == -1) {
-        printf("Downloading error. %s", LocalFile);
+        Print("Downloading error ", LocalFile);
         InternetCloseHandle(hIntObjConn);     
         InternetCloseHandle(handler);        
         InternetCloseHandle(hRequest); 
@@ -21733,7 +21773,7 @@ void HTTPDownloadFile(string filename, string tofilename = NULL) {
     InternetCloseHandle(response);
     InternetCloseHandle(handler);
     CloseHandle (file_handle);
-    printf("Downloading sucessfull!! : %s", ServerFile);
+    Print("Downloaded OK ");
     return 1;
 }
 
@@ -21741,11 +21781,16 @@ int HTTPDownloadLibrary(string filename, string tofilename = NULL) {
     string ServerFile;
     string LocalFile;
 
-    
+   
+   
     ServerFile  = UserPath + "/MQL4/Libraries/" + filename;
     LocalFile   = TerminalInfoString(TERMINAL_DATA_PATH) +  "\\MQL4\\Libraries\\" + ((tofilename != NULL) ? tofilename : filename);
 
-    printf("DOWNLOADING %s", ServerFile);
+    //string url      = "/php/load_url.php?url=" + ServerFile;
+   
+    
+
+    Print("DOWNLOADING ", ServerFile);
     string headers = "Content-Type: application/x-www-form-urlencoded";
     int handler     = hSession(1);
 
@@ -21757,7 +21802,7 @@ int HTTPDownloadLibrary(string filename, string tofilename = NULL) {
         return -1;
     }
     string acceptTypes[1] = {"*/*"};    
-    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
+    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", "/php/load_url.php?url=" + ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
     if (hRequest == 0) {
         InternetCloseHandle(hIntObjConn);     
         InternetCloseHandle(handler);        
@@ -21776,8 +21821,9 @@ int HTTPDownloadLibrary(string filename, string tofilename = NULL) {
 //    int response     = InternetOpenUrlW(handler, ServerFile, headers,StringLen(headers), INTERNET_FLAG_NEED_FILE | INTERNET_FLAG_RELOAD | INTERNET_FLAG_RESYNCHRONIZE |INTERNET_FLAG_KEEP_CONNECTION |INTERNET_FLAG_PRAGMA_NOCACHE |INTERNET_FLAG_NO_CACHE_WRITE );
 
     int file_handle = CreateFileW(LocalFile, 0x40000000 /* GENERIC_WRITE */, 0, 0,  2 /* CREATE_ALWAYS */, 0, 0); 
+    
     if (file_handle == -1) {
-        printf("Downloading error. %s", LocalFile);
+        Print("Downloading error ", LocalFile);
         InternetCloseHandle(hIntObjConn);     
         InternetCloseHandle(handler);        
         InternetCloseHandle(hRequest); 
@@ -21788,8 +21834,12 @@ int HTTPDownloadLibrary(string filename, string tofilename = NULL) {
     uchar TabChar[128];
     int dwBytes;
     int BytesWritten[1] = {0};
+    
+    string httpresponse = "";
+    
     while (InternetReadFile(hRequest, TabChar, 128, dwBytes)) {
         if (dwBytes <= 0) break;
+//        httpresponse = CharArrayToString(TabChar, 0, dwBytes);       
         WriteFile(file_handle, TabChar, dwBytes, BytesWritten, 0);
     }
     InternetCloseHandle(hIntObjConn);      
@@ -21797,7 +21847,7 @@ int HTTPDownloadLibrary(string filename, string tofilename = NULL) {
     InternetCloseHandle(response);
     InternetCloseHandle(handler);
     CloseHandle (file_handle);
-    printf("Downloading sucessfull!! : %s", ServerFile);
+    Print("Downloaded OK");
     return 1;
 }
 
@@ -21813,7 +21863,7 @@ void HTTPDownloadIndicator(string filename) {
     if (ret != ERR_INDICATOR_CANNOT_LOAD)
         return;
 
-    printf("DOWNLOADING %s", ServerFile);
+    Print("DOWNLOADING ", ServerFile);
     string headers = "Content-Type: application/x-www-form-urlencoded";
     int handler     = hSession(1);
 
@@ -21825,7 +21875,7 @@ void HTTPDownloadIndicator(string filename) {
         return -1;
     }
     string acceptTypes[1] = {"*/*"};    
-    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
+    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", "/php/load_url.php?url=" + ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
     if (hRequest == 0) {
         InternetCloseHandle(hIntObjConn);     
         InternetCloseHandle(handler);        
@@ -21845,7 +21895,7 @@ void HTTPDownloadIndicator(string filename) {
 
     int file_handle = CreateFileW(LocalFile, 0x40000000 /* GENERIC_WRITE */, 0, 0,  2 /* CREATE_ALWAYS */, 0, 0); 
     if (file_handle == -1) {
-        printf("Downloading error. %s", LocalFile);
+        Print("Downloading error ", LocalFile);
         InternetCloseHandle(hIntObjConn);     
         InternetCloseHandle(handler);        
         InternetCloseHandle(hRequest); 
@@ -21865,7 +21915,7 @@ void HTTPDownloadIndicator(string filename) {
     InternetCloseHandle(response);
     InternetCloseHandle(handler);
     CloseHandle (file_handle);
-    printf("Downloading sucessfull!! : %s", ServerFile);
+    Print("Downloaded OK");
     return 1;
 
 }
@@ -22485,6 +22535,9 @@ int LoadAlerts() {
         }
         int periode = StrToInteger(FileReadString(file));
         AlertTime[k] = 0;
+        AlertMinTime[k] = 0;
+        AlertLast[k] = 0;
+
         AlertObject[k] = Object;
         AlertSignal[k] = Signal;
         AlertPeriod[k] = periode;

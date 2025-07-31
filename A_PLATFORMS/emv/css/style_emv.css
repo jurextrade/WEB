@@ -647,9 +647,11 @@
 #emv_tester_filtergroup {
     flex-wrap: wrap;
     width: 164px;
-    height: 48px;
+    height: 50px;
     overflow: hidden;
-    flex-direction: column;    
+    flex-direction: column;   
+    background: var(--theme-form-bg-color);  
+    border: 1px solid var(--theme-button-border-color)   
 }    
 
 

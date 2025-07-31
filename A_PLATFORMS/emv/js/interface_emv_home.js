@@ -3,14 +3,20 @@
 var emv_home_leftsection = {
     id: 'emv_home_leftsection', 
     type: 'panel',       
-    class: 'home_leftsection sb_row',
+    class: 'home_leftsection presentationpanel',
     items: [
         {
             id: 'presentation',   
             type: 'html',              
-            class: 'sectioncontainer presentationpanel sb_column', 
+            class: 'sectioncontainer  sb_column', 
             content: "emv_PresentationPanel()"        
         },   
+        {
+            id: 'profile',   
+            type: 'html',              
+            class: 'sectioncontainer  sb_column',   
+            content: "ProfilePanel()"        
+        },           
     ]
 }
 
@@ -26,13 +32,19 @@ var emv_home_rightsection = {
             content: "emv_MainCarouselPanel()"        
         },        
         {
-            id: 'getstarted',   
+            id: 'projectsection',   
             type: 'html',              
             class: 'home_section1 sectioncontainer', 
             content: "emv_GetStartedSection_Panel()"        
         },   
         {
-            id: 'tools',   
+            id: 'testersection',   
+            type: 'html',              
+            class: 'home_section1 sectioncontainer', 
+            content: "emv_TesterSection_Panel()"        
+        },          
+        {
+            id: 'toolssection',   
             type: 'html',              
             class: 'home_section1 sectioncontainer', 
             content: "emv_ToolsSection_Panel()"        

@@ -1,4 +1,4 @@
-const monthnames    = ["January", "February", "March", "April", "May", "June", "July", "Augest", "September", "October", "November", "December"];
+const monthnames    = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const daynames      = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const clocktags     = ['dayname','monthname', 'day', 'month', 'date', 'fullyear', 'hours', 'minutes', 'seconds', 'utc_hours', 'utc_minutes', 'utc_seconds', 'pe', 'gmt'];
 
@@ -59,7 +59,7 @@ class clock {
         }
 
         this.update = function () {
-
+            
             if (this.tags.length == 0) {
                 return;
             }          

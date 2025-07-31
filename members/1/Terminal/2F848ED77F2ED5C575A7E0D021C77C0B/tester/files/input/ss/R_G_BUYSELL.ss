@@ -1,16 +1,15 @@
-(IF (AND (AndS RSI_2 S_OVERSOLD P_H1)
-     (AndS MA_200 S_ABOVE P_H1)
-     (NOT (AndS VELOCITY S_OVERSOLD P_M5)
-     )
-    )
- (START)
- (BUY)
+(IF (AndS DOWNFRACTAL S_CROSS_DOWN CurrentPeriod )
+(START )
+(SELL )
 )
-(IF (AND (AndS RSI_2 S_OVERBOUGHT P_H1)
-     (AndS MA_200 S_BELOW P_H1)
-     (NOT (AndS VELOCITY S_OVERBOUGHT P_M5)
-     )
-    )
- (START)
- (SELL)
+
+(IF  (AndS UPFRACTAL S_CROSS_UP CurrentPeriod )
+(START )
+(BUY )
 )
+
+
+(EXIT )
+
+
+

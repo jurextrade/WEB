@@ -7,7 +7,15 @@ var CurrentDividend = 0;
 
 function option_init() {
     option_solution('option');
-    option_editors_init('option');   
+    option_editors_init('option'); 
+    
+    let ui  = solution.get('ui')     
+    let marketpanel =  ui.sb.get(main, 'pname', 'market');
+
+    if (marketpanel.length == 0) {
+        solution.add_module('market');  
+    }   
+
     Interval_optiontimer    = setInterval(option_timer, 300);     
 
     // market      
@@ -44,7 +52,8 @@ function option_select (name) {
         onclick_sidebarmenu ('sidebar_optionterminals', true);      
 
         DisplayOperation("Select a Platform", true, 'operationpanel', 'var(--bg-optionterminal)');
-        AnimationDisplay ('option_main', 'Welcome to Option Tracker');            
+        AnimationDisplay ('option', 'Welcome to Option Tracker', 'option_toppanel');         
+        AnimationDisplay ('option', 'Sorry YAHOO API not more supported', 'option_toppanel', true);              
     }       
 }
 
@@ -72,7 +81,13 @@ function option_solution (pname) {
       
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                let arraystructure =  JSON.parse(this.responseText);
+                let arraystructure;    
+                try {
+                    arraystructure = JSON.parse(this.responseText);
+                } catch(e) {
+                    return console.error(e); 
+                }                    
+
                 
                 for (var i = 0; i < arraystructure.length; i++) {
                     let terminalstruct = arraystructure[i];
@@ -230,7 +245,7 @@ function option_closeterminal (terminal) {
         ui.platform_updatedata('option', solution.CurrentOptionTerminal)           
     }    
     
-    AnimationDisplay ('option_main', 'Goodbye');
+    AnimationDisplay ('option', 'Goodbye', 'option_toppanel');
     terminal.Loaded = 0;  
 }
 
@@ -273,7 +288,7 @@ function option_drawterminal (terminal, open) {
         sb.box_toggle('option_boxterminalspanel', true);
 
         BottomPanel_Flat(platform, true, true); 
-        AnimationDisplay ('option_main', 'Goodbye');                       
+        AnimationDisplay ('option', 'Goodbye', 'option_toppanel');                       
     }        
 }
 

@@ -1,0 +1,8 @@
+
+RewriteOptions inherit
+RewriteEngine On
+ErrorDocument 404   /404.php
+RewriteBase /
+
+
+RewriteRule ^index\.php$ - [L]

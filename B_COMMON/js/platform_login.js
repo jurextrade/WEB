@@ -177,7 +177,7 @@ function onsubmit_loginform(elt, event) {
             generateAlert("login_errormsg", answer);
             if (!cuser.registering) {
                 
-                $('#mt4assistantpanel').html (answer); 
+                $('#tradedesk_assistantpanel').html (answer); 
                 var  user_mail          = $("#register1").attr ("user_mail");
                 var  user_id            = $("#register1").attr ("user_id");
                 var  user_name          = $("#register1").attr ("user_name");
@@ -258,7 +258,7 @@ function onsubmit_registerform(elt, event) {
                 generateAlert("register_errormsg", answer);
             } else {
                 if (!cuser.registering) {
-                    $('#mt4assistantpanel').html (answer); 
+                    $('#tradedesk_assistantpanel').html (answer); 
                 }
             }
         }

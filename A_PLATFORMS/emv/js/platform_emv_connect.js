@@ -420,9 +420,15 @@ function emv_TreatTLV(origin, reader, values, display) {
     }    
 }
 
+
 function emv_updatebarname (content, values) {
     console.log('emv_updatebarname')
-    let obj_response = JSON.parse(content);
+    let obj_response;    
+    try {
+        obj_response = JSON.parse(content);
+    } catch(e) {
+         return console.error(e); 
+    }
     obj_response = obj_response.data[0];
     let vendor = obj_response.Vendor;
     let cardname = obj_response.Name;

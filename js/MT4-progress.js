@@ -93,7 +93,7 @@ function InitApp (solution) {
   
  
     GSE_init();
-    
+
 
     Editors_init();         
     speech_init();

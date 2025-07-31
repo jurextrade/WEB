@@ -13,13 +13,25 @@ function tradedesk_init() {
     tradedesk_solution('tradedesk');
     tradedesk_editors_init('tradedesk');
     tradedesk_gse_init(); 
+
+    ServerPanel_Update('tradedesk');        
+
+    
+    let ui  = solution.get('ui') 
+    let marketpanel =  ui.sb.get(main, 'pname', 'market');
+
+    if (marketpanel.length == 0) {
+        solution.add_module('market');  
+    }   
+  
+    sidebarpanel_select(tradedeskplatform, "sidebarpanel_terminals");    
     setInterval(tradedesk_timer, 300);     
 
 }
 
 function tradedesk_end () {
     tradedesk_closeterminal(solution.CurrentTerminal)    
-    console.log ('sssssssssssssssssssss')
+
     for (var i = 0; i < solution.Terminals.length; i++) {
         let terminal = solution.Terminals[i];    
         if (terminal.Type == 'Terminal' || terminal.Type == 'Tester') {
@@ -46,10 +58,10 @@ function tradedesk_select (name) {
     DrawChart();
 
     if (!solution.CurrentTerminal) {
-        onclick_sidebarmenu ('sidebar_terminals', true);   
+      
 
         if (solution.UserId == "0") {
-            AnimationDisplay ('tradedesk_main', 'Demo MT4 Terminal is selected');         
+            AnimationDisplay ('tradedesk', 'Demo MT4 Terminal is selected', 'tradedesk_toppanel');         
 
             var terminal = solution.GetRunningTerminalFromName (CurrentTerminalName);
         //    console.log ('terminal selection')
@@ -57,7 +69,7 @@ function tradedesk_select (name) {
             return;
         }
         DisplayOperation("Select a Platform", true, 'operationpanel', 'var (--bg-terminal)');            
-        AnimationDisplay ('tradedesk_main', 'Select MT4 Terminal to Start');         
+        AnimationDisplay ('tradedesk', 'Select MT4 Terminal to Start', 'tradedesk_toppanel');         
     }
 }
 
@@ -68,6 +80,7 @@ function tradedesk_solution (pname) {
 
  
     solution.CurrentTerminal = null;
+    solution.MT4Server_Protocol   = site.protocol;
 
     if (site.protocol == 'http:') {  //TRADESK= 2
         solution.MT4Server_Address   = site.hostname;
@@ -76,7 +89,7 @@ function tradedesk_solution (pname) {
     else {
         solution.MT4Server_Address   = site.hostname;    
         solution.MT4Server_Port     =  2443;    
-        OFFLINE = true;                         // no key certificate
+
     }
 
     if (!solution.DefaultLoaded) {
@@ -204,10 +217,13 @@ function tradedesk_solution (pname) {
 
 function tradedesk_timer () {
     if (solution.CurrentTerminal) {
+//bottom panel
+        $('#tradedesk_bottompanel').css ('display', '');
+
 
         $('#tradedesk_terminalsbar #' + 'tradedesk_close').css ('display', '');
 
-        $('#tradedesk_maintabs').css ('display', '');
+       // $('#tradedesk_maintabs').css ('display', '');
         $('#tradedesk_terminalsbar #tradedeskClose').css ('display', '');     
 
         $("#tradedeskselectstrategypanel").css ('display', '');  
@@ -223,9 +239,13 @@ function tradedesk_timer () {
         $('#tradedesk_root #indicatorCreate').css ('display', '');          
 
     } else {
+//bottom panel
+        $('#tradedesk_bottompanel').css ('display', 'none');
+
+
         $('#tradedesk_terminalsbar #' + 'tradedesk_close').css ('display', 'none');
 
-        $('#tradedesk_maintabs').css ('display', 'none');
+   //     $('#tradedesk_maintabs').css ('display', 'none');
         $('#tradedesk_terminalsbar #tradedeskClose').css ('display', 'none');        
         
         $("#tradedeskselectstrategypanel").css ('display', 'none');  
@@ -338,7 +358,7 @@ function tradedesk_inittradedesk () {
     sb.table_clear(sessionstable);       
     sb.table_clear(alertstable);
     
-    sb.tab_clear (tradedesk_maintabs);
+    sb.tab_clear (tradedesk_maintabs, 'tradedesk_home_tab');
     sb.tab_clear (tradedesksignalstab);
     sb.tab_clear (tradedeskordertab);
 
@@ -397,7 +417,7 @@ function tradedesk_drawterminal (terminal, open) {
                                    
         tradedesk_editors_update()
         BottomPanel_Flat(platform, false, true);
-        !terminal.Running ? AnimationDisplay('tradedesk_main', 'Terminal is not running with Expert') : AnimationDisplay ('tradedesk_main', 'Loading please wait');    
+        !terminal.Running ? AnimationDisplay('tradedesk', 'Terminal is not running with Expert', 'tradedesk_toppanel') : AnimationDisplay ('tradedesk', 'Loading please wait', 'tradedesk_toppanel');    
     } else {
 
         $("#tradedesksyssignalselect option").eq(0).before($('<option>', {value: '--Select Indicator--', text: '--Select Indicator--'}));
@@ -418,7 +438,7 @@ function tradedesk_drawterminal (terminal, open) {
         sb.box_toggle('boxaterminalinfopanel', false);
 
         BottomPanel_Flat(platform, true, true); 
-        AnimationDisplay('tradedesk_main', 'Goodbye');        
+        AnimationDisplay('tradedesk', 'Goodbye', 'tradedesk_toppanel');        
     }
 }
 
@@ -1856,8 +1876,8 @@ function OrderPanel() {
 //BODY END
 // FOOTER
     '<div class="sb_buttongroup">' + 
-        '<button id="tradesubmit" class="sb_button"  name="tradesubmit" type="submit" disabled onclick="onclick_tradesubmit(this)">Submit</button>' + 
         '<button id="tradecancel" class="sb_button"  name="tradecancel" type="submit" disabled onclick="onclick_tradecancel(this)" >Cancel</button>' +
+        '<button id="tradesubmit" class="sb_button"  name="tradesubmit" type="submit" disabled onclick="onclick_tradesubmit(this)">Submit</button>' + 
     '</div>';
     return content;
 }
@@ -2529,7 +2549,7 @@ function SavePanelCSV(terminalname, terminaltype) {
 
     Chart_Draw(terminal)   
     
-    $("#popuppanelsettings").modal('hide');    
+  //.sb_widget.active  $("#popuppanelsettings").modal('hide');    
     return content;
 }
 

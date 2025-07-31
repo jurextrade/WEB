@@ -114,6 +114,7 @@ const icon_question   = 'far fa-circle-question';
 const icon_pin        = 'fas fa-thumbtack';
 const icon_shop       = 'fas fa-shop';
 const icon_exchange   = 'fas fa-right-left';
+const icon_visa       = 'fa-brands fa-cc-visa';
 
 //const icon_anglesdown;
 //const icon_anglesup;

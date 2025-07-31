@@ -77,7 +77,7 @@
 
 #serverpanel_tradedesk .form-control {
     font-size: var(--theme-font-size);
-    text-align:center;  
+ /*   text-align:center;*/  
 }
 
 #serverpanel_tradedesk .terminalname {

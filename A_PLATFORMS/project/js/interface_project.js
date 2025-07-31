@@ -193,11 +193,33 @@ var strategyschedulepanel = {
     content: 'StrategySchedulePanel()',
 }   
 
+
+var strategyquillpanel = {
+    id: 'strategyquillpanel',
+    type: 'panel',
+    class: 'sb_pane quill_editor ql-container ql-snow',
+    items: [],    
+}   
+
+var assistantquillpanel = {
+    id: 'assistantquillpanel',
+    type: 'panel',
+    class: 'sb_panel quill_editor ql-container ql-snow',
+    items: [],    
+}   
+
 var strategydescriptionpanel = {
     id: 'strategydescriptionpanel',
     type: 'panel',
-    class: 'sb_panel quill_editor',
-    items: [],    
+    class: 'sb_panel',
+    items: [strategyquillpanel],    
+}   
+
+var assistantdescriptionpanel = {
+    id: 'assistantdescriptionpanel',
+    type: 'panel',
+    class: 'sb_panel',
+    items: [assistantquillpanel],    
 }   
 
 var boxstrategypropertiespanel = {
@@ -241,10 +263,19 @@ var strategy_sideviewpanel = {
                     items: [
                         boxstrategypropertiespanel,
                         boxstrategychedulepanel,
-                        boxstrategydescriptionpanel,
+              //          boxstrategydescriptionpanel,
                     ],    
                 },
-                strategyfilepanel,
+                {
+                    id:'strategy_sideviewtabpanel',
+                    type:'tabs',    
+                    class: 'sb_main sb_column',
+                    items:
+                        [ 
+                            {id: 'tab_strategyfile',        item: 'File',        type: 'link',  items : [strategyfilepanel],       title: ''},           
+                            {id: 'tab_strategydescription', item: 'Description', type: 'link',  items : [strategydescriptionpanel],   title: ''},
+                        ],
+                }                 
             ]
         }
     ]    
@@ -294,14 +325,18 @@ var strategyfiletab = {
     id:'strategyfiletab',
     type: 'tabs',    
     class: 'sb_main',
-    items: [],
+    items: [
+ //       {id: 'project_home_tab',   item: 'Home',      type:'link', in:  icon_home,       items: [project_home_main], onclose: 'onclick="onclick_StrategyCloseTabItem(this, event)"',   title: 'Home',               events: {onclick:"onclick_project_tab(this)"}},           
+
+    ],
     groupitems: [
         {
             id: 'projectstrategyfileaction',    
             type: 'group',
             items:
                 [  
-                    {id: 'strategy_assistant',  type: 'button',   item: 'Classic View',  class: 'assistant_button', icon:  icon_thanks,  
+                    {id: 'strategy_assistant_button',  type: 'button',   item: 'Switch to Assistant View',  class: 'assistant_button', 
+//                        icon:  icon_thanks,  
                      events: {onclick: "onclick_assistantmode (this)"},  title: 'Switch to Assistant View',                 
                     },         
                     {id: 'project_more',   type: 'link',  icon:  icon_more,    events: {onclick: "onclick_StrategyTabMenu(event)"},  title: 'More Actions...'}
@@ -315,7 +350,8 @@ var classicviewbox = {
     type: 'panel',
     class: 'sb_panel sb_main',
     items: [
-        strategy_classicviewpanel,        
+        strategy_sideviewpanel,
+        //strategy_classicviewpanel,        
     ]
 }
 
@@ -338,46 +374,140 @@ var strategypanel = {
 
 //--------------------------
 
+
+var project_deploy_headerpanel = {
+    id: 'project_deploy_headerpanel',
+    type: 'bar',
+    class: 'sb_sidebarheader ',    
+    style:'z-index:6',           
+    items : 
+    [
+        {id: '',                type: 'link',    item: 'DEPLOY PROJECT',  class: 'sb_sidebarheadertitle'}, 
+        {id: 'button_refresh',   type: 'button', item: 'Refresh', class: 'sb_sbutton',   events: {onclick: "onclick_refresh_terminals (this, event)"}, title: 'Refresh'},
+        {id: 'header_load',     type: 'link',   class: 'sb_sidebarheaderinfo',   icon:  icon_file,  events: {onclick: "onclick_jsonloadfile(this, event)"}, title: 'link to documentation'},                 
+    ]
+}
+
+
+//--------------------------
+
+var project_tree_experts = {
+    id: 'project_tree_experts',       
+    type: 'tree',       
+    item: 'MQ4 Experts',
+    icon: icon_mt4expert,
+    items:[]
+} 
+
+var project_expertsbar = {
+    id : 'project_expertsbar', 
+    type: 'bar',            
+    items: 
+        [                    
+            { 
+                type: 'group',                        
+                position: 'me-auto',
+                class: 'sb_transform',
+                items:
+                    [ 
+                        {id: 'expertDownload',    icon: icon_download,   type:'link',  title: 'Download MT4 Expert',     events: {onclick: "onclick_expertDownload(this)", style:"display:none"}}                 
+                    ]
+            }
+        ]
+}
+
+var project_expertsidepanel = {
+    id: 'project_expertsidepanel',
+    type: 'panel',
+    class: 'sb_panel',
+    items:[project_tree_experts]
+}
+
+var project_boxexpertspanel = {
+    id: 'project_boxexpertspanel',
+    type: 'box',
+    closed: true, 
+    header: {item: 'MQ4 Experts', items: [project_expertsbar], control: {slide: true, onclick_slide: 'onclick_slidehideotherbox (this)', closed : true, orientation: sb.R_CONTROL} },  
+    items: [project_expertsidepanel]    
+}
+
 var distributetable =  {
     id: 'distributetable',
     type: 'table',            
     columns :  ['Terminal', 'Platform', 'Strategy Tester'],
     columnstitle : ['Terminal', 'Platform', 'Strategy Tester'],
+  
+
     rows : [] 
 }
+
+var distributepanel = {
+    id: 'distributepanel',
+    type: 'panel',
+    class: 'sb_formcontainer',
+    items: [
+            distributetable,
+            {id: 'distributeselect',   type: 'button', item: 'Deploy', class: 'sb_sbutton',   events: {onclick: "onclick_distribute (this, event)"}, title: 'Distribute on selected Terminals'},
+
+    ],     
+}
+
+
+//var deploypanel = {
+//    id: 'deploypanel',
+//    type: 'html',
+//    class: 'sb_panel sb_main sb_column',
+//    content: "DistributePanel ('distributepanel', 'sb_column sb_bargroup sb_formcontainer')"
+//}
 
 var deploypanel = {
     id: 'deploypanel',
     type: 'panel',
     class: 'sb_panel sb_main sb_column',
     items:[
+        distributepanel,
+        project_boxexpertspanel,        
     ],
 }
 
 
+//------------------------------------------------------------ TESTER----------------------------------------------------------
 
-//------------------------------------------------------------ ROOT----------------------------------------------------------
+var project_tester_filtergroup = {
+    id: 'project_tester_filtergroup',  
+    class: 'sb_transform',
+    type: 'group',
+   /* position: 'sb_end',*/
+    items:
+        [
+            {id: 'pause_buy',    type: 'checkbox',  item: 'Pause on Buy'}, 
+            {id: 'pause_sell',    type: 'checkbox', item: 'Pause on Sell'}, 
+            {id: 'pause_close',   type: 'checkbox', item: 'Pause on Close'}, 
+        ]
+}
 
+var project_tester_commandgroup = {
+    position: 'me-auto',
+    id: 'project_tester_commandgroup',
+    type: 'group',                        
+    direction:'row',
+    toggle : false,
+    class: 'sb_formcontainer sb_transform ',
+    items:
+        [        
+            {id: 'strategy_tester',    type: 'button',  item: 'Run', icon: icon_play, toggle: false,   events: {onclick: "onclick_project_tester_commandgroup (this)"},  attributes: {disabled:true}, title: 'Test Strategy'}, 
+            {id: 'strategy_velocity',  type: 'range',   value: '1000',  min: '600',  max: '1000', step: '10',  events: {onchange:"onchange_strategy_velocity (this)"}, title: 'Velocity'}, 
+            {id: 'strategy_stop',      type: 'button',  item: 'Stop', icon: icon_stop,  toggle: false,   events: {onclick: "onclick_project_tester_stop (this)"},   attributes: {disabled:true},title: 'Stop Strategy'} 
+        ]
+}
 
-var testerbar  = {
-    id: 'testerbar', 
+var project_tester_bar  = {
+    id: 'project_tester_bar', 
     type: 'bar',            
     items: 
         [
-            {
-                position: 'me-auto',
-                id: 'testergroup',
-                type: 'group',                        
-                direction:'row',
-                toggle : false,
-                class: 'sb_formcontainer',
-                items:
-                    [        
-                        {id: 'strategy_tester',    type: 'button',  class: 'sb_button', item: 'Run', icon: icon_play, toggle: true,   events: {onclick: "onclick_tester (this)"},  tooltip: 'Test Strategy'}, 
-                        {id: 'strategy_velocity',  type: 'range',   value: '800',  min: '600',  max: '1000', step: '10',  events: {onchange:"onchange_strategy_velocity (this)"}, title: 'Velocity'}, 
-                        {id: 'strategy_stop',      type: 'button',  class: 'sb_button', item: 'Stop', icon: icon_stop,  toggle: false,   events: {onclick: "onclick_stoptester (this)"},  tooltip: 'Stop Strategy'} 
-                    ]
-            }
+            project_tester_commandgroup,
+            project_tester_filtergroup            
         ]   
 }
   
@@ -406,24 +536,24 @@ var periodmenu = [
 ]
 
 
-var project_initialbalancegroup = {
-    id: 'project_initialbalancegroup',
+var project_tester_initialbalance = {
+    id: 'project_tester_initialbalance',
     type: 'group',
     form: true,    
     items: [
-       {id: 'tester_Initialbalance', type: 'label', item: 'Initial balance*'},
-       {id: 'strategy_assistant_initialbalance', type: 'int', min: '100',  step: '100', class:"required", attributes: {autocomplete: 'off'}, 
+       {id: 'tester_lInitialbalance', type: 'label', item: 'Initial balance*'},
+       {id: 'tester_initialbalance', type: 'int', min: '100',  step: '100', value: '1000', class:"required", attributes: {autocomplete: 'off'}, events: {onchange:"onchange_project_tester_initialbalance (this)"}, 
         title: "The Initial Balance is required in case you do not precise the size of your orders for your strategy, it will be 2% of your account balance"},
     ] 
 }
 
-var project_timeframegroup = {
-    id: 'project_timeframegroup',
+var project_tester_timeframe = {
+    id: 'project_tester_timeframe',
     type: 'group',
     form: true,    
     items: [
-       {id: 'tester_timeframe', type: 'label', item: 'Time Frame'},
-       {id: 'strategy_assistant_timeframe', type: 'select', events: {onchange:"OnStrategyTimeFrameChange (this)"}, menu: periodmenu},
+       {id: 'tester_ltimeframe', type: 'label', item: 'Time Frame'},
+       {id: 'tester_timeframe', type: 'select', value: 'ANY', events: {onchange:"onchange_project_tester_timeframe (this)"}, menu: periodmenu},
     ] 
 }
 
@@ -453,16 +583,15 @@ var project_strategygroup = {
     ]
 }
 
-var project_strategytester_panel = {
-    id: 'project_strategytester_panel',
+var project_tester_strategy_panel = {
+    id: 'project_tester_strategy_panel',
     type: 'panel',
     class:'sb_formcontainer',
     items: [
         project_strategygroup,             
         project_searchgroup,
-   
-        project_initialbalancegroup,   
-        project_timeframegroup,             
+        project_tester_initialbalance,   
+        project_tester_timeframe,             
     ]
 }
 
@@ -473,11 +602,85 @@ var projectselectstrategypanel = {
     content:'ProjectSelectStrategyPanel()', 
 }
 
+
+var project_tester_buttongroup = ((toggled) =>  {return {
+    id: 'project_tester_buttongroup',
+    type: 'group',
+    class:'',
+    position:'sb_end',        
+    items: [
+
+       {id: 'fullscreen',    type:'control',  class : 'box-btn-fullscreen',     events: {onclick: "onclick_projectfspanel (this, event, project_tester_comments_pamel)"}, title: ''}, 
+       {id: 'compressscreen',type:'control',  class : 'box-btn-compressscreen sb_none', events: {onclick: "onclick_projectcspanel (this, event)"}, title: ''}, 
+       {id: 'slide', type:'control',  class : 'box-btn-slide' + (toggled ? '' : ' rotate-180'), events: {onclick: "onclick_projecttogglepanel(this,event, project_tester_comments_pamel)"},  title: ''}
+
+    ]
+}})
+
+var project_tester_expertbuttonbar = {
+    id: 'project_tester_expertbuttonbar',
+    type: 'group',         
+    class: '',
+    
+    events: {onclick: 'onclick_emv_tester_reader(this, event)'},    
+    items : [
+        {id: 'label_card',  item: 'Expert Comment', type: 'link',   title: 'Expert Comment'},
+    ]
+}
+
+var project_tester_expertbar  = ((toggled) =>  {return {
+    id: 'project_tester_expertbar', 
+    type: 'bar',   
+    style: 'border-top: 1px solid var(--theme-button-border-color)',
+    items:
+     [
+        project_tester_expertbuttonbar,
+        project_tester_buttongroup(toggled)                 
+      ]
+}})
+
 var expert_comment = {
     id: 'expert_comment',
     type: 'html',
     class: 'sb_panel sb_main',
 }
+
+
+var project_tester_expertpanel = ((toggled) =>  {return {
+    id: 'project_tester_expertpanel',
+    type: 'panel',
+    class: 'sb_panel sb_column' + (toggled ? ' toggled' : ''),
+    items:[
+        project_tester_expertbar(toggled),
+        expert_comment,
+    ],
+    catchresize: true,
+    resizefunction: "expertinputresize()"    
+}})
+
+
+var project_tester_strategytbuttonbar = {
+    id: 'project_tester_strategytbuttonbar',
+    type: 'group',         
+    class: '',
+    events: {onclick: 'onclick_emv_tester_reader(this, event)'},    
+    items : [
+        {id: 'label_card',  item: 'Strategy Comment', type: 'link',   title: 'Strategy Comment'},
+    ]
+}
+
+
+
+var project_tester_strategybar  = ((toggled) =>  {return {
+    id: 'project_tester_strategybar', 
+    type: 'bar',   
+    style: 'border-top: 1px solid var(--theme-button-border-color)',
+    items:
+     [
+        project_tester_strategytbuttonbar,
+        project_tester_buttongroup(toggled)                 
+      ]
+}})
 
 var strategy_comment = {
     id: 'strategy_comment',
@@ -485,11 +688,30 @@ var strategy_comment = {
     class: 'sb_panel sb_main', 
 }
 
-var terminalpanel = {
-    id: 'terminalpanel',
+
+var project_tester_strategypanel = ((toggled) =>  {return {
+    id: 'project_tester_strategypanel',
+    type: 'panel',
+    class: 'sb_panel sb_column' + (toggled ? ' toggled' : ''),
+    items:[
+        project_tester_strategybar(toggled),
+        strategy_comment,
+    ],
+    catchresize: true,
+    resizefunction: "strategyinputresize()"    
+}})
+
+
+
+
+var project_tester_comments_pamel = {
+    id: 'project_tester_comments_pamel',
     type: 'panel',    
     class: 'sb_main sb_panel sb_column',
-    items: [expert_comment, strategy_comment]
+    items: [
+        project_tester_strategypanel(true), 
+        project_tester_expertpanel(true)
+    ]
 }
 
 
@@ -498,9 +720,9 @@ var testerpanel = {
     type: 'panel',
     class: 'sb_panel sb_main sb_column',
     items:[
-        project_strategytester_panel,
-        testerbar,
-        terminalpanel,
+        project_tester_strategy_panel,
+        project_tester_bar,
+        project_tester_comments_pamel,
     ],
 }
 
@@ -555,48 +777,6 @@ var project_boxconditionspanel = {
     items: [project_conditionssidepanel]    
 }
 
-//--------------------------
-
-var project_tree_experts = {
-    id: 'project_tree_experts',       
-    type: 'tree',       
-    item: 'Experts',
-    icon: icon_mt4expert,
-    items:[]
-} 
-
-var project_expertsbar = {
-    id : 'project_expertsbar', 
-    type: 'bar',            
-    items: 
-        [                    
-            { 
-                type: 'group',                        
-                position: 'me-auto',
-                class: 'sb_transform',
-                items:
-                    [ 
-                        {id: 'expertDownload',    icon: icon_download,   type:'link',  title: 'Download MT4 Expert',     events: {onclick: "onclick_expertDownload(this)"}}                 
-                    ]
-            }
-        ]
-}
-
-var project_expertsidepanel = {
-    id: 'project_expertsidepanel',
-    type: 'panel',
-    class: 'sb_panel',
-    items:[project_tree_experts]
-}
-
-var project_boxexpertspanel = {
-    id: 'project_boxexpertspanel',
-    type: 'box',
-    closed: true, 
-    header: {item: 'MT4 Experts', items: [project_expertsbar], control: {slide: true, onclick_slide: 'onclick_slidehideotherbox (this)', closed : true, orientation: sb.R_CONTROL} },  
-    items: [project_expertsidepanel]    
-}
-
 
 //------------------------------------------------------------ PROJECT PANEL ----------------------------------------------------------
 
@@ -647,7 +827,8 @@ var project_projectsbar = {
                 type: 'group',                        
                 items:
                     [ 
-                        {id: 'project_projectrename',    type:'link',       icon: icon_rename,           events: {onclick: "onclick_project_projectrename(this)"},  title: 'Rename Current Project'},  
+                        {id: 'project_projectsave',      type:'link',       icon: icon_save,           events: {onclick: "onclick_project_projectsave(this)"},  title: 'Save Current Project'},  
+                        {id: 'project_projectrename',    type:'link',       icon: icon_rename,          events: {onclick: "onclick_project_projectrename(this)"},  title: 'Rename Current Project'},  
                         {id: 'project_projectremove',    type:'link',       icon: icon_remove,           events: {onclick: "onclick_project_projectremove(this)"},  title: 'Delete Current Project'},              
                         {id: 'project_projectcreate',    type:'link',       icon: icon_new,              events: {onclick: "onclick_project_t_projectcreate(this)"},   title: 'Create New Project'},      
                         {id: 'project_projectclose',     type:'link',       icon: icon_close,    class:'sb_close',  events: {onclick: "onclick_project_projectclose()"}, title: 'Close Current Project'}
@@ -734,7 +915,7 @@ var project_projects_headerbar = {
     id: 'project_projects_headerbar',
     type: 'bar',
     class: 'sb_sidebarheader ',    
-    style:'z-index:10',           
+    style:'z-index:6',           
     items : 
     [
         {id: '',                type: 'link',    item: 'PROJECTS EXPLORER',  class: 'sb_sidebarheadertitle'}, 
@@ -765,7 +946,7 @@ var project_projects_sidepanel = {
         project_boxprojectspanel,
         project_boxstrategiespanel,
         project_boxconditionspanel,
-        project_boxexpertspanel,
+
     ]    
 }
 
@@ -857,16 +1038,16 @@ var project_sidebarpanel  = {
     class: 'sb_panel sb_sidebarpanel sb_right',   
     items: 
         [
-            {id: 'sidebarpanel_files',           type: 'panel',     class: 'sb_panel',             items: [project_projects_headerpanel, project_projects_sidepanel]},        
-            {id: 'sidebarpanel_tester',          type: 'panel',     class: 'sb_panel sb_main',     items: [project_tester_headerpanel, testerpanel]},                     
-            {id: 'sidebarpanel_deploy',          type: 'html',      class: 'sb_panel', content: "DeployPanel('deploypanel', 'sb_main sb_column')"},
+            {id: 'sidebarpanel_files',              type: 'panel',     class: 'sb_panel',             items: [project_projects_headerpanel, project_projects_sidepanel]},        
+            {id: 'sidebarpanel_tester',             type: 'panel',     class: 'sb_panel sb_main',     items: [project_tester_headerpanel, testerpanel]},                     
+            {id: 'sidebarpanel_deploy',             type: 'panel',      class: 'sb_panel',             items: [project_deploy_headerpanel,  deploypanel]},
             {id: 'sidebarpanel_projectcharttools',  type: 'panel',class: 'sb_panel',               items: [charttools_header_panel, charttoolspanel('project')]},                  
             {id: 'sidebarpanel_projectsettings',    type: 'panel', class: 'sb_panel',              items: [settingspanel('project')]},                    
         ]
 }
 
-var project_mainpanel = {
-    id: 'project_mainpanel', 
+var project_main = {
+    id: 'project_main', 
     type: 'panel',       
     class: 'sb_panel sb_main sb_column',    
     events: {ondragover: "allowDrop(event)", ondrop: "ondrop_project_main(event)"},
@@ -882,31 +1063,23 @@ var projectplatform = {
     name :  PROJECT_PLATFORM_NAME, 
     pname:  PROJECT_PLATFORM_PNAME,    
     type:   'root',
-    class:  'sb_column',    
+    class:  'sb_row',    
     items: [
-//        project_mainbar,
-        {
-            id: 'essai',
-            class:  'sb_panel sb_row',    
-            type:   'panel',
-            items: [
-                project_sidebarmenu, 
-                project_sidebarpanel,
-                {id: 'project_sidebarpanel_drag',  class:'sb_none', type:'drag', direction:'vertical', dragid: 'project_sidebarpanel'},               
-                project_mainpanel
-            ],  
-        }  
-    ],
+        project_sidebarmenu, 
+        project_sidebarpanel,
+        {id: 'project_sidebarpanel_drag',  class:'sb_none', type:'drag', direction:'vertical', dragid: 'project_sidebarpanel'},               
+        project_main
+    ],  
     brand: {
         title: 'JUREXTRADE', 
         logo: '/A_PLATFORMS/project/res/project.svg',
-        events: {onclick: "openPopupContact()"}
+        events: {onclick: "project_home_open()"}
     },      
     select:                         'project_select(\'' + PROJECT_PLATFORM_NAME + '\')', 
     init:                           'project_init()',     
     end:                            'project_end()', 
     chart:                          project_chart,
-    strategyview:                   STRATEGY_TAB_VIEW,
+    strategyview:                   STRATEGY_SIDE_VIEW,
     strategyselection :             'file',
     strategysideselected :          true,
     strategypropertiestable :       strategypropertiestable,

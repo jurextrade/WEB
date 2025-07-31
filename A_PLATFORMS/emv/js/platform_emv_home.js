@@ -99,21 +99,15 @@ function emv_PresentationPanel () {
            The main focus of the presentation is to analyze the protocol between the ICC and the terminal, rather than discussing the card and terminal elements separately.
            </p>
        </div>
-   </div>
-   <div class="sb_column">
-       <div>This site is still under development</div> 
-       <div>I can assist you in software developments</div> 
-       <div>Please feel free to contact me</div> 
-       <br><p>JUREXTRADE<br><span style="line-height: 1.5;">Gabriel Jureidini</span><br><span style="line-height: 1.5;">Paris-France</span></p>
-       <label><i class="fas fa-envelope"></i> Email<br><span style="line-height: 1.5;">contact@jurextrade.com</span></label>
-	</div>`;
+   </div>`
     return content;
 }
-
-function emv_home_open () {
+//            <button id="Contact" class="sb_sbutton sb_link" onclick="openPopupContact();event.stopPropagation()" title="Contact"><label class="sb_label">Contact</label></button>
+function emv_home_open (select) {
     if (!sb.tab_finditem(emv_maintabs, 'emv_home_tab')) { 
         let hometabitem  =         {id: 'emv_home_tab',     item: 'Home',  type:'link', icon:  icon_home,   items: [emv_home_main], onclose: 'onclick="onclick_emv_tab_close(this, event)"',   title: 'Home',  events: {onclick:"onclick_emv_tab(this)"}}
         sb.tab_additem(emv_maintabs, hometabitem, 1);
+        emv_home_init();        
     } 
     sb.tab_select(emv_maintabs, 'emv_home_tab');
 }
@@ -186,30 +180,77 @@ function onclick_emvconnectseehow (event) {
         } 
         let ui  = solution.get('ui')     
         ui.platform_select(EMV_PLATFORM_PNAME)   
-        selector_select('emv_selectproject', 'Demo_Project');
+        selector_select('emv_selectproject', 'DemoProject');
         LoaderDisplay(false);        
     },5)
 }
 
 function onclick_emvtesterseehow (event) {
-    event.stopPropagation();    
     let platform =  sb.get(main, 'pname', 'emv');
-    if (platform.length == 0) {
-        solution.add_module('emv');               
-    } 
-    let ui  = solution.get('ui')     
-    ui.platform_select(EMV_PLATFORM_PNAME)   
-    selector_select('option_selectterminal', 'Yahoo Finance');
+    LoaderDisplay(true);
+    setTimeout(function() { 
+        if (platform.length == 0) {
+            solution.add_module('emv');               
+        } 
+        let ui  = solution.get('ui')     
+        ui.platform_select(EMV_PLATFORM_PNAME)   
+        selector_select('emv_selectproject', 'DemoProject');
+        LoaderDisplay(false);        
+    },5) 
+    onclick_sidebarmenu('sidebar_emvtestermanager', 1)
+    $('#emv_tester_tab').tab('show');
+}
+
+/*
+function onclick_emvtesterseetransaction (event) {
+    let platform =  sb.get(main, 'pname', 'emv');
+    LoaderDisplay(true);
+    setTimeout(function() { 
+        if (platform.length == 0) {
+            solution.add_module('emv');               
+        } 
+        let ui  = solution.get('ui')     
+        ui.platform_select(EMV_PLATFORM_PNAME)   
+        selector_select('emv_selectproject', 'DemoProject');
+        LoaderDisplay(false);        
+    },5)
+    onclick_sidebarmenu('sidebar_emvtestermanager', 1)
+    $('#emv_tester_tab').tab('show');    
+    Tester.Reader.load_transaction('visa.trs')
+    Tester.Reader.play (false);
+}
+*/
+
+function emv_tester_widget_content () {
+    content = 'To test your card emv payment you need to load EMV Terminal EMV Client and EMV Router and run them on your machine';
+
+    return content;  
+}
+
+function emv_tester_widget_transaction () {
+    content = 'Every EMV Transaction can be saved' +
+    '<br>Check a Visa Transaction'
+    return content;  
 }
 
 function emv_GetStartedSection_Panel () {
     var content = 
-       '<label class="sb_f_size12">Get Started - Project Templates</label>' +
+       '<label class="sb_f_size12">Project Templates</label>' +
        '<div class="sb_row sb_widget-container">' +
             sb_widget_create ('downloadncardreader',  'onclick_downloadcardreader(this, event)', icon_download, 'EMV Client ', 'Card Reader',['onclick_emvclientdownload(event)', 'onclick_emvclientgithub(event)'], ['download', 'github']) +
             sb_widget_create ('emvconnect',           'onclick_emvconnect(this, event)', icon_terminal, 'EMV Terminal','Configure your EMV Terminal',['onclick_emvserverdownload(event)', 'onclick_emvservergithub(event)', 'onclick_emvconnectseehow(event)'], ['download', 'github', 'see demo terminal']) +
             sb_widget_create ('emvrouter',            'onclick_emvrouter(this, event)', icon_terminal, 'EMV Router','Controls Communication for internet Testing',['onclick_emvrouterdownload(event)', 'onclick_emvroutergithub(event)'], ['download', 'github']) +
-            sb_widget_create ('emvtester',            'onclick_emvtester(this, event)', icon_terminal, 'EMV Tester','Test your card',['onclick_emvtesterseehow(event)'], ['see tester']) +
+
+       '</div>' 
+    return content;
+}
+
+function emv_TesterSection_Panel () {
+    var content = 
+       '<label class="sb_f_size12">Tester</label>' +
+       '<div class="sb_row sb_widget-container">' +
+            sb_widget_create ('emvtester',            'onclick_emvtester(this, event)', icon_terminal, 'EMV Tester',emv_tester_widget_content (),['onclick_emvtesterseehow(event)'], ['see tester']) +
+            sb_widget_create ('emvtransaction',            'onclick_emvtester(this, event)', icon_terminal, 'EMV Transactions',emv_tester_widget_transaction (),['onclick_emvtesterseetransaction(event)'], ['Run CB/Visa Card example']) +
        '</div>' 
     return content;
 }
@@ -224,7 +265,7 @@ function emv_ToolsSection_Panel () {
 }
 
 
-function slideToggleCallback () {
+function emvslideToggleCallback () {
     sb.resize(body)
 }
 
@@ -234,12 +275,12 @@ function slideToggleCallback () {
 function emv_AssistantPanel_Close() {
     assistant_login = false;    
     sb.toggle ($('#emv_maincarousel'), 1);
-    sb.toggle ($('#emv_assistantpanel'), 0, slideToggleCallback);
+    sb.toggle ($('#emv_assistantpanel'), 0, emvslideToggleCallback);
 }
 
 function emv_AssistantPanel_Open() {
     sb.toggle ($('#emv_maincarousel'), 0);
-    sb.toggle ($('#emv_assistantpanel'),1, slideToggleCallback);
+    sb.toggle ($('#emv_assistantpanel'),1, emvslideToggleCallback);
 }
 
 function emv_assistant_register () {
@@ -260,7 +301,7 @@ function onclick_emvcheckout (elt) {
 
 function emv_AssistantPanel () {
     var content = 
-//'    <div id="mt4assistantpanel" class="" style="display:' + (assistant_mode ? 'block' : 'none') + '">' +
+//'    <div id="tradedesk_assistantpanel" class="" style="display:' + (assistant_mode ? 'block' : 'none') + '">' +
 '       <label class="sb_f_size12">Connect to EMV Server</label>' +
 '       <form  id="emvassistantform"  class="assistant_panel">' +
 '           <div id="loginclose" onclick="onclick_emv_assistantclose(this)" ><svg class="installcheckmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><path class="checkmark__check" fill="none" d="M16 16 36 36 M36 16 16 36"></path></svg></div>   ' +  

@@ -45,7 +45,13 @@ function constructor_jsontree_update (jsonstruct) {
 /*---------------------------------------------------------------- JSON ----------------------------------------------------------------*/
 
 function constructor_display_sjson (content) {
-    var jsonstruct = JSON.parse(content);
+    let jsonstruct;    
+    try {
+        jsonstruct = JSON.parse(content);
+    } catch(e) {
+         return console.error(e); 
+    }    
+
     constructor_update(jsonstruct);    
 }
 

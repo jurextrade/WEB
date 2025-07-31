@@ -48,7 +48,7 @@ var openaigroup = {
 var soundvoicestable = {
     id: 'soundvoicestable',    
     type: 'table',
-    events: {onclick: 'onclick_voicerow (this, event)'},
+    events: {onmousedown: 'onclick_voicerow (this, event)'},
     columns: ['voiceURI', 'lang',  'default'],
     columnstitle: ['voiceURI', 'lang',  'default'],
     rows : [
@@ -58,7 +58,7 @@ var soundvoicestable = {
 var openaimodelstable = {
     id: 'openaimodelstable',    
     type: 'table',
-    events: {onclick: 'onclick_modelrow (this, event)'},
+    events: {onmousedown: 'onclick_modelrow (this, event)'},
     columns: ['Model',  'Owned by'],
     columnstitle: ['Model', 'Owned by'],
     rows : [
@@ -68,7 +68,7 @@ var openaimodelstable = {
 var translationlanguagestable = {
     id: 'translationlanguagestable',    
     type: 'table',
-    events: {onclick: 'onclick_translationrow (this, event)'},
+    events: {onmousedown: 'onclick_translationrow (this, event)'},
     columns: ['lang'],
     columnstitle: ['lang'],
     rows : [
@@ -78,7 +78,7 @@ var translationlanguagestable = {
 var recognitionlanguagestable = {
     id: 'recognitionlanguagestable',    
     type: 'table',
-    events: {onclick: 'onclick_recognitionrow (this, event)'},
+    events: {onmousedown: 'onclick_recognitionrow (this, event)'},
     columns: ['lang'],
     columnstitle: ['lang'],
     rows : [

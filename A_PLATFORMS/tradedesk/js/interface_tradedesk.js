@@ -767,10 +767,10 @@ var tradedesk_terminals_sidepanel = {
         boxtradedeskpanel,
         boxaccountpanel,
         currenciespanel,
+        boxautomationpanel,
         boxorderpanel,
         boxtsignalspanel,
         boxpercentchangepanel,
-        boxautomationpanel,
         boxtargetpanel,
         boxaterminalinfopanel,
     ]    
@@ -1164,7 +1164,10 @@ var tradedesk_maintabs = {
     type: 'tabs',
     label : '',    
     class: 'sb_main sb_column',
-    items : []
+    items : [
+    //    {id: 'tradedesk_home_tab',   item: 'Home',      type:'link', in:  icon_home,       items: [tradedesk_home_main], onclose: 'onclick="onclick_StrategyCloseTabItem(this, event)"',   title: 'Home',               events: {onclick:"onclick_project_tab(this)"}},           
+
+    ]
 } 
 
 var tradedesk_toppanel = {
@@ -1267,7 +1270,7 @@ var tradedeskplatform = {
     brand: {
         title: 'JUREXTRADE', 
         logo: '/A_PLATFORMS/tradedesk/res/tradedesk.svg',
-        events: {onclick: "openPopupContact()"}
+        events: {onclick: "tradedesk_home_open()"}
     },      
     select:                        'tradedesk_select(\'' + TRADEDESK_PLATFORM_NAME + '\')',
     init:                          'tradedesk_init()',    

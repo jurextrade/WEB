@@ -629,6 +629,7 @@
     border-top: 1px solid var(--theme-border-color);    
     background-color:var(--theme-footer-bg-color);    
     color:var(--theme-footer-color);    
+    z-index:88;
 }
 
 /*---------------------------------------------------- HEADER BAR ---------------------------------------------------*/
@@ -1387,6 +1388,7 @@
 
 .sb_f_size12 {
     font-size: 1.2rem !important;    
+    margin-bottom: 5px;margin-bottom: 5px;    
 }
 
 .sb_propertytitle {
@@ -2107,15 +2109,18 @@ sb_roundbutton.active{
     padding: 0.5rem!important;
     background-color: var(--theme-bg-color);	
     border: 1px solid var(--theme-button-border-color);    
-    width:200px;
+    max-width: 450px;
+    min-width: 200px;    
     min-height:80px;
     margin-right: 0.5rem;    
     margin-bottom: 0.5rem;    
-    font-size:0.8rem;        
+    font-size:var(--theme-sfont-size);
     font-weight: 400;
     line-height: 1.1;    
     overflow:clip;
+    display:flex;
 }     
+
 
 .sb_widget:hover {
     background-color: var(--theme-hover-bg-color)!important;
@@ -2130,7 +2135,7 @@ sb_roundbutton.active{
 }
 
 .sb_widget.active {
-    background-color: var(--theme-hover-bg-color)!important;
+    background-color: var(--theme-select-bg-color)!important;
 	color:var(--theme-hover-color);	
 }
 
@@ -2141,19 +2146,23 @@ sb_roundbutton.active{
 }
 
 .sb_widget-icon {
-    margin: 3px 0px;
-    display:none;    
+    justify-content: center; 
+    padding-bottom: 10px;
 }
+
+.sb_widget-icon i {
+    font-size: large;
+}
+
 
 .sb_widget-buttons {
     display:flex;
     flex-direction: column;
-    flex-wrap: wrap;
+    flex-flow: column;
+    margin-top:10px;
+
 }
 
-.sb_widget-buttons button {
-    margin-left: 9px;
-}
 
 /*---------------------------------------------------- sb_controls ---------------------------------------------------*/
 

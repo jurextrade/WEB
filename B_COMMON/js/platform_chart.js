@@ -436,9 +436,6 @@ function onmousedown_chartcanvas(event, itempos, yValue, mouseXY, fullData, stat
     }
 }
 
-function onclick_chartcanvas(canvas, event) {
-    event.stopPropagation();
-}
 
 function ondrop_chartcanvas(canvas, event) {
     event.preventDefault();
@@ -948,6 +945,9 @@ var onmouseenter_chartmain = function (elt, event) {
 var onmouseover_chartmain = function (elt, event) {
 }
  
+function onclick_chartmain(canvas, event) {
+  //  event.stopPropagation();
+}
 
 function onmousedown_TrackerDrag (elt, row) {
     let tablerow = elt.parentElement

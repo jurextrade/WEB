@@ -13,10 +13,16 @@ function Translation_fromto (text, modelid, async, callback) {
     
     xhr.onreadystatechange = function () {
       if (this.readyState == 4 && this.status == 200) {
-          var response = JSON.parse(this.responseText);          
-          var stranslation = response.translations[0].translation;
+        let response;    
+        try {
+            response = JSON.parse(this.responseText);
+        } catch(e) {
+            return console.error(e); 
+        }          
 
-          if (callback)   {callbackreturn = callback (text, stranslation, modelid);}          
+        var stranslation = response.translations[0].translation;
+
+          if (callback)   {callbackrconsole.erroreturn = callback (text, stranslation, modelid);}          
        }
       if (this.readyState == 4 && this.status == 404) {
          console.log ('Erreur in Reading Translation Request');

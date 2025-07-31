@@ -648,9 +648,9 @@ const emv_CID = {
     tag: '9F27',
     struct: [
         [
-            {id: EMV_CRYPTO_TYPE_AAC                                    , item: "AAC"},
-            {id: EMV_CRYPTO_TYPE_TC                                     , item: "TC"},
-            {id: EMV_CRYPTO_TYPE_ARQC                                   , item: "ARQC"},
+            {id: EMV_CRYPTO_TYPE_AAC                                    , item: "Transaction declined"},
+            {id: EMV_CRYPTO_TYPE_TC                                     , item: "Transaction approved"},
+            {id: EMV_CRYPTO_TYPE_ARQC                                   , item: "Request online approval"},
             {id: EMV_CRYPTO_TYPE_AAR                                    , item: "RFU"},
          
             {id: EMV_CRYPTO_TYPE_PSS                                    , item: "Payment System-specific cryptogram"},
@@ -2188,9 +2188,9 @@ const emv_Steps  = [
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             The IH can group the post-issuance commands in two types of templates:
             <br>
-            1. Issuer Script Template 1 (tag 71) groups proprietary post-issuance commands to be transmitted to the ICC before sending the 2nd GENERATE AC to the ICC.
+            1. Issuer Script Template 1 (tag 71) groups proprietary post-issuance commands to be transmitted to the ICC before sending the 2nd GENERATE AC to the ICC.
             <br>
-            2. Issuer Script Template 2 (tag 72) groups proprietary post-issuance commands to be transmitted to the ICC after sending the second GENERATE AC to the ICC.
+            2. Issuer Script Template 2 (tag 72) groups proprietary post-issuance commands to be transmitted to the ICC after sending the second GENERATE AC to the ICC.
             <br>
             Each issuer script template, regardless of whether it is of the type 1 or type 2, can include the following data objects:
             <br>
@@ -2212,7 +2212,7 @@ const emv_Steps  = [
             <br>
             Create a first-in-first-out stack (FIFO), where each element contains the value field of one Issuer Script Command APDU data object (tag 86) separated from the value field of the template. Each new element added in the stack increments the command counter.
             <br>
-            The processing sequence described below is performed before the second GENERATE AC , if the current template was identified with tag 71, or after the second GENERATE AC , in case the current template was identified with tag 72. Repeat the following steps a number of times equal to the command counter:
+            The processing sequence described below is performed before the second GENERATE AC , if the current template was identified with tag 71, or after the second GENERATE AC , in case the current template was identified with tag 72. Repeat the following steps a number of times equal to the command counter:
             <br>
             Pop the C-APDU kept in the current element of the FIFO stack indicated by the stack pointer.
             <br>
@@ -2222,7 +2222,7 @@ const emv_Steps  = [
             <br>
             If SW1 indicates normal processing (SW1 = 90) or warning (SW1 = 62 or 63), the processing continues with the next Issuer Script Command APDU stored in the stack. If the command counter indicates that this is the first C-APDU that is processed, set to 1 bit 3, "Script processing was performed", in byte 1 of the TSI.
             <br>
-            If SW1 indicates an error condition, the processing does not continue with other C-APDU(s) in the stack. The terminal shall set the first nibble of the first byte in the issuer script results to 1, "Script processing failed". The terminal shall write the sequence number of the Issuer Script Command APDU that reported the error in the second nibble of the first byte in the issuer script results. This sequence number equals the value of the command counter, when less than E, or otherwise the sequence number is set to F. The terminal sets to 1 bit 6, "Script processing failed before final GENERATE AC ", in the byte 5 of the TVR, if the current template is encoded with tag 71. The terminal sets to 1 bit 5, "Script processing failed after final GENERATE AC", in byte 5 of the TVR, if the current template is encoded with tag 72.
+            If SW1 indicates an error condition, the processing does not continue with other C-APDU(s) in the stack. The terminal shall set the first nibble of the first byte in the issuer script results to 1, "Script processing failed". The terminal shall write the sequence number of the Issuer Script Command APDU that reported the error in the second nibble of the first byte in the issuer script results. This sequence number equals the value of the command counter, when less than E, or otherwise the sequence number is set to F. The terminal sets to 1 bit 6, "Script processing failed before final GENERATE AC ", in the byte 5 of the TVR, if the current template is encoded with tag 71. The terminal sets to 1 bit 5, "Script processing failed after final GENERATE AC", in byte 5 of the TVR, if the current template is encoded with tag 72.
             <br>
             When the processing of the entire sequence of Issuer Script Command APDU(s) is successfully performed, the terminal sets up the first nibble of the first byte in the issuer script results to 2, "Script processing successful". The terminal shall write the value 0 in the second nibble of the first byte in the issuer script results.
             </div>`     
@@ -2231,25 +2231,25 @@ const emv_Steps  = [
             description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
             The post-issuance commands can be divided into two groups:
             <br>            
-            1. Commands that change the status of an application or of the entire card, including APPLICATION BLOCK , APPLICATION UNBLOCK , and CARD BLOCK (see Sections 2.5.1, 2.5.2, and 2.5.3 in Book 3 [1]);
+            1. Commands that change the status of an application or of the entire card, including APPLICATION BLOCK , APPLICATION UNBLOCK , and CARD BLOCK (see Sections 2.5.1, 2.5.2, and 2.5.3 in Book 3 [1]);
             <br>
-            2. Commands that change the values of some internal parameters, like the status of a PIN, of some cryptographic keys, or a PIN value, or the values of the data elements associated with the EMV ¢ application that participates in the card risk management processing.
+            2. Commands that change the values of some internal parameters, like the status of a PIN, of some cryptographic keys, or a PIN value, or the values of the data elements associated with the EMV ¢ application that participates in the card risk management processing.
             <br>
             and issuers may define supplementary commands tailored to their specific needs.
             <br>
-            This category includes the EMV ¢ post-issuance command PIN CHANGE/UNBLOCK (see Section 2.5.10 in Book 3 [1]). Payment systems 
+            This category includes the EMV ¢ post-issuance command PIN CHANGE/UNBLOCK (see Section 2.5.10 in Book 3 [1]). Payment systems 
             <br>
             The post-issuance commands use secure messaging:
             <br>
             The integrity and authenticity of the issuer is achieved using a MAC.
             <br>
-            The confidentiality of cryptographic keys or of a PIN value to be updated in the EMV ¢ application is achieved through symmetric key encryption.
+            The confidentiality of cryptographic keys or of a PIN value to be updated in the EMV ¢ application is achieved through symmetric key encryption.
             </div>`     
             },  
         ],
         description: `<div class="col alert alert-primary alert-dismissible fade show" role="alert">
         <p>
-        It was mentioned in Section 6.9.1 that the authorization response message 1110 received from the IH can include post-issuance commands to be delivered to the ICC via the terminal. These commands are not relevant for the current EMV ¢ transaction, but they are used for updating the application data in the card during its utilization lifetime, or for switching an application in the card or even the entire card between the "unblocked" and "blocked" states. EMV ¢ does not make any provisions for updating the application code in the card. The format of the post-issuance commands can be proprietary to the issuer. They are not meaningful for the terminal, which should only dispatch them from the authorization response message and send them sequentially to the ICC that has to be updated.        
+        It was mentioned that the authorization response message 1110 received from the IH can include post-issuance commands to be delivered to the ICC via the terminal. These commands are not relevant for the current EMV ¢ transaction, but they are used for updating the application data in the card during its utilization lifetime, or for switching an application in the card or even the entire card between the "unblocked" and "blocked" states. EMV ¢ does not make any provisions for updating the application code in the card. The format of the post-issuance commands can be proprietary to the issuer. They are not meaningful for the terminal, which should only dispatch them from the authorization response message and send them sequentially to the ICC that has to be updated.        
         </p>
         <div class="related-primary"><br>Related Flags: </br></div>       
         </div>`

@@ -19,6 +19,10 @@ function netprog_init () {
     netprog_filemanager_init();
 
     ServerPanel_Update('netprog');    
+
+
+    sidebarpanel_select(netprogplatform, "sidebarpanel_netprogsiteview");   
+
     setInterval(netprog_timer, 300);     
 }
 
@@ -40,7 +44,8 @@ function netprog_select (name) {
     ui.platform_expand(name, true);
 
     if (!solution.netprog_CurrentProject) {
-        onclick_sidebarmenu ('sidebar_netprogsiteview', true);    
+        DisplayOperation("Select a project or create one", true, 'operationpanel');        
+   //     onclick_sidebarmenu ('sidebar_netprogsiteview', true);    
     }
 }
 
@@ -100,7 +105,11 @@ class npproject {
 
     UpdateSites = function (response, par) {
         let project = par[0];
-        project.Manager = JSON.parse (response);
+        try {
+             project.Manager = JSON.parse(response);
+        } catch(e) {
+            return console.error(e); 
+        }           
 
 // we need to correct the JSON parse structure to have same objects in case of modifying
         MXUpdate (project.Manager);        
@@ -188,7 +197,13 @@ function netprog_solution () {
         }
 
         let callback = function (responsetext, values) {
-            let arraystructure =  JSON.parse(responsetext);
+            let arraystructure;    
+            try {
+                arraystructure = JSON.parse(responsetext);
+            } catch(e) {
+                return console.error(e); 
+            }      
+
             for (var i = 0; i < arraystructure.length; i++) {
                 let projectname = arraystructure[i].name;
                 let projectpath = arraystructure[i].path;
@@ -268,7 +283,7 @@ function netprog_loadedproject (project) {
 function netprog_selectproject(project, forcedisplay) {
   
     if (!project) {
-        return;
+        return null;
     }
     if (project == solution.netprog_CurrentProject) {
         return project;
@@ -292,6 +307,7 @@ function netprog_selectproject(project, forcedisplay) {
         DisplayOperation("Project " + project.Name + " loaded", true, 'operationpanel');            
         netprog_drawproject(project, true);        
     }
+    return project;
 }
 
 function netprog_closeproject (project) {
@@ -347,7 +363,7 @@ function netprog_drawproject(project, open) {
       sb.tree_selectitem ('netprog_tree_projects', '');
       BottomPanel_Flat(platform, true, true);         
 
-      AnimationDisplay('netprog_main', 'Goodbye');             
+      AnimationDisplay('netprog', 'Goodbye', 'netprog_toppanel');             
   }    
 }
 
@@ -376,7 +392,7 @@ function netprog_update_localsite (manager) {
         },
         [localsite]); 
 
-    url_submit ('GET', site.protocol + '//' + document.location.host + '/php/get_dname.php',{ipaddress: localsite.IPPublic} , false, 
+    url_submit ('GET', document.location.protocol + '//' + document.location.host + '/php/get_dname.php',{ipaddress: localsite.IPPublic} , false, 
         function (content, values) {
             localsite.AddrName = content.replace(/[\t\r\n]/gm, '');
         },
@@ -2024,7 +2040,7 @@ const initialNodes = [
 function netprog_MainCarouselPanel () {
     return "";
     var content = 
-//        sb.render (mt4assistantpanel) +     
+//        sb.render (tradedesk_assistantpanel) +     
 '       <div id="netprog_maincarousel" class="featured carousel slide sb_panel" data-bs-ride="carousel">' +
 '           <label class="sb_f_size12">Featured</label>' +
 
@@ -2093,91 +2109,6 @@ function netprog_MainCarouselPanel () {
 '  </div>';
 return content;
 }
-
-//---------------------------------------------------- NETPROG PRESENTATION PANEL------------------------------------------------ 
-
-function onclick_othertools (elt, event) { 
-    event.preventDefault();
-    window.open("./ExProject/index.php");
-}
-
-function netprog_PresentationPanel () {
-    var content =    
-'   <label class="sb_f_size12">Netprog</label>' +
-'   <div class="sb_row">' +
-'       <div class="presentation_image">' +
-'           <img src="/A_PLATFORMS/netprog/res/netprog.svg" >' + 
-'       </div>' +
-'       <div class="presentation_description">' +
-'           <p itemprop="description" class="description">NetProg is an API in C language allowing an homogeneous programming of communicating applications on many operating systems.<br><br>'+
-'           It covers all the need for applications that requires complex way of exchanging data in synchronous or asynchronous mode.<br><br>' +
-'           Based on messages for exchanging data between clients and servers, it, moreover, access databases or files with the same message modelling.<br></p>' +
-'       </div>' +
-'   </div>' +
-'   <div class="sb_column">' +
-'       <div>This site is still under development</div>' + 
-'       <div>I can assist you in software developments</div>' + 
-'       <div>Please feel free to contact me</div>' + 
-'       <br><p>JUREXTRADE<br><span style="line-height: 1.5;">Gabriel Jureidini</span><br><span style="line-height: 1.5;">Paris-France</span></p>' +
-'       <label><i class="fas fa-envelope"></i> Email<br><span style="line-height: 1.5;">contact@jurextrade.com</span></label>' +
-'	</div>';
-    return content;
-}
-
-
-function netprog_home_open () {
-    if (!sb.tab_finditem(netprog_maintabs, 'netprog_home_tab')) { 
-        let hometabitem  = {id: 'netprog_home_tab',     item: 'Home',      type:'link', icon:  icon_home,       items: [netprog_home_section], onclose: 'onclick="onclick_netprog_tab_close(this, event)"',    title: 'Home',      events: {onclick:"onclick_netprog_tab(this, event)"}};
-        
-        sb.tab_additem(netprog_maintabs, hometabitem, 1);
-    } 
-    sb.tab_select(netprog_maintabs, 'netprog_home_tab');
-}
-
-//----------------------------------------------------   WIDGETS PANEL    ------------------------------------------------   
-
-function onclick_connectMT4Terminal (elt, event) { 
-    event.preventDefault();
-    if ($('#mt4assistantpanel').is(':hidden')) {
-        MT4AssistantPanel_Open ();    
-    } else {
-        MT4AssistantPanel_Close ();    
-    }
-}
-
-function onclick_downloadnetprog (elt, event) {
-  
-}
-
-function onclick_netprogdownload (elt, event) {
-   // window.location.href = "https://github.com/jurextrade/NetProg"  
-    var win = window.open("https://github.com/jurextrade/NetProg", '_blank');
-    win.focus();
-}
-
-function netprog_GetStartedSection_Panel () {
-    var content = 
-       '<label class="sb_f_size12">Get Started - Project Templates</label>' +
-       '<div class="sb_row sb_widget-container">' +
-            sb_widget_create ('downloadnetprog',  'onclick_downloadnetprog(this, event)',    icon_download, 'Download ', 'Download NetProg Library', ['onclick_netprogdownload(event)'], ['GitHub']) +
-     //       sb_widget_create ('tradedeskconnect',  'onclick_connectMT4Terminal(this, event)', icon_terminal, 'MT4 Terminal',    'Connect your MT4 Terminal') +
-     //       sb_widget_create ('optionstutorial',   'onclick_optionstutorial(this, event)',    icon_strategy, 'Options',         'Yahoo Options') +                
-       '</div>' 
-    return content;
-}
-
-function netprog_ToolsSection_Panel () {
-    return "";
-    var content = 
-       '<label class="sb_f_size12">Chart Tools</label>' +
-       '<div class="sb_row sb_widget-container">' +
-            sb_widget_create ('signalstutorial',   'onclick_signalstutorial(this, event)',  icon_strategy,  'Signals', "Indicators and Signals") +                
-            sb_widget_create ('trackersstutorial', 'onclick_trackerstutorial(this, event)', icon_strategy,  'Trackers',"Track your signals") +                
-            sb_widget_create ('markerstutorial',   'onclick_markerstutorial(this, event)',  icon_strategy,  'Markers', "Mark composed signals") +
-       '</div>' 
-    return content;
-}
-
 
 //------------------------------------------------------------ NETPROG BOTTOM PANEL ----------------------------------------------------------
 

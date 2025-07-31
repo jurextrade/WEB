@@ -113,6 +113,7 @@ const sb_icons = {
     icon_question:      'far fa-circle-question',
     icon_pin:           'fas fa-thumbtack',
     icon_check:         'fas fa-check',
+    icon_visa:          'fa-brands fa-cc-visa',
 }
 
 //------------------------------------------------------------------- RIGHT SIDEBAR---------------------------------------------------------------------

@@ -78,6 +78,7 @@
 .chartspinner {
     position: absolute;
     color: var(--theme-button-color) !important; 
+    display:none;
 }
 
 .rootindicators > li:first-child > span:first-child{
@@ -195,7 +196,7 @@
     inset: -236px 0px 0px 0px;
     transition: transform .3s cubic-bezier(0,0,.3,1);
     border-radius: 0px 0px 10px 10px;
-    height: 400px;
+    height: 300px;
     width: 100%;
     padding-left: 13px;
     padding-right: 3px;
@@ -204,8 +205,36 @@
     border-bottom: 1px solid var(--theme-border-color);
     color: var(--theme-color);
     background: var(--theme-bg-color);
-    z-index: 9;
+    z-index: 5;
     transform: translate(0px, -162px);
+}
+
+.modalserverpanel .sb_bargroup {
+	display:flex;
+    padding-bottom: 26px;
+}
+
+.modalserverpanel .sb_bar {
+    display: flex;
+    flex-direction: row-reverse;
+    background: transparent !important;
+}
+
+.modalserverpanel .sb_bar button {
+    margin-right: 6px;
+    font-size: large;
+    background: var(--theme-bg-color);
+    border: 0px;
+    color: var(--theme-color);    
+}
+
+.modalserverpanel .sb_buttongroup {
+    padding-top: 30px;
+}
+
+
+.modalserverpanel .form-control {
+    margin-right: 40px;
 }
 
 .modalserverpanel.toggled {
@@ -348,6 +377,9 @@
 /* CONTACT PANEL
 --------------------------------------------------*/
 
+#profilepanel {
+    display:none;
+}
 
 #contactdialog .col-9{
     text-align: left;
@@ -529,7 +561,8 @@
 
 .featured.carousel .carousel-inner {
     flex:1;
-    border: 1px solid var(--theme-border-color);         
+    border: 1px solid var(--theme-border-color);   
+    background: var(--theme-hover-bg-color) !important;      
 }
 
 .featured.carousel .carousel-item {
@@ -577,19 +610,18 @@
 .home_section {
     background: var(--theme-bg-color);
     flex-wrap: wrap;    
-    overflow: auto;
+
 }
 
 .home_leftsection{
     width:500px;
+    display: flex;
+    flex-direction: column;
 }
 
 .home_rightsection{
+    overflow:auto;
 
-}
-
-.home_section1 {
- 
 }
 
 .sectioncontainer {
@@ -2140,7 +2172,6 @@ ul, #myUL {
     inset: 0px 0px auto auto;
     margin: 0px;
     transform: translate(-155px, 9px);
-    border-radius: 10px;
     height: 30px;
     text-align: center;
     display: flex;

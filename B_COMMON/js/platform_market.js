@@ -61,6 +61,8 @@ function onclick_toolspanelheaderpin (elt, event) {
 }
 
 function onclick_markettogglepanel (elt, event) {
+
+    
     let show = !$('#marketmain').hasClass('toggled');   
     if (show == 1) {
         tools_panel_select();    

@@ -1,8 +1,0 @@
-(IF (AndS PROGRESS S_BUY P_M5 P_H1)
- (START)
- (BUY)
-)
-(IF (AndS PROGRESS S_SELL P_M5 P_H1 )
- (START)
- (SELL)
-)

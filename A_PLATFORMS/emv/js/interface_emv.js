@@ -40,7 +40,7 @@ var emv_maintabs = {
     class: 'sb_main',
     label : '',    
     items : [
-        {id: 'emv_home_tab',   item: 'Home',      type:'link', in:  icon_home,       items: [emv_home_main], onclose: 'onclick="onclick_emv_tab_close(this, event)"',   title: 'Home',               events: {onclick:"onclick_emv_tab(this)"}},           
+   //     {id: 'emv_home_tab',   item: 'Home',      type:'link', in:  icon_home,       items: [emv_home_main], onclose: 'onclick="onclick_emv_tab_close(this, event)"',   title: 'Home',               events: {onclick:"onclick_emv_tab(this)"}},           
         {id: 'emv_tester_tab', item: 'EMV Tester',type:'link', icon:  icon_creditcard, items: [emv_tester_main],     onclose: 'onclick="onclick_emv_tab_close(this, event)"',   title: 'EMV',                events: {onclick:"onclick_emv_tab(this)"}},           
      //   {id: 'emv_tvr_tab',      item: 'TVR',       type:'link', icon:  icon_structure,  items: [emv_tvrpanel],              onclose: 'onclick="onclick_emv_tab_close(this, event)"',   title: 'TVR Structure',      events: {onclick:"onclick_emv_tab(this)"}},             
      //   {id: 'emv_tsi_tab',      item: 'TSI',       type:'link', icon:  icon_structure,  items: [emv_tsipanel],              onclose: 'onclick="onclick_emv_tab_close(this, event)"',   title: 'TSI Structure',      events: {onclick:"onclick_emv_tab(this)"}},             

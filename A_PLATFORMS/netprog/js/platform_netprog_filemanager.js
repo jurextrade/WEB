@@ -190,7 +190,12 @@ function netprog_file_read (file) {
 
     cuser.send ({Name: 'readfile', Values: [file.CName]}, false, 
                 function (content, values) {
-                    let message = JSON.parse (content);
+                    let message;    
+                    try {
+                        message = JSON.parse(content);
+                    } catch(e) {
+                        return console.error(e); 
+                    }                          
                     let file = values[0]
                     file.Content = message.Values[0].Content;
                     file.Loaded  = true;                    

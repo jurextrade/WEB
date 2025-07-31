@@ -16,8 +16,8 @@ var markereditor_output = (id =>  {return {
 
 var markereditor_updategroup = (id =>  {return {
     id: 'markereditor_updategroup',  
-    position: 'sb_end',
-    class: 'sb_transform',
+   // position: 'sb_end',
+    class: 'sb_transform sb_none',
     type: 'group',                        
     items: 
         [ 

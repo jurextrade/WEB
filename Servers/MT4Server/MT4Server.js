@@ -515,7 +515,33 @@ function VerifyUser (socket, port, symbol, loginserver, username, password, acco
     http.send(null);
 }
 
+
+
 /////////////////////////////////////////////////////////// COMPILATION /////////////////////////////////////////////////////////
+
+function SendFileExpert (userid, fromfile, filename, projectfolder, emplacement) {                //http
+
+   let content = fs.readFileSync(fromfile)    
+       
+   
+    var http = new XMLHttpRequest();
+    
+    var url = 'http://' + ServerName + '/php/save_expert.php'; + 
+     
+    
+    
+    http.open('POST', url, false);
+    http.setRequestHeader('Content-type', 'application/octet-stream');  
+
+    http.onreadystatechange = function() {//Call a function when the state chan
+        console.log (this.responseText)
+        if(http.readyState == 4 && http.status == 200) {
+             console.log (this.responseText)
+        }
+    }
+    http.send('?user_id=' + userid + '&filename=' + filename + '&projectfolder=' + projectfolder + '&content=' + content + '&emplacement=' + emplacement);
+}
+
 
 function PutFileExpert (fromfile, tofile,  filetype, userid, projectfolder, socket, stdout) {
 
@@ -596,7 +622,10 @@ function CompileMQ4 (userid, terminaltype, projectfolder, filename, socket) {
 			projectfile =  MQ4_SOURCE_PATH + filename + '.ex4';
 			tofile   =  FTPRootPath + userid + '/Projects/' +  projectfolder +  '/MQL4/Experts/' + filename + '.ex4'			
 			NS.SendToHTTPClient(socket, ":______**COMPILE^" + filename + '.ex4'   +  "^" + projectfolder  +  "^MQL4^OK^"  + "MQ4 Successfully Compiled*");    
-			PutFileExpert (projectfile, tofile, 'MQL4', userid, projectfolder, socket, "ok");	
+		   
+            SendFileExpert (userid, projectfile, filename + '.ex4', projectfolder, 'Experts');       
+           
+           // PutFileExpert (projectfile, tofile, 'MQL4', userid, projectfolder, socket, "ok");	
 			Print('File MQ4 Compile OK');
 			return 1;
 		}

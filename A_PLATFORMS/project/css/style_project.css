@@ -2,7 +2,7 @@
 
 /*--------------------------------------------------------- MAIN PROJECT PANEL ----------------------------------------------------*/
 
-#project_mainpanel {
+#project_main {
     font-size: var(--theme-sfont-size); 
     background: var(--theme-bg-color);            
 }
@@ -85,7 +85,19 @@
 #strategyotherpanel {
     width: 25%;
     padding: 1px;    
+    overflow:auto;
 }
+
+#strategyotherpanel .sb_boxheader {
+    display: flex;
+    height: 35px;
+    background: var(--theme-select-bg-color);    
+}
+
+#strategyotherpanel .sb_boxheadertitle {
+    text-transform: unset;
+}
+
 
 #strategychedulepanel .sb_link, #strategypropertiespanel .sb_link{
     margin:0px;
@@ -140,7 +152,7 @@
 
 
 #role_tab_strategydescription {
-    overflow:hidden;
+   /* overflow:hidden; */
 }
 
 /*--------------------------------------------------------- TOP PANEL ----------------------------------------------------*/
@@ -179,20 +191,33 @@
     padding: 10px;    
 
 }
-#testerbar {
-    background: var(--theme-bg-color);
+#project_tester_bar {
+   /* background: var(--theme-bg-color);*/
     padding:10px;    
 }
 
+#project_tester_filtergroup {
+    flex-wrap: wrap;
+    flex:1;
+    height: 50px;
+    overflow: hidden;
+    flex-direction: column;
+    background: var(--theme-form-bg-color);
+    border: 1px solid var(--theme-button-border-color);       
+}
 
-#testergroup {
+#project_tester_filtergroup span {
+    width: 99px;
+}
+
+#project_tester_commandgroup {
  /*   flex:1;
     border: 1px solid var(--theme-special-border)!important;    
 */    
     padding: 10px;    
 }
 
-#testergroup .sb_link {
+#project_tester_commandgroup .sb_link {
     flex:1;
 }
 
@@ -205,24 +230,50 @@
 #strategy_stop {
     width: 25%;
     flex: none;
-    display:none;    
 }
 
 #strategy_velocity {
     height: auto;    
     flex: 1;
-    display:none;
 }    
 
+#project_tester_expertpanel.toggled {
+    flex:1;
+}
+
+#project_tester_expertpanel {
+    height: 30px;
+    flex: none;
+}
+
+#project_tester_strategypanel.toggled {
+    flex:1;
+}
+
+#project_tester_strategypanel {
+    height: 30px;
+    flex: none;
+}
+
+
+#project_tester_strategy_panel .sb_search {
+    max-width: unset;
+}
 /*--------------------------------------------------------- DISTRIBUTE PANEL ------------------------------------------------------*/
 
-#distributepanel {
+#deploypanel {
+    padding: 17px;
+}
 
+#distributepanel {
+    background-color: var(--theme-main-bg-color);
+    border: 1px solid var(--theme-color);
 }
 
 #distributeselect {
-    flex:none;
-    width: 70%;    
+    flex: none;
+    width: 200px;
+    margin-top: 25px;    
 }
 
 #distributepanel .terminalname {
@@ -233,10 +284,9 @@
     font-size: var(--theme-font-size);
 }
 
-#distributetable {
-    width:100%;
+#distributetable th:not(:first-child) {
+    text-align: center;
 }
-
 
 .terminalcheck {
     margin: 0 auto;
@@ -302,18 +352,22 @@
     display: none;
 }
 
+#classicalviewbox {
+    display: none;
+}
+
 #assistantbar {
     font-size: 14px;
 }
 
-#strategy_assistant {
+#strategy_assistant_button {
     background-repeat: no-repeat;
-    width: 130px;  
+    width: 150px;  
     flex:none; 
 	color:white;    
 } 
 
-#strategy_assistant.checked  {
+#strategy_assistant_button.checked  {
     background-repeat: no-repeat;
     width: 130px;   
 }
@@ -349,7 +403,7 @@
 }
 
 #strategy_assistant_panel  .content .body {
-    padding: 0px 55px; 
+   /* padding: 0px 55px; */ 
 }
 
 /*STEP 1--------------------------------------------------------------------*/  
@@ -621,5 +675,5 @@
 
 .assistant_panel .content .body .col-4{
     overflow: auto;
-    padding: 0.5rem 1.5rem
+ /*   padding: 0.5rem 1.5rem */
 }

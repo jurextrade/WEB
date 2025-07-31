@@ -136,9 +136,9 @@ var emv_testerpanel_buttongroup = ((toggled) =>  {return {
     type: 'group',
     items: [
 
-       {id: 'fullscreen',    type:'control',  class : 'box-btn-fullscreen',     events: {onclick: "onclick_testerfspanel (this, event)"}, title: ''}, 
+       {id: 'fullscreen',    type:'control',  class : 'box-btn-fullscreen',     events: {onclick: "onclick_testerfspanel (this, event, emv_tester_panel)"}, title: ''}, 
        {id: 'compressscreen',type:'control',  class : 'box-btn-compressscreen sb_none', events: {onclick: "onclick_testercspanel (this, event)"}, title: ''}, 
-       {id: 'slide', type:'control',  class : 'box-btn-slide' + (toggled ? '' : ' rotate-180'), events: {onclick: "onclick_testertogglepanel(this,event)"},  title: ''}
+       {id: 'slide', type:'control',  class : 'box-btn-slide' + (toggled ? '' : ' rotate-180'), events: {onclick: "onclick_testertogglepanel(this,event, emv_tester_panel)"},  title: ''}
 
     ]
 }})

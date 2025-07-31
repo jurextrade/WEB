@@ -254,31 +254,7 @@ function onmousedown_default_widget (elt, event) {
     $(elt).addClass("active");
 }
 
-function sb_widget_create (id, onclickcallback, icon, title, description, seehowcallback, seehowtitle) {
 
-    var seehowbuttons = '';
-    if (defined(seehowcallback)) {
-        for (var i = 0; i < seehowcallback.length; i++) {
-            seehowbuttons += '<button id="' + id + '_seehow" class="sb_sbutton seehowbutton" onclick="event.preventDefault();' + seehowcallback[i] + '">' + seehowtitle[i] + '</button>';  
-        }
-    }
-    var content = 
-'       <div id="' + id + '" class="sb_widget" onmousedown="onmousedown_default_widget (this,event);" onclick="' + onclickcallback + '">' +
-'           <div class="sb_widget-icon">' +
-'               <span class="sb_icon"><i aria-hidden="true"  class="' + icon + '"></i></span>' +
-'           </div>' +
-'           <div class="sb_widget-content">' +
-'               <div class="sb_widget-title">' +
-'                   <span>' + title + '</span>' +
-'               </div>' +
-'               <div class="sb_widget-description">' + description + '</div>' +
-'               <div class="sb_widget-buttons">'  +
-                    seehowbuttons +
-'               </div>' +
-'           </div>' +
-'       </div>';
-    return content;
-}
 //---------------------------------------------------- SB BODY  ------------------------------------------------  
 
 const dragbar_v_defaultoptions = {
@@ -568,6 +544,53 @@ class SB {
         return content;
     }        
 
+    //---------------------------------------------------- SB WIDGET  ------------------------------------------------  
+
+    widget = function (widget) {
+        var events      = defined(widget.events)     ?  Object.assign({}, widget.events) : {};    
+        var attributes  = defined(widget.attributes) ?  Object.assign({}, widget.attributes) : {};   
+        
+        events.onmousedown = (defined(events.onmousedown) ? events.onmousedown + ';onmousedown_default_widget(this, event)' : 'onmousedown_default_widget(this, event)');        
+        attributes = this.stringify(attributes); 
+        events     = this.stringify(events);        
+        
+        var content = '<div id="' + widget.id + '" class="sb_widget sb_column ' +
+            (defined(widget.class) ? widget.class : '') + '" ' + 
+            (defined(widget.style) ? 'style= "' + widget.style + '" ' : ' ')  +     
+            (defined(widget.title) ? 'title= "' + widget.title + '"' : ' ') +                          
+            attributes +    
+            events + '>' +         
+'           <div class="sb_widget-icon sb_row">' +  
+                (defined(widget.icon) ? '<i class="' + widget.icon + '" style="font-size: large"></i>' : '')  +
+'           </div>' +
+
+'           <div class="sb_widget-content sb_panel">' +
+'               <div class="sb_widget-title">' +
+                    (defined(widget.heading) ? '<span>' + widget.heading + '</span>' : '')  +
+'               </div>' +
+'               <div class="sb_widget-description sb_main">';
+
+                    if (defined (widget.items)) {
+                        for (var i = 0; i < widget.items.length; i++) {
+                            var item = widget.items[i];
+                            content += this.render (item); 
+                        }
+                    }
+                content +='</div>' +
+'               <div class="sb_widget-buttons">';
+                    if (defined(widget.buttons)) {
+                        for (var i = 0; i < widget.buttons.length; i++) {
+                            content += '<button id="' + widget.id + '_see_' + i +  '" class="sb_sbutton seehowbutton" onclick="event.preventDefault();' + 
+                            widget.buttons[i].callback + '"' + 
+                            (defined(widget.buttons[i].title) ? ' title="' + widget.buttons[i].title + '"' : ' ') + '>' + widget.buttons[i].name + '</button>';  
+                        }
+                    }
+                content+='</div>' +
+'           </div>' +
+'       </div>';
+
+    return content;
+   }
     //---------------------------------------------------- SB HTML  ------------------------------------------------  
 
     html = function (html) {
@@ -917,10 +940,18 @@ class SB {
         $('#' + tab.id +  ' #' + CSS.escape(tabitem.id)).tab('show');
     }
 
-    tab_clear = function (tab) {
-        $('#' + tab.id + ' .sb_tab').html('');
-        $('#' + tab.id + ' .sb_content').html ('');
-        tab.items = [];
+    tab_clear = function (tab, exceptid) {
+        if (exceptid) {
+            for (var i = 0; i < tab.items.length; i++) {           
+                if (tab.items[i].id != exceptid) {
+                this.tab_delete (tab, tab.items[i].id)
+                }
+            }
+        } else {
+            $('#' + tab.id + ' .sb_tab').html('');
+            $('#' + tab.id + ' .sb_content').html ('');
+            tab.items = [];
+        }
     }
 
     tab_swap = function (tab, fromitemname, toitemname) {
@@ -1639,20 +1670,10 @@ class SB {
     } 
 
 
-    toggle = function (elt, open, callback) {
+    toggle = function (elt, callback) {
         var $panel = elt;
-
-        if (open == undefined) {
-            $panel.slideToggle("slow", "swing", callback);   
-            return;
-        }
+        $panel.slideToggle("slow", "swing", callback);
         
-        if (open && $panel.is(':hidden')) { 
-            $panel.slideToggle("slow", "swing", callback);
-        }      
-        if (!open && !$panel.is(':hidden')) {
-            $panel.slideToggle("slow", "swing", callback);
-        }    
     }
 
     //---------------------------------------------------- SB ITEM  ------------------------------------------------  
@@ -1759,7 +1780,7 @@ class SB {
 
                 case 'checkbox' :      //input   type='check'
                     content += 
-                    '<span class="sb_check custom-control custom-checkbox' + itemclass + '"' + 
+                    '<span class="sb_check custom-control custom-checkbox ' + itemclass + '"' + 
                         (defined(item.style) ?     ' style= "' + item.style + '"' : '')  + 
                         (defined(item.title) ?     ' title= "' + item.title + '"' : '') + '>'  + 
                         '<input id="' + item.id + '"  type="checkbox"  class="custom-control-input"' + 
@@ -1793,12 +1814,12 @@ class SB {
                         attributes +
                         events +                    
                         (defined(item.style) ?     ' style= "' + item.style + '"' : '')  + 
-                        (defined(item.title) ?     ' title="'  + item.title + '"' : '')  + '>' +
+                        (defined(item.title) ?     ' title="'  + item.title + '"' : '')   + '>'  + 
                         (defined(item.icon) ?      ' <i class="' + item.icon + '"></i>' : '') + 
                         (defined(item.iconfile) ?  ' <img class="sb_iconfile" src="' + item.iconfile + '" ></img>' : '') +                     
                         (defined(item.item) ?      ' <label class="sb_label">' + item.item + '</label>' : '') +                
                         (defined(item.content) ?   eval(item.content) : '') +
-                        (defined (item.html)  ?  item.html : '');                         
+                        (defined (item.html)  ?  item.html : '') +                         
                     '</span>'; 
                 break;
 
@@ -2030,6 +2051,8 @@ class SB {
             $(elt).removeClass("checked");
     }
 
+
+
     //---------------------------------------------------- SB TREE  ------------------------------------------------  
 
 
@@ -2249,6 +2272,7 @@ class SB {
         }
         return label;
     }
+
     //---------------------------------------------------- SB RENDER  ------------------------------------------------  
 
     render = function (component, togglefunction) {
@@ -2326,6 +2350,9 @@ class SB {
             case 'textarea':  
             case 'range' :                               
                 content = this.item(component, togglefunction)
+            break;
+            case 'widget' :
+                content = this.widget(component);
             break;
         }
         return content;
@@ -2507,6 +2534,30 @@ class SB {
     }
 }
 
+function sb_widget_create (id, onclickcallback, icon, title, description, seehowcallback, seehowtitle) {
 
+    var seehowbuttons = '';
+    if (defined(seehowcallback)) {
+        for (var i = 0; i < seehowcallback.length; i++) {
+            seehowbuttons += '<button id="' + id + '_see_' + i +  '" class="sb_sbutton seehowbutton" onclick="event.preventDefault();' + seehowcallback[i] + '">' + seehowtitle[i] + '</button>';  
+        }
+    }
+    var content = 
+'       <div id="' + id + '" class="sb_widget" onmousedown="onmousedown_default_widget (this,event);" onclick="' + onclickcallback + '">' +
+'           <div class="sb_widget-icon">' +
+'               <span class="sb_icon"><i aria-hidden="true"  class="' + icon + '"></i></span>' +
+'           </div>' +
+'           <div class="sb_widget-content sb_panel">' +
+'               <div class="sb_widget-title">' +
+'                   <span>' + title + '</span>' +
+'               </div>' +
+'               <div class="sb_widget-description sb_main">' + description + '</div>' +
+'               <div class="sb_widget-buttons">'  +
+                    seehowbuttons +
+'               </div>' +
+'           </div>' +
+'       </div>';
+    return content;
+}
 
 const sb = new(SB)

@@ -156,6 +156,7 @@ var Engine_init = function(engine, symbol) {
     engine.FirstPass = 1;
     engine.SecondPass = 0;
 
+
     return (0);
 }
 
@@ -277,12 +278,11 @@ var Engine_Run = function(engine) {
     }
     engineStartAsync = setInterval(FindIdxStartBar, 1, engine, symbol, engine.CurrentPeriod, engine.MaxPeriod, ENGINE_CONTEXT, 1);
 
-    $('#strategy_velocity').css('display', 'block');
-    $('#strategy_stop').css('display', 'block');
+    $('#strategy_velocity').removeAttr('disabled') 
+    $('#strategy_stop').removeAttr('disabled') 
     $('#strategy_tester label').html('Pause')
     $('#strategy_tester i').removeClass (icon_play);
     $('#strategy_tester i').addClass (icon_pause);
-    $('#strategy_tester').addClass ('checked');
 
 
     return engine;    
@@ -582,7 +582,7 @@ var Engine_Pause = function(engine, pause) {
         $('#strategy_tester label').html('Run')
         $('#strategy_tester i').removeClass (icon_pause);
         $('#strategy_tester i').addClass (icon_play);
-        $('#strategy_tester').addClass ('checked');        
+
         clearInterval(engineStartAsync);
 
     } else {
@@ -590,7 +590,7 @@ var Engine_Pause = function(engine, pause) {
             $('#strategy_tester label').html('Pause')
             $('#strategy_tester i').removeClass (icon_play);
             $('#strategy_tester i').addClass (icon_pause);
-            $('#strategy_tester').addClass ('checked');
+
             let value = Math.ceil(document.getElementById('strategy_velocity').valueAsNumber);
 
             engineStartAsync = setInterval(EngineAsync_Start, 1000 - value, enginecontext, engine, symbol);
@@ -619,14 +619,10 @@ var Engine_Stop = function(engine, dontcheck) {
         $('#' + rootid + ' .chartpanel  #' + i).prop("disabled", false);
     }
 
-
-    $('#strategy_tester').removeClass ('checked');
     $('#strategy_tester label').html('Run')
     $('#strategy_tester i').removeClass (icon_pause);
     $('#strategy_tester i').addClass (icon_play);    
- 
-    $('#strategy_velocity').css('display', 'none');
-    $('#strategy_stop').css('display', 'none');
+    $('#strategy_stop').attr('disabled',true);
 
     symbolcanvas.CurrentSymbol.xextents[engine.CurrentPeriod] = null; //extents
     SelectChart(engine.CurrentPeriod);

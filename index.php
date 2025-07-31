@@ -72,12 +72,14 @@ function loadgen($userid = '0', $appli) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="EMV debit and credit payment application protocol between the ICC and the termina trading tools card reader network programming mt4 terminal algotrading chinese market Programming tools option yahoo market">
     
     ';
     
     echo   '<title>' . $configuration->title . '</title>';
+    
     echo   '
-    <link href="/A_PLATFORMS/netprog/res/netprog.svg" type="image/x-icon"                           rel="icon">
+    <link href="res/jurextrade.svg" type="image/x-icon"                                             rel="icon">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"          rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"   rel="stylesheet">  
 

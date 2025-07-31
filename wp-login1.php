@@ -182,7 +182,7 @@ switch ($action) {
         }        
 
         if ($datafolder  !=  'IB' || $datafolder  !=  'Yahoo') {
-            $src = $cwd . '/Terminal/MQL4';  
+            $src = $cwd . '/conf/Terminal/MQL4';  
 
             if (!file_exists($dest . '/MQL4')) {
                 copyr($src, $dest . '/MQL4');
@@ -310,7 +310,7 @@ switch ($action) {
                 mkdir($cwd . '/members/' . $current_user->ID);
             
 
-            $src = $cwd . '/conf';  
+            $src = $cwd . '/conf/member';  
             $dest = $cwd . '/members/' . $current_user->ID ;   // destination folder or file        
             
             copyr($src, $dest);

@@ -110,7 +110,7 @@ var chartmain = (pname => {return {
         onmouseenter: "onmouseenter_chartmain(this, event)",
         onmouseleave: "onmouseleave_chartmain(this, event)",      
         onmouseover:  "onmouseover_chartmain(this, event)",      
-        onclick:       "onclick_chartcanvas (this, event)",        
+        onclick:      "onclick_chartmain (this, event)",        
     },
     items: [
         {
@@ -187,7 +187,8 @@ var tree_indicators = (id =>  {return {
             id: 'tree_createdindicators_' + id,       
             type: 'tree',       
             arrow: true,             
-            item: 'Created Indicators',
+            item: id + ' Indicators',
+            style: "font-weight: 600;background: var(--theme-bar-bg-color);color: var(--theme-main-color);",
             icon: icon_indicator,
             items:[
             ]
@@ -198,6 +199,7 @@ var tree_indicators = (id =>  {return {
             type: 'tree',
             arrow: true,                    
             item: 'Predefined Indicators',
+            style: "font-weight: 600;background: var(--theme-bar-bg-color);color: var(--theme-main-color);",            
             icon: icon_indicator,
             items:[
             ]
@@ -215,8 +217,8 @@ var indicatorssidebar = (id =>  {return {
 var boxindicatorspanel = (id =>  {return {
     id: 'boxindicatorspanel_' + id, 
     type: 'box',
-    closed: true, 
-    header: {item: 'Indicators', items: [indicatorbar], control: {slide: true, onclick_slide: 'onclick_slidehideotherbox (this)', closed : true, orientation: sb.R_CONTROL} },  
+    closed: false, 
+    header: {item: 'Indicators', items: [indicatorbar], control: {slide: false, onclick_slide: 'onclick_slidehideotherbox (this)', closed : true, orientation: sb.R_CONTROL} },  
     items: [indicatorssidebar(id)]    
 }})
 

@@ -55,7 +55,12 @@ class emvproject {
     
     UpdateEMV = function (response, par) {
         let project = par[0];
-        project.Manager = JSON.parse(response)
+ 
+        try {
+            project.Manager = JSON.parse(response)
+        } catch(e) {
+             return console.error(e); 
+        }    
         emv_project_update(project.Manager);
         project.Loaded = 1;    
         emv_manager = project.Manager;        
@@ -538,11 +543,11 @@ function emv_treenodeitem (entity, option) {
         nodename = option.fathernodename + '.' + nodename;
     }
 
-
-    return {
+    let node =
+    {
         id:   'treenode-' + classname + '-' + entity.Code,
         type: 'tree',
-        item: option.value , 
+   
         arrow: emv_type_leaf.includes (classname) ? true : false,
         class: 'treenode',
         rootitem: option.tag ? emv_treenodetagitem(option.tag, option.value, entity.Code, true) : emv_tree_update, 
@@ -555,6 +560,10 @@ function emv_treenodeitem (entity, option) {
         },
         events: emv_default_node_events   
     }    
+    if (option.name) {
+        node.item = option.name  
+    }
+    return node;
 }
 
 function emv_treefielditem (entity, fieldname, option) {
@@ -796,7 +805,7 @@ function emv_project_create_treeaid (application, aid) {
 
 function emv_project_create_treeterminal (terminal) {
 
-    let nodeitem  = emv_treenodeitem(terminal, {value: 'Terminal ' + terminal.Code, closed:true});   
+    let nodeitem  = emv_treenodeitem(terminal, {name: 'Terminal ' + terminal.Code, closed:true});   
 
     sb.tree_add_item (emv_tree_terminals, nodeitem);
 
@@ -848,11 +857,17 @@ function emv_project_create_treeterminal (terminal) {
 }
 
 function emv_updateridname (content, values) {
-    let obj_response = JSON.parse(content);
-    obj_response = obj_response.data[0];
-    let vendor= obj_response.Vendor;
-    let appliitem = values[0];
-    appliitem.item = appliitem.item + ' -- ' + vendor;
+    let appliitem = values[0];    
+    let rid       = values[1];    
+    try {
+        let obj_response = JSON.parse(content);
+        obj_response = obj_response.data[0];
+        let vendor = obj_response.Vendor;
+        appliitem.item = rid + '    --    ' +  vendor;        
+    } catch (e) {
+        let rid       = values[1];        
+        appliitem.item = rid;           
+    }
 }
 
 function  emv_project_updateapplications (manager) {
@@ -860,7 +875,7 @@ function  emv_project_updateapplications (manager) {
         let application = manager.Applications[i];
         let nodeitem  = emv_treenodeitem(application, {value:application.RID, closed:true});  
 
-        emv_table_search_aidtable(application.RID.toUpperCase(), 'RID', emv_updateridname, [nodeitem])        
+        emv_table_search_aidtable(application.RID.toUpperCase(), 'RID', emv_updateridname, [nodeitem, application.RID])        
 
         sb.tree_add_item (emv_tree_applications, nodeitem);
 

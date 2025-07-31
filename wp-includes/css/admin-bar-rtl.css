@@ -21,7 +21,7 @@ html {
 	border-radius: 0;
 	box-sizing: content-box;
 	transition: none;
-	-webkit-font-smoothing: subpixel-antialiased; /* Prevent Safari from switching to standard antialiasing on hover */
+swebkit-font-smoothing: subpixel-antialiased; /* Prevent Safari from switching to standard antialiasing on hover */
 	-moz-osx-font-smoothing: auto; /* Prevent Firefox from inheriting from themes that use other values */
 }
 

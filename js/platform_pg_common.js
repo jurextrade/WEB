@@ -901,7 +901,7 @@ function PasteStrategy(strategy) {
     var item = {id:'strategy_' + strategy.Name, type: 'link', item: strategy.Name, icon: icon_strategy,
     attributes:{selector: 'project_selectstrategy', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'}, 
     events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}             
-};
+    };
 
     Menu_Strategies.push(item);
 
@@ -2528,7 +2528,7 @@ function PickerPanel (){
       
    '    </div>'+
    '    <ul class="PickerValuesPanel" style="display:none;overflow:hidden;">' +
-   '        <input id="ValuesSearch" type="text" class="form-control" placeholder="Search.." autocomplete="off" onkeyup="filterFunction(this,  event, 1)"> ' +  
+   '        <input id="ValuesSearch" type="text" class="form-control" placeholder="Search.." autocomplete="off" onclick="event.stopPropagation()" onkeyup="filterFunction(this,  event, 1)"> ' +  
    '        <ul class="PickerValues"  onkeydown ="arrowFunction(this, event, 1)">'+
    '        </ul>'+
    '    </ul>'+
@@ -4425,18 +4425,23 @@ function CloseTerminalConfirm(terminal, callafter, param) {
 
 //------------------------------------------------------------ STRATEGY DESCRIPTION PANEL ----------------------------------------------------------
 
-function StrategyDescriptionPanel_Update (platform, strategy) {
+function StrategyDescriptionPanel_Update (platform, strategy, html) {
     var pname = platform.pname;
 
     if (!strategy) return;
     
-  //  let quilleditor = STRATEGY_ASSISTANT_VIEW ? '#strategy_assistant_quill' : '#strategydescriptionpanel';
-    let quilleditor =  '#strategydescriptionpanel';
-    var options = {modules: {toolbar:  QuillToolBarOptions, clipboard: {matchVisual: false}}, theme: 'snow'};
+    let quilleditor;
+  //  let quilleditor =  '#strategydescriptionpanel';
+    var options = {
+                    modules: {toolbar:  QuillToolBarOptions, clipboard: {matchVisual: false}}, 
+                    theme: 'snow'
+                };
     if (pname != 'project') {
         options.readOnly = true;
         options.modules = {toolbar: false};
         quilleditor = '#sessiondescriptionpanel'
+    } else {
+        quilleditor = projectplatform.strategyview == STRATEGY_ASSISTANT_VIEW ? '#assistantquillpanel' : '#strategyquillpanel';
     }
 
     if ($(quilleditor).children ().length == 0) {
@@ -4457,7 +4462,7 @@ function StrategyDescriptionPanel_Update (platform, strategy) {
     }      
     platform.strategyquilleditor.options.first = true;
     
-    $(quilleditor + ' .ql-editor').html(strategy.Description);
+    $(quilleditor + ' .ql-editor').html(html ? html : strategy.Description);
 //    RefreshStrategyAssistantDescription(strategy);      
 }   
 
@@ -4859,6 +4864,8 @@ function StrategySchedulePanel_Update (platform, schedule) {
     }    
 }
 
+
+
 function RefreshStrategyName(strategy) {
     if (!strategy) return;
     var doc = document.getElementById('strategyname');
@@ -4868,6 +4875,7 @@ function RefreshStrategyName(strategy) {
 }
 
 function RefreshStrategy(strategy) {
+    console.log ('REFRESH')
     StrategyPropertiesPanel_Update (projectplatform, CurrentEngine);
     StrategySchedulePanel_Update (projectplatform,  CurrentEngine.Schedules[0]);           
     StrategyDescriptionPanel_Update(projectplatform, strategy); 
@@ -4881,16 +4889,13 @@ function RefreshStrategy(strategy) {
 
     RefreshStrategyPropertiesHelper(CurrentEngine);
     SCEditor.setValue(CurrentEngine.SCContent, -1);
-   
+
     CEditor.setValue(strategy.CContent);
     CurrentContainer.Refresh();
 }
 
 function RefreshStrategyAssistantProperties () {
    
-    $("#strategy_assistant_initialbalance").val (CurrentStrategy.InitialBalance == "" ? "1000" : CurrentStrategy.InitialBalance);
-    $("#strategy_assistant_timeframe").val (CurrentStrategy.TimeFrame == "" ? "ANY" : CurrentStrategy.TimeFrame);     
-
     var PG = solution.GetPGFromTerminal ();
     if (!PG) {
         return;

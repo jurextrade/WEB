@@ -240,65 +240,7 @@ var netprog_dialogtree = {
 
 //------------------------------------------------------------ MAIN PANELS----------------------------------------------------------
 
-var netprog_home_leftsection = {
-    id: 'netprog_home_leftsection', 
-    type: 'panel',       
-    class: 'home_leftsection sb_row',    
-    items: [
-        {
-            id: 'presentation',   
-            type: 'html',              
-            class: 'sectioncontainer presentationpanel sb_column',  
-            content: "netprog_PresentationPanel()"        
-        },   
-    ]
-}
 
-var netprog_home_rightsection = {
-    id: 'netprog_home_rightsection', 
-    type: 'panel',       
-    class: 'home_rightsection sb_column sb_left sb_main',    
-    items: [
-        {
-            id: 'frontbar',   
-            type: 'html',              
-            class: 'home_section1 sectioncontainer', 
-            content: "netprog_MainCarouselPanel()"        
-        },        
-        {
-            id: 'getstarted',   
-            type: 'html',              
-            class: 'home_section1 sectioncontainer', 
-            content: "netprog_GetStartedSection_Panel()"        
-        },   
-        {
-            id: 'tools',   
-            type: 'html',              
-            class: 'home_section1 sectioncontainer', 
-            content: "netprog_ToolsSection_Panel()"        
-        },   
-    ],
-}
-
-var netprog_home_section = {
-    id: 'home_section', 
-    type: 'panel',       
-    class: 'sb_panel sb_row home_section',
-    items: [
-        netprog_home_leftsection,
-        netprog_home_rightsection,
-    ] 
-}
-var netprog_home_panel = {
-    id: 'netprog_home_panel',
-    type: 'html',
-    class: 'sb_panel',      
-    content : 'Vue_netprog_Main("Machine")',
-    events: {
-        ondrop: "ondrop_home_panel(this, event)",
-        ondragover:"{event.preventDefault()}",        
-    }
-}
 
 var netprog_siteview_topbarmenu = {
     id: 'netprog_siteview_topbarmenu',
@@ -527,7 +469,7 @@ var netprog_maintabs = {
     class: 'sb_main',
     label : '',    
     items : [
-        {id: 'netprog_home_tab',     item: 'Home',      type:'link', icon:  icon_home,       items: [netprog_home_section], onclose: 'onclick="onclick_netprog_other_tab_close(this, event)"',    title: 'Home',      events: {onclick:"onclick_netprog_tab(this, event)"}},           
+     //   {id: 'netprog_home_tab',     item: 'Home',      type:'link', icon:  icon_home,       items: [netprog_home_section], onclose: 'onclick="onclick_netprog_other_tab_close(this, event)"',    title: 'Home',      events: {onclick:"onclick_netprog_tab(this, event)"}},           
         {id: 'netprog_siteview_tab', item: 'Site View', type:'link', icon:  icon_siteview,   items: [netprog_siteview_panel],   onclose: 'onclick="onclick_netprog_other_tab_close(this, event)"',    title: 'Scenario',  events: {onclick:"onclick_netprog_tab(this, event)"}},           
         {id: 'netprog_json_tab',     item: 'JSON',      type:'link', icon:  icon_structure,  items: [netprog_jsoneditor], onclose: 'onclick="onclick_netprog_tab_close(this, event)"',    title: 'Structure', events: {onclick:"onclick_netprog_tab(this, event)"}},             
     ],
