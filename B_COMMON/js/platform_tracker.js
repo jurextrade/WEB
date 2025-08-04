@@ -73,10 +73,10 @@ function tracker_update (terminal) {
 
     marketpanel =  ui.sb.get(main, 'pname', 'market') 
     marketpanel = marketpanel[0]
-    tools_panel_select(true)
+    tools_panel_select(1)
 
 
-    let symbolcanvas = terminal.PG.Canvas;
+    let symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return null;  
     let tableid         = $('#' + marketpanel.id + ' .trackertable').attr('id');
     let table           = sb.get(marketpanel, 'id', tableid)[0];  ;

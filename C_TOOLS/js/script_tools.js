@@ -778,7 +778,7 @@ class sb_Array extends Array {
 function LoaderInit() {
 
     var iLoader = document.createElement('div');
-    document.body.appendChild(iLoader);
+   
 
     iLoader.id                 = 'loader';
 
@@ -798,6 +798,8 @@ function LoaderInit() {
     iLoader.style.position     = "fixed";
     iLoader.style.marginTop    = "-60px"; 
     iLoader.style.marginLeft   = "-60px";     
+    iLoader.style.display      = "block";
+    document.body.appendChild(iLoader);    
     }
 
 function LoaderRemove () {

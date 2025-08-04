@@ -74,8 +74,25 @@ function terminalinputresize() {
 
 //-------------------------------------------------------------------TESTER BARGROUP --------------------------------------------------------
 
+function emv_tester_transactionselect_Update (transactions) {
+    var elt1 = document.getElementById('emv_tester_transactionselect'); 
+    elt1.innerHTML = ' <option value="' + '--Select Transaction--' + '">' + '--Select Transaction--' + '</option>';  
+    
+   for (var j = 0; j < transactions.length; j++) {
+       elt1.insertAdjacentHTML('beforeend','<option value="' + transactions[j] + '">' + transactions[j] + '</option>');   
+   }        
+}
+
+function onchange_emv_tester_transactionselect (elt, event) {
+    let transactionfile = $("#emv_tester_transactionselect option:selected").val();
+    
+ 
+
+    Tester.Reader.load_transaction(transactionfile);
+}
 
 //-----------------------------------------------------------------command group
+
 function  onclick_emv_tester_commandgroup (elt, event) {
     switch (elt.id) {
         case 'emv_tester_play_button':
@@ -88,15 +105,18 @@ function  onclick_emv_tester_commandgroup (elt, event) {
                 Tester.Reader.play (silentmode);
                 $('#emv_tester_play_button').removeAttr('disabled');                     
                 $('#emv_tester_play_button ' + 'i').attr('class', icon_pause);
+                $('#emv_tester_play_button ' + 'i').attr('title', 'Pause');                   
             } else {
                 Tester.Reader.pause ();
-                $('#emv_tester_play_button ' + 'i').attr('class', icon_play);                
+                $('#emv_tester_play_button ' + 'i').attr('class', icon_play);   
+                $('#emv_tester_play_button ' + 'i').attr('title', 'Run');   
             }
             
         break;
         case 'emv_tester_start_button'  :
             Tester.Reader.firststep ();       
-            $('#emv_tester_play_button ' + 'i').attr('class', icon_play);                   
+            $('#emv_tester_play_button ' + 'i').attr('class', icon_play);
+            $('#emv_tester_play_button ' + 'i').attr('title', 'Run');               
         break;
         case 'emv_tester_forward_button' :
             let silentmode = false;
@@ -113,7 +133,7 @@ function  onclick_emv_tester_commandgroup (elt, event) {
 
             if (!solution.emv_CurrentProject) {
                 TreatOperation('Load a project to see related transactions')
-                onclick_sidebarmenu ('sidebar_emvprojectmanager', true);                  
+            //    onclick_sidebarmenu ('sidebar_emvprojectmanager', true);                  
                 return;
             }
             let cuser = solution.user;
@@ -198,9 +218,10 @@ function onclick_emv_tester_stepsgroup(elt, event) {
         $('#emv_apdutreepanel').html(sb.render (emv_apdu_roottree))
         emv_selectstep(step, true);
 
-        $('#emv_tester_recordgroup #emv_tester_start_button').removeAttr('disabled');
-        $('#emv_tester_recordgroup #emv_tester_forward_button').removeAttr('disabled');
-        $('#emv_tester_play_button ' + 'i').attr('class', icon_play);                
+        $('#emv_tester_recordbar #emv_tester_start_button').removeAttr('disabled');
+        $('#emv_tester_recordbar #emv_tester_forward_button').removeAttr('disabled');
+        $('#emv_tester_play_button ' + 'i').attr('class', icon_play);      
+        $('#emv_tester_play_button ' + 'i').attr('title', 'Run');                     
 
 
         //   Tester.Reader.play (silentmode, recordindex)
@@ -286,6 +307,7 @@ function emv_tester_transactiontags_reset () {
 }
 
 function emv_tester_init () {
+    Tester = new emvtester();    
     emv_tester_filtergroup_init();
     emv_tester_Input_init();    
     emv_apdu_init ();    
@@ -643,6 +665,8 @@ class CardReader {
     load_transaction (filename)    {
         let cuser = solution.get('user'); 
         let file_path        = cuser.path + '/EMV/' + solution.emv_CurrentProject.Folder
+        $("#emv_tester_transactionselect option[value='--Select Transaction--']").remove();       
+        $('#emv_tester_transactionselect option[value="' + filename + '"]').prop('selected', true);        
         cuser.send ({Name: 'readfile', Values: [cuser.fileexplorer.Root + '/' + file_path + '/Transactions/' + filename]}, false, 
                     function (content, values) {
                         
@@ -651,15 +675,10 @@ class CardReader {
                         Tester.Reader.save_record();
                         Tester.Reader.firststep();
                         $('#emv_tester_play_button ' + 'i').attr('class', icon_play); 
+                        $('#emv_tester_play_button ' + 'i').attr('title', 'Run');   
                     }, 
         []);      
-
-
     }
-    timer () {
-
-    }
-   
 }
 
 function onclick_emv_tester_reader(elt, event) {

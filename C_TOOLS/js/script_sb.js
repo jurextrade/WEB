@@ -942,7 +942,7 @@ class SB {
 
     tab_clear = function (tab, exceptid) {
         if (exceptid) {
-            for (var i = 0; i < tab.items.length; i++) {           
+            for (var i = tab.items.length-1; i >= 0; i--) {           
                 if (tab.items[i].id != exceptid) {
                 this.tab_delete (tab, tab.items[i].id)
                 }

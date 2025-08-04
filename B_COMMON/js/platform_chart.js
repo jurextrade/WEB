@@ -564,18 +564,28 @@ function  ondblclick_chartcanvasOption(event, itempos, yValue, mouseXY, fullData
     DrawChart ();                    
 }    	
 
-
-
- function onclick_selectindicator (elt, event) {
-
-    var objectname = $(elt).find('label').html();
-
+function Chart_AddIndicator (indicatorname) {
     var symbolcanvas = solution.GetCanvasFromTerminal();
-    let object = symbolcanvas.PG.GetObjectFromName (objectname);
+
+    if (!symbolcanvas) {
+        console.log ('not project loaded')
+        return;
+    }
+    
+    let object = symbolcanvas.PG.GetObjectFromName (indicatorname);
 
     symbolcanvas.AddIndicator(object.Id);
-    $(elt).closest('.sb.overlay').remove();       
-    DrawChart();        
+    
+    DrawChart();   
+
+}
+
+ function onclick_selectindicator (elt, event) {
+    event.stopPropagation();
+    var objectname = $(elt).find('label').html();
+    Chart_AddIndicator(objectname);
+    $(elt).closest('.sb_overlay').remove();       
+    
 }
 
 function onclick_indicatorCreate (elt) {
@@ -1020,19 +1030,17 @@ function DrawChart (pname) {
     if (!platform) {
         return;
     }
-    let terminal =  solution.GetCurrentTerminal(platform.pname)
+   let terminal =  solution.GetCurrentTerminal(platform.pname)
 
-    if (terminal == null) {
-        return;
-    }
+ //  if (terminal == null) {
+ //      return;
+ //  }
     return Chart_Draw(terminal);    
 }
 
 function Chart_Draw (terminal) {
-    if (terminal == null) {
-        return;
-    }
-    let symbolcanvas = terminal.PG.Canvas;
+
+    let symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) {
         return;      
     }
@@ -1098,12 +1106,16 @@ function Chart_Draw (terminal) {
 
     let margin      = {left: 60, right: 60, top: 20, bottom: 25};   
     
-    if (terminal == solution.CurrentProject) {
+    let terminalpname = 'project';
+
+    if (!terminal || terminal == solution.CurrentProject) {
         margin.left = 0;
+    } else {
+        terminalpname = terminal.pname;
     }    
 
     let ui       = solution.get('ui') 
-    let platform = ui.platform_get ('pname', terminal.pname);     
+    let platform = ui.platform_get ('pname', terminalpname);     
 
     var ReactElt = React.createElement(platform.chart, {
         terminal:       terminal,          
@@ -1123,9 +1135,11 @@ function Chart_Draw (terminal) {
 function Chart_XExtents(terminal, symbol, period, fromdate, todate) {
     symbol.xextents[period] = [fromdate, todate];
     let ui       = solution.get('ui') 
-    let platform = ui.platform_get ('pname', terminal.pname);        
-
-
+    let terminalpname = 'project';
+    if (terminal) {
+        terminalpname = terminal.pname;
+    }
+    let platform = ui.platform_get ('pname', terminalpname);        
     platform.chart = fitWidth(platform.chart);  
 }
 
@@ -1634,7 +1648,7 @@ function ReactConstructor (_React$Component) {
                         
 
             
-            if (terminal == solution.CurrentOptionTerminal) {
+            if (terminal && terminal == solution.CurrentOptionTerminal) {
                 parameters.unshift (ChartCanvas, properties, react_optionmain (
                 objects,                    
                 xGrid, 

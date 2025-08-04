@@ -207,7 +207,7 @@ function netprog_solution () {
             for (var i = 0; i < arraystructure.length; i++) {
                 let projectname = arraystructure[i].name;
                 let projectpath = arraystructure[i].path;
-                if (values[0].userid == '0' && projectname != "Demo_Project") continue;
+                if (values[0].userid == '0' && projectname != netprog_default_projectname) continue;
                 solution.netprog_Projects.push(new npproject(NETPROG_PLATFORM_PNAME, projectname, projectpath));
             } 
         }
@@ -257,6 +257,19 @@ function netprog_timer () {
             $('#netprog_projectsbar #netprog_projectclose').css ('display', 'none');
         }
 }
+
+function netprog_home_open (event) {
+    let platform =  sb.get(main, 'pname', 'home');
+    //    LoaderDisplay(true);
+    if (platform.length == 0) {
+        solution.add_module('home');               
+    } 
+  
+    let ui  = solution.get('ui')     
+    ui.platform_select(HOME_PLATFORM_PNAME)    
+    onclick_home_mainbar ($('#home_mainbar_netprog')[0], event)      
+}
+
 
 function netprog_update (manager) {
     netprog_update_localsite(manager);
@@ -2037,8 +2050,8 @@ const initialNodes = [
 
 //----------------------------------------------------   CAROUSEL PANEL    ------------------------------------------------   
 
-function netprog_MainCarouselPanel () {
-    return "";
+function netprog_MainCarouselPanel1 () {
+
     var content = 
 //        sb.render (tradedesk_assistantpanel) +     
 '       <div id="netprog_maincarousel" class="featured carousel slide sb_panel" data-bs-ride="carousel">' +

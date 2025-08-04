@@ -91,7 +91,7 @@ var markereditor = (id =>  {return {
 var markerpanel = (id => {return {
     id: 'markerpanel_' + id,
     type: 'panel',
-    class: 'sb_panel markerpanel',
+    class: 'sb_panel markerpanel sb_main',
     closed: true,
     items: [
         markereditor(id),

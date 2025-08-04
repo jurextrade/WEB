@@ -20,7 +20,7 @@ var trackertable = (id =>  {return {
 var trackerpanel  = (id =>  {return {
     id: 'trackerpanel_' + id,
     type: 'panel',  
-    class: 'sb_panel trackerpanel sb_main',
+    class: 'sb_panel trackerpanel',
     items: [
      //   trackerbar,        
         trackertable(id),

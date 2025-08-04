@@ -107,7 +107,7 @@ function currency_updatesymbol (terminal, symbol) {
         return;
     }
     
-    var symbolcanvas = terminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
    
 
     var symbolcontent = ""; 

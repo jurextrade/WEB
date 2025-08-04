@@ -7,6 +7,7 @@ class emvproject {
         this.Folder                  = path;    
         this.Name                    = name;
         this.Path                    = path;
+        this.Transactions            = [];
         this.Manager                 = new EMVManager()   
         this.Loaded                  = 0; 
     }
@@ -90,11 +91,36 @@ class emvproject {
         let  site           = solution.get('site');        
         let  user           = solution.get('user')               
         
+        this.LoadTransactions(user)
         let rootproject = site.address + user.path + '/EMV/' + this.Folder + "/Files/";
         let url = rootproject + 'emvsolution.json';
         solution.get_file(url, ASYNCHRONE,  this.UpdateEMV, [this]);
     }
 
+    LoadTransactions = function (user) {
+
+        let file_path        = user.path + '/EMV/' + solution.emv_CurrentProject.Folder
+
+        user.send({Name: 'scandir_r',Values: [file_path  + '/Transactions', '.']}, false,  function (content, values) {
+            let dirstruct;    
+            let solution = values[1];
+            let user = values[0];
+
+            try {
+                dirstruct = JSON.parse(content);
+            } catch(e) {
+                return console.error(e); 
+            }                
+
+            solution.Transactions = [];
+            
+            for (var i = 0; i < dirstruct.Values[0].Files.length; i++) {
+                solution.Transactions.push (dirstruct.Values[0].Files[i].Name)
+            }
+            emv_tester_transactionselect_Update(solution.Transactions);
+            }, 
+            [user, this])  
+    }
     LoadAcceptor= function () {				//SIT_D753.wp
     }
 

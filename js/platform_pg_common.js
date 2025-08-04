@@ -334,7 +334,7 @@ function YahooTreatHistory (terminal, symbol, period, values) {
 
     LoaderChartHistory (false);    
 
-    var symbolcanvas = terminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return;
 
 
@@ -408,7 +408,7 @@ function YahooTreatSymbol(responseText, parameters) {
         }
         currency_updatesymbol (terminal, Symbol);   
        
-        let symbolcanvas = terminal.PG.Canvas;
+        let symbolcanvas = solution.GetCanvasFromTerminal(terminal);
         if (!symbolcanvas) {
             return;
         }
@@ -462,7 +462,7 @@ function YahooTreatContract(responseText, parameters) {
 
         currency_updatesymbol (terminal, Symbol);
              
-        let symbolcanvas = terminal.PG.Canvas;
+        let symbolcanvas = solution.GetCanvasFromTerminal(terminal);
         if (!symbolcanvas) {
             return;
         }
@@ -551,7 +551,7 @@ function OnGetHistory (terminal, symbol, period, from, to, async) {
 
     LoaderChartHistory (true);    
     var responsetype = '';
-    if (terminal.pname == 'project') {
+    if ( !terminal || terminal.pname == 'project') {
         if (symbol.Name == 'EURUSD') {
             responsetype = 'arraybuffer';
             var url = site.address + "/Terminal/history/" + symbol.Name + GetTimeFromPeriod(period, MINUTES) + ".hst";
@@ -559,6 +559,7 @@ function OnGetHistory (terminal, symbol, period, from, to, async) {
 
         } else {
             var link = 'https://query1.finance.yahoo.com/v8/finance/chart/' + symbol.Name + '?range=' + yahooRangeName[period] + '&interval=' + yahooPeriodName[period];
+            
             var url = site.address + '/php/load_url.php?url=' + encodeURIComponent(link);
             LoadHistory(url, async, responsetype, terminal, symbol, period, YahooTreatHistory); //5 minutes 300000	         
         }
@@ -701,7 +702,7 @@ function HSTTreatHistory (terminal, Symbol, Period, values) {
     
     LoaderChartHistory (false);    
     
-    var symbolcanvas = terminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return;
 
     if (symbolcanvas.CurrentPeriod == Period) {
@@ -869,11 +870,13 @@ function SetModeEditors (terminal) {
 
 function ModifyObject(object, oldname) {
     if (!object) return;
+
     let terminal = solution.GetCurrentTerminal()
+    let pname    = terminal.pname;    
     if (solution.CurrentProject == terminal) {
 
         if (oldname != object.Name) {
-            sb_tree_renameitem('tree_createdindicators', oldname,  object.Name);            
+            sb_tree_renameitem(pname + '_tree_createdindicators', oldname,  object.Name);            
             UpdateAssistantDependency (object, oldname);                       
         }
     }
@@ -940,7 +943,7 @@ function PasteObject(object) {
                     attributes:{selector: 'selectindicator', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'},
                     events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}            
                    };
-        sb.tree_additems ('tree_createdindicators_' + pname, [item])
+        sb.tree_additems (pname + '_tree_createdindicators', [item])
     }
     
     if (solution.CurrentProject == terminal) {
@@ -1801,7 +1804,7 @@ function PriceGroup_Update (symbolcanvas, Symbol) {
 //------------------------------------------------------------ CHART MARKERS PANEL -------------------------------------------------------
 
 function MarkerPanel_Update (terminal, show, setflag) {
-    let symbolcanvas = terminal.PG.Canvas;
+    let symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return null;  
 
     if (chartpanel_fromcanvas(symbolcanvas.ID).length == 0) return;
@@ -1824,7 +1827,7 @@ function MarkerPanel_Update (terminal, show, setflag) {
 }
 
 function ChartSignalsPanel_Update (terminal, show, setflag) {
-    let symbolcanvas = terminal.PG.Canvas;
+    let symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return null;  
 
     if (chartpanel_fromcanvas(symbolcanvas.ID).length == 0) return;
@@ -1858,7 +1861,7 @@ function GChartPanel_UpdatePeriod (symbolcanvas, period) {
 
 function GChartPanel_Update (terminal) {
 
-    let symbolcanvas = terminal.PG.Canvas;
+    let symbolcanvas = solution.GetCanvasFromTerminal(terminal);
 
     if (chartpanel_fromcanvas(symbolcanvas.ID).length == 0) return;
 
@@ -2327,7 +2330,7 @@ function openPopupPickerIndicatorSignal (event, rootid, objectname, signalname, 
 function openPopupPickerIndicator (event, rootid, objectname, onclick_callback) {
     var PG = solution.GetPGFromTerminal ();
     if (!PG) {
-        return;
+        console.log ('only Predefined for not loaded project')
     }                 
    sb.overlay({
         rootelt: rootid ? $('#' + rootid) : $(event.currentTarget).closest('.sb_root'),
@@ -2423,14 +2426,18 @@ function PickerObjectsPanel_Update (objectname, onclick) {
         onitemclick = onclick;
     }
     var content = '';
+    let objects;    
     var PG = solution.GetPGFromTerminal ();
-    if (!PG) {
-        return;
+    if (!PG || PG.Objects.length == 0) {
+        console.log ('picker on not loaded project')
+        objects = solution.Objects;
+    } else {
+        objects = PG.Objects;
     }          
- 
-     for (var i = 0; i < PG.Objects.length; i++) {
-         var indicator = GetIndicatorFromName (GetIndicatorNameFromObject( PG.Objects[i]));
-         content += '<li class="Indicator" onclick="' + onitemclick + '"><a title="' + indicator.tooltip + '"><label>' +  PG.Objects[i].Name + '</label></a></li>';     
+    
+     for (var i = 0; i < objects.length; i++) {
+         var indicator = GetIndicatorFromName (GetIndicatorNameFromObject(objects[i]));
+         content += '<li class="Indicator" onclick="' + onitemclick + '"><a title="' + indicator.tooltip + '"><label>' +  objects[i].Name + '</label></a></li>';     
      }
 
      $('.PickerSubValuesPanel').css ("display", 'none');  
@@ -4261,6 +4268,12 @@ function IndicatorTypePanel_Update (indicatortype) {
 
 //-------------------------------------------------POPUP PANELS ------------------------------------------------  
 
+
+function onclick_closePopupIndicator (elt, event) {
+    event.stopPropagation();
+    $('#popupindicator').remove(); 
+}
+
 function openPopupIndicator(indicatortype, funcname) {
     var PG = solution.GetPGFromTerminal ();
     if (!PG) {
@@ -4276,7 +4289,7 @@ function openPopupIndicator(indicatortype, funcname) {
         header: 'INDICATORS',
         body: IndicatorPanel ('indicatorpanel', false, 'sb_row'),
               //PickerPanel(0, 1),
-        footer: '<button class="sb_mbutton" id = "indicatorcancel"    data-bs-dismiss="modal">Cancel</button>' +
+        footer: '<button class="sb_mbutton" id = "indicatorcancel"     data-bs-dismiss="modal" onclick="onclick_closePopupIndicator (this, event)">Cancel</button>' +
                 '<button class="sb_mbutton" id = "indicatoradd"      onclick="' + functionname + ';">Add</button>',
         indicator: indicatortype,
         funcname: funcname,
@@ -4309,7 +4322,7 @@ function openPopupObject(objectname) {
         id : 'popupindicator',         
         header: 'INDICATOR : ' + objectname,
         body: IndicatorPanel ('indicatorpanel', true, 'sb_row'),
-        footer: '<button class="sb_mbutton" id = "indicatorcancel" data-bs-dismiss="modal" >Close</button>' + 
+        footer: '<button class="sb_mbutton" id = "indicatorcancel"  onclick="onclick_closePopupIndicator (this, event)" data-bs-dismiss="modal" >Close</button>' + 
                 '<button class="sb_mbutton" id = "indicatorsave" onclick="SaveIndicator (\'' + object.Name + '\');" style="display:' +  (object.Type == "PREDEFINED" ? 'none' : 'block') + '">Save</button>',
         height: 700,
         width: 800,

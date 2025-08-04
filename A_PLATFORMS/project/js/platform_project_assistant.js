@@ -462,7 +462,7 @@ function StrategyAssistantGuidePanel (step) {
         '   <div class="card-body">' +
         '        <div class="card-text">You can test independantly each strategy by generating an MQ4 File for each one.</div>' + 
         '        <div class="card-text">Here you can view the Generated MQ4 Files of your project' +
-        '           <button class="assistant_button sb_button noactivate" title="View Generated MQ4 Files" type="button" onclick="onclick_AssistantViewMQ4Files(this, event)">' + 
+        '           <button class="assistant_button sb_mbutton noactivate" title="View Generated MQ4 Files" type="button" onclick="onclick_AssistantViewMQ4Files(this, event)">' + 
         '           <i class=icon_mt4expert></i><label class="sb_label">MQ4 Expert Advisors</label></button>'+
         '        </div>' +
         '   </div>';       
@@ -483,7 +483,7 @@ function StrategyAssistantGuidePanel (step) {
             '       <div class="card-text">The Time Frame also is required for local testing, At any time during the creation of your strategy, you can see the behaviour of your strategy on the chart' +
             '       </div>' +
             '        <div class="card-text">Testing your strategy is done in the Tester Panel' +
-            '           <button class="assistant_button sb_button noactivate" title="Tester" type="button" onclick="onclick_AssistantTester(this, event)">' + 
+            '           <button class="assistant_button sb_mbutton noactivate" title="Tester" type="button" onclick="onclick_AssistantTester(this, event)">' + 
             '           <i class="' + icon_play + '"></i><label class="sb_label">Tester</label></button>'+
             '        </div>' +
             '       <br>' +  
@@ -496,19 +496,19 @@ function StrategyAssistantGuidePanel (step) {
             '       <div>You can precise Indicators to use in the strategy at any time or here</div>' +
             '       <br>' +             
             '       <div class="card-text">Drag and Drop your indicators on the chart using chart view' +
-            '           <button class="assistant_button sb_button noactivate" title="Chart View"  type="button"  onclick="onclick_AssistantViewChart(this, event)">' +
+            '           <button class="assistant_button sb_mbutton noactivate" title="Chart View"  type="button"  onclick="onclick_AssistantViewChart(this, event)">' +
             '           <i class="' + icon_chart + '"></i><label class="sb_label">Chart View</label></button>' +             
             '       </div>' +                    
             '       <div class="card-text">On the chart you can track signals for each indicator added to the chart' +
-            '       <button class="assistant_button sb_button noactivate" title="Show Sinals Panel"  type="button" onclick="onclick_signalstutorial(this, event)">' +
+            '       <button class="assistant_button sb_mbutton noactivate" title="Show Sinals Panel"  type="button" onclick="onclick_signalstutorial(this, event)">' +
             '        <i class="' + icon_signal + '"></i><label class="sb_label">Signals View</label></button></div>' +
             '       <div class="card-text">Double click in the Chart to spot the bar corresponding signals' +
-            '           <button class="assistant_button sb_button noactivate" title="Tracker Panel"  type="button" onclick="onclick_trackerstutorial(this, event)">' +
+            '           <button class="assistant_button sb_mbutton noactivate" title="Tracker Panel"  type="button" onclick="onclick_trackerstutorial(this, event)">' +
             '           <i class="' + icon_track + '"></i><label class="sb_label">Tracker View</label></button>' +
             '       </div>' +
             '       <div class="card-text">In Tracker you can combine Signals with logical operators And Or and marks it on the chart. You can memorize the result as a condition for reusability</div>' +
             '       <div class="card-text">To see the created conditions' +
-            '           <button class="assistant_button sb_button noactivate" title=""  type="button">' +
+            '           <button class="assistant_button sb_mbutton noactivate" title=""  type="button">' +
             '           <i class="' + icon_condition + '"></i><label class="sb_label">Condition View</label></button>' + 
             '       </div>' +
             '   </div>';                                  
@@ -533,7 +533,7 @@ function StrategyAssistantGuidePanel (step) {
             '       <br>' +              
             '       <div class="card-text">For a variable amount like for instance the ATR value, it must be precised in Rules section</div>' +
             '       <br>' +              
-            '       <div class="card-text">Check the Profit SL/strategy section in Properties View<button class="assistant_button sb_button noactivate" title=""  type="button"><i class="' + icon_helper + '"></i>Properties View</button></div>' +
+            '       <div class="card-text">Check the Profit SL/strategy section in Properties View<button class="assistant_button sb_mbutton noactivate" title=""  type="button"><i class="' + icon_helper + '"></i>Properties View</button></div>' +
             '   </div>';                       
            return bodycontent                      
         break;     
@@ -581,7 +581,7 @@ function StrategyAssistantGuidePanel (step) {
             '       <div class="card-title">Strategy Compilation</div>' +                  
             '       <div class="card-text">Ready to generate an MQ4 Expert of your strategy and test it on you MT4 Platform</div>' +  
             '       <br>' +                        
-            '       <div class="card-text">To View the Generated MQ4 File of your strategy<button class="assistant_button sb_button noactivate" title=""  type="button"><i class=icon_mt4expert></i>MQ4 Expert Advisors</button></div>' +
+            '       <div class="card-text">To View the Generated MQ4 File of your strategy<button class="assistant_button sb_mbutton noactivate" title=""  type="button"><i class=icon_mt4expert></i>MQ4 Expert Advisors</button></div>' +
             '   </div>';     
             return bodycontent        
         break;    
@@ -946,7 +946,7 @@ function RecoveryPanel(engine) {
     content += '<div id="strategy_assistant_recoverymode">';
     content += '    <br><br>' +
                '    <i>*A strategy type describes the way sequential trades are calculated,  by selecting a type some defaults properties are generated for your strategy, you can modify the values later in this assistant. During the whole creation process you can inspect the behaviour by testing your strategy in chart view</i>' +
-               '    <p>For Grid Trading explanations useful link is here </p> <a href="https://forexop.com/" target="new"> <button class="assistant_button sb_button noactivate" title=""   type="button">ForexOp</button></a>' +
+               '    <p>For Grid Trading explanations useful link is here </p> <a href="https://forexop.com/" target="new"> <button class="assistant_button sb_mbutton noactivate" title=""   type="button">ForexOp</button></a>' +
                '</div>';
 
     return content;

@@ -27,7 +27,7 @@
 (SET T_BUYLOTTS 0 )
 (SET T_SELLLOTTS 0 )
 (IF (AND (= (GetDay CurrentTime )
-6 )
+5 )
 (>= CurrentTime 23:00:00 )
 )
 (EXIT )

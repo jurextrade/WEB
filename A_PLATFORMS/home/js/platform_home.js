@@ -5,6 +5,16 @@ const HOME_EMV      = 1;
 const HOME_NETPROG  = 2;
 const HOME_OTHER    = 3;
 
+const HOME_PLATFORM_PROJECT    = 'project';
+const HOME_PLATFORM_NETPROG    = 'netprog';
+const HOME_PLATFORM_EMV        = 'emv';
+const HOME_PLATFORM_TRADEDESK  = 'tradedesk';
+
+function slideToggleCallback () {
+    sb.resize(body)
+}
+
+
 function tester_widget_content () {
     content = 'Strategy can be tested locally before distributing it on the MT4 Terminal, this makes it very convenient while designing your  strategy' +
     '<br>Check the testing of a strategy example in DemoProject'
@@ -40,21 +50,40 @@ function onclick_home_trading_rightsection_1_2(elt, event) {
 }
 
 
-function onclick_home_trading_rightsection_1_0_0(event) {
-    event.stopPropagation();    
-    let platform =  sb.get(main, 'pname', 'project');
+function home_loadmodule (pname, callback) {
+    let platform =  sb.get(main, 'pname', pname);
 
     if (platform.length == 0) {
-        solution.add_module('project');     
-    } 
-    let ui  = solution.get('ui')        
-    ui.platform_select(PROJECT_PLATFORM_PNAME)      
-    
-    let projectname = 'DemoProject';    
-    selector_select('project_selectproject', projectname);
+        LoaderDisplay(true);    
+        DisplayOperation("Loading Module " + pname + " Please wait", true, 'operationpanel');             
+        let timerd = setInterval((pname) => {
+            
+            clearInterval(timerd);
+            solution.add_module(pname); 
+            let ui  = solution.get('ui')        
+            ui.platform_select(pname)                
+            LoaderDisplay(false);      
+            callback();           
+        }, 300, pname) 
+    } else {
+        let ui  = solution.get('ui')        
+        ui.platform_select(pname)    
+        callback();         
+    }
+    return platform.length;
 }
 
-function onclick_home_trading_rightsection_1_1_0(event) {
+function onclick_home_trading_rightsection_1_0_0(elt, event) { 
+    event.stopPropagation();
+
+    let pname = HOME_PLATFORM_PROJECT;
+    home_loadmodule (pname, () => {
+        let projectname = 'DemoProject';    
+        selector_select('project_selectproject', projectname);
+    })      
+}
+
+function onclick_home_trading_rightsection_1_1_0(elt, event) { 
     event.stopPropagation();   
     event.preventDefault();
     if ($('#tradedesk_assistantpanel').css('display') != 'none') {
@@ -65,64 +94,95 @@ function onclick_home_trading_rightsection_1_1_0(event) {
 }
 
 
-function onclick_home_trading_rightsection_1_1_1(event) {
+function onclick_home_trading_rightsection_1_1_1(elt, event) { 
+    event.stopPropagation();   
+
+    let pname = HOME_PLATFORM_TRADEDESK;
+    home_loadmodule (pname, () => {
+        let terminalname = "FP Markets MT4 Terminal";
+        selector_select('tradedesk_selectterminal', terminalname);            
+    })      
+}
+
+
+function onclick_home_trading_rightsection_1_2_0(elt, event) { 
     event.stopPropagation();    
-    let platform =  sb.get(main, 'pname', 'tradedesk');
 
-    if (platform.length == 0) {
-        solution.add_module('tradedesk');     
-    } 
-
-    let ui  = solution.get('ui')        
-    ui.platform_select(TRADEDESK_PLATFORM_PNAME)       
-
-    let terminalname = "FP Markets MT4 Terminal";
-    selector_select('tradedesk_selectterminal', terminalname);    
+    let pname = OPTION_PLATFORM_PNAME;
+    home_loadmodule (pname, () => {
+        let projectname = 'DemoProject';        
+        selector_select('option_selectproject', projectname);          
+    })     
 }
 
+function onclick_home_trading_rightsection_2_0 (elt, event) {
+    onclick_home_trading_rightsection_1_0(elt, event)
+}
 
-function onclick_home_trading_rightsection_1_2_0(event) {
+function onclick_home_trading_rightsection_2_0_0 (elt, event) { 
     event.stopPropagation();    
-    let platform =  sb.get(main, 'pname', 'option');
 
-    if (platform.length == 0) {
-        solution.add_module('option');     
-    } 
-    let ui  = solution.get('ui')        
-    ui.platform_select(OPTION_PLATFORM_PNAME)       
+    let pname = HOME_PLATFORM_PROJECT;
+    home_loadmodule (pname, () => {
+        let project = selector_select('project_selectproject', 'DemoProject');
+        let strategyname = 'FRACTAL_CROSS';
+        
+        LoaderDisplay(true);     
+        let timerId = setInterval((project, strategyname) => {
+            if (project.Loaded) {
+                LoaderDisplay(false);                
+                clearInterval(timerId);
+                selector_select('project_selectstrategy', strategyname);    
 
-
-    let projectname = 'DemoProject';        
-    selector_select('option_selectproject', projectname);    
+                onclick_sidebarmenu('sidebar_tester', 1)
+                onclick_project_tester_commandgroup()    
+            }    
+        },  300, project,  strategyname); 	 
+    })         
+ 
 }
 
-function onclick_home_trading_rightsection_2_0_0 (event) {
-    let platform =  sb.get(main, 'pname', 'project');
-//    LoaderDisplay(true);
-    if (platform.length == 0) {
-        solution.add_module('project');               
-    } 
-  
-    let ui  = solution.get('ui')     
-    ui.platform_select(PROJECT_PLATFORM_PNAME)   
-    let project = selector_select('project_selectproject', 'DemoProject');
-    if (!project) {
-        return;
-    }
-    let strategyname = 'FRACTAL_CROSS';
-
-    let timerId = setInterval((project, strategyname) => {
-        if (project.Loaded) {
-            clearInterval(timerId);
-            selector_select('project_selectstrategy', strategyname);    
-
-            onclick_sidebarmenu('sidebar_tester', 1)
-            onclick_project_tester_commandgroup()    
-        }    
-    },  300, project,  strategyname); //5 minutes 300000	  
-
-
+function onclick_home_trading_rightsection_3_0 (elt, event) {
+    onclick_home_trading_rightsection_1_0(elt, event)
 }
+
+
+function onclick_home_trading_rightsection_3_1 (elt, event) {
+    onclick_home_trading_rightsection_1_0(elt, event)
+}
+
+
+function onclick_home_trading_rightsection_3_1_0 (elt, event) { 
+    event.stopPropagation();    
+
+    let pname = HOME_PLATFORM_PROJECT;
+    home_loadmodule (pname, () => {
+       let indicatorname = 'BAR';
+        onclick_projecttabs($('#tab-chart')[0], event);
+        onclick_controlsbottompanel($('#fullscreen')[0], event);    
+        Chart_AddIndicator('BAR');
+        Chart_AddIndicator('DOWNFRACTAL');
+        Chart_AddIndicator('UPFRACTAL');
+        Chart_AddIndicator('PIVOT_POINT');    
+
+        ChartSignalsPanel_Update(null, true);       
+    })         
+}
+
+
+function onclick_home_trading_rightsection_3_2 (elt, event) {
+    onclick_home_trading_rightsection_1_0(elt, event)
+}
+
+
+function onclick_home_trading_rightsection_3_2_0 (elt, event) { 
+    onclick_home_trading_rightsection_3_1_0(elt, event);
+
+    tools_panel_pin(1)    
+}
+
+
+
 let widget;
     
     let trading_container = add_sectioncontainer (home_trading_rightsection, 'getstarted', 'Projects Template');
@@ -147,51 +207,22 @@ let widget;
 
     trading_container = add_sectioncontainer (home_trading_rightsection, 'tools', 'Chart Tools');
     widget = add_widget (trading_container, 'Signals');
-    add_widgetdescription(widget, {type: 'html',  html: "Indicators and Signals"});
+ 
+
     widget = add_widget (trading_container, 'Trackers');
     add_widgetdescription(widget, {type: 'html',  html: "Track your signals"});
+    add_widgetdescription(widget, {type: 'html',  html: "Indicators and the corresponding Signals added on your chart can be tracked"});
+    add_widgetbutton (widget, 'indicator example', 'Track signals of the BAR, Fractals and PIVOT day indicator')      
+
     widget = add_widget (trading_container, 'Markers');
-    add_widgetdescription(widget, {type: 'html',  html: "Mark composed signals"});
+    add_widgetdescription(widget, {type: 'html',  html: "Markers"});
+    add_widgetdescription(widget, {type: 'html',  html: "While Tracking your signals by double clicking on the chart you can mark all the signals"});
+    add_widgetbutton (widget, 'Marker Panel', 'See Markers')     
+
+
 
  //---------------------
 
-function home_steps_diagram () {
-    var content = '';
-
-    content +=  '<ol class="process_diagram">';
-    
-    content += '<li>' +
-    '               <div  id ="step_' +'0' + '" class= "EMVStep" onmousedown="onmousedown_emv_tree_step(this, event)" >' +
-    '                   <div class="sb_widget-title">STEP ' + 0 + '</div>' +
-    '                   <div>' + 'level 0' + '</div>' +
-    '               </div>' +
-    '           </li>';
-    content += '<li><ul>';
-
-    for (var i = 1; i < 3; i++) {
-        content += '<li><ol>';
-        content += '<li>' +
-        '               <div id ="step_' +i + '" class= "EMVStep" onmousedown="onmousedown_emv_tree_step(this, event)" >' +
-        '                   <div class="sb_widget-title">STEP ' + i + '</div>' +
-        '                   <div >' + 'level 1' + '</div>' + 
-        '               </div>' +
-        '           </li>';
-        for (var j = 0; j < 1; j++) {
-            if (j == 0) {
-                content += '<ul>';
-            }
-            content += '<li><div id ="step_' + j + '" class= "EMVSubStep" onmousedown="onmousedown_emv_tree_step(this, event)">' + 'level 2' + '</div></li>';
-            if (j ==  0) {
-                content += '</ul>';
-            }
-        }
-        content += '</ol></li>';        
-    }
-    content += '</ul></li>'
-    content += '</ol>'
-
-    return content;
-}
 
 
 function emv_tester_widget_content () {
@@ -223,18 +254,14 @@ function onclick_home_emv_rightsection_1_0(elt, event) {
     $('#emv_maincarousel').carousel(0);
 }
 
-function onclick_home_emv_rightsection_1_0_0(event) {
+function onclick_home_emv_rightsection_1_0_0(elt, event) { 
     event.stopPropagation();    
-    let platform =  sb.get(main, 'pname', 'emv');
 
-    if (platform.length == 0) {
-        solution.add_module('emv');     
-    } 
-    let ui  = solution.get('ui')        
-    ui.platform_select(EMV_PLATFORM_PNAME)       
-
-    let projectname = 'DemoProject';   
-    selector_select('emv_selectproject', projectname);
+    let pname = HOME_PLATFORM_EMV;
+    home_loadmodule (pname, () => {
+        let projectname = 'DemoProject';   
+        selector_select('emv_selectproject', projectname); 
+    })         
 }
 
 
@@ -247,16 +274,7 @@ function onclick_home_emv_rightsection_1_0_1(elt, event) {
     win.focus();
 }
 
-function onclick_home_emv_rightsection_1_0 (event) {
-    event.stopPropagation();   
-    event.preventDefault();
 
-    if ($('#emv_assistantpanel').css('display') != 'none') {
-        return;
-    }        
-    $('#emv_maincarousel').carousel(2);
-     sb.toggle ($('#emv_maincarousel'), sb.toggle ($('#emv_assistantpanel'), slideToggleCallback));
-}
 
 //------------------------------emv server
 
@@ -280,6 +298,15 @@ function onclick_home_emv_rightsection_1_1_1(elt, event) {
     win.focus();
 }
 
+function onclick_home_emv_rightsection_1_1_2(elt, event) {
+    event.stopPropagation();   
+    event.preventDefault();
+    if ($('#emv_assistantpanel').css('display') != 'none') {
+        return;
+    }        
+    $('#emv_maincarousel').carousel(2);
+    sb.toggle ($('#emv_maincarousel'), sb.toggle ($('#emv_assistantpanel'), slideToggleCallback)); 
+}
 
 
 //------------------------------emv router
@@ -299,59 +326,80 @@ function onclick_home_emv_rightsection_1_2_0(elt, event) {
 }
 
 function onclick_home_emv_rightsection_1_2_1(elt, event) {
+   // var win = window.open("https://github.com/jurextrade/Servers/blob/main/EMVRouter.js", '_blank');
+   // win.focus();
+}
+
+function onclick_home_emv_rightsection_1_2_2(elt, event) {
+    event.stopPropagation();   
+    event.preventDefault();
+    if ($('#emv_assistantpanel').css('display') != 'none') {
+        return;
+    }        
+    $('#emv_maincarousel').carousel(1);
+     sb.toggle ($('#emv_maincarousel'), sb.toggle ($('#emv_assistantpanel'), slideToggleCallback));
+}
+
+
+function onclick_home_emv_rightsection_1_3 (elt, event) { 
+    event.stopPropagation();   
+    event.preventDefault();    
+    
+
+}
+
+function onclick_home_emv_rightsection_1_3_1(elt, event) {
     var win = window.open("https://github.com/jurextrade/Servers/blob/main/EMVRouter.js", '_blank');
     win.focus();
 }
 
 
+
 function onclick_home_emv_rightsection_2_0(elt, event) {
-    if (!$('#emv_assistantpanel').is(':hidden')) {
-        emv_AssistantPanel_Close ();    
+    event.stopPropagation();   
+    event.preventDefault();    
+    
+    if ($('#emv_assistantpanel').css('display') != 'none') {
+        sb.toggle ($('#emv_assistantpanel'), sb.toggle ($('#emv_maincarousel'), slideToggleCallback)); 
     }
     $('#emv_maincarousel').carousel(2);   
 }
 
 
-function onclick_home_emv_rightsection_2_0_0 (event) {
+function onclick_home_emv_rightsection_2_0_0 (elt, event) { 
     event.stopPropagation();    
-    let platform =  sb.get(main, 'pname', 'emv');
 
-    if (platform.length == 0) {
-        solution.add_module('emv');     
-    } 
-    let ui  = solution.get('ui')        
-    ui.platform_select(EMV_PLATFORM_PNAME)       
-    let projectname = 'DemoProject';   
-    selector_select('emv_selectproject', projectname);
+    let pname = HOME_PLATFORM_EMV;
+    home_loadmodule (pname, () => {
+        let projectname = 'DemoProject';   
+        selector_select('emv_selectproject', projectname);
 
-    onclick_sidebarmenu('sidebar_emvtestermanager', 1)
+        onclick_sidebarmenu('sidebar_emvtestermanager', 1)        
+    })         
+
+
  }
 
-function onclick_home_emv_rightsection_2_1_0 (event) {
+function onclick_home_emv_rightsection_2_1_0 (elt, event) { 
     event.stopPropagation();    
 
-    let platform =  sb.get(main, 'pname', 'emv');
-
-    if (platform.length == 0) {
-        solution.add_module('emv');     
-    } 
-    let ui  = solution.get('ui')        
-    ui.platform_select(EMV_PLATFORM_PNAME)       
-    let project = selector_select('emv_selectproject', 'DemoProject');
-    if (!project) {
-        return;
-    }
-    let transactionfile = "Visa.trs";
-
-    let timerId = setInterval((project, transactionfile) => {
-        if (project.Loaded) {
-            clearInterval(timerId);
-            onclick_sidebarmenu('sidebar_emvtestermanager', 1)
-            $('#emv_tester_tab').tab('show');    
-            Tester.Reader.load_transaction(transactionfile);
-            onclick_emv_tester_commandgroup($('#emv_tester_play_button')[0])
-       }    
-    },  300, project, transactionfile); //5 minutes 300000	  
+    let pname = HOME_PLATFORM_EMV;
+    home_loadmodule (pname, () => {
+        let project = selector_select('emv_selectproject', 'DemoProject');
+        let transactionfile = "visa.trs";
+        
+        LoaderDisplay(true);     
+        let timerId = setInterval((project, transactionfile) => {
+            if (project.Loaded) {
+                LoaderDisplay(false);                 
+                clearInterval(timerId);
+                onclick_sidebarmenu('sidebar_emvtestermanager', 1)
+                $('#emv_tester_tab').tab('show');    
+                Tester.Reader.load_transaction(transactionfile);
+                onclick_emv_tester_commandgroup($('#emv_tester_play_button')[0])
+        }    
+        },  300, project, transactionfile);         
+    })         
 }
 
 
@@ -398,18 +446,16 @@ function onclick_home_netprog_rightsection_1_1_1 (elt, event) {
     win.focus();
 }
 
-function onclick_home_netprog_rightsection_1_0_0(event) {
+function onclick_home_netprog_rightsection_1_0_0(elt, event) { 
     event.stopPropagation();    
-    let platform =  sb.get(main, 'pname', 'netprog');
 
-    if (platform.length == 0) {
-        solution.add_module('netprog');     
-    } 
-    let ui  = solution.get('ui')        
-    ui.platform_select(NETPROG_PLATFORM_PNAME)       
+    let pname = HOME_PLATFORM_NETPROG;
+    home_loadmodule (pname, () => {
+        let projectname = 'DemoProject';   
+        selector_select('netprog_selectproject', projectname);        
+    })         
 
-    let projectname = 'DemoProject';   
-    selector_select('netprog_selectproject', projectname);
+
 }
 
     let netprog_container = add_sectioncontainer (home_netprog_rightsection, 'projectsection', 'Get Started - Project Templates');
@@ -594,9 +640,6 @@ return content;
 
 //----------------------------------------------------ASSISTANT PANEL------------------------------------------------
 
-function slideToggleCallback () {
-    sb.resize(body)
-}
 
 function MT4AssistantRegister () {
     assistant_login = true;
@@ -606,18 +649,11 @@ function MT4AssistantRegister () {
 function onclick_checkout (event) {
 
     event.stopPropagation();    
-    let platform =  sb.get(main, 'pname', 'tradedesk');
-    LoaderDisplay(true);
-    setTimeout(function() { 
-        if (platform.length == 0) {
-            solution.add_module('tradedesk');     
-        } 
-        let ui  = solution.get('ui')        
-        ui.platform_select(TRADEDESK_PLATFORM_PNAME)       
-     //   selector_select('project_selectproject', 'DemoProject');
-        LoaderDisplay(false);        
-    },5)
+        let pname = HOME_PLATFORM_TRADEDESK;
+        home_loadmodule (pname, () => {
+    })
 }
+
 
 function onclick_tradedesk_assistantclose(elt) {
     sb.toggle ($('#tradedesk_assistantpanel'), sb.toggle ($('#trading_maincarousel'), slideToggleCallback));
@@ -1127,6 +1163,7 @@ function home_emv_init_assistance() {
 //----------------------------------------------------  NETPROG CAROUSEL PANEL    ------------------------------------------------   
 
 function netprog_MainCarouselPanel () {
+
     var content = 
 //        sb.render (tradedesk_assistantpanel) +     
 '       <div id="netprog_maincarousel" class="featured carousel slide sb_panel" data-bs-ride="carousel">' +
@@ -1135,72 +1172,39 @@ function netprog_MainCarouselPanel () {
 '           <div class="carousel-inner">' +
 '               <div class="carousel-item active">' +
 '                   <div class="sb_row sb_panel">' +
-'                       <img src="/A_PLATFORMS/netprog/res/netprog1.jpg" alt=""></img>' +
-'                       <div class="card col9">' +
-'                           <div class="card-header">' +
-'                           STRATEGY CREATOR<img src="/res/UnderCon_black.png" class="underconstruct" ></div> ' +
 '                           <div class="card-body">' +
-'                               <div class="card-title">STRATEGY CREATOR - Algo Trading</div>' +
+'                               <div class="card-title">Strong Points</div>' +
 '                               <div class= "mb-3">' +    
-'                                   <li class="card-text">You have an idea of a strategy and You do not know how to program it ? </li>' +
-'                                   <li class="card-text">Strategy Creator allows you to realize and test your strategy </li>' +
-'                                   <li class="card-text">You can test your idea in minutes</li>' +
-'                                   <li class="card-text">A wizard will help you to do it</li>' +
+'                                   <li class="card-text">Profit of 80 % of time and means in developments of communicating applications multi-platforms on TCP/IP </li>' +
+'                                   <li class="card-text">API multi-platforms: UNIX, Windows, IBM,...</li>' +
+'                                   <li class="card-text">Transcoding of  characters</li>' +
+'                                   <li class="card-text">Newspaper of  transfers allowing to index the transfers carried out with mechanisms of recovery</li>' +
+'                                   <li class="card-text">Interpreted language allowing instantaneous programming of orders distributed on the various machines</li>' +
+'                                   <li class="card-text">Connections to data bases</li>' +
+'                                   <li class="card-text">Synchronous or asynchronous communication</li>' +
+
 '                               </div>' +
-'                           </div>' +
+
 '                       </div>' +
 '                   </div>' +
 '               </div>' +
 '               <div class="carousel-item">' +
-'                   <div class="sb_row sb_panel">' +
-'                       <img src="/A_PLATFORMS/netprog/res/netprog2.jpg" alt=""></img>' +
-'                       <div class="card col9">' +
-'                           <div class="card-header">' +
-'                               MT4 PLATFORM' +
-'                           </div> ' +
-'                           <div class="card-body">' +
-'                               <div class="card-title">CONNECT TO YOUR MT4 PLATFORM - Features</div>' +   
-'                                <div class= "mb-3">' +    
-'                                   <li class="card-text">Fully take control on your MT4 experts</li>' +
-'                                   <li class="card-text">Launch more than one expert on the same chart</li>' +
-'                                   <li class="card-text">Change the behavior of your Strategies during run time</li>' +
-'                                   <li class="card-text">Distinguish orders related to your running strategies</li>' +
-'                               </div>' +
-'                           </div>' +
-'                       </div>' +
-'                   </div>' +
-'               </div>' +
-'               <div class="carousel-item">' +
-'                   <div class="sb_row sb_panel">' +
-'                       <img src="/A_PLATFORMS/netprog/res/netprog3.jpg" alt=""></img>' +
-'                       <div class="card col9">' +
-'                           <div class="card-header">' +
-'                           OPTION TRACKER<img src="/res/UnderCon_black.png" class="underconstruct" ></div> ' +
-'                           <div class="card-body">' +
-'                               <div class="card-title">STOCK AND OPTION TRACKER ON YAHOO</div>' +
-'                               <div class= "mb-3">' +    
-'                                   <li class="card-text">Stocks</li>' +
-'                                   <li class="card-text">Option Calculator </li>' +
-'                                   <li class="card-text">Option Greeks</li>' +
-'                                   <li class="card-text">Option Chain</li>' +
-'                               </div>' +
-'                           </div>' +
-'                       </div>' +
+'                   <div class="sb_row sb_panel" style="overflow:auto">' +
+                      sb.render (home_netprog_protocols) +
 '                   </div>' +
 '               </div>' +
 '           </div>' +
 '           <div class="carousel-indicators bottomcarousel">' +
 '               <button  class="sb_roundbutton active" type="button" data-bs-target="#netprog_maincarousel" data-bs-slide-to="0" aria-current="true" aria-label="Slide 1"></button>' +
 '               <button  class="sb_roundbutton" type="button" data-bs-target="#netprog_maincarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>' +
-'               <button  class="sb_roundbutton" type="button" data-bs-target="#netprog_maincarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>' +
+
 '           </div>' +
-'  </div>';
-return content;
+'   </div>';
+    return content;
 }
 
-
 function add_sectioncontainer (section, id, label) {
-    let index       = section.items.length; //frontbar at index 0;    
+    let index       = section.items[1].items.length + 1; //frontbar at index 0;    
     let sectionid = section.id + '_' + index;
     let container = {id: sectionid + 'father', type: 'panel', class: 'sectioncontainer',  
             items: [
@@ -1213,7 +1217,7 @@ function add_sectioncontainer (section, id, label) {
                 }
             ]  
           } 
-          section.items.push (container)
+          section.items[1].items.push (container)
           return container.items[1];
 }
 
@@ -1237,7 +1241,7 @@ function add_widgetdescription (widget, properties) {
 
 function add_widgetbutton (widget, name, title) {
     let index       = widget.buttons.length;
-    widget.buttons.push ({callback: 'onclick_' + widget.id + '_' + index + '(event)', name: name, title : (title ? title : '')});
+    widget.buttons.push ({callback: 'onclick_' + widget.id + '_' + index + '(this, event)', name: name, title : (title ? title : '')});
 }
 
 

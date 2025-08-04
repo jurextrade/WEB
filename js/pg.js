@@ -1,8 +1,8 @@
 
-var Menu_PredefinedIndicators = [];
-
 var CODE_SS             = 0;
 var CODE_CPP            = 1;
+
+
 
 function pg_solution () {
     let  site           = solution.get('site');
@@ -21,11 +21,17 @@ function pg_solution () {
 
     solution.PL             = null;
     solution.PLSELL         = null;
+    
 
 // pl parser
 
     solution.Terminals      = [];
     solution.DefaultLoaded  = false;
+
+    solution.tradedesk_PG  = new pg ('tradedesk');
+    solution.project_PG    = new pg ('project');
+    solution.option_PG     = new pg ('option');
+    
 
     solution.LoadProfile = function (async, interfacecallback, par) {
         if (!async) async = false;
@@ -206,23 +212,27 @@ function pg_solution () {
         var interfacecallback = null;
         this.LoadSignals(site.address + "/Terminal/MQL4/Files/PG_Signals.csv",   ASYNCHRONE, interfacecallback, null);
         this.LoadFields(site.address + "/Terminal/MQL4/Files/PG_Fields.csv",     ASYNCHRONE, interfacecallback, null);
-        this.LoadObjects(site.address + "/Terminal/MQL4/Files/PG_Objects.csv",   ASYNCHRONE, solution.UpdatePredefinedObjects, pname);
+        this.LoadObjects(site.address + "/Terminal/MQL4/Files/PG_Objects.csv",   SYNCHRONE, this.UpdateObjects, pname);
 
     }
-    
+   
+    solution.UpdateObjects = function (pname) {
+       solution.tradedesk_PG.Objects  = solution.Objects;
+       solution.project_PG.Objects    = solution.Objects;
+       solution.option_PG.Objects     = solution.Objects;
+
+    }
+
     solution.UpdatePredefinedIndicators = function (pname) {
-        sb.tree_additems ('tree_predefinedindicators_' + pname, Menu_PredefinedIndicators);  
-    }
-
-    solution.UpdatePredefinedObjects = function (pname) {
+        let menu = [];
         for (var j = 0; j < solution.Objects.length; j++) {
-            Menu_PredefinedIndicators.push({
+            menu.push({
                 id:'indicator_' + solution.Objects[j].Name, type: 'link', item: solution.Objects[j].Name, icon: icon_indicator,
                 attributes:{selector: 'selectindicator', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'},
                 events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}                         
             });
-        }
-        solution.UpdatePredefinedIndicators(pname)
+        }        
+        sb.tree_additems (pname + '_tree_predefinedindicators', menu);  
     }
 
  // project    
@@ -248,9 +258,8 @@ function pg_solution () {
                     });
             }
         }
-        sb.tree_additems ('tree_createdindicators_' + pname, tree_items);    
-   //     sb.tree_additems ('tree_predefinedindicators_' + pname, Menu_PredefinedIndicators);  
-        $('#tree_createdindicators_' + pname).addClass('show');    
+        sb.tree_additems (pname + '_tree_createdindicators', tree_items);    
+        $('#' + pname + '_tree_createdindicators').addClass('show');    
     }
     
     solution.UpdateStrategies = function (terminal) {
@@ -285,7 +294,9 @@ function pg_solution () {
         if (terminal) {
             return terminal.PG;
         }
-        return null;
+        else {
+            return this.ui.currentplatform ?  eval('this.' + this.ui.currentplatform_pname + '_PG') : null;
+            }                
     }
 
     solution.GetCanvasFromTerminal = function (terminal) {
@@ -558,7 +569,7 @@ function pgproject (pname, name, path) {
     this.Port                    = solution.DeployServer_Port;    
     this.Com                     = null;
 
-    this.PG                      = new pg(this.pname);
+    this.PG                      = solution.project_PG;        //new pg(this.pname);
     this.PG.Canvas.ShowLeftAxis  = false;          
 
     this.CurrentStrategy         = null;
@@ -865,7 +876,7 @@ function pgterminal (pname, type, main) {
 
 
     this.pname          = pname;
-    this.PG             = new pg(this.pname);    
+    this.PG             = solution.tradedesk_PG;     //new pg(this.pname);    
 
     this.Name           = '';
     this.Path           = '---';
@@ -975,7 +986,7 @@ function pgterminal (pname, type, main) {
 //        this.Symbols.push(symbol);
     }
     this.Clear = function () {
-        this.PG     = new pg(this.pname);
+        this.PG     = solution.option_PG;     //new pg(this.pname);    
         this.User   = new pguser();
 
         this.Path = '---';
@@ -3609,610 +3620,3 @@ function isCyclic(obj) {
     detect(obj, 'obj');
     return detected;
 }
-
-/*
-function pgsolution () {
-    let  user           = solution.get('user')
-    let  site           = solution.get('site');
-
-    if (site.protocol == 'http:') {
-        solution.MT4Server_Address   =  '217.112.89.92';    
-        solution.MT4Server_Port     =  442;     
-    }
-    else {
-        solution.MT4Server_Address   =  '217.112.89.92';    
-        solution.MT4Server_Port     =  443;    
-    }
-
-    solution.SiteAdress     = site.address;
-
-    solution.UserName       = user.name;
-    solution.UserMail       = user.mail;
-    solution.UserId         = user.id;
-    solution.UserPath       = solution.UserId != 0 ? '/members/' + solution.UserId : '/members/1';
-    solution.UserUrl        = solution.UserId != 0 ? 'Hello ' + solution.UserName : '';
-    solution.UserAdmin      = solution.UserId != 1 ? false : true;
-
-    solution.ObjectSignals  = [];
-    solution.Fields         = [];
-    solution.Objects        = []; //Loaded objects
-
-    solution.PL             = null;
-    solution.PLSELL         = null;
-
-    solution.CurrentProject;
-    solution.CurrentTerminal;
-    solution.CurrentOptionTerminal;
-    solution.CurrentMainTerminal;    
-
-    solution.LocalGMTOffset = (new Date()).getTimezoneOffset() / 60;
-    solution.DifferenceHoursTime = solution.LocalGMTOffset * 60 * 60 * 1000;
-
-    solution.CalendarNews = [];
-    solution.ForexNews = [];
-
-
-    solution.Projects = [];
-    solution.Terminals = [];
-
-
-    solution.ComputerName;
-    solution.SystemDirectory;
-    solution.WindowsDirectory;
-    solution.LastProjectDir;
-    solution.Version;
-    solution.NewsSite;
-    solution.NewsPath;
-    solution.FromMailName;
-    solution.FromMailAdress;
-
-    solution.MarketVisible;
-    solution.ExitConfirmationDialog;
-    solution.OpenConfirmationDialog;
-    solution.ProgressDataPath;
-    solution.ProgressBinPath;
-    solution.ProgressCommonPath;
-    solution.ProgressDocPath;
-    solution.ProgressHistoryPath;
-    solution.MT4DataPath;
-    solution.ProjectsPath;
-    solution.ProgressPath;
-    solution.ProgressSite;
-    solution.LastProjectName = null;
-    solution.LastStrategyName = null;
-    solution.LastTerminalType = null;
-    solution.LastTerminalName = "";
-    solution.LastPlatform = null;
-    solution.LastTerminalLeftBar = "";
-    solution.LastTerminalRightBar = "";
-    solution.ForexString  = ReturnMatchStringFromArray (ForexCurrencies);
-    solution.MarketString = ReturnMatchStringFromArray (MarketCurrencies);
-    solution.ClipBoard = null;
-    solution.StrategyClipBoard = null;
-    solution.ObjectClipBoard = null;
-    solution.ConditionClipBoard = null;
-
-    solution.UpdateIndicators = function (terminal) {
-        let pname    = terminal.pname;
-        let PG       = terminal.PG;     
-        
-        let tree_items = [];
-        for (var j = 0; j < PG.Objects.length; j++) {
-            if (PG.Objects[j].Type == 'PREDEFINED') {
-                continue;
-            } else
-            if (PG.Objects[j].Type == 'SYSTEM') {
-                tree_items.push({id:'indicator_' + PG.Objects[j].Name, type: 'link', item: PG.Objects[j].Name, icon: icon_indicator,
-                    attributes:{selector: 'selectindicator', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'},
-                    events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}        
-                    });
-            } else {
-    
-                tree_items.push({id:'indicator_' + PG.Objects[j].Name, type: 'link', item: PG.Objects[j].Name, icon: icon_indicator,
-                    attributes:{selector: 'selectindicator', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'},
-                    events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}    
-                    });
-            }
-        }
-        sb.tree_additems ('tree_createdindicators_' + pname, tree_items);    
-        sb.tree_additems ('tree_predefinedindicators_' + pname, Menu_PredefinedIndicators);  
-        $('#tree_createdindicators_' + pname).addClass('show');    
-    }
-
-    solution.UpdateStrategies = function (terminal) {
-        terminal.Loaded = 1;    
-    }
-
-    solution.UpdateSchedules = function (terminal) {
-        var PG = terminal.PG;         
-        for (var j = 0; j < PG.Schedules.length; j++) {
-            var schedule = PG.Schedules[j];
-            var engine = PG.GetEngineFromRuleOperation(schedule.StartRule, schedule.Operation, );
-            if (!engine) continue;
-            engine.Schedules.push(schedule);
-        }
-    }
-
-    solution.InitPL = function () {
-        solution.PL = new pl(parser);
-        solution.PL.Trace = function (text) {
-       //     console.log (text);
-        };
-        solution.PL.Clear = function (text) {
-            var textarea = $('#error');
-            if (textarea) textarea.val("");
-        }
-        solution.PLSELL = new pl(parser);
-        solution.PLSELL.Trace = function (text) {
-       //     console.log (text);
-        };
-        solution.PLSELL.Clear = function (text) {
-            var textarea = $('#error');
-            if (textarea) textarea.val("");
-        }
-    }
-
-    solution.Load = function () {
-
-        var interfacecallback = null;
-
-        this.LoadTerminals(this.UserId, this.SiteAdress + "/php/read_terminals.php",SYNCHRONE, UpdateTerminals,   this);
-        this.LoadSignals(this.SiteAdress + "/Terminal/MQL4/Files/PG_Signals.csv",   ASYNCHRONE, interfacecallback, this);
-        this.LoadFields(this.SiteAdress + "/Terminal/MQL4/Files/PG_Fields.csv",     ASYNCHRONE, interfacecallback, this);
-        this.LoadObjects(this.SiteAdress + "/Terminal/MQL4/Files/PG_Objects.csv",   ASYNCHRONE, UpdatePredefinedObjects, this);
-        this.LoadProjects(this.UserId, this.SiteAdress + "/php/read_projects.php",  ASYNCHRONE, UpdateProjects,    this);
-
-        this.LoadProfile(ASYNCHRONE);
-    }
-    solution.LoadProfile = function (async, interfacecallback, par) {
-        if (!async) async = false;
-        var url = this.UserPath + "/";
-
-        var xhttp = new XMLHttpRequest();
-
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                var data = this.responseText;
-                var lines = data.split(/\r\n|\n/);
-                var i = 0;
-                solution.LastProjectName = lines[i];
-                i++;
-                solution.LastStrategyName = lines[i];
-                i++;
-                solution.LastTerminalType = lines[i];
-                i++;
-                solution.LastTerminalName = lines[i];
-                i++;
-                solution.LastPlatform = lines[i];
-                i++;
-                solution.LastTerminalLeftBar = lines[i];
-                i++;
-                solution.LastTerminalRightBar = lines[i];
-                i++;
-    
-                if (interfacecallback)  interfacecallback (par);            
-            }
-        };
-        xhttp.open("GET", url + "PG_Profile.txt", async);
-   //     xhttp.setRequestHeader('Cache-Control', 'no-cache');
-        xhttp.send();
-    }  
-
-    solution.SaveProfile = function () {
-        if (this.UserId == "0") return;
-        var symbolcanvas = this.GetCanvasFromTerminal();
-        var http = new XMLHttpRequest();
-        var url = 'https://www.jurextrade.com/php/save_gprofile.php';
-        var saveinfo = (this.CurrentProject ? this.CurrentProject.Name : "") + "\n" + 
-                    (this.CurrentProject && this.CurrentProject.CurrentStrategy != null ? this.CurrentProject.CurrentStrategy.Name : "") + "\n" + 
-                    (this.CurrentTerminal ? this.CurrentTerminal.Type : "") + "\n" + 
-                    (this.CurrentTerminal ? this.CurrentTerminal.Name : "") + "\n" + 
-                     this.ui.currentplatform_pname + "\n" +    
-                    "\n" +    //leftsidebar ??
-                    "\n";      //rightsidebar
-
-                        
-        var params = 'content=' + saveinfo + '&user_id=' + this.UserId;
-        http.open('POST', url, true);  // must be asyncronous
-        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        http.onreadystatechange = function () { //Call a function when the state changes.
-            if (http.readyState == 4 && http.status == 200) {}
-        }
-        http.send(params);
-    }
-
-    solution.ProjectFindName = function (name) {
-        if (!name || name == "") {
-            var newname = "NewProject_";
-            var i = 0;
-            while (i >= 0) {
-                if (this.GetProjectFromName(newname + i)) i++;
-                else {
-                    name = newname + i;
-                    break;
-                }
-            }
-        }
-        return name;
-    }
-    solution.LoadProjects = function (Id, url, async, interfacecallback, par) {
-        if (!async) async = false;
-        var params = 'user_id=' + (Id == "0" ? "1" : Id);     
-        
-        var xhttp = new XMLHttpRequest();
-        xhttp.userid = Id;
-
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-        
-                let arraystructure =  JSON.parse(this.responseText);
-                for (var i = 0; i < arraystructure.length; i++) {
-                    let projectname = arraystructure[i].name;
-                    let projectpath = arraystructure[i].path;
-                    if (this.userid == '0' && projectname != "DemoProject") continue;
-                    solution.Projects.push(new pgproject(PROJECT_PLATFORM_PNAME, projectname, projectpath));
-                }   
-                if (interfacecallback)  interfacecallback (par);            
-            }
-        };
-        xhttp.open('POST', url, async);
-        xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhttp.send(params);
-    }
-    
-    solution.NewProject = function (name) {
-        if (!name) {
-            name = this.ProjectFindName(name);
-        }
-
-        let project = new pgproject(PROJECT_PLATFORM_PNAME, name, name);
-        project.Loaded = true;
-        project.Folder = name;
-        project.PG.Objects = this.Objects.slice(0);        
-
-        solution.Projects.push(project);
-      //  project.Save ();
-        return project;
-    }    
-
-
-    solution.LoadTerminals = function (Id, url, async, interfacecallback, par) {
-        if (!async) async = false;
-        var params = 'user_id=' + (Id == "0" ? "1" : Id);
-
-        var xhttp = new XMLHttpRequest();
-      
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                let arraystructure =  JSON.parse(this.responseText);
-                for (var i = 0; i < arraystructure.length; i++) {
-                    let accountnumber = arraystructure[i].accountnumber;
-                    let accountname = arraystructure[i].accountname;
-                    let terminalname = arraystructure[i].terminalname;
-                    let datapath = arraystructure[i].datapath;
-                    let terminaltype = arraystructure[i].terminaltype;
-
-                    var pathElements = datapath.replace(/\/$/, '').split('/');
-                    var sdatapath = pathElements[pathElements.length - 1];
-
-                
-                    if (terminaltype == 'MT4') {     
-
-                        if (solution.GetTerminalsFromName (terminalname).length != 0) continue;
-                        
-                        var realterminal   = new pgterminal(TRADEDESK_PLATFORM_PNAME, 'Terminal');
-                        var testerterminal = new pgterminal(TRADEDESK_PLATFORM_PNAME, 'Tester');
-                        realterminal.User.AccountNumber = testerterminal.User.AccountNumber = accountnumber;
-                        realterminal.User.AccountName   = testerterminal.User.AccountName = accountname;
-                        realterminal.Name               = testerterminal.Name = terminalname;
-                        realterminal.DataPath           = testerterminal.DataPath = datapath;
-                        realterminal.Folder             = testerterminal.Folder = sdatapath;
-                        solution.Terminals.push(realterminal);
-                        solution.Terminals.push(testerterminal);
-                    }
-                    if (terminaltype == 'Yahoo') {   // 2 terminals; option and main
-
-                        if (solution.GetTerminalsFromDataPath (datapath).length != 0) continue;
-
-                        let realterminal                = new pgterminal( (datapath == '//Main' ? HOME_PLATFORM_PNAME : OPTION_PLATFORM_PNAME), terminaltype);
-                        realterminal.User.AccountNumber = accountnumber;
-                        realterminal.User.AccountName   = accountname;
-                        realterminal.Name               = terminalname;
-                        realterminal.DataPath           = datapath;
-                        realterminal.Folder             = sdatapath;
-
-                        solution.Terminals.push(realterminal);
-                    }
-                    else
-                    if (terminaltype == 'IB') {   // 2 terminals; option and main
-
-                        if (solution.GetTerminalsFromName (terminalname).length != 0) continue;
-
-                        var realterminal = new pgterminal("", terminaltype);
-                        realterminal.User.AccountNumber =  accountnumber;
-                        realterminal.User.AccountName =  accountname;
-                        realterminal.Name =  terminalname;
-                        realterminal.DataPath = datapath;
-                        realterminal.Folder = sdatapath;
-                        solution.Terminals.push(realterminal);
-                    }
-                }
-                if (interfacecallback)  interfacecallback (par);                           
-            }
-        };
-        xhttp.open('POST', url, async);
-        xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhttp.send(params);
-    }
-    
-    solution.LoadObjects = function (url, async, interfacecallback, par) {
-        if (!async) async = false;
-        
-        var xhttp = new XMLHttpRequest();
-       
-        xhttp.onreadystatechange = function () {
-            solution.Objects = [];
-            if (this.readyState == 4 && this.status == 200) {
-                var data = this.responseText;
-                var lines = data.split(/\r\n|\n/);
-                var headings = lines[0].split(','); // Splice up the first row to get the headings
-                var pobject = null;
-                for (var j = 1; j < lines.length; j++) {
-                    if (lines[j] == "") continue;
-                    var values = lines[j].split(','); // Split up the comma seperated values
-                    //pgobject (id, name, type, cross, period, method, apply, shift, mode, displaytype, display, leveltype, value, levels) {
-                    pobject = new pgobject(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], [values[12], values[13], values[14], values[15]]);
-                    if (pobject.Type == "CUSTOM" || pobject.Type == "PREDEFINED") {
-                        pobject.ProgName = values[4];
-                    } else {
-                        if (pobject.Type == "SAR") pobject.Step = values[4];
-                        else pobject.Period = values[4];
-                    }
-                    k = 1;
-                    for (var a = 0; a < 5; a++)
-                        for (i = 0; i < NBR_PERIODS; i++) {
-                            pobject.Level[a][i] = values[15 + k] == "--" ? EMPTY_VALUE : +values[15 + k];
-                            k = k + 1;
-                        }
-                    solution.Objects.push(pobject);
-                }
-                if (interfacecallback)  interfacecallback (par);            
-            }
-        };
-        xhttp.open("GET", url, async);
-        
-        xhttp.send();
-    }
-    solution.LoadFields = function (url, async, interfacecallback, par) {
-        if (!async) async = false;
-        
-        var xhttp = new XMLHttpRequest();
-
-        FieldsItems = [];
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                var data = this.responseText;
-                var lines = data.split(/\r\n|\n/);
-                var headings = lines[0].split(','); // Splice up the first row to get the headings
-                var objname = "";
-                var object = null;
-                var i = 0;
-                for (var j = 1; j < lines.length; j++) {
-                    if (lines[j] == "") continue;
-                    var values = lines[j].split(',');
-                    solution.Fields.push({
-                        recid: 500 + i,
-                        Type: values[0],
-                        name: values[1],
-                        CName: values[2],
-                        Description: values[3]
-                    });
-                    FieldsItems.push({
-                        recid: 500 + i,
-                        Type: values[0],
-                        name: values[1],
-                        CName: values[2],
-                        Description: values[3],
-                        //w2ui: {style: "color: black; background-color: DarkKhaki"}
-                        w2ui: {style: 'color: ' + (values[0] == "io" ? 'black' : 'yellow') + '; background-color: ' + 'DarkKhaki'}                        
-                    });
-                    ActionDescription.push({
-                        id: 500 + i,
-                        text: values[3]
-                    });
-                    i++;
-                }
-                if (interfacecallback)  interfacecallback (par);            
-            }
-        }
-        xhttp.open("GET", url, async);
-        xhttp.send();
-    }
-    solution.LoadSignals = function (url, async, interfacecallback, par) {
-        if (!async) async = false;
-        
-        var xhttp = new XMLHttpRequest();
-
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-    
-                var data = this.responseText;
-                var lines = data.split(/\r\n|\n/);
-                var headings = lines[0].split(','); // Splice up the first row to get the headings
-                var objname = "";
-                var object = null;
-                var i = 0;
-    
-                for (var j = 1; j < lines.length; j++) {
-                    if (lines[j] == "") continue;
-                    var values = lines[j].split(',');
-    
-                    if (objname != values[0]) {
-                        i = 0;
-                        object = {objectname: values[0], signals: []};
-                        solution.ObjectSignals.push(object);
-                        objname = values[0];
-                    }
-                    object.signals.push({recid: i, text: values[1], type: SignalType[SignalName.indexOf(values[1])], description: values[2]});
-                    i++;
-                }
-                if (interfacecallback)  interfacecallback (par);            
-            }
-        }
-        xhttp.open("GET", url, async);
-        xhttp.send();
-    }    
-
-
-    solution.AddYahooTerminal = function (accountnumber, accountname, terminalname, terminaltype, datapath) {
-        var http = new XMLHttpRequest();
-        var url =   this.SiteAdress + '/wp-login1.php?action=add&' + 'user_login=' + this.get('user').name +  '&accountnumber=' + accountnumber + '&accountname=' + accountname + '&terminalname=' + terminalname + '&datapath=' + datapath + '&terminaltype=' + terminaltype;
-        http.open('GET', url, false);
-    	http.onreadystatechange = function() {//Call a function when the state chan
-    	    if(http.readyState == 4 && http.status == 200) {
-    		var userid = 0;
-    		if (http.responseText == '0')  {
-    			}
-    			else {
-    				userid = http.responseText;
-    			}
-    		}
-    	}
-        http.send(null);
-    }     
-
-    solution.GetMainTerminal = function () {
-        var terminals = [];
-        for (var i = 0; i < this.Terminals.length; i++) {
-            if (this.Terminals[i].Folder == "Main") 
-                return (this.Terminals[i]);
-        }
-        return null;
-    }
-    
-    solution.GetTerminalFromType = function (type) {
-        for (var i = 0; i < this.Terminals.length; i++) {
-            if (this.Terminals[i].Type == type) return this.Terminals[i];
-        }
-        return null;
-    }
-    solution.GetTerminalsFromName = function (name) {
-        var terminals = [];
-        for (var i = 0; i < this.Terminals.length; i++) {
-            if (this.Terminals[i].Name == name) terminals.push(this.Terminals[i]);
-        }
-        return terminals;
-    }
-    solution.GetRunningTerminalFromName = function (name) {  //running priority
-        var terminals = this.GetTerminalsFromName(name);
-        var terminal = terminals[0];   // terminal has priority
-
-        for (var i = 0; i < terminals.length; i++) {
-
-            if (terminals[i].Type == 'Terminal' && terminals[i].Running == true) {
-                terminal = terminals[i];
-                break;
-            }    
-            else 
-            if (terminals[i].Type == 'Tester' && terminals[i].Running == true) {
-                terminal = terminals[i];
-                break;
-            }
-        }        
-        return terminal;
-    }
-
-    solution.GetTerminalFromCom = function (com) {  //running priority
-     
-        for (var i = 0; i < this.Terminals.length; i++) {
-
-            if (this.Terminals[i].Type == 'Terminal' || this.Terminals[i].Type == 'Tester') {
-                if (this.Terminals[i].Com == com) {
-                    return this.Terminals[i];
-                };
-            }    
-        }        
-        return null;
-    }
-
-    solution.GetTerminalsFromDataPath = function (datapath) {
-        var terminals = [];
-        for (var i = 0; i < this.Terminals.length; i++) {
-            if (this.Terminals[i].DataPath == datapath) terminals.push(this.Terminals[i]);
-        }
-        return terminals;
-    }
-
-    solution.GetTerminalFromNameType = function (name, type) {
-        for (var i = 0; i < this.Terminals.length; i++) {
-            if (this.Terminals[i].Name == name && this.Terminals[i].Type == type) return this.Terminals[i];
-        }
-        return null;
-    }
-    solution.GetProjectFromName = function (name) {
-        for (var i = 0; i < this.Projects.length; i++) {
-            if (this.Projects[i].Name == name) return this.Projects[i];
-        }
-        return null;
-    }
-    solution.GetProjectFromFolder = function (folder) {
-        for (var i = 0; i < this.Projects.length; i++) {
-            if (this.Projects[i].Folder == folder) return this.Projects[i];
-        }
-        return null;
-    }
-    solution.GetFieldFromName = function (fieldname) {
-        for (var i = 0; i < this.Fields.length; i++) {
-            if (this.Fields[i].name == fieldname) return this.Fields[i];
-        }
-        return null;
-    }
-  
-    solution.GetCurrentTerminal = function (pname) {
-        if (pname == undefined){
-            return this.ui.currentplatform ? this.ui.currentplatform.data : null;
-        }
-        let platform = this.ui.platform_get ('pname', pname)
-
-        return platform ? platform.data : null
-    }
-
-    solution.GetPGFromTerminal  = function (terminal) {
-        
-        if (terminal) {
-            return terminal.PG;
-        }
-        terminal = this.GetCurrentTerminal ();
-
-        if (terminal) {
-            return terminal.PG;
-        }
-        return null;
-    }
-
-    solution.GetCanvasFromTerminal = function (terminal) {
-        var PG = this.GetPGFromTerminal (terminal);
-        return (PG ? PG.Canvas : null);
-    }
-
-  
-    if (solution.UserId != "0") {
-        solution.AddYahooTerminal ("XXXXXX", "XXXXXX", "Yahoo Finance" , "Yahoo", "//Yahoo"); //options
-        solution.AddYahooTerminal ("XXXXXX", "XXXXXX", "Yahoo Finance" , "Yahoo", "//Main"); //Main for home requests
-    }
-    else {
-        
-        let mainterminal                = new pgterminal(HOME_PLATFORM_PNAME, "Yahoo");
-        mainterminal.User.AccountNumber =  "XXXXXX";
-        mainterminal.User.AccountName   =  "XXXXXX";
-        mainterminal.Name               =  "Yahoo Finance";
-        mainterminal.DataPath           = "//Main";
-        mainterminal.Folder             = "Main";
-
-        solution.Terminals.push(mainterminal);
-
-    }
-    solution.InitPL();
-    return solution;
-}
-*/

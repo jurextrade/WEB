@@ -66,53 +66,40 @@ function onclick_theme (elt, event) {
         }
     }
 
-    function serverPanel (id) {
 
-        switch (id) {
-            case 'tradedesk' :
-                return ServerPanel(id, 'MT4 Server'); //tradedesk_PlatformsPanel();   
-            break;
-            case 'emv' :
-                return ServerPanel(id, 'EMV Router Server');  
-            break;
-            case 'project' :
-                return ServerPanel(id, 'Deploy Server');  
-            break;
-            case 'netprog' :
-                return ServerPanel(id, 'NetProg Server');  
-            break;
-        }
-        return '';
-    }
 //----------------------------------------------------   SERVER PANEL    ------------------------------------------------ 
 
 
 
 
 function ServerPanel_Update (id) {
-    let server, port, protocol;
+    let server, port, protocol, reconnection;
 
     switch (id) {
 
         case 'emv' :
-             server   = solution.EMVRouter_Address;
-             port     = solution.EMVRouter_Port;
-             protocol = solution.EMVRouter_Protocol;
+             server         = solution.EMVRouter_Address;
+             port           = solution.EMVRouter_Port;
+             protocol       = solution.EMVRouter_Protocol;
+             reconnection   = solution.EMVRouter_Reconnection;             
         break;
         case 'project' :
-            server   = solution.DeployServer_Address;
-            port     = solution.DeployServer_Port;
-            protocol = solution.DeployServer_Protocol;
+            server          = solution.DeployServer_Address;
+            port            = solution.DeployServer_Port;
+            protocol        = solution.DeployServer_Protocol;
+            reconnection    = solution.DeployServer_Reconnection;                         
        break;
         case 'netprog' :
-            server   = solution.NetProgServer_Address;
-            port     = solution.NetProgServer_Port;
-            protocol = solution.NetProgServer_Protocol;
+            server          = solution.NetProgServer_Address;
+            port            = solution.NetProgServer_Port;
+            protocol        = solution.NetProgServer_Protocol;
+            reconnection    = solution.NetProgServer_Reconnection;             
         break;
         case 'tradedesk' :
-            server   = solution.MT4Server_Address;
-            port     = solution.MT4Server_Port;
-            protocol = solution.MT4Server_Protocol;
+            server          = solution.MT4Server_Address;
+            port            = solution.MT4Server_Port;
+            protocol        = solution.MT4Server_Protocol;
+            reconnection    = solution.MT4Server_Reconnection;                         
         break;
     }
    
@@ -121,6 +108,7 @@ function ServerPanel_Update (id) {
     $('#unsecureradio_'+ id).prop("checked",protocol  == 'http:');   
     $('#nodeserveradress_'+ id).val(server);
     $('#nodeserverport_'+ id).val(port);
+    reconnection  ? $('#reconnection_'+ id).prop ('checked', true) : $('#reconnection_'+ id).prop ('checked', false)
 }
 
 function onclick_ResetServer (id, elt, event) {
@@ -132,10 +120,10 @@ function onclick_CloseServer (id, elt, event) {
 }
 
 function onclick_ApplyServer (id, elt, event) {
-    let newadress   =   $('#nodeserveradress_'+ id).val();
-    let newport     =   $('#nodeserverport_'+ id).val();
-    let protocol    =  $('#secureradio_'+ id).prop("checked") ? 'https:' : 'http:';
-
+    let newadress    =  $('#nodeserveradress_'+ id).val();
+    let newport      =  $('#nodeserverport_'+ id).val();
+    let protocol     =  $('#secureradio_'+ id).prop("checked") ? 'https:' : 'http:';
+    let reconnection =  $('#reconnection_'+ id).prop("checked");
 
 
     if (newadress.startsWith("http://")) {
@@ -150,33 +138,37 @@ function onclick_ApplyServer (id, elt, event) {
             solution.EMVRouter_Address  = newadress;
             solution.EMVRouter_Port     = newport;
             solution.EMVRouter_Protocol = protocol;
+            solution.EMVRouter_Reconnection   = reconnection;          
             RouterCom.Close ();
-            EMVConnect(protocol + '//' + newadress, newport);
+            EMVConnect(protocol + '//' + newadress, newport, reconnection);
         
         break;
         case 'project' :
             solution.DeployServer_Address   = newadress;
             solution.DeployServer_Port      = newport;
             solution.DeployServer_Protocol  = protocol;
+            solution.DeployServer_Reconnection   = reconnection;               
             DeployCom.Close ();
-            DeployConnect(protocol + '//' + newadress, newport);
+            DeployConnect(protocol + '//' + newadress, newport, reconnection);
         
        break;
         case 'netprog' :
             solution.NetProgServer_Address  = newadress;
             solution.NetProgServer_Port     = newport;
             solution.NetProgServer_Protocol = protocol;
+            solution.NetProgServer_Reconnection   = reconnection;                    
         break;
         case 'tradedesk' :
             solution.MT4Server_Address   = newadress;
             solution.MT4Server_Port      = newport;
             solution.MT4Server_Protocol  = protocol;
+            solution.MT4Server_Reconnection   = reconnection;   
             for (var j = 0; j < solution.Terminals.length; j++) {
 
                 var terminal = solution.Terminals[j];
                 if (terminal.Type == 'Terminal' || terminal.Type == 'Tester') {
                     terminal.Com.Close ();
-                    MT4Connect(terminal, protocol + '//' + newadress, newport);
+                    MT4Connect(terminal, protocol + '//' + newadress, newport, reconnection);
                 }            
             }            
         break;        
@@ -217,45 +209,6 @@ function onclick_RadioServer(id, http) {
     }
 }
 
-
-
-function ServerPanel (id, name) {
-    var content = '';
-
-    
-    content = 
-   `<div id="serverpanel_${id}" >       		            
-        <div class="sb_f_style_h6">${name}</div>
-        
-        <div class="sb_bar sb_column">
-            <button  title="Close" class="sb_sbutton"><i class="fas fa-times" aria-hidden="true" onclick="onclick_CloseServer('${id}', this, event)"></i></span>        
-        </div>
-        <div id="" class="sb_bargroup ">
-        <span class="sb_check  custom-control custom-radio ">
-            <input id="secureradio_${id}" type="radio" class="custom-control-input" checked="" name="radio_http" onclick="onclick_RadioServer('${id}', \'secure\'); onclick_default_radio_item(this,event)" onchange="onchange_default_sb_item(this);" oninput="onchange_default_sb_item(this);">
-            <label class="sb_label custom-control-label" for="secureradio_${id}">https</label>
-        </span>
-        <span class="sb_check  custom-control custom-radio ">
-            <input id="unsecureradio_${id}" type="radio" class="custom-control-input" name="radio_http" onclick="onclick_RadioServer('${id}', \'unsecure\'); onclick_default_radio_item(this,event)" onchange="onchange_default_sb_item(this);" oninput="onchange_default_sb_item(this);">
-            <label class="sb_label custom-control-label" for="unsecureradio_${id}">http</label>
-        </span>
-        </div>
-        <div class="sb_formgroup">
-        <label>Address</label>
-        <input id ="nodeserveradress_${id}" class="form-control" value=""/>
-        </div>     
-        <div class="sb_formgroup">
-        <label>Port</label>
-        <input id ="nodeserverport_${id}" class="form-control" value=""/>
-        </div>   
-        <div class="sb_buttongroup">
-        <button class="sb_button"  type="button" onclick="onclick_ResetServer('${id}', this, event)">Reset</button>        
-        <button class="sb_button"  type="button" onclick="onclick_ApplyServer('${id}', this, event)">Apply</button>
-        </div>    
-    </div>`;
-
-    return content
-}
 
 //------------------------------------------------------------ NETPROG SETTINGS PANEL ----------------------------------------------------------
 

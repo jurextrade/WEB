@@ -388,7 +388,7 @@ function ondblclick_GSE (event, container) {
     	var condition = solution.CurrentProject.PG.GetConditionFromName (node.Name[0]);
         if (condition && node.Inherit.length == 0) {
         	for (var z = 0; z < condition.Section.ListEntities.length; z++) 
-                container.GSE.MakeLink ("RULES", "SESSIONLINK", node, TreeEntity(PL, container.GSE, condition.Section.ListEntities[z]));
+                container.GSE.MakeLink ("RULES", "SESSIONLINK", node, TreeEntity(solution.PL, container.GSE, condition.Section.ListEntities[z]));
         }   
         node.Close = !node.Close;
     }      

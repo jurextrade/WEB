@@ -184,7 +184,7 @@
     inset: 0px 0px 0px 50px;        
     background: var(--theme-main-bg-color);
     color: var(--theme-color);
-    z-index: 7;
+    z-index: 8;
     border: 1px solid var(--theme-border-color);
     padding: 10px;
     border-radius: 0px 0px 10px 10px;

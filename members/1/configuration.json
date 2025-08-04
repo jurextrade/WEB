@@ -108,7 +108,7 @@
         {
           "pname": "news",
           "type": "panel",
-          "active": true,
+          "active": false,
           "icon": "fas fa-calendar-alt",
           "title": "Calendar & Forex News",
           "library": {
@@ -143,7 +143,7 @@
         {
           "pname": "market",
           "type": "panel",
-          "active": true,
+          "active": false,
           "index": 0,
           "library": {
             "stylesheet": [
@@ -191,8 +191,11 @@
           "pname": "emv",
           "name": "EMV",
           "type": "root",
-          "active": true,
+          "active": false,
           "index": 2,
+          "dependency": [
+            "speech"
+          ] ,         
           "header": {
             "title": "EMV",
             "logo": "/A_PLATFORMS/emv/res/emv.svg",
@@ -223,8 +226,6 @@
               "/A_PLATFORMS/emv/js/platform_emv_database.js",
               "/A_PLATFORMS/emv/js/platform_emv_tester.js",
               "/A_PLATFORMS/emv/js/interface_emv_tester.js",
-              "/A_PLATFORMS/emv/js/interface_emv_home.js",
-              "/A_PLATFORMS/emv/js/platform_emv_home.js",
               "/A_PLATFORMS/emv/js/platform_emv.js",
               "/A_PLATFORMS/emv/js/interface_emv.js"
             ]
@@ -258,12 +259,9 @@
               "/A_PLATFORMS/netprog/js/netprog/mxmanager_class.js",
               "/B_COMMON/js/platform_gse.js",
               "/B_COMMON/js/interface_gse.js",
-
               "/A_PLATFORMS/netprog/js/platform_netprog_gse.js",
               "/A_PLATFORMS/netprog/js/platform_netprog_jsoneditor.js",
               "/A_PLATFORMS/netprog/js/interface_netprog_jsoneditor.js",
-              "/A_PLATFORMS/netprog/js/platform_netprog_home.js",
-              "/A_PLATFORMS/netprog/js/interface_netprog_home.js",            
               "/A_PLATFORMS/netprog/js/platform_netprog_server.js",
               "/A_PLATFORMS/netprog/js/interface_netprog_server.js",
               "/A_PLATFORMS/netprog/js/platform_netprog_jseditor.js",
@@ -283,7 +281,7 @@
           "active": false,
           "dependency": [
             "speech"
-          ],          
+          ],
           "header": {
             "title": "Learn Chinese",
             "events": {
@@ -341,9 +339,10 @@
           "type": "root",
           "dependency": [
             "market",
-            "news"
+            "news", 
+            "speech"
           ],
-          "active": false,
+          "active": true,
           "library": {
             "stylesheet": [
               "/C_TOOLS/css/quill.snow.css",
@@ -381,8 +380,6 @@
               "/js/expert_signals.js",
               "/js/expert.js",
               "/js/MT4-indicators.js",
-              "/A_PLATFORMS/project/js/interface_project_home.js",          
-              "/A_PLATFORMS/project/js/platform_project_home.js",                   
               "/A_PLATFORMS/project/js/interface_project_assistant.js",
               "/A_PLATFORMS/project/js/platform_project_assistant.js",
               "/A_PLATFORMS/project/js/platform_project_connect.js",
@@ -449,12 +446,13 @@
           "type": "root",
           "dependency": [
             "market",
-            "news"
+            "news", 
+            "speech"
           ],
           "active": false,
           "library": {
             "stylesheet": [
-             "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css",                
+              "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css",
               "/A_PLATFORMS/tradedesk/css/style_tradedesk.css",
               "/B_COMMON/css/style_currency.css"
             ],
@@ -488,8 +486,6 @@
               "/js/expert_signals.js",
               "/js/expert.js",
               "/js/MT4-indicators.js",
-              "/A_PLATFORMS/tradedesk/js/interface_tradedesk_home.js",          
-              "/A_PLATFORMS/tradedesk/js/platform_tradedesk_home.js",                  
               "/A_PLATFORMS/tradedesk/js/platform_tradedesk_connect.js",
               "/A_PLATFORMS/tradedesk/js/interface_tradedesk.js",
               "/A_PLATFORMS/tradedesk/js/platform_tradedesk.js"

@@ -4,29 +4,18 @@ var CurrentTSystemObjectName    = 'VELOCITY';
 var CurrentTEngine              = null;
 var CurrentTSchedule            = null;
 var SystemSignalNbr             = 1;
-var CurrentTerminalName         = "FxPro - MetaTrader 4";
+
 //---------------------------------------------------------------------MODULE START -----------------------------------------------------------------------------//
 
 function tradedesk_init() {
-
-
     tradedesk_solution('tradedesk');
     tradedesk_editors_init('tradedesk');
     tradedesk_gse_init(); 
 
     ServerPanel_Update('tradedesk');        
 
-    
-    let ui  = solution.get('ui') 
-    let marketpanel =  ui.sb.get(main, 'pname', 'market');
-
-    if (marketpanel.length == 0) {
-        solution.add_module('market');  
-    }   
-  
     sidebarpanel_select(tradedeskplatform, "sidebarpanel_terminals");    
     setInterval(tradedesk_timer, 300);     
-
 }
 
 function tradedesk_end () {
@@ -63,7 +52,7 @@ function tradedesk_select (name) {
         if (solution.UserId == "0") {
             AnimationDisplay ('tradedesk', 'Demo MT4 Terminal is selected', 'tradedesk_toppanel');         
 
-            var terminal = solution.GetRunningTerminalFromName (CurrentTerminalName);
+            var terminal = solution.GetRunningTerminalFromName (tradedesk_default_terminalname);
         //    console.log ('terminal selection')
             tradedesk_selectterminal(terminal); 
             return;
@@ -78,17 +67,18 @@ function tradedesk_solution (pname) {
     let  site           = solution.get('site');
     let  user           = solution.get('user')
 
- 
+
     solution.CurrentTerminal = null;
-    solution.MT4Server_Protocol   = site.protocol;
+    solution.MT4Server_Protocol       = site.protocol;
+    solution.MT4Server_Reconnection   = tradedesk_default_server_reconnection;
 
     if (site.protocol == 'http:') {  //TRADESK= 2
         solution.MT4Server_Address   = site.hostname;
-        solution.MT4Server_Port     =  2080;     
+        solution.MT4Server_Port     =  tradedesk_default_server_port;     
     }
     else {
         solution.MT4Server_Address   = site.hostname;    
-        solution.MT4Server_Port     =  2443;    
+        solution.MT4Server_Port     =  tradedesk_default_server_sport;    
 
     }
 
@@ -96,9 +86,9 @@ function tradedesk_solution (pname) {
         pg_solution ()
         solution.LoadPGDefault (pname);   
         solution.DefaultLoaded = true;            
-    } else {   
-        solution.UpdatePredefinedIndicators (pname);
-    }
+    }    
+    solution.UpdatePredefinedIndicators (pname);
+
 
     solution.tradedesk_LoadTerminals = function (Id, url, async, interfacecallback, par) {
         if (!async) async = false;
@@ -124,9 +114,9 @@ function tradedesk_solution (pname) {
                     
                     if (terminalstruct.Type == 'MT4') {   
 
+  
+                        if (this.userid == '0' && terminalstruct.Name != tradedesk_default_terminalname) continue;
                         if (solution.GetTerminalsFromName (terminalstruct.Name).length != 0) continue;
-                        if (this.userid == '0' && terminalstruct.Name != CurrentTerminalName) continue;
-
                         terminalstruct.Type = 'Terminal';
                         let realterminal   = new pgterminal(TRADEDESK_PLATFORM_PNAME, terminalstruct.Type);
                         realterminal =  {...realterminal, ...terminalstruct}
@@ -262,6 +252,20 @@ function tradedesk_timer () {
     }
 }
 
+function tradedesk_home_open  (event) {
+    let platform =  sb.get(main, 'pname', 'home');
+    //    LoaderDisplay(true);
+    if (platform.length == 0) {
+        solution.add_module('home');               
+    } 
+  
+    let ui  = solution.get('ui')     
+    ui.platform_select(HOME_PLATFORM_PNAME)       
+    onclick_home_mainbar ($('#home_mainbar_trading')[0], event)      
+}    
+
+
+
 function tradedesk_selectterminal(terminal, force) {
     
     if (!terminal) {
@@ -364,7 +368,7 @@ function tradedesk_inittradedesk () {
 
     AccountPanels_Reset();
 
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     symbolcanvas.Init(solution.CurrentTerminal.pname);
 }
 
@@ -450,7 +454,7 @@ function tradedesk_displayterminal(terminal, Symbol) {
         AddSymbol(terminal, Symbol);
     }
     
-    var symbolcanvas = terminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return;    
 
 
@@ -569,7 +573,7 @@ $(document).on('change', '#tradedesksyssignalselect', function () {
 });	
 
 $(document).on('mousedown', '#tsignalstable th', function (event) {
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;    
     var PG = symbolcanvas.PG;
     var periodname = event.target.innerHTML;
@@ -1729,7 +1733,7 @@ function DrawAlert(rowindex, alertid) {
 
     var PG = terminal.PG;
     
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;        
 
     sb.table_rowselect (alertstable, rowindex);
@@ -1884,7 +1888,7 @@ function OrderPanel() {
 
 
 function SetOrderType(elt, type) {
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;    
     var Symbol = symbolcanvas.CurrentSymbol;
     
@@ -1981,7 +1985,7 @@ function AdjustSLTPPips(id, Symbol) {
 }
 
 function SetTradeType(elt) {
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;    
     
     var id= 'orderpanel';
@@ -2014,7 +2018,7 @@ function SetTradeType(elt) {
 }
 
 function SetTPSLType(elt, sltp) {
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;    
     var id= 'orderpanel';    
 
@@ -3391,7 +3395,7 @@ function SelectSymbol(Symbol) {
 
     if (!Symbol) return null;
     
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return null;      
    
     if (symbolcanvas.CurrentSymbol != Symbol) {
@@ -3441,7 +3445,7 @@ function SelectPeriod(terminal, Symbol, Period, async) {
     
     if (!terminal || !Symbol) return null;
 
-    var symbolcanvas = terminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return null;    
 
     if (async == undefined)
@@ -3524,7 +3528,7 @@ function CSVTreatHistory (terminal, Symbol, Period, values) {
     stopLoaderMarker();
 
 
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;
 
     if (symbolcanvas.CurrentPeriod == Period) {
@@ -3549,7 +3553,7 @@ function AddChartSelection(symbolcanvas, selection, x, y) {
 }
 
 var onTrendLineStart = function (elt, event) {
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;  
     
     if (event.button == 2) {
@@ -3561,7 +3565,7 @@ var onTrendLineStart = function (elt, event) {
     }
 }
 var onFibStart = function (elt, event) {
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;  
     
     if (event.button == 2) {
@@ -3573,7 +3577,7 @@ var onFibStart = function (elt, event) {
     }
 }
 var onTrendLineComplete = function (elt, event) {
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;    
     
     
@@ -3592,7 +3596,7 @@ var onTrendLineComplete = function (elt, event) {
     }
 }
 var onFibComplete = function (elt, event) {
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (event && event.button == 2) {
         return;
     }

@@ -3,6 +3,7 @@
 .trackerpanel {
     font-size:10px;
     border: 1px solid var(--theme-border-color);    
+    width: 670px;    
 }
     
 .trackertable .objectname {

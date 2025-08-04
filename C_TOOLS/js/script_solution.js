@@ -108,7 +108,19 @@ class SOLUTION {
         
         if (prop.dynamic) {
             this.add_configuration_scripts(this.Init)
-
+        } else {   //some are already loaded, let's merge module parameter with SB
+            for (var i = 0; i < main.items.length; i++) {
+                let struct_module = this.get_modulefrompname(main.items[i].pname)
+                main.items[i] =  {...main.items[i], ...struct_module.module}
+            }
+            for (var i = 0; i < footer.items.length; i++) {
+                let struct_module = this.get_modulefrompname(footer.items[i].pname)
+                footer.items[i] =  {...footer.items[i], ...struct_module.module}
+            }
+            for (var i = 2; i < default_right_sidebarpanel.items.length; i++) {
+                let struct_module = this.get_modulefrompname(default_right_sidebarpanel.items[i].items[0].pname)
+                default_right_sidebarpanel.items[i].items[0] =  {...default_right_sidebarpanel.items[i].items[0], ...struct_module.module}
+            }            
         }  
 
         this.user.send({Name: 'scandir_r',Values: this.user.is_admin () ? ['.', ''] : [this.user.path  + '/NetProg', '.']}, false,  function (content, values) {
@@ -148,7 +160,7 @@ class SOLUTION {
 
         if (solution.dynamic) {
             InitApp (solution)    
-        }     
+        }      
     }
 
     Init_module (solution, module, placement) {
@@ -1712,7 +1724,7 @@ function onclick_rightsidebarmenu (id, show) {
 function rightsidebarpanel_hide (psidebarpanel) {
     let psidebarmenu    = psidebarpanel.next(); 
     let toresize        = psidebarpanel.hasClass('pinned')
-    console.log ('hide right');
+
     psidebarpanel.css ({'transition':''});
 
     let sbpanels = psidebarpanel.children ();

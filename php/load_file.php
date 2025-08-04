@@ -1,7 +1,7 @@
 <?php
-  $url       = isset($_REQUEST['url']) ? $_REQUEST['url'] : '';  
+  $file       = isset($_REQUEST['file']) ? $_REQUEST['file'] : '';  
   $cwd       = dirname(getcwd() ,1);
-  $filename  = $url;
+  $filename  = $cwd . $file;
   
 
   $content = file_get_contents($filename);

@@ -11193,7 +11193,7 @@ var ChartCanvas = function (_Component) {
 
 			var xValue = _state.displayXAccessor(currentItem);
 			var yValue = yScale.invert(mouseXY[1]);
-
+            console.log ('handle mousedown from ChartCanvas')
             if (this.props.onMouseDown)		
 			    this.props.onMouseDown(e, currentItem, yValue, mouseXY, this.fullData, this.state);
 						
@@ -11218,7 +11218,7 @@ var ChartCanvas = function (_Component) {
 
 			var xValue = _state.displayXAccessor(currentItem);
 			var yValue = yScale.invert(mouseXY[1]);
-
+        //    console.log ('handle click from ChartCanvas')
             if (this.props.onClick)		
 			    this.props.onClick(e, currentItem, yValue, mouseXY, this.fullData, this.state);
 			
@@ -11232,7 +11232,7 @@ var ChartCanvas = function (_Component) {
 			    xScale = _state.xScale,
 			    xAccessor = _state.xAccessor;
 
-
+            
 			var currentCharts = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_ChartDataUtil__["d" /* getCurrentCharts */])(chartConfig, mouseXY);
 			var currentItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_ChartDataUtil__["a" /* getCurrentItem */])(xScale, xAccessor, mouseXY, plotData);
 		    		    
@@ -11244,7 +11244,7 @@ var ChartCanvas = function (_Component) {
 
 			var xValue = _state.displayXAccessor(currentItem);
 			var yValue = yScale.invert(mouseXY[1]);
-
+          //  console.log ('double click from handle')
             if (this.props.onDoubleClick)		
 			    this.props.onDoubleClick(e, currentItem, yValue, mouseXY, this.fullData, this.state);
 			
@@ -12247,7 +12247,7 @@ var EventCapture = function (_Component) {
 	
 	
 	        var mouseXY = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils__["mousePosition"])(e, this.node.getBoundingClientRect());
-
+          //  console.log ('handleClick from Event capture')
 			onClick(mouseXY, e);
 		}
 	}, {
@@ -12258,7 +12258,7 @@ var EventCapture = function (_Component) {
 	
 	
 	        var mouseXY = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils__["mousePosition"])(e, this.node.getBoundingClientRect());
-
+            //console.log ('handle DoubleClick from EVent capture')
 			onDoubleClick(mouseXY, e);
 		}
 	}, {
@@ -12350,7 +12350,7 @@ var EventCapture = function (_Component) {
 					e.persist();
 					setTimeout(function () {
 						if (!_this2.contextMenuClicked) {
-							// console.log("NO RIGHT")
+					//		console.log ('handle Mouse down from Event capture')
 							onMouseDown(mouseXY, currentCharts, e);
 						}
 						_this2.contextMenuClicked = false;
@@ -12408,17 +12408,19 @@ var EventCapture = function (_Component) {
 
 				var rect = this.node.getBoundingClientRect();
 				var newPos = [Math.round(e.pageX - rect.left), Math.round(e.pageY - rect.top)];
-
+               // console.log ('pan happened ' + this.panHappened)
 				if (!this.panHappened) {
 					if (this.clicked) {
 // GABRIEL					    
+                        console.log ('pan this.clicked')
 					//	onDoubleClick(newPos, e);
 						this.clicked = false;
 					} else {
 						this.clicked = true;
 						setTimeout(function () {
 							if (_this3.clicked) {
-								onClick(newPos, e);
+                        //         console.log ('handle click pan end from Event capture')
+						//		onClick(newPos, e);
 								_this3.clicked = false;
 							}
 						}, 300);

@@ -382,7 +382,7 @@ function TradedeskTreatSymbol(terminal, values, selected) {
     if (!Symbol) {
         return;
     }
-    var symbolcanvas = solution.CurrentTerminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;        
     
     Symbol.Connected = true;
@@ -854,7 +854,7 @@ function TreatHistory(solution, terminal, values) {
 
     LoaderChartHistory (false);    
 
-    var symbolcanvas = terminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return;    
 
     if (symbolcanvas.CurrentPeriod == period) {

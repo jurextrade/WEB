@@ -4,32 +4,24 @@ var Interval_selectchart        = 0;
 
 var CurrentEngine           = null;
 var CurrentStrategy         = null;
+
 //---------------------------------------------------------------------MODULE START -----------------------------------------------------------------------------//
 
 function project_init() {
     project_solution('project');
-
-    DeployConnect(solution.DeployServer_Address, solution.DeployServer_Port);  
-
     project_editors_init('project');   
     project_gse_init(); 
-  // console.log ('project assitant init')
-  //project_assistant_init ();
-    project_assistant_select (projectplatform.strategyview == STRATEGY_ASSISTANT_VIEW); 
-  //console.log ('project init')
+
+    DeployConnect(solution.DeployServer_Address, solution.DeployServer_Port);  
     ServerPanel_Update('project');
-    project_LoadTerminals(ASYNCHRONE, DistributePanel_Update, solution);    
-   
 
-    let ui  = solution.get('ui') 
-    let marketpanel =  ui.sb.get(main, 'pname', 'market');
 
-    if (marketpanel.length == 0) {
-        solution.add_module('market');  
-    }   
+    project_assistant_select (projectplatform.strategyview == STRATEGY_ASSISTANT_VIEW); 
+
+
     sidebarpanel_select(projectplatform, "sidebarpanel_files");       
     setInterval(project_timer, 300);         
-   
+
 }
 
 function project_end () {
@@ -48,14 +40,14 @@ function project_select (name) {
     $('#marketpanel').css ('display', 'flex');        
     
     ui.platform_updatedata('project', solution.CurrentProject)
-    
+
     ui.platform_expand(name, true);
 
     AnimationReset('animation')
 
     $("#home_root").parent().scrollTop(0);  
-    
-    DrawChart();
+    SelectChart ();
+    //DrawChart();
 
     if (!solution.CurrentProject) {
   //      onclick_sidebarmenu ('sidebar_files', true);    
@@ -69,32 +61,35 @@ function project_select (name) {
     }
 }
 
+
 function project_solution (pname) {
 
     let  site           = solution.get('site');
     let  user           = solution.get('user')
 
     solution.Projects       = [];
+
     solution.CurrentProject = null;
-    solution.DeployServer_Protocol   = site.protocol;    
+
+    solution.DeployServer_Protocol      = site.protocol;    
+    solution.DeployServer_Reconnection  = project_default_server_reconnection;        
+    solution.DeployServer_Address       = site.hostname;   
 
 
     if (site.protocol == 'http:') {                                 //PROJECT=2
-        solution.DeployServer_Address   = site.hostname;   
-        solution.DeployServer_Port     =  2080;     
+        solution.DeployServer_Port     =  project_default_server_port;     
     }
     else {
-        solution.DeployServer_Address   = site.hostname;
-        solution.DeployServer_Port     =  2443;    
+        solution.DeployServer_Port     =  project_default_server_sport;    
     }
 
     if (!solution.DefaultLoaded) {
         pg_solution ()
         solution.LoadPGDefault (pname);   
         solution.DefaultLoaded = true;            
-    } else {   
-        solution.UpdatePredefinedIndicators (pname);
-    }
+    }  
+    solution.UpdatePredefinedIndicators (pname);
+    
 
     solution.NewProject = function (name) {
         if (!name) {
@@ -148,6 +143,7 @@ function project_solution (pname) {
         }        
         return null;
     }
+
     solution.project_LoadProjects = function (userid, url, async, interfacecallback, par) {
 
         let callback = function (responsetext, values) {
@@ -161,7 +157,7 @@ function project_solution (pname) {
                 let projectstruct = arraystructure[i];
 
                 if (!projectstruct.Name || !projectstruct.Path) continue;
-                if (values[0].id == '0' && projectstruct.Name != "DemoProject") continue;                    
+                if (values[0].id == '0' && projectstruct.Name != project_default_projectname) continue;                    
                 let project = new pgproject(PROJECT_PLATFORM_PNAME, projectstruct.Name, projectstruct.Path)
 
                 project =  {...project, ...projectstruct}
@@ -178,7 +174,59 @@ function project_solution (pname) {
 
         url_submit ('POST', url, param /*object {}*/, async, callback, [solution.user] , interfacecallback, par);
     }
-    
+
+    solution.UpdateDistributeTerminals = function (solution) {
+        DistributePanel_Update(solution);
+    }
+
+    solution.project_LoadTerminals = function (Id, url, async, interfacecallback, par) {
+        if (!async) async = false;
+        var params = 'user_id=' + (Id == "0" ? "1" : Id);
+
+        var xhttp = new XMLHttpRequest();
+
+        xhttp.solution = this;
+        xhttp.userid = Id;
+
+        xhttp.onreadystatechange = function () {
+
+            let solution = xhttp.solution;
+
+            if (this.readyState == 4 && this.status == 200) {
+                let arraystructure =  JSON.parse(this.responseText);
+                for (var i = 0; i < arraystructure.length; i++) {
+
+                    let terminalstruct = arraystructure[i];
+
+                    let pathElements = terminalstruct.DataPath.replace(/\/$/, '').split('/');
+                    let sdatapath = pathElements[pathElements.length - 1];
+                    
+                    if (terminalstruct.Type == 'MT4') {   
+
+                        if (solution.GetTerminalsFromName (terminalstruct.Name).length != 0) continue;
+                        if (this.userid == '0' && terminalstruct.Name != tradedesk_default_terminalname) continue;
+
+                        terminalstruct.Type = 'Terminal';
+                        let realterminal   = new pgterminal(TRADEDESK_PLATFORM_PNAME, terminalstruct.Type);
+                        realterminal =  {...realterminal, ...terminalstruct}
+ 
+                        terminalstruct.Type = 'Tester';                        
+                        let testerterminal  = new pgterminal(TRADEDESK_PLATFORM_PNAME, terminalstruct.Type);
+                        testerterminal =  {...testerterminal, ...terminalstruct}
+                        realterminal.Folder             = testerterminal.Folder = sdatapath;
+                        solution.Terminals.push(realterminal);
+                        solution.Terminals.push(testerterminal);
+                    }
+                }    
+                if (interfacecallback)  interfacecallback (par);            
+            }
+        }
+        
+        xhttp.open('POST', url, async);
+        xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhttp.send(params);
+    }
+
     solution.project_UpdateProjects = function (solution) {
         let projects = [];
         
@@ -195,6 +243,7 @@ function project_solution (pname) {
         sb.tree_additems ('project_tree_projects', projects);
         StrategyAssistantFillProjects ();     
     }
+    solution.project_LoadTerminals(user.id, site.address  + "/php/read_terminals.php", SYNCHRONE, solution.UpdateDistributeTerminals, solution);    
     solution.project_LoadProjects(user.id, site.address + "/php/read_projects.php",  SYNCHRONE, solution.project_UpdateProjects, solution);
 }
 
@@ -203,8 +252,9 @@ function project_timer () {
    
     
     if (solution.CurrentProject) {        
+         $('#projectstrategyfileaction').css ('display', '');
 //bottom panel
-        $('#project_bottompanel').css ('display', '');
+      //  $('#strategy_assistant_button').css ('display', '');
 
 
 //project
@@ -263,8 +313,10 @@ function project_timer () {
 */        
     }
     else {
+
+         $('#projectstrategyfileaction').css ('display', 'none');
 //bottom panel
-        $('#project_bottompanel').css ('display', 'none');
+      //  $('#project_bottompanel').css ('display', 'none');
  
 //project
         $('#project_projectsbar #project_projectrename').css ('display', 'none');
@@ -291,6 +343,19 @@ function project_timer () {
         
         $('#project_root #indicatorCreate').css ('display', 'none');            
     }
+}
+
+
+function project_home_open  (event) {
+    let platform =  sb.get(main, 'pname', 'home');
+    //    LoaderDisplay(true);
+    if (platform.length == 0) {
+        solution.add_module('home');               
+    } 
+  
+    let ui  = solution.get('ui')     
+    ui.platform_select(HOME_PLATFORM_PNAME)   
+    onclick_home_mainbar ($('#home_mainbar_trading')[0], event)      
 }
 
 function project_loadedproject (project) {
@@ -368,7 +433,7 @@ function project_initproject () {
     solution.CurrentProject.CurrentStrategy = null;
     CurrentStrategy = null;
 
-    sb.tree_removechildren ('tree_createdindicators');
+    sb.tree_removechildren ('project_tree_createdindicators');
     sb.tree_removechildren ('project_tree_conditions');
     sb.tree_removechildren ('project_tree_experts');
     sb.tree_removechildren ('project_tree_strategies');
@@ -436,44 +501,6 @@ function onchange_project_projectselect (elt, event) {
     project_selectproject(project);
 }
 
-function project_LoadTerminals (async, interfacecallback, par) {
-    let  site        = solution.get('site');
-    let  user        = solution.get('user')
-    let  url         = site.address  + "/php/read_terminals.php"
-
-    if (!async) async = false;
-    var params = 'user_id=' + (user.id == "0" ? "1" : user.id);
-
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.solution = this;
-    xhttp.userid = user.id;
-
-    xhttp.onreadystatechange = function () {
-
-        let solution = xhttp.solution;
-
-        if (this.readyState == 4 && this.status == 200) {
-            let arraystructure =  JSON.parse(this.responseText);
-            let arrayresult = [];
-            for (var i = 0; i < arraystructure.length; i++) {
-           
-                let terminalstruct = arraystructure[i];
-                if (terminalstruct.Type == 'MT4') {
-                    let pathElements = terminalstruct.DataPath.replace(/\/$/, '').split('/');
-                    let sdatapath = pathElements[pathElements.length - 1];
-                    terminalstruct.Folder = sdatapath;
-                    arrayresult.push (terminalstruct);
-                }
-            }    
-            if (interfacecallback)  interfacecallback (arrayresult, par);            
-        }
-    }
-    
-    xhttp.open('POST', url, async);
-    xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xhttp.send(params);
-}
 
 //------------------------------------------------------------ PROJECT FILE BAR ----------------------------------------------------------
 
@@ -1044,9 +1071,6 @@ function CodeEditorPanel(id, classnames, type) {
     return content;
 }
 
-
-
-
 //------------------------------------------------------------ DISTRIBUTE SIDEBAR PANELS ----------------------------------------------------------
 
 function onclick_distribute (elt) {
@@ -1058,15 +1082,19 @@ function onclick_distribute (elt) {
         terminalchecked         = $('#terminalcheck' + '_' + i + '_0').is(":checked");    
         strategytesterchecked   = $('#strategytestercheck' + '_' + i + '_1').is(":checked");   
 
-        if (terminalchecked)        DistributeProject(solution.CurrentProject, solution.terminals[i], 'Terminal');            
-        if (strategytesterchecked)  DistributeProject(solution.CurrentProject, solution.terminals[i],  'Tester'); 
+        if (terminalchecked)        DistributeProject(solution.CurrentProject, solution.Terminals[i], 'Terminal');            
+        if (strategytesterchecked)  DistributeProject(solution.CurrentProject, solution.Terminals[i],  'Tester'); 
 
     }        
     
 }
 
 function onclick_refresh_terminals(elt) {
-    project_LoadTerminals(ASYNCHRONE, DistributePanel_Update, solution);    
+    let  site        = solution.get('site');
+    let  user        = solution.get('user')
+    let  url         = site.address  + "/php/read_terminals.php"
+
+    solution.project_LoadTerminals(user.id, url, SYNCHRONE, solution.UpdateDistributeTerminals, solution);    
 }
 
 
@@ -1089,7 +1117,7 @@ function DeployHeaderPanel () {
 
 
 
-function DistributePanel_Update (terminals, solution) {
+function DistributePanel_Update (solution) {
     var tcontent = '';
     let  user        = solution.get('user')
 
@@ -1097,31 +1125,33 @@ function DistributePanel_Update (terminals, solution) {
           $('#distributepanel').html(sb.render(ReturnWarningALert('You should Register to see your Terminals')))
           return;
     }
-    solution.terminals = terminals;
 
     distributetable.rows = [];
 
-    if (terminals.length == 0) {
+    if (solution.Terminals.length == 0) {
         $('#distributepanel').html(sb.render(ReturnWarningALert('You do not have any MT4 Platform Configured with MT4 Terminal')))
         return ;
     }
 
-    for (var i = 0; i < terminals.length; i++) {
-        let terminal = terminals[i];
-        distributetable.rows.push ([
-                '<i class="fas fa-landmark"></i><span id="terminalname" class="terminalname" >' +  terminal.Name + '</span>',
-                sb.render({id: 'terminalcheck_'+ i + '_0', type: 'checkbox', class: 'terminalcheck'}) ,               
-                sb.render({id: 'strategytestercheck_'+ i + '_1', type: 'checkbox', class: 'terminalcheck'}) ,               
- 
-               // '<div class="sb_check custom-control custom-checkbox terminalcheck">' + 
-               // '   <input id="terminalcheck_'+ i + '_0'   + '" class="custom-control-input" type="checkbox" onchange="onchange_default_sb_item(this);" oninput="onchange_default_sb_item(this);"/>' + 
-               // '   <label for="terminalcheck_'+ i + '_0'  + '" class="custom-control-label"></label>' +                        
-               // '</div>',
-                //'<div class="sb_check custom-control custom-checkbox terminalcheck">' + 
-                //'   <input id="strategytestercheck_'+ i + '_1'  + '" class="custom-control-input " type="checkbox" onchange="onchange_default_sb_item(this);" oninput="onchange_default_sb_item(this);"/>' + 
-                //'   <label for="strategytestercheck_'+ i + '_1' + '" class="custom-control-label"></label>' +                        
-                //'</div>'                
-        ])
+    for (var i = 0; i < solution.Terminals.length; i++) {
+        let terminal = solution.Terminals[i];        
+        if (terminal.Type == 'Terminal') {        
+    
+            distributetable.rows.push ([
+                    '<i class="fas fa-landmark"></i><span id="terminalname" class="terminalname"+ title="' + terminal.Folder +'">' +  terminal.Name + '</span>',
+                    sb.render({id: 'terminalcheck_'+ i + '_0', type: 'checkbox', class: 'terminalcheck'}) ,               
+                    sb.render({id: 'strategytestercheck_'+ i + '_1', type: 'checkbox', class: 'terminalcheck'}) ,               
+    
+                // '<div class="sb_check custom-control custom-checkbox terminalcheck">' + 
+                // '   <input id="terminalcheck_'+ i + '_0'   + '" class="custom-control-input" type="checkbox" onchange="onchange_default_sb_item(this);" oninput="onchange_default_sb_item(this);"/>' + 
+                // '   <label for="terminalcheck_'+ i + '_0'  + '" class="custom-control-label"></label>' +                        
+                // '</div>',
+                    //'<div class="sb_check custom-control custom-checkbox terminalcheck">' + 
+                    //'   <input id="strategytestercheck_'+ i + '_1'  + '" class="custom-control-input " type="checkbox" onchange="onchange_default_sb_item(this);" oninput="onchange_default_sb_item(this);"/>' + 
+                    //'   <label for="strategytestercheck_'+ i + '_1' + '" class="custom-control-label"></label>' +                        
+                    //'</div>'                
+            ])
+        }
     }
     sb.table_setrows (distributetable, distributetable.rows)
 }
@@ -1218,7 +1248,7 @@ function ondrop_project_main(event) {
     
     var data = event.dataTransfer.getData("text");
 
-    var symbolcanvas = solution.CurrentProject.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal(solution.CurrentProject);
     
     if (data.startsWith('project_selectstrategy')) {
         var strategyname = data.replace ('project_selectstrategy_', '');
@@ -2149,7 +2179,7 @@ function SelectStrategy(strategy) {
         }
     }
 
-    var symbolcanvas = solution.CurrentProject.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal(solution.CurrentProject);
     if (!symbolcanvas) return;  
    
     symbolcanvas.Indicators = [];
@@ -2278,11 +2308,12 @@ function DownloadStrategy(strategyfile) {
 //-----------------------------------------------------------------------------------------------------------------------  
 
 function ProjectSelectPeriod (terminal, Symbol, Period, async) {
-    if (!terminal || !Symbol) return;
+    if (!Symbol) return;
 
     if (async == undefined)
         async = true;    
-    var symbolcanvas = solution.CurrentProject.PG.Canvas;
+
+    var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return;      
     var rootid = rootid_fromcanvas(symbolcanvas.ID);
 
@@ -2311,10 +2342,10 @@ function SelectChart (period) {
 
     clearInterval(Interval_selectchart);
 
-    if (!solution.CurrentProject) 
-        return;
+ //  if (!solution.CurrentProject) 
+ //      return;
     
-    var symbolcanvas = solution.CurrentProject.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;      
 
 
@@ -2328,11 +2359,11 @@ function SelectChart (period) {
     var Symbol = symbolcanvas.CurrentSymbol;
 
     if (!Symbol) {
-        var symbolname = "EURUSD";
-        Symbol = new pgsymbol('EURUSD'); //   (name, port, minlot, maxlot, lotstep, spread, stoplevel, point, digits, lotsize)
-        Symbol.Set('EURUSD', 'EURUSD', 0, "0.01", "100", "0.2", "1", 5, 0.00001, 0, 6); //   (name, port, minlot, maxlot, lotstep, spread, stoplevel, point, digits, lotsize)
+        let symbolname = "EURUSD";
+        Symbol = new pgsymbol(symbolname); //   (name, port, minlot, maxlot, lotstep, spread, stoplevel, point, digits, lotsize)
+        Symbol.Set(symbolname, symbolname, 0, "0.01", "100", "0.2", "1", 5, 0.00001, 0, 6); //   (name, port, minlot, maxlot, lotstep, spread, stoplevel, point, digits, lotsize)
         symbolcanvas.CurrentSymbol = Symbol;
-        solution.CurrentProject.PG.Symbols.push(Symbol);
+        solution.GetPGFromTerminal ().Symbols.push(Symbol);
         Symbol.Last = '';
     }
     ProjectSelectPeriod (solution.CurrentProject, Symbol, period, true);

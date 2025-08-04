@@ -615,17 +615,31 @@
     flex:1;
 }
 
-#emv_tester_recordgroup {
-    height:60px;
-    flex:none;
+#emv_tester_recordbar {
+    padding: 10px;
+    height: 60px;
+    flex: none;
+}
+
+#emv_tester_commandpanel {
+    flex:0;
+}
+
+#emv_tester_stepsbar {
+    justify-content: center;
+}
+
+
+#emv_tester_commandgroup {
+    padding: 10px;
 }
 
 #emv_tester_terminalinput {
-    border-top: 1px solid var(--theme-button-border-color);
+   /* border-top: 1px solid var(--theme-button-border-color);*/
 }
 
 #emv_card_input {
-    border-top: 1px solid var(--theme-button-border-color);
+   /* border-top: 1px solid var(--theme-button-border-color);*/
 }
 
 #emv_tester_play_button {
@@ -646,12 +660,12 @@
 
 #emv_tester_filtergroup {
     flex-wrap: wrap;
-    width: 164px;
+    flex: 1;
     height: 50px;
     overflow: hidden;
-    flex-direction: column;   
-    background: var(--theme-form-bg-color);  
-    border: 1px solid var(--theme-button-border-color)   
+    flex-direction: column;
+    background: var(--theme-form-bg-color);
+    border: 1px solid var(--theme-button-border-color);
 }    
 
 
@@ -684,7 +698,7 @@
     overflow:auto;
     color:var(--theme-color);
     margin-top: -1px;  
-    border-top: 1px solid var(--theme-button-border-color);        
+   /* border-top: 1px solid var(--theme-button-border-color);        */
 }
 
 #emv_apdutreepanel .sb_formcontainer {
@@ -791,7 +805,7 @@
 }
 
 #emv_transactiontags_tablepanel {
-    border-top: 1px solid var(--theme-button-border-color);        
+   /* border-top: 1px solid var(--theme-button-border-color);        */
     margin-top: -1px;    
 }
 

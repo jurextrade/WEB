@@ -598,7 +598,7 @@ var netprogplatform = {
     brand: {
         title: 'NetProg', 
         logo: '/A_PLATFORMS/netprog/res/netprog.svg',
-        events: {onclick: "netprog_home_open()"}
+        events: {onclick: "netprog_home_open(event)"}
     },            
     
     select:'netprog_select(\'' + NETPROG_PLATFORM_NAME + '\')',   

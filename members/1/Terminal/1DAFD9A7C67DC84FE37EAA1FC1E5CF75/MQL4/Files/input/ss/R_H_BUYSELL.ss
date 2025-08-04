@@ -40,7 +40,7 @@
 (SET T_SELLLOTSL T_SELLLOTSL )
 (SET T_BUYLOTSL T_BUYLOTSL )
 (IF (AND (= (GetDay CurrentTime )
-6 )
+5 )
 (>= CurrentTime 23:00:00 )
 )
 (EXIT )

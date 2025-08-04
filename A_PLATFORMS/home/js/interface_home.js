@@ -18,86 +18,6 @@ var emv_assistantpanel = {
     content: 'emv_AssistantPanel()'    
 }
 //------------------------------------------------------------ MAIN PANELS----------------------------------------------------------
-
-var home_trading_leftsection = {
-    id: 'home_trading_leftsection', 
-    type: 'panel',       
-    class: 'home_leftsection presentationpanel sb_column sb_left', 
-    items: [
-        {id: 'presentation', type: 'html',  class: 'sectioncontainer sb_column', content: "trading_PresentationPanel()"},   
-        {id: 'profile',      type: 'html',  class: 'sb_column',                  content: "ProfilePanel()"     },   
-    ]
-}
-
-var home_trading_rightsection = {
-    id: 'home_trading_rightsection', 
-    type: 'panel',       
-    class: 'home_rightsection sb_column sb_left sb_panel sb_main',      
-    items: [
-        {id: 'frontbar',   type: 'html',  class: 'sectioncontainer',  content: "trading_MainCarouselPanel()" },        
-        ],
-}
-
-var home_emv_leftsection = {
-    id: 'home_emv_leftsection', 
-    type: 'panel',       
-    class: 'home_leftsection presentationpanel sb_column sb_left', 
-    items: [
-        {id: 'presentation', type: 'html',  class: 'sectioncontainer sb_column', content: "emv_PresentationPanel()"},   
-        {id: 'profile',      type: 'html',  class: 'sb_column',                  content: "ProfilePanel()"     },   
-    ]
-}
-
-var home_emv_tree_steps = {
-    id: "home_emv_tree_steps",
-    type: "html",
-    class: "sb_panel sb_main",
-    content: 'home_steps_diagram()',
-};
-
-
-var home_emv_rightsection = {
-    id: 'home_emv_rightsection', 
-    type: 'panel',       
-    class: 'home_rightsection sb_column sb_left sb_panel sb_main',      
-    items: [
-        {id: 'frontbar',   type: 'html',  class: 'sectioncontainer',  content: "emv_MainCarouselPanel()" },        
-        ],
-}
-
-var home_netprog_leftsection = {
-    id: 'home_netprog_leftsection', 
-    type: 'panel',       
-    class: 'home_leftsection presentationpanel sb_column sb_left',     
-    items: [
-        {id: 'presentation', type: 'html',  class: 'sectioncontainer sb_column', content: "netprog_PresentationPanel()"},   
-        {id: 'profile',      type: 'html',  class: 'sb_column',                  content: "ProfilePanel()"     },           
-    ]
-}
-
-
-var home_netprog_rightsection = {
-    id: 'home_netprog_rightsection', 
-    type: 'panel',       
-    class: 'home_rightsection sb_column sb_left sb_main',    
-    items: [
-    {id: 'frontbar',   type: 'html',  class: 'sectioncontainer',  content: "netprog_MainCarouselPanel()" },            
-
-    ],
-}
-
-
-
-var home_section = {
-    id: 'home_section', 
-    type: 'panel',       
-    class: 'sb_panel sb_row home_section',
-    items: [
-        home_trading_leftsection,
-        home_trading_rightsection,
-        home_emv_tree_steps        
-    ] 
-}
 var home_projects_group = {
     id: 'home_projects_group',
     type: 'group',         
@@ -120,6 +40,105 @@ var home_mainbar = {
             home_projects_group
         ]
 }    
+
+
+var home_trading_leftsection = {
+    id: 'home_trading_leftsection', 
+    type: 'panel',       
+    class: 'home_leftsection presentationpanel sb_column sb_left', 
+    items: [
+        {id: 'presentation', type: 'html',  class: 'sectioncontainer sb_column', content: "trading_PresentationPanel()"},   
+        {id: 'profile',      type: 'html',  class: 'sb_column',                  content: "ProfilePanel()"     },   
+    ]
+}
+
+var home_trading_rightsection = {
+    id: 'home_trading_rightsection', 
+    type: 'panel',       
+    class: 'home_rightsection sb_column sb_left sb_panel sb_main',      
+    items: [
+        {id: 'frontbar',   type: 'html',  class: 'sectioncontainer',  content: "trading_MainCarouselPanel()" },    
+        {id: 'widget_panel', type: 'panel', class: 'home_widgets sb_column' , items:[]}    
+    ],
+}
+
+var home_emv_leftsection = {
+    id: 'home_emv_leftsection', 
+    type: 'panel',       
+    class: 'home_leftsection presentationpanel sb_column sb_left', 
+    items: [
+   
+        {id: 'presentation', type: 'html',  class: 'sectioncontainer sb_column', content: "emv_PresentationPanel()"},   
+        {id: 'profile',      type: 'html',  class: 'sb_column',                  content: "ProfilePanel()"     },   
+    ]
+}
+
+var home_emv_rightsection = {
+    id: 'home_emv_rightsection', 
+    type: 'panel',       
+    class: 'home_rightsection sb_column sb_left sb_panel sb_main',      
+    items: [
+        {id: 'frontbar',   type: 'html',  class: 'sectioncontainer',  content: "emv_MainCarouselPanel()" },    
+        {id: 'widget_panel', type: 'panel', class: 'home_widgets sb_column' , items:[]}                
+        ],
+}
+
+var home_netprog_leftsection = {
+    id: 'home_netprog_leftsection', 
+    type: 'panel',       
+    class: 'home_leftsection presentationpanel sb_column sb_left',     
+    items: [
+   
+        {id: 'presentation', type: 'html',  class: 'sectioncontainer sb_column', content: "netprog_PresentationPanel()"},   
+        {id: 'profile',      type: 'html',  class: 'home_widget sb_column',                  content: "ProfilePanel()"     },           
+    ]
+}
+
+
+var home_netprog_rightsection = {
+    id: 'home_netprog_rightsection', 
+    type: 'panel',       
+    class: 'home_rightsection sb_column sb_left sb_main',    
+    items: [
+    {id: 'frontbar',   type: 'html',  class: 'sectioncontainer',  content: "netprog_MainCarouselPanel()" },
+        {id: 'widget_panel', type: 'panel', class: 'home_widgets sb_column' , items:[]}                    
+
+    ],
+}
+var home_netprog_protocols = {
+        id: 'home_netprog_protocols',
+        type: 'table',            
+        columns :  ['IP',	'client',	'server',	'Connection',	'Dialog'],
+        columnstitle : ['', '', '', '', ''],
+        rows : [
+            ['TCP',    	    'yes',	    'yes',	'IP_PROTO_TCP',	    'TCP'],
+            ['FTP',    	    'yes',	    'no' ,	'IP_PROTO_FTP',	    'FTP'],
+            ['HTTP',   	    'yes',	    'no' ,	'IP_PROTO_HTTP',	'HTTP'],
+            ['SMTP',   	    'yes',	    'no' ,	'IP_PROTO_SMTP',	'SMTP'],
+            ['POP',    	    'yes',	    'no' ,	'IP_PROTO_POP',	    'POP'],
+            ['DNS',    	    'yes',	    'no' ,	'IP_PROTO_DNS',	    'DNS'],
+            ['DG', 	        'yes',	    'yes',	'IP_PROTO_DG',	    'USER_DEFINED'],
+            ['IO', 	 	 	 ''	 ,     	''  ,   '',                 ''  ],
+            ['STORE',  	    'yes',	    '-' ,	'IO_PROTO_STORE',	'ANY'], 	
+            ['FIXED SIZE',  'yes',	    '-' ,	'IO_PROTO_FIOP',	'USER_DEFINED'],
+            ['DATABASE',   	 '' ,  	    '' 	, 	'',	                ''  ],
+            ['ODBC',   	    'yes',	    '-' ,	'DB_PROTO_ODBC',	'DB'],
+            ['ORACLE', 	    'yes',     	'-' ,	'DB_PROTO_ORACLE',	'DB'],
+            ['SQL/DS',	 	 '', 	    ''  ,   'DB_PROTO_SQLDS',	'DB'],                        
+        ]       
+}
+
+var home_section = {
+    id: 'home_section', 
+    type: 'panel',       
+    class: 'sb_panel sb_row sb_main home_section',
+    items: [
+        home_trading_leftsection,
+        home_trading_rightsection,
+    ] 
+}
+
+
 
 //----------------------------------------------------------------<<< MAIN >>>-----------------------------------------------------------------------
 
@@ -153,7 +172,7 @@ var home_main = {
     class: 'sb_panel sb_main sb_column',
     events: {ondragover: "allowDrop(event)", ondrop: "ondrop_home_main(event)"},      
     items: [
-        home_mainbar,
+        home_mainbar,     
         home_section,
        // {id: 'home_section_drag', type:'drag', direction:'horizontal', dragid: 'home_section'},            
     ],

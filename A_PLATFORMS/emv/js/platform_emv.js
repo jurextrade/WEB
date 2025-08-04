@@ -1,6 +1,8 @@
 //---------------------------------------------------------------------MODULE START -----------------------------------------------------------------------------//
 
 function emv_init () {
+    emv_solution('emv')
+    emv_tester_init();
 
 // market          
     let ui  = solution.get('ui')     
@@ -8,17 +10,12 @@ function emv_init () {
     if (marketpanel.length != 0) {
         $('#marketpanel').css ('display', 'none')   
     } 
-
-    Tester = new emvtester();
-    emv_solution()
-    EMVConnect(solution.EMVRouter_Address, solution.EMVRouter_Port);     
-    emv_home_init () ;
-
-//    emv_loadproject()    
-    emv_tester_init();
-
+    
+    EMVConnect(solution.EMVRouter_Address, solution.EMVRouter_Port, solution.EMVRouter_Reconnection);     
     ServerPanel_Update('emv');
+
     emv_TLVParserPanel_Update(); 
+
     sidebarpanel_select(emvplatform, "sidebarpanel_emvprojectmanager");       
     setInterval(emv_timer, 300);         
 }
@@ -53,22 +50,23 @@ function emv_select (name) {
 }
 
 
-function emv_solution () {
+function emv_solution (pname) {
 
     let  site           = solution.get('site');
     let  user           = solution.get('user')
 
     solution.emv_Projects       = [];
     solution.emv_CurrentProject = null;
-    solution.EMVRouter_Protocol   = site.protocol;            
+    solution.EMVRouter_Protocol   = site.protocol;    
+    solution.EMVRouter_Reconnection   = emv_default_router_reconnection;              
 
     if (site.protocol == 'http:') {  //EMV = 5
-        solution.EMVRouter_Address   = site.hostname;    
-        solution.EMVRouter_Port     =  5080;     
+        solution.EMVRouter_Address   = 'localhost';  //site.hostname;    
+        solution.EMVRouter_Port     =  emv_default_router_port;     
     }
     else {
-        solution.EMVRouter_Address   =  site.hostname;    
-        solution.EMVRouter_Port     =  5443;    
+        solution.EMVRouter_Address   =   'localhost'; //site.hostname;    
+        solution.EMVRouter_Port     =  emv_default_router_sport;    
     }
 
    // if (site.hostname != 'www.jurextrade.com') {
@@ -92,7 +90,7 @@ function emv_solution () {
                 let projectstruct = arraystructure[i];
 
                 if (!projectstruct.Name || !projectstruct.Path) continue;
-                if (values[0].userid == '0' && projectstruct.Name != "Demo_Project") continue;                    
+                if (values[0].userid == '0' && projectstruct.Name != emv_default_projectname) continue;                    
                 let project = new emvproject(EMV_PLATFORM_PNAME, projectstruct.Name, projectstruct.Path)
                 project =  {...project, ...projectstruct}
                 solution.emv_Projects.push(project);
@@ -130,26 +128,27 @@ function emv_solution () {
 function emv_timer () {
 
     if (Tester.Reader.Statut == READER_PLAYING || Tester.Reader.Records.length == 0) {
-        $('#emv_tester_recordgroup #emv_tester_forward_button').attr('disabled',true);
-        $('#emv_tester_recordgroup #emv_tester_start_button').attr('disabled',true);   
+        $('#emv_tester_recordbar #emv_tester_forward_button').attr('disabled',true);
+        $('#emv_tester_recordbar #emv_tester_start_button').attr('disabled',true);   
         if (Tester.Reader.Records.length == 0) {
-            $('#emv_tester_recordgroup #emv_tester_play_button').attr('disabled',true);         
+            $('#emv_tester_recordbar #emv_tester_play_button').attr('disabled',true);         
         }
     } else {
         if (Tester.Reader.RecordIndex ==  Tester.Reader.Records.length) {
-            $('#emv_tester_recordgroup #emv_tester_forward_button').attr('disabled',true);
-            $('#emv_tester_play_button ' + 'i').attr('class', icon_repeat);   
-            $('#emv_tester_recordgroup #emv_tester_start_button').removeAttr('disabled');   
-            $('#emv_tester_recordgroup #emv_tester_play_button').removeAttr('disabled');                                     
+            $('#emv_tester_recordbar #emv_tester_forward_button').attr('disabled',true);
+            $('#emv_tester_play_button ' + 'i').attr('class', icon_repeat); 
+            $('#emv_tester_play_button ' + 'i').attr('title', 'RePlay');                 
+            $('#emv_tester_recordbar #emv_tester_start_button').removeAttr('disabled');   
+            $('#emv_tester_recordbar #emv_tester_play_button').removeAttr('disabled');                                     
         } else 
         if (Tester.Reader.RecordIndex == 0) {
-            $('#emv_tester_recordgroup #emv_tester_start_button').attr('disabled',true);
-            $('#emv_tester_recordgroup #emv_tester_forward_button').removeAttr('disabled');   
-            $('#emv_tester_recordgroup #emv_tester_play_button').removeAttr('disabled');              
+            $('#emv_tester_recordbar #emv_tester_start_button').attr('disabled',true);
+            $('#emv_tester_recordbar #emv_tester_forward_button').removeAttr('disabled');   
+            $('#emv_tester_recordbar #emv_tester_play_button').removeAttr('disabled');              
         } else {
-            $('#emv_tester_recordgroup #emv_tester_play_button').removeAttr('disabled');  
-            $('#emv_tester_recordgroup #emv_tester_forward_button').removeAttr('disabled');
-            $('#emv_tester_recordgroup #emv_tester_start_button').removeAttr('disabled');
+            $('#emv_tester_recordbar #emv_tester_play_button').removeAttr('disabled');  
+            $('#emv_tester_recordbar #emv_tester_forward_button').removeAttr('disabled');
+            $('#emv_tester_recordbar #emv_tester_start_button').removeAttr('disabled');
         }
     }
     if (solution.emv_CurrentProject) {        
@@ -159,9 +158,9 @@ function emv_timer () {
         $('#emv_projectsbar #emv_projectdistribute').css ('display', '');
         $('#emv_projectsbar #emv_projectclose').css ('display', '');
         if (Tester.Reader.Records.length != 0) {
-            $('emv_tester_recordgroup').css ('display', 'flex');
+            $('emv_tester_recordbar').css ('display', 'flex');
         } else {
-            $('emv_tester_recordgroup').css ('display', 'none');
+            $('emv_tester_recordbar').css ('display', 'none');
         }
     }
     else {
@@ -170,8 +169,21 @@ function emv_timer () {
         $('#emv_projectsbar #emv_projectcompile').css ('display', 'none');
         $('#emv_projectsbar #emv_projectdistribute').css ('display', 'none');
         $('#emv_projectsbar #emv_projectclose').css ('display', 'none');
-        $('emv_tester_recordgroup').css ('display', 'none');
+        $('emv_tester_recordbar').css ('display', 'none');
     }
+}
+
+
+function emv_home_open (event) {
+    let platform =  sb.get(main, 'pname', 'home');
+    //    LoaderDisplay(true);
+    if (platform.length == 0) {
+        solution.add_module('home');               
+    } 
+  
+    let ui  = solution.get('ui')     
+    ui.platform_select(HOME_PLATFORM_PNAME)    
+    onclick_home_mainbar ($('#home_mainbar_emv')[0], event)            
 }
 
 function emv_loadedproject (project) {
@@ -263,10 +275,7 @@ function emv_drawproject(project, open) {
         $('#emv_projectselect option[value="' + project.Name + '"]').prop('selected', true);
         sb.tree_selectitem ('emv_tree_projects', project.Name); 
         sb.box_toggle('emv_boxapplicationspanel', true);        
-
-
-        ServerPanel_Update('emv');
-  
+ 
     } else {
         solution.emv_CurrentProject = null; 
         $("#emv_projectselect option").eq(0).before($('<option>', {value: '--Select Project--', text: '--Select Project--'}));
@@ -276,7 +285,6 @@ function emv_drawproject(project, open) {
         
      //   sb.tab_delete(emv_maintabs, 'emv_tester_tab');   
 
-        ServerPanel_Update('emv');
         BottomPanel_Flat(platform, true, true);         
         AnimationDisplay('emv', 'Goodbye', 'emv_toppanel');             
     }   

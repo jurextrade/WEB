@@ -184,7 +184,7 @@ var tree_indicators = (id =>  {return {
     icon: icon_indicator,
     items:[
         {
-            id: 'tree_createdindicators_' + id,       
+            id: id + '_tree_createdindicators',       
             type: 'tree',       
             arrow: true,             
             item: id + ' Indicators',
@@ -195,7 +195,7 @@ var tree_indicators = (id =>  {return {
 
         },
         {
-            id: 'tree_predefinedindicators_' + id,       
+            id: id + '_tree_predefinedindicators' ,       
             type: 'tree',
             arrow: true,                    
             item: 'Predefined Indicators',

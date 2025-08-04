@@ -1270,7 +1270,7 @@ var tradedeskplatform = {
     brand: {
         title: 'JUREXTRADE', 
         logo: '/A_PLATFORMS/tradedesk/res/tradedesk.svg',
-        events: {onclick: "tradedesk_home_open()"}
+        events: {onclick: "tradedesk_home_open(event)"}
     },      
     select:                        'tradedesk_select(\'' + TRADEDESK_PLATFORM_NAME + '\')',
     init:                          'tradedesk_init()',    

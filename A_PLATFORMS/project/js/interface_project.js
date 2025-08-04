@@ -1073,7 +1073,7 @@ var projectplatform = {
     brand: {
         title: 'JUREXTRADE', 
         logo: '/A_PLATFORMS/project/res/project.svg',
-        events: {onclick: "project_home_open()"}
+        events: {onclick: "project_home_open(event)"}
     },      
     select:                         'project_select(\'' + PROJECT_PLATFORM_NAME + '\')', 
     init:                           'project_init()',     

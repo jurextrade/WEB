@@ -119,9 +119,9 @@ var Marker_Run = function (marker) {
     marker.CurrentPeriod = marker.MinPeriod;
     
     var terminal = solution.GetCurrentTerminal();
-    if (!terminal) return;
+    //if (!terminal) return;
 
-    if (terminal == solution.CurrentProject) {
+    if (terminal == solution.CurrentProject) {   // can be null for not loaded projects
         ProjectSelectPeriod(solution.CurrentProject, symbol, marker.CurrentPeriod, true);
     }
     else
@@ -349,7 +349,7 @@ function marker_update (signaltype, onclick) {
     if (!marker) {
         return;
     }
-    tools_panel_select();    
+    tools_panel_select(1);    
     inputeditor.setValue(marker.SCContent)
     $(elt).closest('.sb_overlay').remove();
 }

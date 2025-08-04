@@ -143,6 +143,7 @@ var emv_testerpanel_buttongroup = ((toggled) =>  {return {
     ]
 }})
 
+
 //---------------------------------------------------------------------------- TRANSACTION TAGS PANEL -----------------------------------------------------------------------------------
 
 var emv_transactiontags_searchgroup = ((toggled) =>  {return {
@@ -291,6 +292,28 @@ var emv_apdupanel  = ((toggled) =>  {return {
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+var emv_tester_stepsgroup = (steps => {
+    let items = [];
+    for (var i = 0; i < steps.length; i++) {
+        items.push ({id: 'step_' + i,   type: 'button', class: 'sb_roundbutton EMVStep',   events: {onclick: "onclick_emv_tester_stepsgroup (this, event)"}, title: 'Step ' + i})
+    }
+    return {
+    id:   'emv_tester_stepsgroup',  
+    type: 'group',
+    items: items
+
+}})
+
+var emv_tester_stepsbar  = {
+    id: 'emv_tester_stepsbar',
+    type: 'bar',     
+    position: '',
+    class: 'sb_transform',    
+    items: [ 
+            emv_tester_stepsgroup(emv_Steps),
+        ]    
+}
+
 var emv_tester_commandgroup = {
     id: 'emv_tester_commandgroup',  
     class: 'sb_transform',
@@ -298,8 +321,7 @@ var emv_tester_commandgroup = {
    // style: 'display:none',
     items:
         [    
-            {id: 'emv_tester_upload_transaction',  icon: icon_download,  class: 'sb_right', item : 'Load Transaction', type:'button',  title: 'Load transaction',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},  
-            {id: 'emv_tester_play_button' ,    /*item: 'Run',*/       icon: icon_play,       type:'button',  class: 'sb_sbutton', title: 'play',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
+            {id: 'emv_tester_play_button' ,    /*item: 'Run',*/       icon: icon_play,       type:'button',  class: 'sb_sbutton', title: 'Run',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
             {id: 'emv_tester_start_button' ,   /*item: 'Start',*/     icon: icon_backward,   type:'button',  class: 'sb_sbutton', title: 'go to start',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
             {id: 'emv_tester_forward_button' , /*item: 'Forward',*/ icon: icon_forwardstep,  type:'button',  class: 'sb_sbutton', title: 'step Forward',   events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},            
    
@@ -309,24 +331,10 @@ var emv_tester_commandgroup = {
     ]    
 }
 
-var emv_tester_stepsgroup = (steps => {
-    let items = [];
-    for (var i = 0; i < steps.length; i++) {
-        items.push ({id: 'step_' + i,   type: 'button', class: 'sb_roundbutton EMVStep',   events: {onclick: "onclick_emv_tester_stepsgroup (this, event)"}, title: 'Step ' + i})
-    }
-    return {
-    id:   'emv_tester_stepsgroup',  
-    position: 'sb_distance',
-    type: 'group',
-    items: items
-
-}})
-
 var emv_tester_filtergroup = {
     id: 'emv_tester_filtergroup',  
     class: 'sb_transform',
     type: 'group',
-    position: 'sb_end',
     items:
         [
             {id: 'ignore_apdu',    type: 'checkbox', item: 'APDU',     events: {onclick:'onclick_emv_tester_filtergroup(this, event)'}}, 
@@ -338,19 +346,43 @@ var emv_tester_filtergroup = {
         ]
 }
 
-var emv_tester_recordgroup  = {
-    id: 'emv_tester_recordgroup',
+
+
+var emv_tester_recordbar  = {
+    id: 'emv_tester_recordbar',
     type: 'bar',     
     position: '',
     class: 'sb_transform',    
     items:
         [ 
             emv_tester_commandgroup,
-            emv_tester_stepsgroup(emv_Steps),
             emv_tester_filtergroup,  
         ]    
 }
 
+
+var emv_tester_transactiongroup = {
+    id: 'emv_tester_transactiongroup',
+    type: 'group',
+    form: true,
+    items: [
+        {id: 'emv_tester_transactionfile', type: 'label', item: 'Transaction'},
+        {id: 'emv_tester_transactionselect',  type: 'select',   title: 'Select Saved Transaction', events: {onchange: "onchange_emv_tester_transactionselect(event, this)"},value: '--Select Transaction--', menu: []}, 
+    ]
+}
+
+
+
+var  emv_tester_transactionpanel = {
+    id: 'emv_tester_transactionpanel',
+    type: 'panel',
+    class: 'sb_panel sb_main sb_column',
+    items: [
+        emv_tester_transactiongroup,             
+ //       {id: 'emv_tester_upload_transaction',  icon: icon_download,  class: 'sb_right', item : 'Load Transaction', type:'button',  title: 'Load transaction',  events: {onclick:'onclick_emv_tester_commandgroup(this, event)'}},  
+
+    ]
+}
 
 
 var emv_tester_headerbar = {
@@ -366,9 +398,6 @@ var emv_tester_headerbar = {
         {id: 'header_load',     type: 'link',   class: 'sb_sidebarheaderinfo',   icon:  icon_file,  events: {onclick: "onclick_jsonloadfile(this, event)"}, title: 'link to documentation'},                 
     ]
 }
-
-
-
 
 var emv_tester_headerpanel = {
     id: 'emv_tester_headerpanel',
@@ -492,25 +521,37 @@ var emv_tester_terminalpanel = ((toggled) =>  {return {
 }})
 
 
+var emv_tester_commandpanel = {
+    id: 'emv_tester_commandpanel',    
+    type: 'panel',
+    class: 'sb_panel sb_column',
+    items:[        
+        emv_tester_transactionpanel,
+        emv_tester_recordbar,        
+        emv_tester_stepsbar,
+    ]   
+}
 
+var emv_tester_panel = {
+    id: 'emv_tester_panel',
+    type: 'panel',
+    class: 'sb_panel sb_main sb_column',
+    items:[        
+        emv_tester_cardpanel(true),
+        emv_tester_terminalpanel(true),   
+        emv_apdupanel(true),        
+        emv_transactiontagspanel(true)        
+    ]
+}
 //-------------------------------------------------------------------- TESTER SIDEBAR PANEL --------------------------------------------------------------
 
 var emv_tester_sidepanel = {
     id: 'emv_tester_sidepanel',
     type: 'panel',
     class: 'sb_sidepanel sb_panel sb_main sb_column',
-    items:[        emv_tester_recordgroup,                 
-        {
-            id: 'emv_tester_panel',
-            type: 'panel',
-            class: 'sb_panel sb_main sb_column',
-            items:[        
-                emv_tester_cardpanel(true),
-                emv_tester_terminalpanel(true),   
-                emv_apdupanel(true),        
-                emv_transactiontagspanel(true)        
-            ]
-        }
+    items:[        
+        emv_tester_commandpanel,
+        emv_tester_panel
     ],
 }
     //        {id: '',  type:'drag', direction:'horizontal', dragid: 'emv_testerright_panel'},            

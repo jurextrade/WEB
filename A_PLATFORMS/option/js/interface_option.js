@@ -514,7 +514,7 @@ var optionplatform = {
     brand: {
         title: 'JUREXTRADE', 
         logo: '/A_PLATFORMS/option/res/option.svg',
-        events: {onclick: "openPopupContact()"}
+        events: {onclick: "option_home_open(event)"}
     },      
     select:        'option_select(\'' + OPTION_PLATFORM_NAME + '\')',
     init:          'option_init()',

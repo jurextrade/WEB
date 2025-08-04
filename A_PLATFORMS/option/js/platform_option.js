@@ -9,12 +9,6 @@ function option_init() {
     option_solution('option');
     option_editors_init('option'); 
     
-    let ui  = solution.get('ui')     
-    let marketpanel =  ui.sb.get(main, 'pname', 'market');
-
-    if (marketpanel.length == 0) {
-        solution.add_module('market');  
-    }   
 
     Interval_optiontimer    = setInterval(option_timer, 300);     
 
@@ -62,6 +56,9 @@ function option_solution (pname) {
     let  user           = solution.get('user')
 
 
+
+
+
     solution.CurrentOptionTerminal = null;
 
 
@@ -69,9 +66,9 @@ function option_solution (pname) {
         pg_solution ()
         solution.LoadPGDefault (pname);   
         solution.DefaultLoaded = true;        
-    } else {   
-        solution.UpdatePredefinedIndicators (pname);
-    }
+    }    
+    solution.UpdatePredefinedIndicators (pname);
+    
 
     solution.option_LoadTerminals = function (Id, url, async, interfacecallback, par) {
         if (!async) async = false;
@@ -96,7 +93,7 @@ function option_solution (pname) {
                     let sdatapath = pathElements[pathElements.length - 1];
 
 
-                    if (terminalstruct.Type == 'Yahoo' && terminalstruct.Name != 'Main') {   // 2 terminals; option and main
+                    if (terminalstruct.Type == 'Yahoo') {   // 2 terminals; option and main
 
                         if (solution.GetTerminalsFromName (terminalstruct.Name).length != 0) continue;
 
@@ -135,7 +132,7 @@ function option_solution (pname) {
         for (var j = 0; j < solution.Terminals.length; j++) {
             var terminal = solution.Terminals[j];
     
-            if ((terminal.Type == 'Yahoo' && terminal.Name != 'Main') || terminal.Type == 'IB') {
+            if ((terminal.Type == 'Yahoo') || terminal.Type == 'IB') {
 
                 items.push({id:'terminal_' + terminal.Name, type: 'link', item: terminal.Name, icon: icon_terminal, Type:terminal.Type,
                     attributes:{selector: 'option_selectterminal'},
@@ -181,6 +178,18 @@ function option_timer () {
         $('#option_root #' + 'indicatorCreate').css ('display', 'none');              
 
     }
+}
+
+function option_home_open (event) {
+    let platform =  sb.get(main, 'pname', 'home');
+    //    LoaderDisplay(true);
+    if (platform.length == 0) {
+        solution.add_module('home');               
+    } 
+  
+    let ui  = solution.get('ui')     
+    ui.platform_select(HOME_PLATFORM_PNAME)    
+    onclick_home_mainbar ($('#home_mainbar_trading')[0], event)      
 }
 
 function option_selectterminal(terminal, force) {
@@ -549,7 +558,7 @@ function UpdateSymbolFromOptionChain (terminal, symbol, fulloptionchain) {
     
     if (symbol.NbrContracts == 0) {  // symbol not found
 
-        var symbolcanvas = terminal.PG.Canvas;
+        var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
         if (!symbolcanvas) {
             return;
         }
@@ -684,7 +693,7 @@ function OptionTreatComputation (responseText, parameters) {
         if (symbol.NbrContractRead == symbol.NbrContracts) {
             UpdateContracts(symbol);   
            
-            var symbolcanvas = terminal.PG.Canvas;
+            var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
             if (!symbolcanvas) {
                 return;
             }
@@ -840,7 +849,7 @@ function option_displayterminal(terminal, Symbol) {
         OptionAddSymbol(terminal, Symbol);
  //   }
 
-    var symbolcanvas = terminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return;     
 
     if (symbolcanvas.Updated == false) {
@@ -890,7 +899,7 @@ function OptionSelectPeriod(terminal, Symbol, Period, async) {
         return;
     }
 
-    let symbolcanvas = terminal.PG.Canvas;
+    let symbolcanvas = solution.GetCanvasFromTerminal(terminal);
 
     if (!symbolcanvas) {
         return;    
@@ -927,7 +936,7 @@ function Option_SelectSymbol(symbol, force) {
 
     force = OptionOpenSymbol(symbol);
     
-    let symbolcanvas = terminal.PG.Canvas;
+    let symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     
     if (!symbolcanvas) return;      
     
@@ -965,7 +974,7 @@ function OrderPanel_Update (entity, righttype, type) {
     if (entity == null) {
         return;
     }
-    let symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    let symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     if (righttype.value == 'Stock') {
         let symbol = entity;
 
@@ -993,7 +1002,7 @@ function OnOptionOrder() {
 //        return;
     }
     
-    var symbolcanvas = terminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return;    
     var Symbol = symbolcanvas.CurrentSymbol;    
     
@@ -1085,7 +1094,7 @@ function OptionOrderPanel () {
 }
 
 function OptionSetOrderType(e, type) {
-    var symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    var symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     if (!symbolcanvas) return;    
     var Symbol = symbolcanvas.CurrentSymbol;
     
@@ -1169,7 +1178,7 @@ function OptionUpdateOrderPanel (id, Symbol) {
 
 
 function OptionSetRightType(e, contract) {
-    var symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    var symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     if (!symbolcanvas) return;    
     
     var Symbol = symbolcanvas.CurrentSymbol;
@@ -1249,7 +1258,7 @@ function OptionSetRightType(e, contract) {
 }
 
 function OptionSelectContract(e) {
-    var symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    var symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     if (!symbolcanvas) return;    
     var Symbol = symbolcanvas.CurrentSymbol;
 
@@ -1291,7 +1300,7 @@ function OptionSelectContract(e) {
 
 
 function ondblclick_optioncontractsrow (elt, event) {
-    let symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    let symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     let symbol       = symbolcanvas.CurrentSymbol;
     let eltpos       = document.elementFromPoint(event.pageX, event.pageY);
     let splitelt     = eltpos.id.split('_')
@@ -1329,7 +1338,7 @@ function ondblclick_optioncontractsrow (elt, event) {
 
 function ondragstart_optioncontractsrow(elt, event, tableid) {
     
-    let symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    let symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     let symbol       = symbolcanvas.CurrentSymbol;
     let eltpos       = document.elementFromPoint(event.pageX, event.pageY);
     let splitelt     = eltpos.id.split('_')
@@ -1579,7 +1588,7 @@ function RoundTo(v, d) {
 }
 
 function SearchInGrid (grid) {
-    var symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    var symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     var symbol = symbolcanvas.CurrentSymbol;    
     if (!symbol) return;
     
@@ -1771,7 +1780,7 @@ var TrackOption = function (event, itempos, yValue, mouseXY, fulldata, state) {
 
 
         
-    var symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    var symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     if (!symbolcanvas) return;
     
     var PG       = solution.CurrentOptionTerminal.PG;
@@ -1937,7 +1946,7 @@ var TrackOption = function (event, itempos, yValue, mouseXY, fulldata, state) {
 }
 
 function OptionTreatHistory (terminal, symbol, period, values) {
-    var symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    var symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     if (!symbolcanvas) return;
    
     var k = 0;
@@ -2173,7 +2182,7 @@ function OptionTreatOption(solution, terminal, values) {
     var reqid = rreqid - 1000;
     var price   = (+values[3]).toFixed(2);   ;
 
-    var symbolcanvas = terminal.PG.Canvas;
+    var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     var Symbol = symbolcanvas.CurrentSymbol;
     if (!Symbol || Symbol.Contracts.length == 0) return;
 
@@ -2245,7 +2254,7 @@ function OptionTreatOptionSize(solution, terminal, values) {
 
     var size   = +values[3];
 
-    var symbolcanvas = terminal.PG.Canvas;  
+    var symbolcanvas = solution.GetCanvasFromTerminal(terminal);  
     var Symbol = symbolcanvas.CurrentSymbol;
     if (!Symbol || Symbol.Contracts.length == 0) return;
 
@@ -2822,7 +2831,7 @@ function onpaste_sitesidebarpanel(elt, event) {
 
     // after selecting symbols between symbols
 
-    var symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    var symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     if (!symbolcanvas) return;
     
     var symbol = symbolcanvas.CurrentSymbol;    
@@ -2962,7 +2971,7 @@ function select_expiry (symbol, expiry, checked, update) {
 }
 
 function onclick_optionexpirygroup (elt, event) {
-    let symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    let symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     let symbol = symbolcanvas.CurrentSymbol;    
     if (!symbol) return;
 
@@ -3087,7 +3096,7 @@ function onhover_ExpiryBar(elt) {
 }
 
 function onclick_ExpiryBar(elt) {
-    let symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    let symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     let symbol = symbolcanvas.CurrentSymbol;    
     if (!symbol) return;
 
@@ -3098,7 +3107,7 @@ function onclick_ExpiryBar(elt) {
 }
 
 function onclick_StrikeBar(elt) {
-    let symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    let symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     let symbol = symbolcanvas.CurrentSymbol;    
     if (!symbol) return;
 
@@ -3144,7 +3153,7 @@ function OptionToolbarsPanel_Update (symbol) {
 //------------------------------------------------------------ STRIKE MENU PANEL ----------------------------------------------------------
 
 function onclick_ExpiryMenu (elt, event) {
-    var symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    var symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     var symbol = symbolcanvas.CurrentSymbol;    
     if (!symbol) return;    
 
@@ -3159,7 +3168,7 @@ function onclick_ExpiryMenu (elt, event) {
 }
 
 function onclick_StrikeMenu (elt, event) {
-    var symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    var symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     var symbol = symbolcanvas.CurrentSymbol;    
     if (!symbol) return;    
 
@@ -3174,7 +3183,7 @@ function onclick_StrikeMenu (elt, event) {
 
 
 function onclick_StrikesMenu (elt, event) {
-    let symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    let symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     if (!symbolcanvas) return;      
     
    let symbol = symbolcanvas.CurrentSymbol;
@@ -3226,7 +3235,7 @@ function StrikeMenuPanel (){
 }
 
 function onclick_ExpiriesMenu (elt, event) {
-    let symbolcanvas = solution.CurrentOptionTerminal.PG.Canvas;
+    let symbolcanvas = solution.CurrentOptionsolution.GetCanvasFromTerminal(solution.CurrentOptionTerminal);
     if (!symbolcanvas) return;      
     
    let symbol = symbolcanvas.CurrentSymbol;

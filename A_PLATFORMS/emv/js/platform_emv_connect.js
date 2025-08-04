@@ -6,7 +6,7 @@ const CARD             = "CARD";
 const ROUTER           = "ROUTER";
 var RouterCom          = null;
 
-function EMVConnect(adress, port) {
+function EMVConnect(adress, port, reconnection) {
 
     if (RouterCom && RouterCom.Socket.connected == true) 
         return;
@@ -28,7 +28,8 @@ function EMVConnect(adress, port) {
             onerrorfunction:          function (com, data) { HighlightReader(ROUTER, 0); },   
             onupdatefunction:         function (com, data) { HighlightReader(ROUTER, 0); },
             onconnect_errorfunction:  function (com, data) { HighlightReader(ROUTER, 0); },
-            onconnect_failedfunction: function (com, data) { HighlightReader(ROUTER, 0); },    
+            onconnect_failedfunction: function (com, data) { HighlightReader(ROUTER, 0); },  
+            reconnection:             reconnection ? reconnection : false  
         }
     )
 
@@ -127,7 +128,8 @@ function emv_TreatInit(origin, reader, values, fromrouter) {
                 if (fromrouter) {   
                     ExportFileConfirm('Do you want to save this Transaction in a File ?' , 'Tester.Reader.save_transaction')
                 } else {
-                    $('#emv_tester_play_button ' + 'i').attr('class', icon_repeat);                                 
+                    $('#emv_tester_play_button ' + 'i').attr('class', icon_repeat);  
+                    $('#emv_tester_play_button ' + 'i').attr('title', 'RePlay');                                                      
                 }
             }
         break;

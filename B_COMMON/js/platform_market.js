@@ -25,8 +25,7 @@ var MarketClosingDays = [
 $(document).ready(function(){
     $(document).on('click', function(event){
 
-        let panel = $(event.target).closest('#marketpanel')        
-        if (panel.length != 0) {
+        if ($(event.target).closest('#marketpanel').length != 0 ||  $(event.target).closest('.chartpanel').length != 0) {     
             return;
         }
         tools_panel_remove();    
@@ -46,55 +45,100 @@ function market_end () {
 
 //----------------------------------------------------   TOOLS PANEL    ------------------------------------------------   
 
+
 function onclick_toolspanelheaderpin (elt, event) {
     let $marketmain = $('#marketmain');   
 
     if ($(elt).hasClass ('checked')) {
+        tools_panel_select(0);        
         $marketmain.removeClass ('pinned')
-        $marketmain.css ({'transition':'none'});
-        tools_panel_hide();
+       $('#marketpanel .box-btn-slide').addClass ('rotate-180')            
         
     } else {
         $marketmain.addClass ('pinned')
+        $('#marketpanel .box-btn-slide').removeClass ('rotate-180')   
+        sb.resize(sb.interface);         
     }
-    sb.resize(sb.interface);              
+             
 }
 
 function onclick_markettogglepanel (elt, event) {
 
-    
+    let marketmain = $('#marketmain'); 
+    let toresize;
     let show = !$('#marketmain').hasClass('toggled');   
     if (show == 1) {
-        tools_panel_select();    
+  
+        toresize     = marketmain.hasClass ('pinned');    
+        
+        marketmain.addClass('toggled')
+    
+        if (toresize) {
+            sb.resize(sb.interface);        
+        }
     }    
     if (show == 0) {
-        tools_panel_hide();            
+        toresize     = marketmain.hasClass ('pinned');    
+        
+        marketmain.css ({'transition':''});
+
+        marketmain.removeClass('toggled')
+
+        if (toresize) {
+            sb.resize(sb.interface);        
+        }
+    
     }
 }
 
-function tools_panel_select () {
+function tools_panel_pin (show) {
+
+    let $marketmain = $('#marketmain');   
+
+    if (show == 1) {
+         if($marketmain.hasClass ('pinned')) {
+            return;
+         }   
+        $marketmain.addClass ('pinned')             
+        tools_panel_select(1);   
+        $('#toolspanelheader_pin').addClass ('checked') 
+        
+    } else {
+        
+        if(!$marketmain.hasClass ('pinned')) {
+            return;
+        }
+        tools_panel_select(0);
+        $marketmain.removeClass ('pinned')  
+        $('#toolspanelheader_pin').removeClass ('checked')           
+          
+    }
+}
+
+
+function tools_panel_select (show) {
+
+
     let marketmain = $('#marketmain');   
     let toresize     = marketmain.hasClass ('pinned');    
-    
-    marketmain.addClass('toggled')
-  
-    if (toresize) {
-        sb.resize(sb.interface);        
+    if (show == 1) {    
+
+        marketmain.addClass('toggled')
+        $('#marketpanel .box-btn-slide').removeClass ('rotate-180')  
+        if (toresize) {
+            sb.resize(sb.interface);        
+        }
+    } else {
+        marketmain.css ({'transition':''});
+        marketmain.removeClass('toggled')
+        $('#marketpanel .box-btn-slide').addClass ('rotate-180')   
+        if (toresize) {
+            sb.resize(sb.interface);        
+        }
     }
 }
 
-function tools_panel_hide () {
-    let marketmain = $('#marketmain');   
-    let toresize     = marketmain.hasClass ('pinned');    
-    
-    marketmain.css ({'transition':''});
 
-    marketmain.removeClass('toggled')
-
-    if (toresize) {
-        sb.resize(sb.interface);        
-    }
-}
 
 function tools_panel_remove () {
     let marketmain = $('#marketmain');   

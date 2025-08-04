@@ -129,7 +129,7 @@ var toolspanel = {
     class: 'sb_panel sb_main sb_row',
     items: [
         markerpanel('market'),       
-        {id: '', type:'drag', class:'', direction:'vertical', dragid: 'markerpanel_market'},    
+        {id: '', type:'drag', class:'', direction:'vertical', dragid: 'trackerpanel_market'},    
         trackerpanel('market'),          
     ]
 }                

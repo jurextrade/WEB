@@ -197,7 +197,7 @@ var emvplatform = {
     brand: {
         title: 'EMV', 
         logo: '/A_PLATFORMS/emv/res/emv.svg',
-        events: {onclick: "emv_home_open()"}
+        events: {onclick: "emv_home_open(event)"}
     },            
     select: 'emv_select(\'' + EMV_PLATFORM_NAME + '\')', 
     init: 'emv_init()',
