@@ -556,8 +556,8 @@ const OP_SELLLIMIT          = 18;
 const OP_BUYSTOP            = 19;
 const OP_SELLSTOP           = 20;
 
-const OpName                = ["BUY", "SELL", "BUYLIMIT", "SELLLIMIT", "BUYSTOP", "SELLSTOP"];
-//var	OpName              = ["buy", "sell", "buy limit", "sell limit", "buy stop","sell stop"];
+//const OpName                = ["BUY", "SELL", "BUYLIMIT", "SELLLIMIT", "BUYSTOP", "SELLSTOP"];
+const	OpName              = ["buy", "sell", "buy limit", "sell limit", "buy stop","sell stop"];
 
 //================================================= DIRECTION ==========================================
 
@@ -1995,9 +1995,11 @@ var ProcessTrailingStop = function(MagicNumber, BTrailingStop, STrailingStop, Tr
     }
     return;
 }
+
 var B_ReadSInfo = function(info, Pos, length) {
     return info.substring(Pos, length + Pos);
 }
+
 var CloseOrders = function(MagicNumber, Operation, NbrLots, FromPrice, Mode, Pending) {
     switch (arguments.length) {
         case 0:
@@ -2063,6 +2065,7 @@ var CloseOrders = function(MagicNumber, Operation, NbrLots, FromPrice, Mode, Pen
     // for
     return 0;
 }
+
 var OrderTrade = function(price, mode, Lots, comment, MagicNumber, PipStopLoss, PipTakeProfit) {
     switch (arguments.length) {
         case 5:
@@ -2108,6 +2111,7 @@ var OrderTrade = function(price, mode, Lots, comment, MagicNumber, PipStopLoss, 
     }
     return error;
 }
+
 var SetSLTP = function(MagicNumber, BuyPipStopLoss, BuyPipTakeProfit, SellPipStopLoss, SellPipTakeProfit) {
     switch (arguments.length) {
         case 1:
@@ -2389,7 +2393,11 @@ var B_init = function(session) {
     B_BuyMinProfit[session] = B_TakeProfit[session] * B_ILot[session];    //B_SessionProfit * B_ILot[session];
     B_SellMinProfit[session] = B_TakeProfit[session] * B_ILot[session];    //B_SessionProfit * B_ILot[session];
 
-    PG_Print(TYPE_INFO, "--START Session " + session + "\n");
+    PG_Print(TYPE_INFO, "**START Session " + session + "\n");
+
+    if ($('#pause_START').prop('checked')) {
+        Engine_Pause (CurrentEngine, true)
+    }  
 
     B_InitGraphics(session);
     B_NbrSession += 1;
@@ -2535,6 +2543,8 @@ var B_start1 = function() {
     //    SaveFlagEngines();
     return 0;
 }
+
+
 var B_start = function(session) {
     var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;      
@@ -2542,47 +2552,83 @@ var B_start = function(session) {
     
     var engine = GetEngine(B_StartOnRule[session], B_Operation[session]);
     var PipStep = B_PipStep[session];
+    
     //----------------------------------------
     // CLOSING AND EXITING IN SESSION
     //----------------------------------------
+    
     if (B_CloseBuy[session] === true && B_BuyNbrTrade[session] > 0) {
-        PG_Print(TYPE_INFO, "**CLOSE BUY Session : " + session + 
+
+        PG_Print(TYPE_INFO, "**CLOSE_BUY Session : " + session + 
             " profit : " + B_BuyProfit[session].toFixed(2)) +
              " Rule " + RuleName[B_StartOnRule[session]]; 
+       
+        if ($('#pause_CLOSE_BUY').prop('checked')) {
+            Engine_Pause (CurrentEngine, true)
+        }  
+
         CloseOrders(B_MagicNumber[session], OP_BUY);
         return 0;
     }
+
     if (B_CloseSell[session] === true && B_SellNbrTrade[session] > 0) {
-        PG_Print(TYPE_INFO, "**CLOSE SELL Session : " + session + 
+    
+        PG_Print(TYPE_INFO, "**CLOSE_SELL Session : " + session + 
             " profit : " + B_SellProfit[session].toFixed(2)) +
             " Rule " +  RuleName[B_StartOnRule[session]]; 
+
+        if ($('#pause_CLOSE_SELL').prop('checked')) {
+            Engine_Pause (CurrentEngine, true)
+        }  
+
         CloseOrders(B_MagicNumber[session], OP_SELL);
         return 0;
     }
+    
     if (B_ExitBuy[session] === true && B_BuyNbrTrade[session] > 0) {
-        PG_Print(TYPE_INFO, "**EXIT BUY Session : " +  session + 
+        
+        PG_Print(TYPE_INFO, "**EXIT_BUY Session : " +  session + 
             " profit : " + B_BuyProfit[session].toFixed(2)) +
             " Rule " + RuleName[B_StartOnRule[session]]; 
+
+        if ($('#pause_EXIT_BUY').prop('checked')) {
+            Engine_Pause (CurrentEngine, true)
+        }  
+            
         CloseOrders(B_MagicNumber[session], OP_BUY, -1, -1, -1, 1);
         return 0;
     }
+
     if (B_ExitSell[session] === true && B_SellNbrTrade[session] > 0) {
-        PG_Print(TYPE_INFO, "**EXIT SELL Session : " + session + 
+    
+        PG_Print(TYPE_INFO, "**EXIT_SELL Session : " + session + 
             " profit : " + B_SellProfit[session].toFixed(2)) +
             " Rule " + RuleName[B_StartOnRule[session]]; 
+
+        if ($('#pause_EXIT_SELL').prop('checked')) {
+            Engine_Pause (CurrentEngine, true)
+        }  
             
         CloseOrders(B_MagicNumber[session], OP_SELL, -1, -1, -1, 1);
         return 0;
     }
+    
     if (B_ExitBuy[session] === true && B_ExitSell[session] === true && B_HedgeNbrLots[session] + B_BuyNbrTrade[session] + B_SellNbrTrade[session] === 0) {
-        PG_Print(TYPE_INFO, "--EXIT Session : "  + session + 
+        
+        PG_Print(TYPE_INFO, "**EXIT Session : "  + session + 
             " profit : " +  B_SessionProfit[session].toFixed(2) + 
             " Rule " + RuleName[B_StartOnRule[session]] + 
             " Time Elapsed : " +  ReturnElapsedTime((TimeCurrent() - B_StartDate[session]) * 1000, true) + "\n");
+
+        if ($('#pause_EXIT').prop('checked')) {
+            Engine_Pause (CurrentEngine, true)
+        }  
+
         B_NbrSession -= 1;
         B_deinit(session);
         return 0;
     }
+
     //----------------------------------------
     // TRAILING STOP FOR BUY SELL AND SESSION
     //----------------------------------------
@@ -2609,10 +2655,13 @@ var B_start = function(session) {
             if (B_OrderType[session] === OT_HEDGE && B_ExitSell[session] === false && B_ExitBuy[session] === false) B_BuySell[session] = true;
             else B_BuySell[session] = false;
         } else B_BuySell[session] = false;
+        
         if (B_BuyNow[session] === true) {
             if ((B_BuyLot[session] < SYS_MINLOT || B_BuyLot[session] > SYS_MAXLOT) || (B_MaxLot[session] != 0 && B_BuyLot[session] > B_MaxLot[session])) {
+        
                 PG_Print(TYPE_ERROR, "Buy Lots : " + B_BuyLot[session] + " not in Range for the symbol  : " + symbolcanvas.CurrentSymbol + " in Session : " + session);
                 B_BuyNow[session] = false;
+        
             } else {
                 if (engine === -1) {
                     if (B_StartOnRule[session] === R_MANUAL)
@@ -2620,7 +2669,15 @@ var B_start = function(session) {
                             Send_Manual(symbolcanvas.CurrentSymbol, session, OP_BUY, B_BuyLot[session], B_BuyLotSL[session], B_BuyLotTP[session], 1);
                             B_BuyNow[session] = false;
                         } else B_BuyNow[session] = true;
-                } else return B_ProcessTrade(session, 0, OP_BUY, B_BuyLot[session], B_BuyLotSL[session], B_BuyLotTP[session], B_SellLotSL[session], B_SellLotTP[session]);
+                } else {
+
+                    PG_Print(TYPE_INFO, "**BUY Session : "  + session + "\n");
+                    if ($('#pause_BUY').prop('checked')) {
+                        Engine_Pause (CurrentEngine, true)
+                    } 
+
+                    return B_ProcessTrade(session, 0, OP_BUY, B_BuyLot[session], B_BuyLotSL[session], B_BuyLotTP[session], B_SellLotSL[session], B_SellLotTP[session]);
+                }
             }
         } else {
             if (engine === -1) {
@@ -2628,6 +2685,8 @@ var B_start = function(session) {
                     if (B_BuySellAutomatic[session]) Send_Manual(symbolcanvas.CurrentSymbol, session, OP_BUY, B_BuyLot[session], B_BuyLotSL[session], B_BuyLotTP[session], 0);
             }
         }
+
+
         if (B_SellNow[session] === true) {
             if ((B_SellLot[session] < SYS_MINLOT || B_SellLot[session] > SYS_MAXLOT) || (B_MaxLot[session] != 0 && B_SellLot[session] > B_MaxLot[session])) {
                 PG_Print(TYPE_ERROR, "Sell Lots : " + B_SellLot[session]  + " not in Range for the symbol  : " + symbolcanvas.CurrentSymbol);
@@ -2639,7 +2698,14 @@ var B_start = function(session) {
                             Send_Manual(symbolcanvas.CurrentSymbol, session, OP_SELL, B_SellLot[session], B_SellLotSL[session], B_SellLotTP[session], 1);
                             B_SellNow[session] = false;
                         } else B_SellNow[session] = true;
-                } else return B_ProcessTrade(session, 0, OP_SELL, B_SellLot[session], B_BuyLotSL[session], B_BuyLotTP[session], B_SellLotSL[session], B_SellLotTP[session]);
+                } else {
+
+                    PG_Print(TYPE_INFO, "**SELL Session : "  + session + "\n");
+                    if ($('#pause_SELL').prop('checked')) {
+                        Engine_Pause (CurrentEngine, true)
+                    } 
+                    return B_ProcessTrade(session, 0, OP_SELL, B_SellLot[session], B_BuyLotSL[session], B_BuyLotTP[session], B_SellLotSL[session], B_SellLotTP[session]);
+                }
             }
         } else {
             if (engine === -1) {
@@ -2651,17 +2717,47 @@ var B_start = function(session) {
     //----------------------------------------
     // FIRST BUY SELL IN SESSION
     //----------------------------------------
+    
     if (B_LastLot[session] === 0) {
-        if (!B_BuySellAutomatic[session] || B_Suspend[session]) return 0;
+       
+        if (!B_BuySellAutomatic[session] || B_Suspend[session]) {
+            return 0;
+        }
+        
         if (B_Operation[session] === OP_BUYSELL) {
             if (B_OrderType[session] === OT_HEDGE) {
-                if (B_BuyRule(session) || B_SellRule(session)) B_BuyNow[session] = true;
+                
+                if (B_BuyRule(session) || B_SellRule(session)) {
+                    B_BuyNow[session] = true;
+                }
             } else {
-                if (B_BuyRule(session)) B_BuyNow[session] = true;
-                if (B_SellRule(session)) B_SellNow[session] = true;
+                
+                if (B_BuyRule(session)) {
+                    B_BuyNow[session] = true;
+                }
+                if (B_SellRule(session)) {
+                    B_SellNow[session] = true;
+                }
             }
-        } else if (B_Operation[session] === OP_BUY && B_BuyRule(session)) B_BuyNow[session] = true;
-        else if (B_Operation[session] === OP_SELL && B_SellRule(session)) B_SellNow[session] = true;
+            return 0;
+        } 
+
+        if (B_Operation[session] === OP_BUY) {
+            
+            if (B_BuyRule(session)) {
+                B_BuyNow[session] = true;
+            }
+            return 0;
+        }  
+
+        if (B_Operation[session] === OP_SELL) {
+
+            if (B_SellRule(session)) {
+                B_SellNow[session] = true;
+            }
+            return 0;
+        }
+
         return 0;
     }
     //----------------------------------------
@@ -2670,14 +2766,34 @@ var B_start = function(session) {
     if (B_DeHedgeAutomatic[session]) {
         if (B_Hedged[session] === true) {
             if (B_CloseHedgeBuyRule(session)) {
+
+                PG_Print(TYPE_INFO, "**CLOSE_HEDGE_BUY Session : "  + session + "\n");
+                if ($('#pause_CLOSE_HEDGE_BUY').prop('checked')) {
+                    Engine_Pause (CurrentEngine, true)
+                } 
+
                 B_HedgeSession(session, 0, OP_BUY);
                 return 0;
             }
+
             if (B_CloseHedgeSellRule(session)) {
+
+                PG_Print(TYPE_INFO, "**CLOSE_HEDGE_SELL Session : "  + session + "\n");
+                if ($('#pause_CLOSE_HEDGE_SELL').prop('checked')) {
+                    Engine_Pause (CurrentEngine, true)
+                } 
+
                 B_HedgeSession(session, 0, OP_SELL);
                 return 0;
             }
+
             if (B_CloseHedgeRule(session)) {
+
+                PG_Print(TYPE_INFO, "**CLOSE_HEDGE Session : "  + session + "\n");
+                if ($('#pause_CLOSE_HEDGE').prop('checked')) {
+                    Engine_Pause (CurrentEngine, true)
+                } 
+
                 B_HedgeSession(session, 0, OP_SELL);
                 B_HedgeSession(session, 0, OP_BUY);
                 return 0;
@@ -2689,6 +2805,7 @@ var B_start = function(session) {
     //----------------------------------------
     //Ajout Simulation
     ProcessTPSL(B_MagicNumber[session]);
+  
     if (B_ExitAutomatic[session]) {
         if (B_ExitRule(session)) {
             console.log("Should Exit ! ");
@@ -2725,16 +2842,30 @@ var B_start = function(session) {
         }
     }
     // Automatic Exit
+  
     //----------------------------------------
     // HEDGE AUTOMATIC
     //----------------------------------------
+  
     if (B_HedgeAutomatic[session] && !B_Suspend[session]) {
         // hedge Automatic
         if (B_HedgeBuyRule(session)) {
+
+            PG_Print(TYPE_INFO, "**HEDGE_BUY Session : "  + session + "\n");
+            if ($('#pause_HEDGE_BUY').prop('checked')) {
+                Engine_Pause (CurrentEngine, true)
+            } 
+
             B_HedgeSession(session, 1, OP_BUY);
             return 0;
         }
         if (B_HedgeSellRule(session)) {
+
+            PG_Print(TYPE_INFO, "**HEDGE_SELL Session : "  + session + "\n");
+            if ($('#pause_HEDGE_SELL').prop('checked')) {
+                Engine_Pause (CurrentEngine, true)
+            }             
+
             B_HedgeSession(session, 1, OP_SELL);
             return 0;
         }
@@ -2748,7 +2879,9 @@ var B_start = function(session) {
     }
     return 0;
 }
-//+------------------------------------------------------------------+ INIT
+
+//+------------------------------------------------------------------+ DEINIT
+
 var B_deinit = function(session) {
 //    PG_Print(TYPE_INFO, "B_deinit " + session);
     B_ExitBuy[session] = false;
@@ -2768,6 +2901,7 @@ var B_deinit = function(session) {
     return (0);
 }
 //+------------------------------------------------------------------+ START
+
 var B_SetRecoveryMode = function(session, Lot) {
     // recovery MODE
     var RecoveryMode = RecoveryModeName[B_RecoveryMode[session]];
@@ -3869,57 +4003,46 @@ function Order(symbol, mode, lots, comment, price, magicnumber, stoploss, takepr
 }
 
 var OrderClose = function(ticket, lots, price, slippage) {
+    
     var index = OrderReturn(ticket);
-    if (index != -1) {
-        var profit;
-        
-        for (const i of CurrentEngine.Periods) {
-            Orders[index].closeidx.push(CurrentEngine.Data[i].length - 1);
-        }
-
-        if (order.Type == OP_BUY) {
-            profit = (price - order.OpenPrice) * order.Lots * 100000;
-        }    
-        else {
-            profit = (order.OpenPrice - price) * order.Lots * 100000;
-        }
-
-        Orders[index].CloseTime = TimeCurrent();
-        Orders[index].ClosePrice = price;
-        Orders[index].removed = 1;
-        OrdersHistory.push(Orders[index]);
-       // Orders.splice(index, 1);
-        PG_Print(TYPE_INFO, ticket + " CLOSE ["  + order.Lots.toFixed(2)  + ", "  + price + "]  Profit : " + profit.toFixed(2));
-        
-        
-        if ($('#pause_close').prop('checked')) {
-            Engine_Pause (CurrentEngine, true)
-        } 
-
-        return true;
-
-    } else {
+    
+    if (index == -1) {
         PG_Print(TYPE_INFO, "order  closed : " + "Error");
         return false;
     }
-}
 
-var OrderReturn = function(ticket) {
-    for (var i = 0; i < Orders.length; i++) {
-        if (Orders[i].Ticket == ticket) return i;
+    let profit;
+    let order = Orders[index];
+    
+    for (const i of CurrentEngine.Periods) {
+        order.closeidx.push(CurrentEngine.Data[i].length - 1);
     }
-    return -1;
-}
 
-var OrderDelete = function(ticket) {
-    var index = OrderReturn(ticket);
-    if (index != -1) {
-        Orders[index].removed = 2;
+    if (order.Type == OP_BUY) {
+        profit = (price - order.OpenPrice) * order.Lots * 100000;
+    }    
+    else {
+        profit = (order.OpenPrice - price) * order.Lots * 100000;
     }
-    return false;
+
+    order.CloseTime = TimeCurrent();
+    order.ClosePrice = price;
+    order.removed = 1;
+    OrdersHistory.push(order);
+    // Orders.splice(index, 1);
+    
+    PG_Print(TYPE_INFO, ticket + " close " + OpName[order.Type] + " ["  + order.Lots.toFixed(2)  + ", "  + price + "]  Profit : " + profit.toFixed(2));
+    
+    
+    if ($('#pause_close_buy').prop('checked') && (order.Type == OP_BUY)) {
+        Engine_Pause (CurrentEngine, true)
+    } 
+    if ($('#pause_close_sell').prop('checked') && (order.Type == OP_SELL)) {
+        Engine_Pause (CurrentEngine, true)
+    } 
+
+    return true;
 }
-
-
 
 var OrderSend = function(symbol, operation, lots, price, slippage, stoploss, takeprofit, comment, magicnumber, expiration) {
     switch (arguments.length) {
@@ -3953,6 +4076,21 @@ var OrderModify = function(ticket, price, stoploss, takeprofit, expiration, colo
         Orders[index].StopLoss = stoploss;
         Orders[index].Expiration = expiration;
         return true;
+    }
+    return false;
+}
+
+var OrderReturn = function(ticket) {
+    for (var i = 0; i < Orders.length; i++) {
+        if (Orders[i].Ticket == ticket) return i;
+    }
+    return -1;
+}
+
+var OrderDelete = function(ticket) {
+    var index = OrderReturn(ticket);
+    if (index != -1) {
+        Orders[index].removed = 2;
     }
     return false;
 }

@@ -176,14 +176,14 @@ function project_assistant_panel (strategy) {
     '               </div>' +
     '               <div class="col-8">' +
     '                   <div class="sb_widget">' + 
-                            Init_strategypropertiesfield ('Specification', 'B_MAXCOUNT', 'B_ORDERTYPE') +     
-                            Init_strategypropertiesfield ('Lots Size', 'B_ILOT', 'B_MAXLOT') +     
-                            Init_strategypropertiesfield ('Recovery', 'B_RECOVERYMODE', 'B_RECOVERYVALUE') +     
-    '                   </div>' +
-    '                   <div class="sb_widget">' + 
                             Init_strategypropertiesfield ('Strategy Type', 'B_OPERATION', 'B_ONEORDERPERBAR') +      
                             Init_strategypropertiesfield ('Grid Trading', 'B_DIRECTION', 'B_DIRECTIONTYPE') +     
                             Init_strategypropertiesfield ('Trade Steps', 'B_PIPSTEP', 'B_TIMESTEP') +     
+    '                   </div>' +
+    '                   <div class="sb_widget">' + 
+                            Init_strategypropertiesfield ('Specification', 'B_MAXCOUNT', 'B_ORDERTYPE') +     
+                            Init_strategypropertiesfield ('Lots Size', 'B_ILOT', 'B_MAXLOT') +     
+                            Init_strategypropertiesfield ('Recovery', 'B_RECOVERYMODE', 'B_RECOVERYVALUE') +     
     '                   </div>' +
     '                   <div class="sb_widget">' + 
                             Init_strategypropertiesfield ('Hedging', 'B_HEDGEMAGNITUDE') +    
@@ -645,7 +645,7 @@ function OnClickProject (elt) {
 function OnClickStrategy (elt) {
 
     if (CurrentStrategy) {
-        OnCloseStrategy(CloseStrategy, CurrentStrategy);
+        OnCloseStrategy(project_closestrategy, CurrentStrategy);
     } else {  
         var strategyname     = $('#newstrategyname').val();    
         if (strategyname == "") {
@@ -751,7 +751,7 @@ function onclick_AssistantStrategySelect (elt) {
     let strategyname = selected_option.text();
     let strategy = solution.CurrentProject.PG.GetStrategyFromName(strategyname);
 
-    OnCloseStrategy(SelectStrategy, strategy);
+    OnCloseStrategy(project_selectstrategy, strategy);
 }
 
 
@@ -837,13 +837,13 @@ function Init_strategypropertiesfield (label, name, name1) {
     '<label class="sb_widget-title">' + label + '</label>' +       
     '<div class="sb_formgroup">' +
     '   <label style="cursor: pointer;" >' + EngineFieldsItems[index].item1 + '</label>' +    
-        sb.item({...EngineFieldsItems[index],  ...{attributes: {propertyid: EngineFieldsItems[index].id}}}) + 
+        sb.item({...EngineFieldsItems[index],  ...{attributes: {propertyid: EngineFieldsItems[index].id}, events: {onchange: "onchange_strategyproperty (this, event)"}}}) + 
     '</div>';         
     if (name1) {    
         content += 
         '<div class="sb_formgroup">' +
             '<label style="cursor: pointer;" >' + EngineFieldsItems[index1].item1 + '</label>' +    
-            sb.item({...EngineFieldsItems[index1],  ...{attributes: {propertyid: EngineFieldsItems[index1].id}}}) + 
+            sb.item({...EngineFieldsItems[index1],  ...{attributes: {propertyid: EngineFieldsItems[index1].id}, events: {onchange: "onchange_strategyproperty (this, event)"}}}) + 
         '</div>';          
     }
     return content;
@@ -877,7 +877,7 @@ function Init_strategypropertiesfields (level) {
         }
         content += '<label>' +  EngineFieldsItems[i].item1  + '</label>';
         j++;
-        content += sb.item({...EngineFieldsItems[i],  ...{attributes: {propertyid: EngineFieldsItems[i].id}}})   
+        content += sb.item({...EngineFieldsItems[i],  ...{attributes: {propertyid: EngineFieldsItems[i].id}, events: {onchange: "onchange_strategyproperty (this, event)"}}})   
         if (j == 3) {
             content += '</div>';
         }

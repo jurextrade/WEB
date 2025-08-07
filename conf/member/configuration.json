@@ -108,7 +108,7 @@
         {
           "pname": "news",
           "type": "panel",
-          "active": true,
+          "active": false,
           "icon": "fas fa-calendar-alt",
           "title": "Calendar & Forex News",
           "library": {
@@ -143,7 +143,7 @@
         {
           "pname": "market",
           "type": "panel",
-          "active": true,
+          "active": false,
           "index": 0,
           "library": {
             "stylesheet": [
@@ -191,8 +191,11 @@
           "pname": "emv",
           "name": "EMV",
           "type": "root",
-          "active": true,
+          "active": false,
           "index": 2,
+          "dependency": [
+            "speech"
+          ] ,         
           "header": {
             "title": "EMV",
             "logo": "/A_PLATFORMS/emv/res/emv.svg",
@@ -336,9 +339,10 @@
           "type": "root",
           "dependency": [
             "market",
-            "news"
+            "news", 
+            "speech"
           ],
-          "active": false,
+          "active": true,
           "library": {
             "stylesheet": [
               "/C_TOOLS/css/quill.snow.css",
@@ -442,7 +446,8 @@
           "type": "root",
           "dependency": [
             "market",
-            "news"
+            "news", 
+            "speech"
           ],
           "active": false,
           "library": {

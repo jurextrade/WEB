@@ -102,7 +102,7 @@ class emv {
     constructor () {        
         MX*				pMX;
 
-        MXCom*			pRouterCom;
+        MXCom*			pemv_RouterCom;
 
         CB2A*			pCB2A;
         EMVSettings		Settings;	

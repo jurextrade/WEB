@@ -448,7 +448,8 @@ class connect {   //'http://100.119.36.131:80'
         this.Socket.emit('message', buffer);
     }
     Close = function () {
-        this.Socket.disconnect();
+
+        this.Socket.close();
     }
 }
 

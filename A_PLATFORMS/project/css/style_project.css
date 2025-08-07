@@ -192,50 +192,56 @@
 
 }
 #project_tester_bar {
-    padding: 10px;
-    height: 60px;
+    /*padding: 10px;   height: 60px;*/
     flex: none;
 }
+#project_tester_pause_panel {
+    flex:1;
+}
 
-#project_tester_filtergroup {
+#project_tester_pausebar {
+    min-height: unset;
+    border: 1px solid var(--theme-button-border-col);
+    background: var(--theme-form-bg-color);
+}
+
+
+.pause_group {
     flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: flex-start;    
     flex:1;
     height: 50px;
     overflow: hidden;
     flex-direction: column;
     background: var(--theme-form-bg-color);
-    border: 1px solid var(--theme-button-border-color);       
+    border: 1px solid var(--theme-button-border-color);    
+    margin-right: 1px;   
 }
 
-#project_tester_filtergroup span {
-    width: 99px;
+.pause_group span {
+    min-width: 60px;
 }
 
 #project_tester_commandgroup {
- /*   flex:1;
-    border: 1px solid var(--theme-special-border)!important;    
-*/    
     padding: 10px;    
+    padding-right: 0px;    
 }
 
-#project_tester_commandgroup .sb_link {
-    flex:1;
-}
-
-
-#strategy_tester {
-    width: 25%;
+#project_tester_play_button {
+    width: 59px;
     flex: none;
 }
 
-#strategy_stop {
-    width: 25%;
+#project_tester_stop_button {
+    width: 30px;
     flex: none;
 }
 
-#strategy_velocity {
+#project_tester_velocity_slider {
     height: auto;    
     flex: 1;
+    width:56px
 }    
 
 #project_tester_expertpanel.toggled {
@@ -366,7 +372,7 @@
     width: 150px;  
     flex:none; 
 	color:white;    
-    background: var(--theme-platform-color);    
+  
 } 
 
 #strategy_assistant_button.checked  {

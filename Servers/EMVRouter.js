@@ -186,7 +186,17 @@ function ListenHTTP (port) {
 	}
 
     	
-	var io = socket(server, {cors: {origin: '*', credentials: true}});
+    let origin =  [
+          "http://localhost",
+          "https://localhost",
+          "http://127.0.0.1",
+          "https://127.0.0.1",
+          "http://www.jurextrade.com",
+          "https://www.jurextrade.com",
+        ];
+
+    var io = socket(server, {cors: {origin: origin, credentials: true}});
+
 
     io.on('connection', function (socket) {
 

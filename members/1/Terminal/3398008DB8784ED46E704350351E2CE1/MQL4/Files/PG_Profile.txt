@@ -1,5 +1,5 @@
-EURUSD
-4
+USDCHF
+1
 72
 false
 false

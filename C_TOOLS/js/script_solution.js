@@ -480,8 +480,8 @@ class SOLUTION {
     
     evaluate_interface () {                                           // launch module init for all modules if present                
         let rest_body = [header, main, footer]
-        for (var p = 0; p < rest_body.length; p++) {
-            for (var i= 0; i < rest_body[p].items.length; i++) {
+        for (var p = rest_body.length -1 ; p >= 0; p--) {
+            for (var i = rest_body[p].items.length - 1; i >= 0; i--) {
                 let sb_elt = rest_body[p].items[i];
                 if (!sb_elt) {
                     continue;
@@ -493,7 +493,7 @@ class SOLUTION {
 
         let right_sidebarpanel = right.items[0]
         if (right_sidebarpanel) {
-            for (var i= 0; i < right_sidebarpanel.items.length; i++) {
+            for (var i = right_sidebarpanel.items.length - 1; i >=0; i--) {
                 let sb_elt = right_sidebarpanel.items[i].items[0];
                 if (!sb_elt) {
                     continue;
@@ -1753,7 +1753,7 @@ function rightsidebarpanel_select (psidebarpanel, id) {
     let sidebarmenu         = $('#' + id);    
     let psidebarmenu    = psidebarpanel.next(); 
     let toresize        = psidebarpanel.hasClass ('pinned')
-    console.log ('select right');
+
         
     let sbpanels = psidebarpanel.children ();
     $.each(sbpanels, function (index, panel) {

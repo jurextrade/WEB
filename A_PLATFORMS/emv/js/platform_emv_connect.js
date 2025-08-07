@@ -4,14 +4,14 @@
 const TERMINAL         = "TERMINAL";
 const CARD             = "CARD";
 const ROUTER           = "ROUTER";
-var RouterCom          = null;
+var emv_RouterCom          = null;
 
 function EMVConnect(adress, port, reconnection) {
 
-    if (RouterCom && RouterCom.Socket.connected == true) 
+    if (emv_RouterCom && emv_RouterCom.Socket.connected == true) 
         return;
 
-        RouterCom = new connect (adress, port, 
+        emv_RouterCom = new connect (adress, port, 
         {
             onconnectfunction:  function (com) {
 
@@ -33,7 +33,7 @@ function EMVConnect(adress, port, reconnection) {
         }
     )
 
-    return RouterCom.Socket;
+    return emv_RouterCom.Socket;
 }
 
 function HighlightReader (origin, connect, color) {
@@ -157,21 +157,21 @@ var selectTimeout = null;
 
 function timeout_selectpanel () {
     let cuser = solution.get('user')       
-    RouterCom.Send(cuser.id + '*ABORT*Time Out*');
+    emv_RouterCom.Send(cuser.id + '*ABORT*Time Out*');
     $("#emv_card_modal").modal('hide');    
     clearTimeout(selectTimeout);
 }
 
 function onclick_selectcancel () {
     let cuser = solution.get('user')       
-    RouterCom.Send(cuser.id + '*ABORT*Cancelled by User*');
+    emv_RouterCom.Send(cuser.id + '*ABORT*Cancelled by User*');
     $("#emv_card_modal").modal('hide');    
 }
 
 function onclick_selectbutton (elt, id) {
     let cuser       = solution.get('user')     
     let selection   = elt.id.replace('button_select_', '')
-    RouterCom.Send(cuser.id + '*SELECT*' + selection + '*');
+    emv_RouterCom.Send(cuser.id + '*SELECT*' + selection + '*');
     $("#emv_card_modal").modal('hide');    
 }
 
@@ -210,8 +210,8 @@ function emv_TreatSelect(origin, reader, values, display, fromrouter) {
                 footer:  '<button class="sb_mbutton" onclick="onclick_selectcancel()">Cancel</button>',                      
             });       
             $("#emv_card_modal .modal-close").css ('display',  'none')                
-         //   RouterCom.Send(cuser.id + '*ABORT*Cancelled by User*'); // + delta.lines[0]);     
-//            RouterCom.Send(cuser.id + '*SELECT^1*'); // + delta.lines[0]);                   
+         //   emv_RouterCom.Send(cuser.id + '*ABORT*Cancelled by User*'); // + delta.lines[0]);     
+//            emv_RouterCom.Send(cuser.id + '*SELECT^1*'); // + delta.lines[0]);                   
         break;
         case TERMINAL:
 

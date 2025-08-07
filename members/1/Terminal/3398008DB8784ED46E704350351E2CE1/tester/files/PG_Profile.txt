@@ -1,0 +1,17 @@
+EURUSD
+4
+72
+false
+false
+false
+false
+false
+false
+"candle"
+[]
+[]
+[]
+[]
+[]
+[]
+[]

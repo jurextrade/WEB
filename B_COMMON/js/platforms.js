@@ -1,22 +1,25 @@
 
 const emv_default_projectname         = "DemoProject";
 const project_default_projectname     = "DemoProject";
-const tradedesk_default_terminalname  = "FxPro - MetaTrader 4";
-const netprog_default_terminalname  = "FxPro - MetaTrader 4";
+const netprog_default_projectname     = "DemoProject";
+const tradedesk_default_terminalname  = "FP Markets MT4 Terminal";
 
+const emv_default_router_name   = 'localhost';
 const emv_default_router_port     = 5080;
 const emv_default_router_sport    = 5443;
 const emv_default_router_reconnection   = true;
 
-
+const project_default_server_name   = 'localhost';
 const project_default_server_port     = 2080;
 const project_default_server_sport     =2443;
 const project_default_server_reconnection   = true;
 
+const tradedesk_default_server_name   = 'localhost';
 const tradedesk_default_server_port   = 2080;
 const tradedesk_default_server_sport  = 2443;
 const tradedesk_default_server_reconnection   = true;
 
+const netprog_default_server_name   = 'localhost';
 const netprog_default_server_port     = 4080;
 const netprog_default_server_sport    = 4443;
 const netprog_default_server_reconnection   = true;
@@ -166,7 +169,7 @@ function selector_select (selector, name, type) {
             var strategyname =name;
             var strategy = solution.CurrentProject.PG.GetStrategyFromName(strategyname);
             if (strategy == CurrentStrategy) return strategy;
-            return SelectStrategy(strategy);
+            return project_selectstrategy(strategy);
 
         case 'project_selectproject' :
             var projectname =name;

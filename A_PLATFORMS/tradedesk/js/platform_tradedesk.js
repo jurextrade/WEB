@@ -12,7 +12,6 @@ function tradedesk_init() {
     tradedesk_editors_init('tradedesk');
     tradedesk_gse_init(); 
 
-    ServerPanel_Update('tradedesk');        
 
     sidebarpanel_select(tradedeskplatform, "sidebarpanel_terminals");    
     setInterval(tradedesk_timer, 300);     
@@ -69,17 +68,19 @@ function tradedesk_solution (pname) {
 
 
     solution.CurrentTerminal = null;
+
+
     solution.MT4Server_Protocol       = site.protocol;
+    solution.MT4Server_Address        = tradedesk_default_server_name
     solution.MT4Server_Reconnection   = tradedesk_default_server_reconnection;
 
+
+    
     if (site.protocol == 'http:') {  //TRADESK= 2
-        solution.MT4Server_Address   = site.hostname;
         solution.MT4Server_Port     =  tradedesk_default_server_port;     
     }
     else {
-        solution.MT4Server_Address   = site.hostname;    
         solution.MT4Server_Port     =  tradedesk_default_server_sport;    
-
     }
 
     if (!solution.DefaultLoaded) {
@@ -89,7 +90,7 @@ function tradedesk_solution (pname) {
     }    
     solution.UpdatePredefinedIndicators (pname);
 
-
+   
     solution.tradedesk_LoadTerminals = function (Id, url, async, interfacecallback, par) {
         if (!async) async = false;
         var params = 'user_id=' + (Id == "0" ? "1" : Id);
@@ -120,12 +121,12 @@ function tradedesk_solution (pname) {
                         terminalstruct.Type = 'Terminal';
                         let realterminal   = new pgterminal(TRADEDESK_PLATFORM_PNAME, terminalstruct.Type);
                         realterminal =  {...realterminal, ...terminalstruct}
-                        MT4Connect(realterminal, realterminal.Server, realterminal.Port);
  
                         terminalstruct.Type = 'Tester';                        
                         let testerterminal  = new pgterminal(TRADEDESK_PLATFORM_PNAME, terminalstruct.Type);
                         testerterminal =  {...testerterminal, ...terminalstruct}
-                        MT4Connect(testerterminal, testerterminal.Server, testerterminal.Port);                        
+                       
+                       
                         realterminal.Folder             = testerterminal.Folder = sdatapath;
 
                         solution.Terminals.push(realterminal);
@@ -155,6 +156,7 @@ function tradedesk_solution (pname) {
                     events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}               
                 })
                 sb.select_additem ('tradedesk_terminalselect', terminal.Name);            
+                MT4Connect(terminal, solution.MT4Server_Address, solution.MT4Server_Port, solution.MT4Server_Reconnection);                    
 
             }
         }
@@ -1128,8 +1130,8 @@ function TradedeskStrategyPanel (classnames) {
     return content;                             
 }
 
-
-function SessionPropertiesPanel (classnames) {
+            
+function SessionPropertiesPanel (classnames) {                      
     Init_strategypropertiestable(sessionpropertiestable);
     var content =
         sb.table (sessionpropertiestable);
@@ -1512,13 +1514,14 @@ function onclick_alertsignal (elt, objectname, tableid) {
     $('#' + id + ' tbody').prepend (rowcontent);    
 }
 
-function onclick_selectalertindicator (elt) {
+function onclick_selectalertindicator (elt, event) {
+    event.stopPropagation();
     var objectname = elt.children[0].children[0].innerText;
     PickerSignalsPanel_Update (objectname, undefined, 'onclick_alertsignal(this,\'' +  objectname + '\')')   
 }
 
 function onclick_alertsettingsbar_add (elt, event) {
-    openPopupPickerIndicator(event, 'popupalertssettings', undefined, 'onclick_selectalertindicator(this)');
+    openPopupPickerIndicator(event, 'popupalertssettings', undefined, 'onclick_selectalertindicator(this,event)');
 }
 
 
@@ -3832,14 +3835,14 @@ function OnClickApplyServers (elt) {
             if (servername != terminal.Server) {
                 terminal.Server = servername;
                 terminal.Com.Socket.close();     
-                MT4Connect(terminal, terminal.Server, terminal.Port);
+                MT4Connect(terminal, solution.MT4Server_Address, solution.MT4Server_Port, solution.MT4Server_Reconnection);
             }   
             terminal = solution.GetTerminalFromNameType(terminal.Name, 'Tester');
             servername = $('#strategytesterserver' + i).val();
             if (servername != terminal.Server) {
                 terminal.Server = servername;
                 terminal.Com.Socket.close();   
-                MT4Connect(terminal, terminal.Server, terminal.Port);      
+                MT4Connect(terminal, solution.MT4Server_Address, solution.MT4Server_Port, solution.MT4Server_Reconnection);
             }
         }   
     }

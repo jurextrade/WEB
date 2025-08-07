@@ -10,11 +10,14 @@ var moment      = require('moment');
 
 
 
+
 var ServerName          = "jurextrade.com"; 
 var FTPUserName         = "uk4ibca5";   				//Your username for a ftp session
 var FTPPassword         = "]!42fksf14)]";            //Your password for a ftp session
 var FTPPort             = 21;
 var FTPRootPath 	    = "/public_html/members/"; //"/public_html/members/";
+var FTPMODE             = false;
+
 
 var MQ4_SOURCE_PATH     = "./Compile/MQL4/";
 var C_SOURCE_PATH       = "./Compile/C/Files/input/";
@@ -135,8 +138,16 @@ function ListenHTTP (port) {
 	else {
 		server = http.createServer();
 	}
-		
-	var io = socket(server, {cors: {origin: '*', credentials: true}});
+	let origin =  [
+          "http://localhost",
+          "https://localhost",
+          "http://127.0.0.1",
+          "https://127.0.0.1",
+          "http://www.jurextrade.com",
+          "https://www.jurextrade.com",
+        ];
+
+	var io = socket(server, {cors: {origin: origin, credentials: true}});
 
     io.sockets.on('connection', function (socket) {
 
@@ -519,27 +530,48 @@ function VerifyUser (socket, port, symbol, loginserver, username, password, acco
 
 /////////////////////////////////////////////////////////// COMPILATION /////////////////////////////////////////////////////////
 
-function SendFileExpert (userid, fromfile, filename, projectfolder, emplacement) {                //http
+function SendFileExpert (userid, fromfile, tofile, filetype, projectfolder, socket, emplacement) {                //http
 
-   let content = fs.readFileSync(fromfile)    
-       
    
+    let content = fs.readFileSync(fromfile)    
     var http = new XMLHttpRequest();
     
-    var url = 'http://' + ServerName + '/php/save_expert.php'; + 
-     
-    
-    
-    http.open('POST', url, false);
-    http.setRequestHeader('Content-type', 'application/octet-stream');  
+    var url = 'http://' + ServerName + '/php/save_expert.php';  
+    const params = new URLSearchParams();
+ 
+    console.log (userid + '*' + tofile + '*' + projectfolder + '*' + emplacement)
 
-    http.onreadystatechange = function() {//Call a function when the state chan
-        console.log (this.responseText)
-        if(http.readyState == 4 && http.status == 200) {
-             console.log (this.responseText)
-        }
-    }
-    http.send('?user_id=' + userid + '&filename=' + filename + '&projectfolder=' + projectfolder + '&content=' + content + '&emplacement=' + emplacement);
+    var FormData = require('form-data');
+    var formdata = new FormData();
+    formdata.append('user_id', userid);
+    formdata.append('filename', tofile);
+    formdata.append('projectfolder', projectfolder);
+    formdata.append("emplacement", emplacement);
+    formdata.append('content', content);
+
+
+    const axios = require('axios');
+
+    axios.post(url, formdata, {
+        headers: {
+            'Content-Type': 'application/octet-stream', // Or the specific MIME type
+        },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+    })
+    .then(response => {
+          var strerror = "\nUPLOAD " +  fromfile + " to " + response.data  + " OK successfully uploaded\n";
+	      Print(strerror);
+	      NS.SendToHTTPClient(socket, ":______**UPLOAD^" + fromfile   +  "^" + projectfolder  +  "^" + filetype +  "^OK^"  + strerror + "*");   	
+    })
+    .catch(error => {
+          var strerror = "\nUPLOAD " +  fromfile + " to " +   tofile  + " Failed: " + JSON.stringify(err) + "\n";    
+          Print(strerror);
+		  NS.SendToHTTPClient(socket, ":______**UPLOAD^" + fromfile   +  "^" + projectfolder  +  "^" + filetype + "^ERROR^" + strerror + "*");              
+
+
+        console.error('Error uploading stream:', error);
+    });    
 }
 
 
@@ -599,11 +631,18 @@ function CompileC (userid, terminaltype, projectfolder, filename, socket) {
 		}
 
 		Print('Compile ok!');	
-		exec ('strip ' + projectfile);
-		var fromfile =  C_OBJ_PATH + projectfile;
-		var tofile   =  FTPRootPath + userid + '/Projects/' +  projectfolder +  '/MQL4/Libraries/' + projectfile;		
-		NS.SendToHTTPClient(socket, ":______**COMPILE^" + projectfile   +  "^"  + projectfolder  + "^C^OK^" + "C Project Successfully Compiled*");   		
-		PutFileExpert (fromfile, tofile, 'C', userid, projectfolder, socket, stdout);
+		NS.SendToHTTPClient(socket, ":______**COMPILE^" + projectfile   +  "^"  + projectfolder  + "^C^OK^" + "C Project Successfully Compiled*");   
+
+        exec ('strip ' + projectfile);
+		let fromfile =  C_OBJ_PATH + projectfile;
+        if (FTPMODE) {
+            let tofile   =  FTPRootPath + userid + '/Projects/' +  projectfolder +  '/MQL4/Libraries/' + projectfile;		
+		    PutFileExpert (fromfile, tofile, 'C', userid, projectfolder, socket, stdout);
+
+        } else {
+            let tofile   = projectfile;		
+            SendFileExpert (userid, fromfile, tofile, 'C',  projectfolder, socket, 'Libraries');           
+        }
 		return 1;
 	});
 }
@@ -616,17 +655,21 @@ function CompileMQ4 (userid, terminaltype, projectfolder, filename, socket) {
 	const { exec } = require('child_process'); 
 	return exec('compile.exe  /compile:' + projectfile + ' /inc:' + './' + ' /log:' + '' + 'error.log', {"cwd": MQ4_SOURCE_PATH}, (err, stdout, stderr) => {
 		
-		var myLines = require('fs').readFileSync(MQ4_SOURCE_PATH + 'error.log', "ascii").toString("ascii").split('\n');			
+		var myLines = fs.readFileSync(MQ4_SOURCE_PATH + 'error.log', "ascii").toString("ascii").split('\n');			
 				
 		if (err) {
-			projectfile =  MQ4_SOURCE_PATH + filename + '.ex4';
-			tofile   =  FTPRootPath + userid + '/Projects/' +  projectfolder +  '/MQL4/Experts/' + filename + '.ex4'			
+	        Print('File MQ4 Compile OK');            
 			NS.SendToHTTPClient(socket, ":______**COMPILE^" + filename + '.ex4'   +  "^" + projectfolder  +  "^MQL4^OK^"  + "MQ4 Successfully Compiled*");    
-		   
-            SendFileExpert (userid, projectfile, filename + '.ex4', projectfolder, 'Experts');       
-           
-           // PutFileExpert (projectfile, tofile, 'MQL4', userid, projectfolder, socket, "ok");	
-			Print('File MQ4 Compile OK');
+
+			let fromfile =  MQ4_SOURCE_PATH + filename + '.ex4';
+            if (FTPMODE) {
+                let tofile   =  FTPRootPath + userid + '/Projects/' +  projectfolder +  '/MQL4/Experts/' + filename + '.ex4'			
+                PutFileExpert (fromfile, tofile, 'MQL4', userid, projectfolder, socket, "ok");	
+
+            } else {
+                let tofile   =  filename + '.ex4';			
+                SendFileExpert (userid, fromfile, tofile, 'MQL4',  projectfolder, socket, 'Experts');       
+            }
 			return 1;
 		}
 		NS.SendToHTTPClient(socket, ":______**COMPILE^" + filename + '.ex4'   +  "^" + projectfolder  +  "^MQL4^ERROR^" + " ERROR = " + myLines[myLines.length - 2] + "*");    

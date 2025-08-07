@@ -904,7 +904,7 @@
 }
 
 
-#SaveStrategy:hover {
+#project_savestrategy:hover {
 	background: var(--theme-hover-bg-color);
 }
 

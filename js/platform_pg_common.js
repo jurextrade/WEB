@@ -910,7 +910,7 @@ function PasteStrategy(strategy) {
 
     sb.tree_additems ('project_tree_strategies', [item]);
     sb.select_additem ('projectstrategyselect', item.item);     
-    SelectStrategy(strategy);
+    project_selectstrategy(strategy);
 
     return strategy;
 }
@@ -2025,7 +2025,7 @@ function ProjectNamePanel() {
 }
 
 function StrategyNamePanel() {
-    var content = '<div class=" panelname"><input  class="form-control"  type="text" id="strategyname" autocomplete="off"  onpaste="CheckContent(event)" onkeypress="CheckChar(event)" ><span id="strategy_close" class="' + icon_close + '" onclick="OnCloseStrategy(CloseStrategy)" onmouseleave="panelnametooltip ($(this),\'\', 0);" onmouseenter="panelnametooltip ($(this),\'Close Strategy\',  1);"></span></div>';
+    var content = '<div class=" panelname"><input  class="form-control"  type="text" id="strategyname" autocomplete="off"  onpaste="CheckContent(event)" onkeypress="CheckChar(event)" ><span id="strategy_close" class="' + icon_close + '" onclick="OnCloseStrategy(project_closestrategy)" onmouseleave="panelnametooltip ($(this),\'\', 0);" onmouseenter="panelnametooltip ($(this),\'Close Strategy\',  1);"></span></div>';
     return content;
 }
 
@@ -2351,9 +2351,6 @@ function onclick_indicators (elt, event) {
     openPopupPickerIndicator(event, 'marketpanel', undefined, 'onclick_selectindicator(this, event)');
 }
 
-function onclick_alertsettingsbar_add (elt, event) {
-    openPopupPickerIndicator(event, 'popupalertssettings', undefined, 'onclick_selectsignalindicator(this, event)');
-}
 
 function onclick_selectsignal (elt, event, objectname, platformname) {
     event.stopPropagation();
@@ -4825,7 +4822,7 @@ function Init_strategypropertiestable (table) {
     var rows= [];
 
     for (var i= 0; i < EngineFieldsItems.length; i++) {
-        rows.push ([EngineFieldsItems[i].item1, sb.item({...EngineFieldsItems[i],  ...{attributes: {propertyid: EngineFieldsItems[i].id}}})]);        
+        rows.push ([EngineFieldsItems[i].item1, sb.item({...EngineFieldsItems[i],  ...{attributes: {propertyid: EngineFieldsItems[i].id}}, events: {onchange: "onchange_strategyproperty (this, event)"}})]);        
     }
     table.rows = rows;
 }

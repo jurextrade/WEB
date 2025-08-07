@@ -278,11 +278,11 @@ var Engine_Run = function(engine) {
     }
     engineStartAsync = setInterval(FindIdxStartBar, 1, engine, symbol, engine.CurrentPeriod, engine.MaxPeriod, ENGINE_CONTEXT, 1);
 
-    $('#strategy_velocity').removeAttr('disabled') 
-    $('#strategy_stop').removeAttr('disabled') 
-    $('#strategy_tester label').html('Pause')
-    $('#strategy_tester i').removeClass (icon_play);
-    $('#strategy_tester i').addClass (icon_pause);
+    $('#project_tester_velocity_slider').removeAttr('disabled') 
+    $('#project_tester_stop_button').removeAttr('disabled') 
+    $('#project_tester_play_button label').html('Pause')
+    $('#project_tester_play_button i').removeClass (icon_play);
+    $('#project_tester_play_button i').addClass (icon_pause);
 
 
     return engine;    
@@ -310,7 +310,7 @@ var Engine_Start = function(engine, symbol, period, startbar, endbar) {
     Engine_init(engine, symbol);
     TICK_STEP = OPEN_TICK;
     if (!PausedSimulator) {
-        let value = Math.ceil(document.getElementById('strategy_velocity').valueAsNumber);
+        let value = Math.ceil(document.getElementById('project_tester_velocity_slider').valueAsNumber);
         engineStartAsync = setInterval(EngineAsync_Start, 1000 - value, enginecontext, engine, symbol);
     }
 }
@@ -579,19 +579,19 @@ var Engine_Pause = function(engine, pause) {
     PausedSimulator = pause;
     
     if (PausedSimulator) {
-        $('#strategy_tester label').html('Run')
-        $('#strategy_tester i').removeClass (icon_pause);
-        $('#strategy_tester i').addClass (icon_play);
+        $('#project_tester_play_button label').html('Run')
+        $('#project_tester_play_button i').removeClass (icon_pause);
+        $('#project_tester_play_button i').addClass (icon_play);
 
         clearInterval(engineStartAsync);
 
     } else {
         if (TestMode) {
-            $('#strategy_tester label').html('Pause')
-            $('#strategy_tester i').removeClass (icon_play);
-            $('#strategy_tester i').addClass (icon_pause);
+            $('#project_tester_play_button label').html('Pause')
+            $('#project_tester_play_button i').removeClass (icon_play);
+            $('#project_tester_play_button i').addClass (icon_pause);
 
-            let value = Math.ceil(document.getElementById('strategy_velocity').valueAsNumber);
+            let value = Math.ceil(document.getElementById('project_tester_velocity_slider').valueAsNumber);
 
             engineStartAsync = setInterval(EngineAsync_Start, 1000 - value, enginecontext, engine, symbol);
         }        
@@ -619,10 +619,10 @@ var Engine_Stop = function(engine, dontcheck) {
         $('#' + rootid + ' .chartpanel  #' + i).prop("disabled", false);
     }
 
-    $('#strategy_tester label').html('Run')
-    $('#strategy_tester i').removeClass (icon_pause);
-    $('#strategy_tester i').addClass (icon_play);    
-    $('#strategy_stop').attr('disabled',true);
+    $('#project_tester_play_button label').html('Run')
+    $('#project_tester_play_button i').removeClass (icon_pause);
+    $('#project_tester_play_button i').addClass (icon_play);    
+    $('#project_tester_stop_button').attr('disabled',true);
 
     symbolcanvas.CurrentSymbol.xextents[engine.CurrentPeriod] = null; //extents
     SelectChart(engine.CurrentPeriod);

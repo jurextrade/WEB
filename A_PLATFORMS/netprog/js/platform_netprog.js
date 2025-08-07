@@ -18,9 +18,6 @@ function netprog_init () {
     netprog_gse_init('gsecanvas_netprog');
     netprog_filemanager_init();
 
-    ServerPanel_Update('netprog');    
-
-
     sidebarpanel_select(netprogplatform, "sidebarpanel_netprogsiteview");   
 
     setInterval(netprog_timer, 300);     

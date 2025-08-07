@@ -2,14 +2,14 @@
 
 
 const DEPLOYSERVER           = "DEPLOYSERVER";
-var DeployCom          = null;
+var project_DeployCom          = null;
 
-function DeployConnect(adress, port) {
+function DeployConnect(adress, port, reconnection) {
 
-    if (DeployCom && DeployCom.Socket.connected == true) 
+    if (project_DeployCom && project_DeployCom.Socket.connected == true) 
         return;
 //    console.log ('deply connect')
-    DeployCom = new connect (adress, port, 
+    project_DeployCom = new connect (adress, port, 
         {
             onconnectfunction:  function (com) {
 
@@ -26,11 +26,13 @@ function DeployConnect(adress, port) {
             onerrorfunction:          function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },   
             onupdatefunction:         function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
             onconnect_errorfunction:  function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
-            onconnect_failedfunction: function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },    
+            onconnect_failedfunction: function (com, data) {this.reconnection = false; HighlightTerminal(DEPLOYSERVER, null, 0); },   
+            reconnection:             reconnection ? reconnection : false  
+
         }
     )
 
-    return DeployCom.Socket;
+    return project_DeployCom.Socket;
 }
 
 //---------------------------------------------------- IP ADDRESS-----------------------------------------------   
@@ -242,7 +244,7 @@ function OnCompileProject(project, filename, content, langtype, terminaltype) {
         return;
     }
     var sorder = "*COMPILE*" + project.Folder + "*" + filename + "*" + langtype + "*" + terminaltype + "*" + content;
-    DeployCom.Send(solution.UserId + sorder);
+    project_DeployCom.Send(solution.UserId + sorder);
 }
 
 //-------------------------------------------------- COMPILE STRATEGY ---------------------------------------------
@@ -337,7 +339,7 @@ function OnCompileStrategy (project, strategyname, content, langtype) {
     }
 
     var sorder = "*COMPILE*" + project.Folder + "*" + strategyname + "*" + langtype + "*" + "Terminal" + "*" + content;
-    DeployCom.Send(solution.UserId + sorder);
+    project_DeployCom.Send(solution.UserId + sorder);
 }
 
 var loopBeginLoopComplete = function(strategy) {

@@ -884,6 +884,7 @@ function pgterminal (pname, type, main) {
     this.Loaded         = 0; //we do a load on this terminal
     this.Server         = solution.MT4Server_Address;                   //MT4 Server
     this.Port           = solution.MT4Server_Port;
+    this.Reconnection   = solution.MT4Server_Reconnection;
     this.Com            = null;
     this.User           = new pguser();
     

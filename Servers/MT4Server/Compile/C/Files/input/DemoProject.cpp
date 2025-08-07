@@ -1201,7 +1201,7 @@ void R_RULE (U)
 
 //------------------------------BUYSELL ENGINE ------------------------------
 
-}
+Set_Rule(OP_BUYSELL, T_START, R_U, P_SIGNAL);Set_Rule(OP_BUY, T_STATUS, R_U, P_SIGNAL);Set_Rule(OP_SELL, T_STATUS, R_U, P_SIGNAL);Set_Rule(OP_EXIT, T_STATUS, R_U, P_SIGNAL);}
 
 /* ============================================================
 STRATEGY : EMA20_SAR

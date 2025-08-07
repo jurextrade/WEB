@@ -333,6 +333,7 @@ var strategyfiletab = {
         {
             id: 'projectstrategyfileaction',    
             type: 'group',
+            style:'display:none',
             items:
                 [  
                     {id: 'strategy_assistant_button',  type: 'button',   item: 'Switch to Assistant View',  class: 'assistant_button', 
@@ -473,19 +474,6 @@ var deploypanel = {
 
 //------------------------------------------------------------ TESTER----------------------------------------------------------
 
-var project_tester_filtergroup = {
-    id: 'project_tester_filtergroup',  
-    class: 'sb_transform',
-    type: 'group',
-   /* position: 'sb_end',*/
-    items:
-        [
-            {id: 'pause_buy',    type: 'checkbox',  item: 'Pause on Buy'}, 
-            {id: 'pause_sell',    type: 'checkbox', item: 'Pause on Sell'}, 
-            {id: 'pause_close',   type: 'checkbox', item: 'Pause on Close'}, 
-        ]
-}
-
 var project_tester_commandgroup = {
     position: 'me-auto',
     id: 'project_tester_commandgroup',
@@ -495,11 +483,51 @@ var project_tester_commandgroup = {
     class: 'sb_formcontainer sb_transform ',
     items:
         [        
-            {id: 'strategy_tester',    type: 'button',  item: 'Run', icon: icon_play, toggle: false,   events: {onclick: "onclick_project_tester_commandgroup (this)"},  attributes: {disabled:true}, title: 'Test Strategy'}, 
-            {id: 'strategy_velocity',  type: 'range',   value: '1000',  min: '600',  max: '1000', step: '10',  events: {onchange:"onchange_strategy_velocity (this)"}, title: 'Velocity'}, 
-            {id: 'strategy_stop',      type: 'button',  item: 'Stop', icon: icon_stop,  toggle: false,   events: {onclick: "onclick_project_tester_stop (this)"},   attributes: {disabled:true},title: 'Stop Strategy'} 
+            {id: 'project_tester_play_button',    type: 'button',  icon: icon_play, toggle: false,   events: {onclick: "onclick_project_tester_commandgroup (this)"},  attributes: {disabled:true}, title: 'Start Tester'}, 
+            {id: 'project_tester_stop_button',      type: 'button',  icon: icon_stop,  toggle: false,   events: {onclick: "onclick_project_tester_stop (this)"},   attributes: {disabled:true},title: 'Stop Tester'} ,
+            {id: 'project_tester_velocity_slider',  type: 'range',   value: '1000',  min: '600',  max: '1000', step: '10',  events: {onchange:"onchange_strategy_velocity (this)"}, title: 'Velocity'}, 
         ]
 }
+
+
+  
+var project_tester_pausesession_group =  ((idgroup, visible, grouparray) =>  {
+    let checkitems = [];
+    if (idgroup != 2) {
+        for (var i = 0; i < OperationItems.length; i++) {
+            if (grouparray.includes(OperationItems[i].name)) {
+                checkitems.push ({id: 'pause_' + OperationItems[i].name,    type: 'checkbox',  item: OperationItems[i].name, title: OperationItems[i].tooltip});
+            }
+        }
+    }    
+    else {
+        checkitems = [
+            {id: 'pause_buy',    type: 'checkbox',  item: 'Buy'}, 
+            {id: 'pause_sell',    type: 'checkbox', item: 'Sell'}, 
+            {id: 'pause_close_buy',   type: 'checkbox', item: 'Close Buy'}, 
+            {id: 'pause_close_sell',   type: 'checkbox', item: 'Close Sell'}, 
+        ]        
+    }
+    return {
+        id: 'project_tester_pausesession_group_' + idgroup,  
+        class: 'pause_group sb_transform' + (visible == 0  ? ' sb_none' : ''),
+        type: 'group',
+        items: checkitems,
+    }
+})
+
+
+var project_tester_pausetab = {
+    id: 'project_tester_pausetab',  
+    type: 'group', 
+    toggle: true,     
+    items: [        
+            {id: 'project_tester_pause_action_0',type: 'button',  item: 'Pause main', class:'sb_checked checked', events: {onclick: "onclick_project_tester_pausegroup(this, event)"},   title: 'Pause on Actions'}, 
+            {id: 'project_tester_pause_action_1',type: 'button',  item: 'Pause close', events: {onclick: "onclick_project_tester_pausegroup(this, event)"},   title: 'Pause on Actions'}, 
+            {id: 'project_tester_pause_action_2',type: 'button',  item: 'Pause orders',  events: {onclick: "onclick_project_tester_pausegroup(this, event)"},   title: 'Pause on Orders'}, 
+    ]
+}
+
 
 var project_tester_bar  = {
     id: 'project_tester_bar', 
@@ -507,7 +535,17 @@ var project_tester_bar  = {
     items: 
         [
             project_tester_commandgroup,
-            project_tester_filtergroup            
+            {
+                id: 'project_tester_pause_panel', 
+                type: 'panel', 
+                class: "sb_column",           
+                items:[
+                    {id: 'project_tester_pausebar',  type: 'bar', items: [project_tester_pausetab]},
+                    project_tester_pausesession_group(0, 1, ['START', 'EXIT', 'BUY', 'EXIT_BUY', 'SELL', 'EXIT_SELL', 'HEDGE_BUY', 'HEDGE_SELL']),
+                    project_tester_pausesession_group(1, 0, ['CLOSE', 'CLOSE_HEDGE', 'CLOSE_BUY', 'CLOSE_HEDGE_BUY', 'CLOSE_SELL','CLOSE_HEDGE_SELL']),
+                    project_tester_pausesession_group(2, 0),
+                  ]
+            }
         ]   
 }
   

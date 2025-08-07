@@ -12,7 +12,6 @@ function emv_init () {
     } 
     
     EMVConnect(solution.EMVRouter_Address, solution.EMVRouter_Port, solution.EMVRouter_Reconnection);     
-    ServerPanel_Update('emv');
 
     emv_TLVParserPanel_Update(); 
 
@@ -21,10 +20,7 @@ function emv_init () {
 }
 
 function emv_end () {
-    for (var i = 0; i < solution.emv_Projects.length; i++) {
-        let project = solution.emv_Projects[i];    
-        project.Com.Socket.close();     
-    }   
+    emv_RouterCom.Close();
 }
 
 function emv_beforeunload () {
@@ -57,15 +53,16 @@ function emv_solution (pname) {
 
     solution.emv_Projects       = [];
     solution.emv_CurrentProject = null;
-    solution.EMVRouter_Protocol   = site.protocol;    
-    solution.EMVRouter_Reconnection   = emv_default_router_reconnection;              
+
+
+    solution.EMVRouter_Protocol     = site.protocol;   
+    solution.EMVRouter_Address      = emv_default_router_name     
+    solution.EMVRouter_Reconnection = emv_default_router_reconnection;              
 
     if (site.protocol == 'http:') {  //EMV = 5
-        solution.EMVRouter_Address   = 'localhost';  //site.hostname;    
         solution.EMVRouter_Port     =  emv_default_router_port;     
     }
     else {
-        solution.EMVRouter_Address   =   'localhost'; //site.hostname;    
         solution.EMVRouter_Port     =  emv_default_router_sport;    
     }
 

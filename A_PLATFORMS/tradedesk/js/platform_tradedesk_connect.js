@@ -28,7 +28,7 @@ const MT4SERVER           = "MT4SERVER";
 const MT4TERMINAL         = "MT4TERMINAL";
 
 
-function MT4Connect(terminal, adress, port) {
+function MT4Connect(terminal, adress, port, reconnection) {
 
     if (terminal.Com && terminal.Com.Socket.connected == true) 
         return;
@@ -77,6 +77,7 @@ function MT4Connect(terminal, adress, port) {
             onupdatefunction:         function (com, data) {MT4HighlightTerminal(MT4SERVER, null, 0); },
             onconnect_errorfunction:  function (com, data) {MT4HighlightTerminal(MT4SERVER, null, 0); },
             onconnect_failedfunction: function (com, data) {MT4HighlightTerminal(MT4SERVER, null, 0); },    
+            reconnection:             reconnection ? reconnection : false              
         }
     )
 

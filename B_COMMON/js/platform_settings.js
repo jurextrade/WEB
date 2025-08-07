@@ -45,7 +45,7 @@ function onclick_theme (elt, event) {
     function modalserverpanel_select () {
         let routerpanel = $('#modalserverpanel_' + solution.ui.currentplatform_pname);   
         let toresize     = routerpanel.hasClass ('pinned');    
-        
+
         routerpanel.addClass('toggled')
       
         if (toresize) {
@@ -57,8 +57,9 @@ function onclick_theme (elt, event) {
     function onclick_button_server (elt, event) {
 
         let show = !$('#modalserverpanel_' + solution.ui.currentplatform_pname).hasClass('toggled');   
-        
+   
         if (show == 1) {
+            onclick_ResetServer(solution.ui.currentplatform_pname, elt, event)            
             modalserverpanel_select();    
         }    
         if (show == 0) {
@@ -103,11 +104,11 @@ function ServerPanel_Update (id) {
         break;
     }
    
-    
+
     $('#secureradio_'+ id).prop("checked",  protocol  == 'https:') ;
     $('#unsecureradio_'+ id).prop("checked",protocol  == 'http:');   
-    $('#nodeserveradress_'+ id).val(server);
-    $('#nodeserverport_'+ id).val(port);
+    document.getElementById('nodeserveradress_'+ id).value = server;
+    document.getElementById('nodeserverport_'+ id).value =  port;
     reconnection  ? $('#reconnection_'+ id).prop ('checked', true) : $('#reconnection_'+ id).prop ('checked', false)
 }
 
@@ -139,7 +140,7 @@ function onclick_ApplyServer (id, elt, event) {
             solution.EMVRouter_Port     = newport;
             solution.EMVRouter_Protocol = protocol;
             solution.EMVRouter_Reconnection   = reconnection;          
-            RouterCom.Close ();
+            emv_RouterCom.Close ();
             EMVConnect(protocol + '//' + newadress, newport, reconnection);
         
         break;
@@ -148,7 +149,7 @@ function onclick_ApplyServer (id, elt, event) {
             solution.DeployServer_Port      = newport;
             solution.DeployServer_Protocol  = protocol;
             solution.DeployServer_Reconnection   = reconnection;               
-            DeployCom.Close ();
+            project_DeployCom.Close ();
             DeployConnect(protocol + '//' + newadress, newport, reconnection);
         
        break;

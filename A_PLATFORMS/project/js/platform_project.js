@@ -12,8 +12,7 @@ function project_init() {
     project_editors_init('project');   
     project_gse_init(); 
 
-    DeployConnect(solution.DeployServer_Address, solution.DeployServer_Port);  
-    ServerPanel_Update('project');
+    DeployConnect(solution.DeployServer_Address, solution.DeployServer_Port, solution.DeployServer_Reconnection);  
 
 
     project_assistant_select (projectplatform.strategyview == STRATEGY_ASSISTANT_VIEW); 
@@ -25,7 +24,7 @@ function project_init() {
 }
 
 function project_end () {
-
+     project_DeployCom.Close ();
 }
 
 //---------------------------------------------------------------------MODULE END -----------------------------------------------------------------------------//
@@ -73,7 +72,7 @@ function project_solution (pname) {
 
     solution.DeployServer_Protocol      = site.protocol;    
     solution.DeployServer_Reconnection  = project_default_server_reconnection;        
-    solution.DeployServer_Address       = site.hostname;   
+    solution.DeployServer_Address       = project_default_server_name;   
 
 
     if (site.protocol == 'http:') {                                 //PROJECT=2
@@ -252,7 +251,7 @@ function project_timer () {
    
     
     if (solution.CurrentProject) {        
-         $('#projectstrategyfileaction').css ('display', '');
+       
 //bottom panel
       //  $('#strategy_assistant_button').css ('display', '');
 
@@ -269,6 +268,7 @@ function project_timer () {
         $('#project_strategiesbar #project_strategycreate').css ('display', '');
 
         if (CurrentStrategy) {
+            $('#projectstrategyfileaction').css ('display', '');            
          //   $('#strategyfiletab').css ('display', '');
             $('#project_strategiesbar #project_strategyrename').css ('display', '');
             $('#project_strategiesbar #project_strategyremove').css ('display', '');
@@ -278,7 +278,8 @@ function project_timer () {
             
         }    
         else {
-       //     $('#strategyfiletab').css ('display', 'none'); 
+       //     $('#strategyfiletab').css ('display', 'none');
+            $('#projectstrategyfileaction').css ('display', 'none');
             $('#project_strategiesbar #project_strategyrename').css ('display', 'none');
             $('#project_strategiesbar #project_strategyremove').css ('display', 'none');    
             $('#overlay_strategyhelper').remove();        
@@ -296,7 +297,7 @@ function project_timer () {
                  
 /*        
 /*
-        $("#SaveStrategy .w2ui-tb-caption").prop( "disabled", shouldDisable);
+        $("#project_savestrategy .w2ui-tb-caption").prop( "disabled", shouldDisable);
         $("#CancelStrategy .w2ui-tb-caption").prop( "disabled", shouldDisable);
 
         if (document.getElementById('strategyname') && document.getElementById('strategyname').value != CurrentStrategy.Name) {
@@ -314,7 +315,6 @@ function project_timer () {
     }
     else {
 
-         $('#projectstrategyfileaction').css ('display', 'none');
 //bottom panel
       //  $('#project_bottompanel').css ('display', 'none');
  
@@ -344,6 +344,7 @@ function project_timer () {
         $('#project_root #indicatorCreate').css ('display', 'none');            
     }
 }
+
 
 
 function project_home_open  (event) {
@@ -413,7 +414,7 @@ function project_closeproject(project) {
         SaveProjectConfirm(project);
     } else {
   
-        CloseStrategy (); 
+        project_closestrategy (); 
     }
    
     if (project == solution.CurrentProject) {
@@ -440,8 +441,8 @@ function project_initproject () {
  
     sb.tab_clear (strategyfiletab, 'project_home_tab');      
     $('#projectstrategyselect').html('');     
-    $('#strategy_stop').attr('disabled',true);    
-    $('#strategy_tester').attr('disabled',true);      
+    $('#project_tester_stop_button').attr('disabled',true);    
+    $('#project_tester_play_button').attr('disabled',true);      
 }
 
 function project_drawproject(project, open) {
@@ -501,9 +502,183 @@ function onchange_project_projectselect (elt, event) {
     project_selectproject(project);
 }
 
+function project_saveproject(project) {
+    if (!project) return;
+    if (solution.UserId == "0") {
+        DisplayOperation("Project can not be saved, You are not registered", true, 'operationpanel', "coral");
+        return;
+    }
+    TraceErrorEditor("----------------------------------------------------------------------------", 1);
+    TraceErrorEditor("> START SAVING " + project.Name, 1);
+    TraceErrorEditor("----------------------------------------------------------------------------", 1);
+    DisplayOperation("Saving Project " + project.Name + "", true, 'operationpanel');            
 
-//------------------------------------------------------------ PROJECT FILE BAR ----------------------------------------------------------
+    project_savestrategy (project.CurrentStrategy)
+    project.Save();
 
+
+    TraceErrorEditor("----------------------------------------------------------------------------", 1);
+    TraceErrorEditor("> FINISH SAVING " + project.Name, 1);
+    TraceErrorEditor("----------------------------------------------------------------------------", 1);
+    DisplayOperation("Project " + project.Name + " Saved ", true, 'operationpanel');            
+}
+
+//------------------------------------------------------------ PROJECT STRATEGY ----------------------------------------------------------
+
+function project_savestrategy (strategy) {
+
+    if (CurrentEngine) {
+        strategy.pBEngine.Copy(CurrentEngine);
+        var original = strategy.pBEngine.Code[CODE_SS];
+        var modified = strategy.pBEngine.SCContent;
+        strategy.pBEngine.Code[CODE_SS] = strategy.pBEngine.SCContent;
+        strategy.CContent = CEditor.getValue();
+//Generate C File if nothing inside
+
+        if (strategy.CContent == "") {
+            strategy.CContent = GenerateCStrategy(strategy);
+            CEditor.setValue(strategy.CContent);
+        }
+        strategy.Code[CODE_CPP] = strategy.CContent;
+     //   strategy.Description = projectplatform.strategyquilleditor;
+
+        // for buttons to be ok saved
+
+        CurrentEngine.Code[CODE_SS] = CurrentEngine.SCContent;
+        strategy.ShouldSave = false;
+        strategy.Created = false;
+    }
+
+//    project_saveproject(solution.CurrentProject);
+}
+
+function project_selectstrategy(strategy) {
+
+    if (!strategy || strategy == CurrentStrategy) {
+        return;
+    }
+    
+    if (TestMode) {
+        Engine_Stop(CurrentEngine);
+    }
+    
+    PausedSimulator = 0;
+    let shouldinitialize = false; 
+    
+    let strategypanelcontent = $('#strategypaneltabcontent');
+    if (strategypanelcontent.length == 0) {
+        shouldinitialize = true;
+    }
+
+    if (!sb.tab_finditem (strategyfiletab, strategy.Name)) {
+        var strategyfiletabitem  = {id: strategy.Name,   icon: icon_strategy, item: strategy.Name,  type: 'link', roleid: 'strategypaneltabcontent',   
+                                    onclose:'onclick="onclick_StrategyCloseTabItem(this, event)"', 
+                                    items: [strategypanel],  events: {onclick: "onclick_StrategyTabItem(this)"}}
+        sb.tab_additem (strategyfiletab, strategyfiletabitem);
+    }
+    if (shouldinitialize) {
+
+        project_assistant_init ();
+        if (projectplatform.strategyview != STRATEGY_ASSISTANT_VIEW) {
+            $('#classicviewbox').css ('display', 'flex'); 
+            $('#assistantviewbox').css ('display', 'none'); 
+        }        
+        else {
+            $('#classicviewbox').css ('display', 'none'); 
+            $('#assistantviewbox').css ('display', 'flex');             
+        }        
+    }
+    sb.tab_select (strategyfiletab,   strategy.Name);
+
+    project_savestrategy(CurrentStrategy);
+    var engine = strategy.pBEngine.Clone();
+
+ 
+    if (engine.Schedules.length == 0) {
+        var schedule = new pgschedule(engine.StartRule, engine.Operation, '', '-1', '-1', '-1', '-1', '-1', '-1', '-1', '-1', '-1', '-1', '0');
+        engine.Schedules.push(schedule);
+        solution.CurrentProject.PG.Schedules.push(schedule);
+    }
+
+    ParseEngine(engine);
+
+    for (var i = 0; i < engine.Indicators.length; i++) {
+        if (!strategy.UsedIndicators.includes(engine.Indicators[i])) {        
+            strategy.UsedIndicators.push (engine.Indicators[i]);
+        }
+    }
+
+    var symbolcanvas = solution.GetCanvasFromTerminal(solution.CurrentProject);
+    if (!symbolcanvas) return;  
+   
+    symbolcanvas.Indicators = [];
+    
+    for (var i = 0; i < strategy.UsedIndicators.length; i++) {
+        var object = solution.CurrentProject.PG.GetObjectFromId (strategy.UsedIndicators[i]);    
+        symbolcanvas.AddIndicator(object.Id);
+    }
+
+    var strategyperiod = null;
+
+    if (strategy.Created)    {
+        strategyperiod = P_M1;
+    }
+    else {
+        if (engine.Periods.length != 0) {
+            strategyperiod = Math.min.apply(null, engine.Periods);
+        } 
+    }
+
+    solution.CurrentProject.CurrentStrategy = strategy;
+    CurrentStrategy = strategy;
+    CurrentEngine = engine;
+
+
+    RefreshStrategy(strategy);
+    DrawStrategy(strategy, true);
+
+    SelectChart(strategyperiod); 
+    return strategy;
+
+}
+
+function project_closestrategy(strategy) {
+    if (!strategy) return null;
+
+    sb.tab_delete (strategyfiletab, strategy.Name);    
+
+    if (strategy == solution.CurrentProject.CurrentStrategy ) {
+        
+        CurrentStrategy = null;
+        solution.CurrentProject.CurrentStrategy = null; 
+        CurrentEngine = null;
+
+        if (TestMode) Engine_Stop(CurrentEngine);
+        PausedSimulator = 0;
+        
+        DrawStrategy(null, false);
+    }
+}
+
+//---------------------------------------------------- CLOSE ALL STRATEGIES ------------------------------------------------ 
+
+function CloseAllStrategies() {
+    for (var i= strategyfiletab.items.length - 1; i >= 0; i--) {
+        let strategy = solution.CurrentProject.PG.GetStrategyFromName(strategyfiletab.items[i].item);
+        if (strategy) {
+            project_closestrategy(strategy);
+        }
+    }
+}
+
+function CloseSavedStrategies() {
+    for (var i= strategyfiletab.items.length - 1; i >= 0; i--) {
+        let strategy = solution.CurrentProject.PG.GetStrategyFromName(strategyfiletab.items[i].item);
+        if (strategy && !strategy.ShouldSave) {
+            project_closestrategy(strategy);
+        }
+    }
+}
 //---------------------------------------------------- CLOSE PROJECT ---------------------------------------------- 
 
 function onclick_project_projectclose () {
@@ -736,9 +911,8 @@ var SCEditor                = null;
 var CEditor                 = null;
 
 
-function SaveEditor(env, args, request) {
-    SaveStrategy(CurrentStrategy);
-}
+
+
 
 function UpdateGSE(engine) {
     if (!engine) return;
@@ -797,15 +971,32 @@ function project_editors_init (id){
         showPrintMargin: false
     });    
     SCEditor.addCommand({
-        name: 'saveFile',
+        name: 'Ace_Save',
         bindKey: {
             win: 'Ctrl-S',
             mac: 'Command-S',
             sender: 'editor|cli'
         },
-        exec: SaveEditor
+        exec: function (env, args, request)  {
+            project_savestrategy(CurrentStrategy);
+        }
         });
-
+    SCEditor.addCommand({
+        name: 'Ace_Shift',
+        bindKey: {
+            win: 'Shift-Tab',
+            mac: 'Shift-Tab',
+            sender: 'editor|cli'
+        },
+        exec: function (env, args, reques)  {
+            if (solution.CurrentProject && CurrentStrategy) { 
+                let tabs      = strategyfiletab.items;
+                let ctabitem  = sb.tab_finditem(strategyfiletab, CurrentStrategy.Name);
+                let ctabindex = tabs.indexOf(ctabitem);
+                let ntabindex = ctabindex == strategyfiletab.items.length - 1 ? 0 : ctabindex + 1;
+                project_selectstrategy (solution.CurrentProject.PG.GetStrategyFromName(strategyfiletab.items[ntabindex].id))                
+            }
+        }});
 
     CEditor              = new aceeditor('ceditor',          "ace/theme/sc_on_dark", "ace/mode/lisp"); 
     CEditor.setOptions( {
@@ -1226,7 +1417,7 @@ function OnDrop_page_main (event) {             //layout_page_panel_main"
 
         var strategy = PG.GetStrategyFromName(data);
         if (strategy) {
-            OnCloseStrategy(SelectStrategy, strategy);
+            OnCloseStrategy(project_selectstrategy, strategy);
             return;
         }
         
@@ -1253,7 +1444,7 @@ function ondrop_project_main(event) {
     if (data.startsWith('project_selectstrategy')) {
         var strategyname = data.replace ('project_selectstrategy_', '');
         var strategy = symbolcanvas.PG.GetStrategyFromName(strategyname);
-        SelectStrategy(strategy);
+        project_selectstrategy(strategy);
         return;
     } else 
     if (data.startsWith('project_selectproject')) {
@@ -1366,10 +1557,6 @@ function OnClickSwitchLevel(elt, event) {
 function OnClickActions(elt, event) {
 }
 
-
-
-
-
 //------------------------------------------------------------ TESTER PANEL ----------------------------------------------------------
 
 
@@ -1401,10 +1588,14 @@ function onchange_strategyselect(elt, event) {
     var strategy = solution.CurrentProject.PG.GetStrategyFromName(strategyname);
     if (strategy == solution.CurrentProject.CurrentStrategy) return;
 
-    SelectStrategy(strategy);
+    project_selectstrategy(strategy);
 }	
 
-   
+function onclick_project_tester_pausegroup(elt, event) {
+
+    $('#project_tester_pause_panel .pause_group').addClass('sb_none')  
+    $('#project_tester_pausesession_group_' + elt.id.slice(-1)).removeClass('sb_none');
+}   
 
 function onclick_project_tester_commandgroup(elt, event) {
     if (TestMode) {
@@ -1634,36 +1825,20 @@ function OnReloadProject(terminal, terminalname, terminaltype) {
 //---------------------------------------------------- SAVE PROJECT ---------------------------------------------- 
 
 function onclick_project_projectsave () {
-    SaveProject(solution.CurrentProject);
+    project_saveproject(solution.CurrentProject);
 }
 
 function SaveProjectConfirm (project) {
    
     sb.confirm_modal('Save Project ' + project.Name + ' ?').yes(function () {
-        SaveProject(project);
+        project_saveproject(project);
     }).no(function () {})
 }
 
 function SelectSaveProject (namecommand) {
-    SaveProject();   
+    project_saveproject();   
 }
 
-function SaveProject(project) {
-    if (!project) return;
-    if (solution.UserId == "0") {
-        DisplayOperation("Project can not be saved, You are not registered", true, 'operationpanel', "coral");
-        return;
-    }
-    TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    TraceErrorEditor("> START SAVING " + project.Name, 1);
-    TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    DisplayOperation("Saving Project " + project.Name + "", true, 'operationpanel');            
-    project.Save();
-    TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    TraceErrorEditor("> FINISH SAVING " + project.Name, 1);
-    TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    DisplayOperation("Project " + project.Name + " Saved ", true, 'operationpanel');            
-}
 
 //---------------------------------------------------- NEW PROJECT ---------------------------------------------- 
 
@@ -1778,7 +1953,7 @@ function NewStrategy(strategyname, strategytype) {
                 }]);    
     sb.select_additem ('projectstrategyselect', strategyname);  
 
-    SelectStrategy(strategy);
+    project_selectstrategy(strategy);
 
     return strategy;
 }
@@ -1855,14 +2030,14 @@ function DeleteStrategy(strategy) {
 
     if (!strategy) return null;
     
-    sb_tree_removeitem ('project_tree_strategies', strategy.Name);
-    sb_select_removeitem ('projectstrategyselect', strategy.Name);
+    sb.tree_removeitem ('project_tree_strategies', strategy.Name);
+    sb.select_removeitem ('projectstrategyselect', strategy.Name);
     
     var tabindex = sb.tab_delete (strategyfiletab, strategy.Name);    
     if (tabindex < 0) {
-        CloseStrategy (strategy);
+        project_closestrategy (strategy);
     } else {
-        SelectStrategy(solution.CurrentProject.PG.GetStrategyFromName (strategyfiletab.items[tabindex].item))
+        project_selectstrategy(solution.CurrentProject.PG.GetStrategyFromName (strategyfiletab.items[tabindex].item))
     }
     
     for (var i = solution.CurrentProject.PG.Engines.length; i--;) {
@@ -1896,7 +2071,7 @@ function OnClickCloseStrategy() {
     var project = solution.CurrentProject;
     var strategy = project ? project.CurrentStrategy : null;
     
-    OnCloseStrategy(CloseStrategy, strategy);
+    OnCloseStrategy(project_closestrategy, strategy);
 }     
 
 
@@ -1912,45 +2087,9 @@ function OnCloseStrategy(callafter, param, param1) {
     }
 }   
 
-function CloseStrategy(strategy) {
-    if (!strategy) return null;
-
-    sb.tab_delete (strategyfiletab, strategy.Name);    
-
-    if (strategy == solution.CurrentProject.CurrentStrategy ) {
-        CurrentStrategy = null;
-        solution.CurrentProject.CurrentStrategy = null; 
-        CurrentEngine = null;
-
-        if (TestMode) Engine_Stop(CurrentEngine);
-        PausedSimulator = 0;
-        
-        DrawStrategy(null, false);
-    }
-}
-
-//---------------------------------------------------- CLOSE ALL STRATEGIES ------------------------------------------------ 
-
-function CloseAllStrategies() {
-    for (var i= strategyfiletab.items.length - 1; i >= 0; i--) {
-        let strategy = solution.CurrentProject.PG.GetStrategyFromName(strategyfiletab.items[i].item);
-        if (strategy) {
-            CloseStrategy(strategy);
-        }
-    }
-}
-
-function CloseSavedStrategies() {
-    for (var i= strategyfiletab.items.length - 1; i >= 0; i--) {
-        let strategy = solution.CurrentProject.PG.GetStrategyFromName(strategyfiletab.items[i].item);
-        if (strategy && !strategy.ShouldSave) {
-            CloseStrategy(strategy);
-        }
-    }
-}
 
 function SelectCloseStrategy() {
-    OnCloseStrategy(CloseStrategy);
+    OnCloseStrategy(project_closestrategy);
 }
 //---------------------------------------------------- SAVE STRATEGY ------------------------------------------------  
 
@@ -2011,36 +2150,10 @@ function OnSaveStrategy(event) {
     } else {
          DisplayOperation("Saving Project " + solution.CurrentProject.Name, true, 'operationpanel', 'var(--bg-strategycreator)');    
     }        
-    setTimeout(SaveStrategy, 300, CurrentStrategy);        
+    setTimeout(project_savestrategy, 300, CurrentStrategy);        
 
 }
 
-function SaveStrategy(strategy) {
-
-    if (CurrentEngine) {
-        strategy.pBEngine.Copy(CurrentEngine);
-        var original = strategy.pBEngine.Code[CODE_SS];
-        var modified = strategy.pBEngine.SCContent;
-        strategy.pBEngine.Code[CODE_SS] = strategy.pBEngine.SCContent;
-        strategy.CContent = CEditor.getValue();
-//Generate C File if nothing inside
-
-        if (strategy.CContent == "") {
-            strategy.CContent = GenerateCStrategy(strategy);
-            CEditor.setValue(strategy.CContent);
-        }
-        strategy.Code[CODE_CPP] = strategy.CContent;
-     //   strategy.Description = projectplatform.strategyquilleditor;
-
-        // for buttons to be ok saved
-
-        CurrentEngine.Code[CODE_SS] = CurrentEngine.SCContent;
-        strategy.ShouldSave = false;
-        strategy.Created = false;
-    }
-
-    SaveProject(solution.CurrentProject);
-}
 
 
 //---------------------------------------------------- SELECT STRATEGY ------------------------------------------------  
@@ -2050,7 +2163,7 @@ function _StrategySelect (project, strategyname) {
         clearInterval(Interval_selectstrategy);
         var strategy = project.PG.GetStrategyFromName(strategyname);        
         if (!strategy) return;
-        SelectStrategy (strategy);
+        project_selectstrategy (strategy);
     }    
 }
 
@@ -2099,7 +2212,7 @@ function onclick_project_tab(elt, event) {
 
 function onclick_StrategyTabItem (elt) {
     var strategy = solution.CurrentProject.PG.GetStrategyFromName ($(elt)[0].innerText);
-    SelectStrategy (strategy);
+    project_selectstrategy (strategy);
 }
 
 function onclick_StrategyCloseTabItem (elt, event) {
@@ -2114,104 +2227,15 @@ function onclick_StrategyCloseTabItem (elt, event) {
     let strategy        = solution.CurrentProject.PG.GetStrategyFromName (strategyname);
     
     if (tabindex < 0) {
-        CloseStrategy (strategy);
+        project_closestrategy (strategy);
     } else {
         strategyname = strategyfiletab.items[tabindex].item;
         strategy = solution.CurrentProject.PG.GetStrategyFromName (strategyname);
-        SelectStrategy(strategy)
+        project_selectstrategy(strategy)
     }
 }
 
-function SelectStrategy(strategy) {
 
-    if (!strategy || strategy == CurrentStrategy) {
-        return;
-    }
-    
-    if (TestMode) {
-        Engine_Stop(CurrentEngine);
-    }
-    
-    PausedSimulator = 0;
-    let shouldinitialize = false; 
-    
-    let strategypanelcontent = $('#strategypaneltabcontent');
-    if (strategypanelcontent.length == 0) {
-        shouldinitialize = true;
-    }
-
-
-
-    if (!sb.tab_finditem (strategyfiletab, strategy.Name)) {
-        var strategyfiletabitem  = {id: strategy.Name,   icon: icon_strategy, item: strategy.Name,  type: 'link', roleid: 'strategypaneltabcontent',   
-                                    onclose:'onclick="onclick_StrategyCloseTabItem(this, event)"', 
-                                    items: [strategypanel],  events: {onclick: "onclick_StrategyTabItem(this)"}}
-        sb.tab_additem (strategyfiletab, strategyfiletabitem);
-    }
-    if (shouldinitialize) {
-
-        project_assistant_init ();
-        if (projectplatform.strategyview != STRATEGY_ASSISTANT_VIEW) {
-            $('#classicviewbox').css ('display', 'flex'); 
-            $('#assistantviewbox').css ('display', 'none'); 
-        }        
-        else {
-            $('#classicviewbox').css ('display', 'none'); 
-            $('#assistantviewbox').css ('display', 'flex');             
-        }        
-    }
-    sb.tab_select (strategyfiletab,   strategy.Name);
-
-    var engine = strategy.pBEngine.Clone();
-
- 
-    if (engine.Schedules.length == 0) {
-        var schedule = new pgschedule(engine.StartRule, engine.Operation, '', '-1', '-1', '-1', '-1', '-1', '-1', '-1', '-1', '-1', '-1', '0');
-        engine.Schedules.push(schedule);
-        solution.CurrentProject.PG.Schedules.push(schedule);
-    }
-
-    ParseEngine(engine);
-
-    for (var i = 0; i < engine.Indicators.length; i++) {
-        if (!strategy.UsedIndicators.includes(engine.Indicators[i])) {        
-            strategy.UsedIndicators.push (engine.Indicators[i]);
-        }
-    }
-
-    var symbolcanvas = solution.GetCanvasFromTerminal(solution.CurrentProject);
-    if (!symbolcanvas) return;  
-   
-    symbolcanvas.Indicators = [];
-    
-    for (var i = 0; i < strategy.UsedIndicators.length; i++) {
-        var object = solution.CurrentProject.PG.GetObjectFromId (strategy.UsedIndicators[i]);    
-        symbolcanvas.AddIndicator(object.Id);
-    }
-
-    var strategyperiod = null;
-
-    if (strategy.Created)    {
-        strategyperiod = P_M1;
-    }
-    else {
-        if (engine.Periods.length != 0) {
-            strategyperiod = Math.min.apply(null, engine.Periods);
-        } 
-    }
-
-    solution.CurrentProject.CurrentStrategy = strategy;
-    CurrentStrategy = strategy;
-    CurrentEngine = engine;
-
-
-    RefreshStrategy(strategy);
-    DrawStrategy(strategy, true);
-
-    SelectChart(strategyperiod); 
-    return strategy;
-
-}
 
 function DrawStrategy(strategy, open) {
 
@@ -2219,7 +2243,7 @@ function DrawStrategy(strategy, open) {
  
         $("#projectstrategyselect option[value='--Select Strategy--']").remove();   
         $('#projectstrategyselect option[value="' + strategy.Name + '"]').prop('selected', true); 
-        $('#strategy_tester').removeAttr('disabled') 
+        $('#project_tester_play_button').removeAttr('disabled') 
 
         sb.tree_selectitem ('project_tree_strategies', strategy.Name);                              
       
@@ -2232,8 +2256,8 @@ function DrawStrategy(strategy, open) {
         sb.tree_selectitem ('project_tree_strategies', '');         
         $("#projectstrategyselect option").eq(0).before($('<option>', {value: '--Select Strategy--', text: '--Select Strategy--'}));
         $("#projectstrategyselect option[value='--Select Strategy--']").prop('selected', true);
-        $('#strategy_stop').attr('disabled',true);    
-        $('#strategy_tester').attr('disabled',true);           
+        $('#project_tester_stop_button').attr('disabled',true);    
+        $('#project_tester_play_button').attr('disabled',true);           
 
         DisplayOperation("" , true, 'operationpanel'); 
 
@@ -2281,28 +2305,22 @@ function DownloadStrategy(strategyfile) {
     let  site           = solution.get('site');            
     let  user           = solution.get('user')    
 
-    var url = site.address + user.path + '/Projects/' + solution.CurrentProject.Folder + "/MQL4/Experts/" + strategyfile;
+    var url = user.path + '/Projects/' + solution.CurrentProject.Folder + "/MQL4/Experts/" + strategyfile;
 
     var fileName = "//MQL4//Experts//" + strategyfile;
     var strategyname = strategyfile.split(".ex4")[0];
     var strategy = solution.CurrentProject.PG.GetStrategyFromName (strategyname);
     
     if (strategy) {
-        SelectStrategy (strategy);
+        project_selectstrategy (strategy);
     }
-    var sterminal = solution.GetTerminalFromType ('Terminal');
-    if (sterminal) {
-        fileName = sterminal.DataPath + fileName; 
+    var sterminal = solution.GetTerminalsFromName('FP Markets MT4 Terminal');
+    if (sterminal.length) {
+        fileName = sterminal[0].DataPath + fileName; 
+    } else {
+        fileName = strategyfile;
     }
-    fileName = strategyfile;
-    let a = document.createElement("a");
-    a.style = "display: none";
-    document.body.appendChild(a);
-    a.href = url;
-    a.download = fileName;
-    a.click();
-    window.URL.revokeObjectURL(url);
-    a.remove();
+    SaveURIInFile (url, '')
 }
 
 //-----------------------------------------------------------------------------------------------------------------------  
