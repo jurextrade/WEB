@@ -281,7 +281,7 @@ function YahooTreatHistory (terminal, symbol, period, values) {
         } else {
             e = objError.message;
         }            
-        DisplayOperation(e, true, 'operationpanel', 'tomato');        
+        DisplayInfo(e, true, 'operationpanel', 'tomato');        
         LoaderChartHistory (false);    
         return;
     }    
@@ -391,7 +391,7 @@ function YahooTreatSymbol(responseText, parameters) {
         } else {
             e = objError.message;
         }            
-        DisplayOperation('Symbol not found', true, 'operationpanel', 'tomato');        
+        DisplayInfo('Symbol not found', true, 'operationpanel', 'tomato');        
         if (selected) LoaderDisplay(false);
         return;
     }    
@@ -443,7 +443,7 @@ function YahooTreatContract(responseText, parameters) {
         } else {
             e = objError.message;
         }            
-        DisplayOperation('Symbol not found', true, 'operationpanel', 'tomato');        
+        DisplayInfo('Symbol not found', true, 'operationpanel', 'tomato');        
         if (selected) LoaderDisplay(false);
         return;
     }    
@@ -1485,7 +1485,8 @@ function Project_ParseError  (str, hash) {
 
 function TraceErrorEditor(value, add) {
     if (ErrorEditor != null) {
-        sb.tab_select(project_bottomtabs, 'tab-error');
+      //  bottompanel_select (projectplatform,'tab-error') 
+        //sb.tab_select(project_bottomtabs, 'tab-error');
         ErrorEditor.setValue(ErrorEditor.getValue() + value + "\r\n");
         ErrorEditor.gotoEnd ();         
     }
@@ -4839,8 +4840,8 @@ function StrategySchedulePanel (classnames) {
     Init_strategyscheduletable(strategyscheduletable, strategyschedulepropertytable);
 
     var content =
-        sb.table (strategyscheduletable) +
-        sb.table (strategyschedulepropertytable);
+        sb.table (strategyschedulepropertytable) +
+        sb.table (strategyscheduletable);
     return content;
 }
 

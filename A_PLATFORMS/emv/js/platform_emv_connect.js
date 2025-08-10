@@ -254,7 +254,7 @@ function emv_TreatTrace(origin, reader, values, silentmode, display) {
                 case  "Insert Card\n" :
                 case "System Problem Remove Card\n" :
                 case "Transaction Completed please Remove Card\n" :
-                    TreatOperation(values[2], 'operationpanel');
+                    TreatInfo(values[2], 'operationpanel');
 //                    emv_TreatDialogTrace('Card', values[1]);
 //                    card_waiting_response = 1;
                     break;   

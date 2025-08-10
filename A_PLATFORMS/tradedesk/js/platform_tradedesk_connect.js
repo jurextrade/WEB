@@ -193,7 +193,7 @@ function MT4TreatCommand(solution, terminal, Line, values) {
         TreatEngineFlags(solution, terminal, values);
     } else
     if (values[0] == "OPERATION") {
-        TreatOperation(values[1]);
+        TreatInfo(values[1]);
     } else
     if (values[0] == "SDATA") {
         TreatData(solution, terminal, values, ENGINE_ORDER);
@@ -1298,7 +1298,7 @@ function TreatAlert(solution, terminal, values) {
     var color = (objsignal ? objsignal.Color : 'gray');
     
 
-   // DisplayOperation(Symbol.Name + " : " + alertsi.Object + " " + alertsi.Signal + " " + periods, solution.CurrentTerminal.PG.AlertsSound, 'alertnotificationpanel', color);
+   // DisplayInfo(Symbol.Name + " : " + alertsi.Object + " " + alertsi.Signal + " " + periods, solution.CurrentTerminal.PG.AlertsSound, 'alertnotificationpanel', color);
 
     $('#alertnotificationpanel').val(Symbol.Name + " : " + alertsi.Object + " " + alertsi.Signal + " " + periods);
     $('#alertnotificationpanel').css ('color', color);
@@ -1690,7 +1690,7 @@ function OnExitSession (terminal, engineindex, symbolname, start) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }  
     
@@ -1705,7 +1705,7 @@ function OnStartEngine(terminal, engineindex, symbolname, start) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     
@@ -1719,7 +1719,7 @@ function OnSessionCommand (terminal, Session, nID) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
 
@@ -1807,7 +1807,7 @@ function OnCloseAll(terminal, optype, profit, symbol) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var sorder = "*CLOSEALLENGINE " + optype + " = [" + "0" + "] ";
@@ -1821,7 +1821,7 @@ function OnExitAll(terminal, optype, profit, symbol) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var sorder = "*EXITALLENGINE " + optype + " = [" + "0" + "] ";
@@ -1837,7 +1837,7 @@ function OnOrder () {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var symbolcanvas = solution.GetCanvasFromTerminal();
@@ -1871,7 +1871,7 @@ function OnOrder () {
         };
         sorder = "*ORDER -1 = [" + sEntry + " " + sOperation + " " + Symbol.SellVolume + " " + Symbol.SellSL + " " + Symbol.SellTP + " ]";
     } else {
-        TreatOperation("Unknow order type " + Symbol.TradeOrder, 'operationpanel', 'red');
+        TreatInfo("Unknow order type " + Symbol.TradeOrder, 'operationpanel', 'red');
         return null;
     }
     terminal.Com.Send(solution.UserId + '*' + Symbol.Name + sorder);
@@ -1883,7 +1883,7 @@ function OnManualSession(terminal, sessionnumber, s) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var symbolcanvas = solution.GetCanvasFromTerminal();
@@ -1899,7 +1899,7 @@ function OnSaveMM(terminalname, terminaltype) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
 
@@ -1928,7 +1928,7 @@ function OnBuy() {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var symbolcanvas = solution.GetCanvasFromTerminal();
@@ -1946,7 +1946,7 @@ function OnSell() {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var symbolcanvas = solution.GetCanvasFromTerminal();
@@ -1963,7 +1963,7 @@ function OnModify (terminal) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     // var sorder = "*ORDER -1 = [0 SELL 1 0 0 ]";
@@ -1975,7 +1975,7 @@ function OnClose (terminal, etype) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var seltab;
@@ -2045,7 +2045,7 @@ function OnPendingOrder(terminal, type, svolume, stoploss, stakeprofit) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     

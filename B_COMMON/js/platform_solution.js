@@ -40,7 +40,7 @@ function onclick_right_sidebarsave(elt, event) {
     solution.configuration.theme = ui.sb.theme;
     cuser.send ({Name: 'savefile', Values: [cuser.fileexplorer.Root + cuser.path + '/configuration.json', JSON.stringify(solution.configuration, null, 2)]}, true, 
                 function (content, values) {
-                    DisplayOperation("Configutation Saved ", true, 'operationpanel',  'var(--theme-platform-color)');
+                    DisplayInfo("Configutation Saved ", true, 'operationpanel',  'var(--theme-platform-color)');
                 }, 
                 ['configuration.json']);  
 }

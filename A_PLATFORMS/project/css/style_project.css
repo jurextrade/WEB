@@ -36,6 +36,7 @@
     margin-right: 10px;;  
 }
 
+#project_strategyselect,
 #project_projectselect {
     color: var(--theme-select-color);
     width: auto;  
@@ -69,17 +70,16 @@
     border-bottom: 1px solid var(--theme-border-color);
 }
 
-#strategypropertiespanel {
-    overflow:auto;
+#strategypropertiespanel,
+#strategyschedulepanel {
     padding: 10px;    
+    border: 1px solid var(--theme-button-border-color);       
 }
 
-#strategypropertiestable td {
+
+#strategypropertiestable td,
+#strategyschedulepropertytable td {
     width:300px;
-}
-
-#strategychedulepanel {
-    overflow:auto;
 }
 
 #strategyotherpanel {
@@ -272,7 +272,7 @@
     padding: 17px;
 }
 
-#distributepanel {
+#project_distributepanel {
     background-color: var(--theme-main-bg-color);
     border: 1px solid var(--theme-color);
 }
@@ -283,7 +283,7 @@
     margin-top: 25px;    
 }
 
-#distributepanel .terminalname {
+#project_distributepanel .terminalname {
     margin-left: 5px;
 }
 
@@ -340,7 +340,7 @@
 
 /*--------------------------------------------------------- TREE ------------------------------------------------------*/
 
-#project_tree_strategies, #project_tree_indicators, #project_tree_conditions, #project_tree_experts {
+#project_tree_strategies, #project_tree_indicators, #project_tree_conditions {
     display:none;
 }
 

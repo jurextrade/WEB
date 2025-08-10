@@ -56,8 +56,8 @@ var constructor_sidebaremenu = {
     direction: 'column',       
     items : 
     [
-        {id: 'sidebar_jsonmanager',     type: 'link',  icon:  icon_structure, events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'JSON Structure'},                 
-        {id: 'sidebar_htmlproperties',  type: 'link',  icon:  icon_files,     events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Project Workspace'},                           
+        {id: 'sidebar_jsonmanager',     type: 'link',  icon:  icon_structure, events: {onclick: "sidebarmenu_select(this.id)"}, title: 'JSON Structure'},                 
+        {id: 'sidebar_htmlproperties',  type: 'link',  icon:  icon_files,     events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Project Workspace'},                           
     ]
 }
   

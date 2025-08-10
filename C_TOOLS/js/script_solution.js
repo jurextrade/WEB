@@ -108,30 +108,20 @@ class SOLUTION {
         
         if (prop.dynamic) {
             this.add_configuration_scripts(this.Init)
-        } else {   //some are already loaded, let's merge module parameter with SB
-            for (var i = 0; i < main.items.length; i++) {
-                let struct_module = this.get_modulefrompname(main.items[i].pname)
-                main.items[i] =  {...main.items[i], ...struct_module.module}
-            }
-            for (var i = 0; i < footer.items.length; i++) {
-                let struct_module = this.get_modulefrompname(footer.items[i].pname)
-                footer.items[i] =  {...footer.items[i], ...struct_module.module}
-            }
-            for (var i = 2; i < default_right_sidebarpanel.items.length; i++) {
-                let struct_module = this.get_modulefrompname(default_right_sidebarpanel.items[i].items[0].pname)
-                default_right_sidebarpanel.items[i].items[0] =  {...default_right_sidebarpanel.items[i].items[0], ...struct_module.module}
-            }            
-        }  
+        } 
 
-        this.user.send({Name: 'scandir_r',Values: this.user.is_admin () ? ['.', ''] : [this.user.path  + '/NetProg', '.']}, false,  function (content, values) {
-            let dirstruct = JSON.parse (content);
-            values[0].fileexplorer = dirstruct.Values[0]}, [this.user])
-        
         c_solution.machine      = new machine();
         c_solution.ui           = new ui(this.configuration.theme);        
-       
         c_solution.get_languages();    
+        
 
+
+
+      /*  this.user.send({Name: 'scandir_r',Values: this.user.is_admin () ? ['.', ''] : [this.user.path  + '/NetProg', '.']}, false,  function (content, values) {
+            let dirstruct = JSON.parse (content);
+            values[0].fileexplorer = dirstruct.Values[0]}, [this.user])
+      */
+        
         if (prop.action != ''){
             switch (prop.action) {
                 case 'login' :
@@ -152,15 +142,12 @@ class SOLUTION {
 
         solution          = c_solution;
 
-        solution.update_interface ();                    //render all
-
+        solution.check_configuration ();                 // see if html structure is coherent 
+        solution.update_interface ();                    // add modules in sb and render all
         solution.evaluate_interface ();                  //launch init on each module
-      
-        solution_update();               
+     
+        solution_update();                               // panel solution update
 
-        if (solution.dynamic) {
-            InitApp (solution)    
-        }      
     }
 
     Init_module (solution, module, placement) {
@@ -207,6 +194,11 @@ class SOLUTION {
         if (rightsidebarpanel.length == 0) {
             rightsidebarpanel = default_right_sidebarpanel;
             right.items.push (rightsidebarpanel);
+            
+            for (var i = 2; i < rightsidebarpanel.items.length; i++) {                                  // merge fields sb and configuration file
+                let struct_module = this.get_modulefrompname(rightsidebarpanel.items[i].items[0].pname)
+                rightsidebarpanel.items[i].items[0] =  {...rightsidebarpanel.items[i].items[0], ...struct_module.module}
+            } 
         } 
         
         let rightsidebarmenu   = this.ui.sb.get(right, 'id', 'right_sidebarmenu');    
@@ -214,8 +206,8 @@ class SOLUTION {
             rightsidebarmenu = default_right_sidebarmenu; 
             right.items.push (rightsidebarmenu);
         }    
-        let headerbaritems   = this.ui.sb.get(header, 'id', 'headerbar_items');    
 
+        let headerbaritems   = this.ui.sb.get(header, 'id', 'headerbar_items');    
         if (headerbaritems.length == 0) {
             headerbaritems = {id: 'headerbar_items', type: 'group', position: 'me-auto', toggle: true, items: [],}        
             header.items.unshift (headerbaritems)
@@ -223,6 +215,15 @@ class SOLUTION {
 
         if (main.items.length != 0) {        // program loaded with main not empty
             this.header_updateplatforms();        
+            for (var i = 0; i < main.items.length; i++) {
+                let struct_module = this.get_modulefrompname(main.items[i].pname)
+                main.items[i] =  {...main.items[i], ...struct_module.module}
+            }
+        }
+                                                                //some are already loaded, let's merge module parameter with SB for dependency field
+        for (var i = 0; i < footer.items.length; i++) {
+            let struct_module = this.get_modulefrompname(footer.items[i].pname)
+            footer.items[i] =  {...footer.items[i], ...struct_module.module}
         }
     }
 
@@ -426,7 +427,7 @@ class SOLUTION {
     //-------------------------------------------------- 2 - Updating  SB items  then render ------------------------------------------------------------------------------
 
     update_interface () {                                             // add all sb_items and render body from all modules in configuration file
-        this.check_configuration ()
+     
                 
         if (this.dynamic) {
             this.brand_update ();
@@ -479,9 +480,9 @@ class SOLUTION {
   //-------------------------------------------------- 3 - Evaluating  modules initialization  ------------------------------------------------------------------------------
     
     evaluate_interface () {                                           // launch module init for all modules if present                
-        let rest_body = [header, main, footer]
+      let rest_body = [header, main, footer]
         for (var p = rest_body.length -1 ; p >= 0; p--) {
-            for (var i = rest_body[p].items.length - 1; i >= 0; i--) {
+            for (var i = rest_body[p].items.length - 1; i > 0; i--) {   // ignore first right 
                 let sb_elt = rest_body[p].items[i];
                 if (!sb_elt) {
                     continue;
@@ -504,19 +505,43 @@ class SOLUTION {
     }
 
     module_init (sb_elt) {                                         // launch module init for module if present
+
+        let struct_module = this.get_modulefrompname(sb_elt.pname)
+       
+        if (!struct_module) {
+            console.log ('module unknown for initialisation ' + sb_elt.pname );
+            return;
+        }
+        
+        if (defined(struct_module.module.Init)) {
+            console.log ('Initialisation on ' + sb_elt.pname + ' alreay done');
+            return;
+        }
+
         if (sb_elt.init) {
             try  {  
                 eval (sb_elt.init)
-                                                                   // look for dependency;
+                                                                  // look for dependency;
             }
             catch (e) {
                 console.log (sb_elt.id + ' : Error in module launching module_init' + sb_elt.pname + ' :' + e);
             }   
         }
+       
+        struct_module.module.Init = true;
+
         if (sb_elt.dependency) {
             for (var i = 0; i < sb_elt.dependency.length; i++) {
-                let panel =  this.ui.sb.get(main, 'pname', sb_elt.dependency[i]);
-
+                let struct_module = this.get_modulefrompname( sb_elt.dependency[i])
+                if (!struct_module) {
+                    continue;
+                }
+                let sbitem = this.ui.sb.get(sb.interface, 'id', struct_module.placement);
+                
+                if (sbitem.length == 0) {
+                    continue;
+                }
+                let panel =  this.ui.sb.get(sbitem[0], 'pname',  sb_elt.dependency[i]);
                 if (panel.length == 0) {
                     solution.add_module(sb_elt.dependency[i]);  
                 }   
@@ -798,7 +823,7 @@ class SOLUTION {
         return null;
     }
 
-    add_module (pname) {                                  // upload the module and then launch module initialisation (sb interface)
+    add_module (pname, not_launchinitmodule) {                                  // upload the module and then launch module initialisation (sb interface)
 
         let struct_module = this.get_modulefrompname(pname)
         if (!struct_module) {
@@ -812,7 +837,7 @@ class SOLUTION {
         let placement   = struct_module.placement;
         
         if (this.add_module_scripts(module, placement, 1)) {
-            this.script_is_loaded(this.Init_module, this, module, placement)
+            this.script_is_loaded(not_launchinitmodule ? null : this.Init_module, this, module, placement)
         }        
     }
 
@@ -889,8 +914,10 @@ class SOLUTION {
             fileref.setAttribute("async", false);  
             document.getElementsByTagName("head")[0].appendChild(fileref)   
             return;
-        }   
-        callback(par, par1, par2)       
+        } 
+        if (callback) {  
+            callback(par, par1, par2)       
+        }
     }    
 
     script_exist (filename, mime) {
@@ -1527,7 +1554,7 @@ class user {
         this.dname        = '';
         this.photo        = '';
         this.path         = '';
-        this.fileexplorer = '';
+        this.fileexplorer = null;
         this.registering  = false;
         this.login        = new login ();    
     } 
@@ -1783,7 +1810,7 @@ function rightsidebarpanel_select (psidebarpanel, id) {
 
 //------------------------------------------------------------------- MAIN SIDEBAR---------------------------------------------------------------------
 
-function onclick_sidebarmenu (id, show) {
+function sidebarmenu_select (id, show) {
     let ui  = solution.get('ui') 
 
     let rootelt = $('#' + id).closest('.sb_root');
@@ -1799,10 +1826,46 @@ function onclick_sidebarmenu (id, show) {
         }
     }
     if (show == 1) {
-        sidebarpanel_select(platform, id.replace("sidebar", "sidebarpanel"));    
+        sidebarpanel_show(platform, id.replace("sidebar", "sidebarpanel"));    
     }    
     if (show == 0) {
         sidebarpanel_hide(platform, id.replace("sidebar", "sidebarpanel"));            
+    }
+}
+
+function sidebarpanel_show (platform, id) {
+    let sidebarpanel    =  $('#' + id);
+    let psidebarpanel   = sidebarpanel.parent ();
+    let drageltv        = psidebarpanel.next();  
+    let toresize        = !psidebarpanel.hasClass ('toggled')
+
+        
+    let sbpanels = psidebarpanel.children ();
+    $.each(sbpanels, function (index, panel) {
+        $(panel).removeClass("sb_active");
+        $(panel).addClass("sb_none");        
+    });
+
+    drageltv.removeClass('sb_none');    
+    sidebarpanel.removeClass("sb_none");    
+
+    sidebarpanel.addClass("sb_active");    
+    
+
+
+    let sidebarmenu     = $('#' + id.replace("sidebarpanel", "sidebar"))
+    
+    let psidebarmenu    = sidebarmenu.closest('.sb_sidebarmenu'); 
+    let sbmenus         = psidebarmenu.find('.sb_link');
+    $.each(sbmenus, function (index, menu) {
+        $(menu).removeClass("checked");
+    });
+
+    sidebarmenu.addClass("checked");
+
+    if (toresize) {
+        psidebarpanel.addClass('toggled')
+        sb.resize(platform);
     }
 }
 
@@ -1832,42 +1895,6 @@ function sidebarpanel_hide (platform) {
         sb.resize(platform);
     }
 }
-
-function sidebarpanel_select (platform, id) {
-    let sidebarpanel    =  $('#' + id);
-    let psidebarpanel   = sidebarpanel.parent ();
-    let drageltv        = psidebarpanel.next();  
-    let toresize        = !psidebarpanel.hasClass ('toggled')
-
-        
-    let sbpanels = psidebarpanel.children ();
-    $.each(sbpanels, function (index, panel) {
-        $(panel).removeClass("sb_active");
-        $(panel).addClass("sb_none");        
-    });
-    sidebarpanel.removeClass("sb_none");    
-
-    sidebarpanel.addClass("sb_active");    
-    
-    drageltv.removeClass('sb_none');
-
-    let sidebarmenu     = $('#' + id.replace("sidebarpanel", "sidebar"))
-    
-    let psidebarmenu    = sidebarmenu.closest('.sb_sidebarmenu'); 
-    let sbmenus         = psidebarmenu.find('.sb_link');
-    $.each(sbmenus, function (index, menu) {
-        $(menu).removeClass("checked");
-    });
-
-    sidebarmenu.addClass("checked");
-
-    if (toresize) {
-        psidebarpanel.addClass('toggled')
-        sb.resize(platform);
-    }
-}
-
-
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 var theme_main_color;

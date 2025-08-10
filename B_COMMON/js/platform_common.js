@@ -44,12 +44,12 @@ function BlinkOperation(elt, line, bgcolor, opcount) {
     OpCount++;
  }
 
-function TreatOperation(line, id, color) {
+function TreatInfo(line, id, color) {
     sound = true;
-    DisplayOperation(line, sound, id, color);
+    DisplayInfo(line, sound, id, color);
 }
 
-function DisplayOperation(line, withsound, id, bgcolor, opcount) {
+function DisplayInfo(line, withsound, id, bgcolor, opcount) {
     let operationpanel = {
         id: 'operationpanel',
         position: '',    
@@ -81,7 +81,8 @@ function DisplayOperation(line, withsound, id, bgcolor, opcount) {
     Interval_messageblink = setInterval(BlinkOperation, 500, elt, line, bgcolor, opcount);
 
     if (withsound) {
-    //        gsound.speak(line);
+        let gsound          = solution.get('sound')     
+        gsound.speak(line);
     }
  }
 

@@ -4,7 +4,7 @@
 $userid         = $_REQUEST['user_id'];
 $filename       = $_REQUEST['filename'];
 $projectfolder  = $_REQUEST['projectfolder'];
-$content        = $_REQUEST['content'] ? $_REQUEST['content'] : 'this is content';
+$content        = $_REQUEST['content'];
 $emplacement    = $_REQUEST['emplacement'];
 
 $cwd            =  dirname(getcwd() ,1);

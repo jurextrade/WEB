@@ -1180,7 +1180,7 @@ if ((AndS(SMA_5, S_CROSS_DOWN, CurrentPeriod) && AndS(MA_200, S_BELOW, CurrentPe
 Set_Rule(OP_EXIT, T_STATUS, R_K, P_SIGNAL);}
 
 /* ============================================================
-STRATEGY : EMA_PARABOLIC_SAR
+STRATEGY : STARTER_NO_CODE
 RULE : W
 =============================================================*/
 
@@ -1201,7 +1201,7 @@ void R_RULE (U)
 
 //------------------------------BUYSELL ENGINE ------------------------------
 
-Set_Rule(OP_BUYSELL, T_START, R_U, P_SIGNAL);Set_Rule(OP_BUY, T_STATUS, R_U, P_SIGNAL);Set_Rule(OP_SELL, T_STATUS, R_U, P_SIGNAL);Set_Rule(OP_EXIT, T_STATUS, R_U, P_SIGNAL);}
+}
 
 /* ============================================================
 STRATEGY : EMA20_SAR
@@ -1611,11 +1611,11 @@ void R_RULE (F)
 
 if (AndS(BAR, S_BULL, P_H4, P_D1, P_W1, P_MN))
 
-{ Set_Rule(OP_BUYSELL, T_START, R_F, P_SIGNAL);Set_Rule(OP_BUY, T_STATUS, R_F, P_SIGNAL);}
+{ Set_Rule(OP_BUYSELL, T_START, R_F, P_SIGNAL);Set_Rule(OP_SELL, T_STATUS, R_F, P_SIGNAL);}
 
 if (AndS(BAR, S_BEAR, P_H4, P_D1, P_W1, P_MN))
 
-{ Set_Rule(OP_BUYSELL, T_START, R_F, P_SIGNAL);Set_Rule(OP_SELL, T_STATUS, R_F, P_SIGNAL);}
+{ Set_Rule(OP_BUYSELL, T_START, R_F, P_SIGNAL);Set_Rule(OP_BUY, T_STATUS, R_F, P_SIGNAL);}
 
 if (AndS(BAR, S_BEAR, P_D1))
 
@@ -1828,11 +1828,21 @@ if (((SValue(CLOSE, S_CURRENT, CurrentPeriod) < SPValue(LOW, S_PREVIOUS, Current
 { Set_Rule(OP_SELL, T_STATUS, R_C, P_SIGNAL);}
 Set_Rule(OP_EXIT, T_STATUS, R_C, P_SIGNAL);}
 
+/* ============================================================
+STRATEGY : STARTER_NO_CODE2
+RULE : X
+=============================================================*/
+
+void R_RULE (X)
+{
+
+//------------------------------BUYSELL ENGINE ------------------------------
+
+Set_Rule(OP_BUYSELL, T_START, R_X, P_SIGNAL);Set_Rule(OP_BUY, T_STATUS, R_X, P_SIGNAL);Set_Rule(OP_SELL, T_STATUS, R_X, P_SIGNAL);Set_Rule(OP_EXIT, T_STATUS, R_X, P_SIGNAL);}
+
 
 
 //--------------------------------- Not Called Strategies Rules -------------------------------------------
 
-void R_RULE (X)
-{};
 void R_RULE (Y)
 {};

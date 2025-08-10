@@ -15,7 +15,7 @@ function emv_init () {
 
     emv_TLVParserPanel_Update(); 
 
-    sidebarpanel_select(emvplatform, "sidebarpanel_emvprojectmanager");       
+    sidebarpanel_show(emvplatform, "sidebarpanel_emvprojectmanager");       
     setInterval(emv_timer, 300);         
 }
 
@@ -40,8 +40,8 @@ function emv_select (name) {
     ui.platform_expand(name, true);
 
     if (!solution.emv_CurrentProject) {
-      //  onclick_sidebarmenu ('sidebar_emvprojectmanager', true);    
-        DisplayOperation("Select a project or create one", true, 'operationpanel', 'var(--theme-platform-color)');
+      //  sidebarmenu_select ('sidebar_emvprojectmanager', true);    
+        DisplayInfo("Select a project or create one", true, 'operationpanel', 'var(--theme-platform-color)');
     }    
 }
 
@@ -186,7 +186,7 @@ function emv_home_open (event) {
 function emv_loadedproject (project) {
     if (project.Loaded) {
         clearInterval(Interval_emv_loadproject);
-        DisplayOperation("Project " + project.Name + " loaded", true, 'operationpanel');            
+        DisplayInfo("Project " + project.Name + " loaded", true, 'operationpanel');            
         LoaderDisplay(false);      
        // emv_project_updateterminal(project)           
         emv_drawproject(project, true);        
@@ -210,14 +210,14 @@ function emv_selectproject(project, forcedisplay) {
 
     if (!project.Loaded) {
         LoaderDisplay(true);        
-        DisplayOperation("Loading Project " + project.Name + "  ... Please wait", true, 'operationpanel',  'var(--theme-platform-color)');
+        DisplayInfo("Loading Project " + project.Name + "  ... Please wait", true, 'operationpanel',  'var(--theme-platform-color)');
 
         Interval_emv_loadproject = setInterval(emv_loadedproject, 300, project); //5 minutes 300000     
         project.Load();
    
     }
     else {
-        DisplayOperation("Project " + project.Name + " loaded", true, 'operationpanel');      
+        DisplayInfo("Project " + project.Name + " loaded", true, 'operationpanel');      
       //  emv_project_updateterminal(project)              
         emv_drawproject(project, true);        
     }    
@@ -433,7 +433,7 @@ function emv_apdu_searchtag (name, event) {
         }
     }
     if (tags.length != 0) {
-        onclick_sidebarmenu ('sidebar_emvtestermanager', true);           
+        sidebarmenu_select ('sidebar_emvtestermanager', true);           
         emv_tester_fullscreenpanel('emv_apdupanel');
 
         $('#emv_apdu_roottree_ref *').removeClass ('searchtag');

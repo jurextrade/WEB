@@ -114,7 +114,7 @@ function tracker_update (terminal) {
 //    $('#' + panelid +' td:nth-child(1)').attr('draggable', 'true');   
 //    $('#' + panelid +' td:nth-child(1)').attr('ondragstart', 'ondragstart_TrackerRow(this, event)');
 /*
-    sidebarpanel_select(platform, 'sidebarpanel_' + platform.pname + 'charttools ');  
+    sidebarpanel_show(platform, 'sidebarpanel_' + platform.pname + 'charttools ');  
     if ($('#boxtrackerpanel_' + platform.pname + ' #slide').hasClass ('rotate-180')) {              //closed
         $('#boxtrackerpanel_' + platform.pname + ' #slide').click()    
     }

@@ -398,10 +398,6 @@ function recognition_stopcallback () {
     console.log ('..................................recognition_stopped')
 }
 
-function sound_startcallback (result) {
-    console.log ('..................................sound_started')    
-    Recognition_set(false, true, true)
-}
 
 function recognition_abortcallback () {
     console.log ('..................................recognition_aborted')
@@ -411,12 +407,13 @@ function recognition_abortcallback () {
 
 function sound_startcallback (result) {
     console.log ('..................................sound_started')    
-    Recognition_set(false, true, true)
+//    Recognition_set(false, true, true)
 }
+
 
 function sound_endcallback (result) {
     console.log ('...................................sound_ended')
-    Recognition_set(true, true, true)
+//    Recognition_set(true, true, true)
 }
 
 //---------------------------------------------------------- OPEN AI CALLBACK ----------------------------------------------------------------------
@@ -476,7 +473,7 @@ function Recognition_set (on, switchcheck, buttoncheck) {
     }      
     if (on) {
         setTimeout(function(){ grecognition.start(); }, 400); 
-        TreatOperation("Microphone is on ", 'operationpanel', 'green');
+        TreatInfo("Microphone is on ", 'operationpanel', 'green');
 
         if (switchcheck) {
             $('#switchrecognition').prop('checked', true);    
@@ -488,7 +485,7 @@ function Recognition_set (on, switchcheck, buttoncheck) {
     else {
         grecognition.abort()
         grecognition.stop();
-        TreatOperation("Microphone is off ", 'operationpanel', 'red');      
+        TreatInfo("Microphone is off ", 'operationpanel', 'red');      
 
         if (switchcheck) {
             $('#switchrecognition').prop('checked', false); 
@@ -510,7 +507,7 @@ function Sound_set (on, switchcheck, buttoncheck) {
 
     if (on == true) {
         gsound.start();   
-        TreatOperation("You ask to put sound on .... Hello ", 'operationpanel', 'green');
+        TreatInfo("You ask to put sound on .... Hello ", 'operationpanel', 'green');
         if (switchcheck) {
             $('#switchsound').prop('checked', true);    
         }
@@ -521,7 +518,7 @@ function Sound_set (on, switchcheck, buttoncheck) {
     else {
         gsound.abort();        
         gsound.stop();   
-        TreatOperation("You ask to cut sound ", 'operationpanel', 'red');
+        TreatInfo("You ask to cut sound ", 'operationpanel', 'red');
         if (switchcheck) {
             $('#switchsound').prop('checked', false); 
         }   
@@ -541,7 +538,7 @@ function OpenAI_set (on, buttoncheck) {
 
     if (on == true) {
         gopenai.start();   
-        TreatOperation("Open AI started", 'operationpanel', 'green');
+        TreatInfo("Open AI started", 'operationpanel', 'green');
 
         if (buttoncheck) {
             $('#button_openai').addClass ('checked')          
@@ -549,7 +546,7 @@ function OpenAI_set (on, buttoncheck) {
     }   
     else {
         gopenai.stop();   
-        TreatOperation("Open AI is stopped ", 'operationpanel', 'red');
+        TreatInfo("Open AI is stopped ", 'operationpanel', 'red');
 
         if (buttoncheck) {
             $('#button_openai').removeClass ('checked')         
@@ -567,7 +564,7 @@ function Translation_set (on, buttoncheck) {
 
     if (on == true) {
         gtranslation.start();   
-        TreatOperation("Translation started", 'operationpanel', 'green');
+        TreatInfo("Translation started", 'operationpanel', 'green');
 
         if (buttoncheck) {
             $('#button_translation').addClass ('checked')          
@@ -575,7 +572,7 @@ function Translation_set (on, buttoncheck) {
     }   
     else {
         gtranslation.stop();   
-        TreatOperation("Translation is stopped ", 'operationpanel', 'red');
+        TreatInfo("Translation is stopped ", 'operationpanel', 'red');
 
         if (buttoncheck) {
             $('#buttobutton_translationn_openai').removeClass ('checked')         
@@ -780,7 +777,7 @@ function onclick_sound_voice (elt, event) {
     gsound.set_voice(voice);
     sound_lang = gsound.lang;  
 
-    TreatOperation('You selected ' + voice.name + ' ', 'operationpanel', 'gold');    
+    TreatInfo('You selected ' + voice.name + ' ', 'operationpanel', 'gold');    
     
     sb.table_rowselect (soundvoicestable,  rowindex);   
 

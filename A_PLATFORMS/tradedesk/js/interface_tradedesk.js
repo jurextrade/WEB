@@ -275,8 +275,8 @@ var TradedeskSettingsDisplayButtonsBar  = {
             direction:'column',
             toggle : false,
             items :  [
-                {id: 'settings_addindicator',    type: 'button',  icon:  'far fa-hand-point-right', title: 'Add Indicator to MT4 Terminal',      onclick: 'onclick_sidebarmenu(this.id)'},
-                {id: 'settings_removeindicator', type: 'button',  icon:  'far fa-hand-point-left',  title: 'Remove Indicator from MT4 Terminal', onclick: 'onclick_sidebarmenu(this.id)'}
+                {id: 'settings_addindicator',    type: 'button',  icon:  'far fa-hand-point-right', title: 'Add Indicator to MT4 Terminal',      onclick: 'sidebarmenu_select(this.id)'},
+                {id: 'settings_removeindicator', type: 'button',  icon:  'far fa-hand-point-left',  title: 'Remove Indicator from MT4 Terminal', onclick: 'sidebarmenu_select(this.id)'}
             ]              
           }  
         ]
@@ -293,8 +293,8 @@ var TradedeskSettingsDisplayButtonsUpBar  = {
             direction:'row',
             toggle : false,
             items :  [
-                {id: 'settings_upindicator',    type: 'button',  icon:  'far fa-hand-point-up', title: 'Move Indicator Up',      onclick: 'onclick_sidebarmenu(this.id)'},
-                {id: 'settings_downindicator', type: 'button',  icon:  'far fa-hand-point-down',  title: 'Move Indicator Down', onclick: 'onclick_sidebarmenu(this.id)'}
+                {id: 'settings_upindicator',    type: 'button',  icon:  'far fa-hand-point-up', title: 'Move Indicator Up',      onclick: 'sidebarmenu_select(this.id)'},
+                {id: 'settings_downindicator', type: 'button',  icon:  'far fa-hand-point-down',  title: 'Move Indicator Down', onclick: 'sidebarmenu_select(this.id)'}
             ]              
           }  
           */
@@ -400,7 +400,7 @@ var tradedesksettingsbargroup = {
     toggle : false,
     items :
         [     
-            {id: 'sidebar_terminalsettings',  type: 'link',  panelid: 'serverspanel',   icon:  icon_settings,      title: 'Settings',     content: "ServersPanel('serverspanel', 'container h-100 d-flex flex-column')",  events: {onclick: 'onclick_sidebarmenu(this.id)'}}                                
+            {id: 'sidebar_terminalsettings',  type: 'link',  panelid: 'serverspanel',   icon:  icon_settings,      title: 'Settings',     content: "ServersPanel('serverspanel', 'container h-100 d-flex flex-column')",  events: {onclick: 'sidebarmenu_select(this.id)'}}                                
         ]           
 }
 
@@ -1208,12 +1208,12 @@ var tradedesk_sidebarmenu  = {
             toggle : false,
             items :  
                 [
-                    {id: 'sidebar_terminals',     type: 'link', icon:  icon_files,   title: 'Terminals',            events: {onclick: "onclick_sidebarmenu(this.id)"}},
-                    {id: 'sidebar_signals',       type: 'link', icon:  icon_signal,  title: 'Signals',              events: {onclick: "onclick_sidebarmenu(this.id)"}},
-                    {id: 'sidebar_enginelook',    type: 'link', icon:  icon_project, title: 'Inspect Strategy',     events: {onclick: "onclick_sidebarmenu(this.id)"}},
-                    {id: 'sidebar_history',       type: 'link', icon:  icon_history, title: 'History of Trades',    events: {onclick: "onclick_sidebarmenu(this.id)"}},
-//                    {id: 'sidebar_news',          type: 'link', icon:  icon_news,    title: 'Weekly News',          events: {onclick: "onclick_sidebarmenu(this.id)"}},
-                    {id: 'sidebar_video',         type: 'link', icon:  icon_comment, title: 'Community..',          events: {onclick: "onclick_sidebarmenu(this.id)"}},
+                    {id: 'sidebar_terminals',     type: 'link', icon:  icon_files,   title: 'Terminals',            events: {onclick: "sidebarmenu_select(this.id)"}},
+                    {id: 'sidebar_signals',       type: 'link', icon:  icon_signal,  title: 'Signals',              events: {onclick: "sidebarmenu_select(this.id)"}},
+                    {id: 'sidebar_enginelook',    type: 'link', icon:  icon_project, title: 'Inspect Strategy',     events: {onclick: "sidebarmenu_select(this.id)"}},
+                    {id: 'sidebar_history',       type: 'link', icon:  icon_history, title: 'History of Trades',    events: {onclick: "sidebarmenu_select(this.id)"}},
+//                    {id: 'sidebar_news',          type: 'link', icon:  icon_news,    title: 'Weekly News',          events: {onclick: "sidebarmenu_select(this.id)"}},
+                    {id: 'sidebar_video',         type: 'link', icon:  icon_comment, title: 'Community..',          events: {onclick: "sidebarmenu_select(this.id)"}},
                 ]
         },
         charttoolsgroup('tradedesk'),

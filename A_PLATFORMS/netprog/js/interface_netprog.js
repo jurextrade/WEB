@@ -549,9 +549,9 @@ var netprog_sidebaremenu = {
             toggle : false,
             items : 
             [
-                {id: 'sidebar_netprogsiteview',    type: 'link',  icon:  icon_siteview, events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Site View'},                 
-                {id: 'sidebar_netprogmanager',     type: 'link',  icon:  icon_inspect,  events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Project Manager'},                           
-                {id: 'sidebar_netprogfilemanager', type: 'link',  icon:  icon_files,    events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Project File Workspace'},                           
+                {id: 'sidebar_netprogsiteview',    type: 'link',  icon:  icon_siteview, events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Site View'},                 
+                {id: 'sidebar_netprogmanager',     type: 'link',  icon:  icon_inspect,  events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Project Manager'},                           
+                {id: 'sidebar_netprogfilemanager', type: 'link',  icon:  icon_files,    events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Project File Workspace'},                           
             ]
         }, 
         settingsgroup('netprog'),

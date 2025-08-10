@@ -160,7 +160,8 @@ function netprog_netprogservers_check (manager) {
                         let tabitem = {id: appli.Name, item: appli.Name,  type:'link', icon: icon_server,  events: {onclick: "onclick_netprogtabs(event)"}, items: [netprog_server(appli.Code)]}           
                         sb.tab_additem (netprog_bottomtabs, tabitem);
                     }
-                    sb.tab_select (netprog_bottomtabs,   appli.Name);
+                    bottompanel_select (netprogplatform, appli.Name)
+                  //  sb.tab_select (netprog_bottomtabs,   appli.Name);
                     server.Output.setValue('ok connect')
                     server.Input.setValue('');  
 
@@ -178,7 +179,8 @@ function netprog_netprogservers_check (manager) {
                 onmessagefunction:    function (com, data) {
                     let server = solution.GetServerFromCom(com);
                     let appli  = server.Entity;                    
-                    sb.tab_select(netprog_bottomtabs, appli.Name)
+                 //   sb.tab_select(netprog_bottomtabs, appli.Name)
+                    bottompanel_select (netprogplatform, appli.Name)
                     server.Output.setValue(data)
                 },    
                 onclosefunction:          function (com, data) {server.Output.setValue('close')},
@@ -251,7 +253,7 @@ function onclick_netprog_server_group (elt, event) {
         break;
         case 'exportserver_serverjsscript':
             if (!solution.user.is_registered()) {
-                TreatOperation(register_needed_label, 'operationpanel', 'red');            
+                TreatInfo(register_needed_label, 'operationpanel', 'red');            
                 return;                
             }                
             sb.modal ({
@@ -279,7 +281,7 @@ function onclick_netprog_server_group (elt, event) {
             let cuser = solution.user;
 
             if (!cuser.is_registered()) {
-                TreatOperation(register_needed_label, 'operationpanel', 'red');            
+                TreatInfo(register_needed_label, 'operationpanel', 'red');            
                 return;                
             }        
 

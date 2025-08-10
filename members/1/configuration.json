@@ -89,7 +89,7 @@
         {
           "pname": "speech",
           "type": "panel",
-          "active": true,
+          "active": false,
           "iconfile": "/res/openai.svg",
           "library": {
             "stylesheet": [
@@ -108,7 +108,7 @@
         {
           "pname": "news",
           "type": "panel",
-          "active": true,
+          "active": false,
           "icon": "fas fa-calendar-alt",
           "title": "Calendar & Forex News",
           "library": {
@@ -143,7 +143,7 @@
         {
           "pname": "market",
           "type": "panel",
-          "active": true,
+          "active": false,
           "index": 0,
           "library": {
             "stylesheet": [
@@ -449,7 +449,7 @@
             "news",
             "speech"
           ],
-          "active": true,
+          "active": false,
           "library": {
             "stylesheet": [
               "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css",

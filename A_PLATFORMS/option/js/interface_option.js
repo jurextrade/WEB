@@ -460,9 +460,9 @@ var option_sidebarmenu  = {
             toggle : false,
             items : 
             [
-                {id: 'sidebar_optionterminals',  type: 'link',  icon:  icon_files,                   events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Market' },           
-                {id: 'sidebar_optionsummary',    type: 'link',  icon: 'far fa-list-alt',             events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Stock Summary'},       
-                {id: 'sidebar_site',             type: 'link',  icon:  icon_link, title: 'Site',     events: {onclick: "onclick_sidebarmenu(this.id)"}},
+                {id: 'sidebar_optionterminals',  type: 'link',  icon:  icon_files,                   events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Market' },           
+                {id: 'sidebar_optionsummary',    type: 'link',  icon: 'far fa-list-alt',             events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Stock Summary'},       
+                {id: 'sidebar_site',             type: 'link',  icon:  icon_link, title: 'Site',     events: {onclick: "sidebarmenu_select(this.id)"}},
 
             ]
         },

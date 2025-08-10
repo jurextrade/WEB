@@ -55,7 +55,7 @@ function home_loadmodule (pname, callback) {
 
     if (platform.length == 0) {
         LoaderDisplay(true);    
-        DisplayOperation("Loading Module " + pname + " Please wait", true, 'operationpanel');             
+        DisplayInfo("Loading Module " + pname + " Please wait", true, 'operationpanel');             
         let timerd = setInterval((pname) => {
             
             clearInterval(timerd);
@@ -133,8 +133,7 @@ function onclick_home_trading_rightsection_2_0_0 (elt, event) {
                 LoaderDisplay(false);                
                 clearInterval(timerId);
                 selector_select('project_selectstrategy', strategyname);    
-
-                onclick_sidebarmenu('sidebar_tester', 1)
+                sidebarmenu_select('sidebar_tester', 1)
                 onclick_project_tester_commandgroup()    
             }    
         },  300, project,  strategyname); 	 
@@ -374,7 +373,7 @@ function onclick_home_emv_rightsection_2_0_0 (elt, event) {
         let projectname = 'DemoProject';   
         selector_select('emv_selectproject', projectname);
 
-        onclick_sidebarmenu('sidebar_emvtestermanager', 1)        
+        sidebarmenu_select('sidebar_emvtestermanager', 1)        
     })         
 
 
@@ -393,7 +392,7 @@ function onclick_home_emv_rightsection_2_1_0 (elt, event) {
             if (project.Loaded) {
                 LoaderDisplay(false);                 
                 clearInterval(timerId);
-                onclick_sidebarmenu('sidebar_emvtestermanager', 1)
+                sidebarmenu_select('sidebar_emvtestermanager', 1)
                 $('#emv_tester_tab').tab('show');    
                 Tester.Reader.load_transaction(transactionfile);
                 onclick_emv_tester_commandgroup($('#emv_tester_play_button')[0])

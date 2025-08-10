@@ -248,7 +248,7 @@ var charttoolsgroup= (id =>  {return {
     toggle : false,
     items :
         [     
-            {id: 'sidebar_' + id  + 'charttools',  type: 'link',  icon:  icon_chart,   events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Chart tools'}                                
+            {id: 'sidebar_' + id  + 'charttools',  type: 'link',  icon:  icon_chart,   events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Chart tools'}                                
         ]           
 }})
 

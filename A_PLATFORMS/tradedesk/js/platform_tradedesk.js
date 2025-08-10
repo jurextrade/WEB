@@ -13,7 +13,7 @@ function tradedesk_init() {
     tradedesk_gse_init(); 
 
 
-    sidebarpanel_select(tradedeskplatform, "sidebarpanel_terminals");    
+    sidebarpanel_show(tradedeskplatform, "sidebarpanel_terminals");    
     setInterval(tradedesk_timer, 300);     
 }
 
@@ -56,7 +56,7 @@ function tradedesk_select (name) {
             tradedesk_selectterminal(terminal); 
             return;
         }
-        DisplayOperation("Select a Platform", true, 'operationpanel', 'var (--bg-terminal)');            
+        DisplayInfo("Select a Platform", true, 'operationpanel', 'var (--bg-terminal)');            
         AnimationDisplay ('tradedesk', 'Select MT4 Terminal to Start', 'tradedesk_toppanel');         
     }
 }
@@ -292,7 +292,7 @@ function tradedesk_selectterminal(terminal, force) {
 
     if (!terminal.Loaded) {
         LoaderDisplay(true);
-        DisplayOperation("Loading Terminal ... Please wait", true, 'operationpanel', 'var(--bg-terminal)');
+        DisplayInfo("Loading Terminal ... Please wait", true, 'operationpanel', 'var(--bg-terminal)');
         
         Interval_loadterminal = setInterval(tradedesk_loadedterminal, 300, terminal); //5 minutes 300000     
         terminal.Load();
@@ -304,7 +304,7 @@ function tradedesk_selectterminal(terminal, force) {
         UpdatePanel (terminal);
         Tradedesk_UpdateAlerts(terminal);
 
-        DisplayOperation("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');        
+        DisplayInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');        
         terminal.Com.Send(solution.UserId + '*START*' + terminal.Type + '*' + terminal.Name + '*1');    
         tradedesk_drawterminal (terminal, true);    // relatef to interface and terminal        
     }
@@ -379,7 +379,7 @@ function tradedesk_loadedterminal (terminal) {
         clearInterval(Interval_loadterminal);
         LoaderDisplay(false);      
 
-        DisplayOperation("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');
+        DisplayInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');
         terminal.Com.Send(solution.UserId + '*START*' + terminal.Type + '*' + terminal.Name + '*1');    
         tradedesk_drawterminal (terminal, true);    // relatef to interface and terminal        
     }
@@ -950,7 +950,7 @@ function ondblclick_tradedeskcurrenciesrow(elt, event) {
 function onclick_togglesidebar (rootid, elt) {
     varid = elt[0].id;
 
-    onclick_sidebarmenu (id, false); //hide
+    sidebarmenu_select (id, false); //hide
 }           
 
 //---------------------------------------------------- TRADEDESK MAIN PANEL  ----------------------------------------------------------------------   
@@ -1377,7 +1377,7 @@ function FillSessionMenu (Session, menuitems) {
 
 
 function OnSelectSession(Session) {
-    onclick_sidebarmenu ( 'sidebar_enginelook', true);
+    sidebarmenu_select ( 'sidebar_enginelook', true);
     SelectSession(Session);
 }
 
@@ -1646,7 +1646,7 @@ function ReloadAlerts(terminalname, terminaltype) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var sorder = "*RELOADALERTFILE ";
@@ -1661,7 +1661,7 @@ function SaveAlerts (terminal) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var PG = terminal.PG;    
@@ -2169,7 +2169,9 @@ function UpdateOrderPanel (id, Symbol) {
 function onclick_tradesubmit (elt) {
     OnOrder();
     SetOrderType(this, 'CANCEL');
-    sb.tab_select (tradedesk_bottomtabs, 'tab_orders');    
+    bottompanel_select (tradedeskplatform,'tab_orders')    
+
+ //  sb.tab_select (tradedesk_bottomtabs, 'tab_orders');    
     sb.box_toggle('boxorderpanel', 0);    
 }
 
@@ -2287,7 +2289,7 @@ function ondblclick_automationrow(elt, event) {
     var terminal = solution.CurrentTerminal;
     if (!terminal) return;    
 
-    onclick_sidebarmenu ('sidebar_enginelook', true);
+    sidebarmenu_select ('sidebar_enginelook', true);
 
     var PG = terminal.PG;
 
@@ -2476,7 +2478,7 @@ function SavePanelCSV(terminalname, terminaltype) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');     
+        TreatInfo(register_needed_label, 'operationpanel', 'red');     
         $("#popuppanelsettings").modal('hide');              
         return;
     }
@@ -2628,7 +2630,7 @@ function ReloadPanel(terminalname, terminaltype) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var terminal = solution.GetTerminalFromNameType(terminalname, terminaltype);
@@ -3069,7 +3071,7 @@ function SaveMMCSV(terminalname, terminaltype) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
 

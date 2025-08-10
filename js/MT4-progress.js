@@ -72,10 +72,10 @@ function InitApp1 (solution) {
     let mainterminal = solution.GetMainTerminal()
     ui.platform_select(mainterminal.pname);
 
-    onclick_sidebarmenu ('sidebar_home', true);    
-    onclick_sidebarmenu ('sidebar_terminals', true);
-    onclick_sidebarmenu ('sidebar_files', true);
-    onclick_sidebarmenu ('sidebar_optionterminals', true);    
+    sidebarmenu_select ('sidebar_home', true);    
+    sidebarmenu_select ('sidebar_terminals', true);
+    sidebarmenu_select ('sidebar_files', true);
+    sidebarmenu_select ('sidebar_optionterminals', true);    
    // solution.add_module('solution')
     //solution.add_module('news')   
 */     
@@ -124,17 +124,17 @@ function InitApp (solution) {
     home_selectterminal (solution.GetMainTerminal (), 1);    
 
     if (solution.UserId == "0" && !market_closed()) {
-        var terminal = solution.GetTerminalFromName ('Alpari MT4', 'terminal');
-        tradedesk_selectterminal(terminal); 
+        var terminal = solution.GetTerminalsFromName ('Alpari MT4', 'terminal');
+        tradedesk_selectterminal(terminal[0]); 
     }
 
     ui.platform_select(HOME_PLATFORM_PNAME);
 
 
-    onclick_sidebarmenu ('sidebar_home', true);    
-    onclick_sidebarmenu ('sidebar_terminals', true);
-    onclick_sidebarmenu ('sidebar_files', true);
-    onclick_sidebarmenu ('sidebar_optionterminals', true);    
+    sidebarmenu_select ('sidebar_home', true);    
+    sidebarmenu_select ('sidebar_terminals', true);
+    sidebarmenu_select ('sidebar_files', true);
+    sidebarmenu_select ('sidebar_optionterminals', true);    
   
     setInterval("market_time()", 1);        
    
@@ -286,7 +286,7 @@ function OnReloadSchedule(terminal) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var sorder = "*RELOADSCHEDULEFILE ";
@@ -299,7 +299,7 @@ function OnPauseStrategy () {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var symbolcanvas = solution.GetCanvasFromTerminal();

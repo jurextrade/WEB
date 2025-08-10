@@ -16,7 +16,7 @@ class emvproject {
         let  user    = solution.get('user')      
         
         if (!cuser.is_registered()) {
-            TreatOperation(register_needed_label, 'operationpanel', 'red');            
+            TreatInfo(register_needed_label, 'operationpanel', 'red');            
             return;                
         }
         
@@ -27,7 +27,7 @@ class emvproject {
         let cuser = solution.get('user')
     
         if (!cuser.is_registered()) {
-            TreatOperation(register_needed_label, 'operationpanel', 'red');      
+            TreatInfo(register_needed_label, 'operationpanel', 'red');      
             return;
         }
               
@@ -38,7 +38,7 @@ class emvproject {
         let  user    = solution.get('user')      
         
         if (!cuser.is_registered()) {
-            TreatOperation(register_needed_label, 'operationpanel', 'red');            
+            TreatInfo(register_needed_label, 'operationpanel', 'red');            
             return;                
         }
            
@@ -49,7 +49,7 @@ class emvproject {
        
         user.send ({Name: 'savefile', Values: [rootproject + 'emv.ini', content]}, true, 
                     function (content, values) {
-                        DisplayOperation("Project Succesfully Renamed", true, 'operationpanel');                             
+                        DisplayInfo("Project Succesfully Renamed", true, 'operationpanel');                             
                     }, 
                     [this]);  
     }
@@ -72,7 +72,7 @@ class emvproject {
         let cuser = solution.get('user')
 
         if (!cuser.is_registered()) {
-            TreatOperation(register_needed_label, 'operationpanel', 'red');      
+            TreatInfo(register_needed_label, 'operationpanel', 'red');      
             return;
         }
         let rootproject     = cuser.fileexplorer.Root + cuser.path + '/EMV/' + this.Folder + "/Files/";   
@@ -82,7 +82,7 @@ class emvproject {
 
         cuser.send ({Name: 'savefile', Values: [url, content]}, true, 
                     function (content, values) {
-                        DisplayOperation("Project Saved", true, 'operationpanel');                             
+                        DisplayInfo("Project Saved", true, 'operationpanel');                             
                     }, 
                     ['emvsolution.json']);  
     }
@@ -216,7 +216,7 @@ function emv_RenameProject (project, newname) {
     if (!project) return;
 
     if (solution.UserId == "0") {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');
+        TreatInfo(register_needed_label, 'operationpanel', 'red');
         return;
     }
     if ($('#emv_projectsbar .box-btn-slide').hasClass('rotate-180'))    
@@ -246,7 +246,7 @@ function emv_RemoveProject (project) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     
@@ -325,7 +325,7 @@ function onclick_emv_b_projectcreate (elt) {
 function emv_project_newproject (name) {
 
     if (solution.UserId == "0") {
-        TreatOperation('As you are not registered the project will not be saved', 'operationpanel');
+        TreatInfo('As you are not registered the project will not be saved', 'operationpanel');
     }
 
     project_closeproject (solution.CurrentProject);

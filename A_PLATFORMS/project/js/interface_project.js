@@ -72,6 +72,17 @@ var error_comment = {
     resizefunction: '{if (ErrorEditor) ErrorEditor.resize()}',      
 }
 
+var strategy_helper = {
+    id: 'strategy_helper',
+    type: 'html',
+    class: 'sb_main sb_panel',
+    catchresize: true,
+    resizefunction: '{if (PropertiesEditor) PropertiesEditor.resize()}',      
+}
+
+
+
+
 //------------------------------------------------------------ STRATEGY PROPERTIES PANEL ----------------------------------------------------------
 
 var strategyfilebar = {
@@ -182,14 +193,14 @@ var strategyfilepanel = {
 var strategypropertiespanel = {
     id: 'strategypropertiespanel',
     type: 'html',
-    class: 'strategypropertiespanel sb_panel sb_column',
+    class: 'strategypropertiespanel sb_column',
     content: 'StrategyPropertiesPanel()',
 }   
 
 var strategyschedulepanel = {
     id: 'strategyschedulepanel',
     type: 'html',
-    class: 'strategychedulepanel sb_panel',
+    class: 'strategychedulepanel',
     content: 'StrategySchedulePanel()',
 }   
 
@@ -261,11 +272,13 @@ var strategy_sideviewpanel = {
                     type: 'panel',
                     class: 'strategyotherpanel sb_column',
                     items: [
-                        boxstrategypropertiespanel,
-                        boxstrategychedulepanel,
+                         strategypropertiespanel,
+                         strategyschedulepanel,
               //          boxstrategydescriptionpanel,
                     ],    
                 },
+                {id: 'project_sideview_drag',  type:'drag', direction:'vertical', dragid: 'strategyotherpanel'},               
+
                 {
                     id:'strategy_sideviewtabpanel',
                     type:'tabs',    
@@ -376,19 +389,32 @@ var strategypanel = {
 //--------------------------
 
 
-var project_deploy_headerpanel = {
-    id: 'project_deploy_headerpanel',
+var project_deploy_headerbar = {
+    id: 'project_deploy_headerbar',
     type: 'bar',
     class: 'sb_sidebarheader ',    
-    style:'z-index:6',           
+    style:'z-index:6',      
     items : 
     [
-        {id: '',                type: 'link',    item: 'DEPLOY PROJECT',  class: 'sb_sidebarheadertitle'}, 
-        {id: 'button_refresh',   type: 'button', item: 'Refresh', class: 'sb_sbutton',   events: {onclick: "onclick_refresh_terminals (this, event)"}, title: 'Refresh'},
+        {id: '',                type: 'link',    item: 'DEPLOY PANEL',  class: 'sb_sidebarheadertitle'}, 
+        {id: 'label_server',    item: 'Deploy Server', type: 'link',  icon: icon_connection, events: {onclick: "onclick_button_server (this, event)"}, title: 'DEPLOY SERVER'},
+        {id: 'button_server',   type: 'button', class: 'sb_roundbutton',   events: {onclick: "onclick_button_server (this, event)"}, title: 'Deploy Server'},        
         {id: 'header_load',     type: 'link',   class: 'sb_sidebarheaderinfo',   icon:  icon_file,  events: {onclick: "onclick_jsonloadfile(this, event)"}, title: 'link to documentation'},                 
     ]
 }
 
+
+var project_deploy_headerpanel = {
+    id: 'project_deploy_headerpanel',
+    type : 'panel',
+    class: 'sb_column',    
+    style:'position:relative',      
+    items : 
+    [
+        project_deploy_headerbar,
+        modalserverpanel('project'),
+    ]
+}
 
 //--------------------------
 
@@ -396,7 +422,7 @@ var project_tree_experts = {
     id: 'project_tree_experts',       
     type: 'tree',       
     item: 'MQ4 Experts',
-    icon: icon_mt4expert,
+    icon: icon_strategy,
     items:[]
 } 
 
@@ -417,18 +443,13 @@ var project_expertsbar = {
         ]
 }
 
-var project_expertsidepanel = {
-    id: 'project_expertsidepanel',
-    type: 'panel',
-    class: 'sb_panel',
-    items:[project_tree_experts]
-}
+
 
 var project_boxexpertspanel = {
     id: 'project_boxexpertspanel',
     type: 'box',
     closed: true, 
-    header: {item: 'MQ4 Experts', items: [project_expertsbar], control: {slide: true, onclick_slide: 'onclick_slidehideotherbox (this)', closed : true, orientation: sb.R_CONTROL} },  
+    header: {item: 'Expert Advisers', items: [project_expertsbar], control: {slide: true, onclick_slide: 'onclick_slidehideotherbox (this)', closed : true, orientation: sb.R_CONTROL} },  
     items: [project_expertsidepanel]    
 }
 
@@ -442,23 +463,51 @@ var distributetable =  {
     rows : [] 
 }
 
-var distributepanel = {
-    id: 'distributepanel',
+var project_distributepanel = {
+    id: 'project_distributepanel',
     type: 'panel',
     class: 'sb_formcontainer',
     items: [
+            {id : 'distributebar', type : 'bar', items: [
+                {id: 'd_terminals',  type: 'label',    item: 'MT4 Terminals',  class: 'sb_link', title: 'Terminals'},  
+                {
+                    id: 'd_commands',
+                    type: 'group',                        
+                    position: 'sb_end',
+                    direction:'row',
+                    items:[{id: 'd_refresh',   type: 'button', item: 'Refresh', class: 'sb_sbutton',   events: {onclick: "onclick_refresh_terminals (this, event)"}, title: 'Refresh'}]
+                },
+                ]
+            },
             distributetable,
-            {id: 'distributeselect',   type: 'button', item: 'Deploy', class: 'sb_sbutton',   events: {onclick: "onclick_distribute (this, event)"}, title: 'Distribute on selected Terminals'},
+            {id: 'distributeselect',   type: 'button', item: 'Deploy Project', class: 'sb_sbutton',   events: {onclick: "onclick_distributeproject (this, event)"}, title: 'Distribute on selected Terminals'},
 
     ],     
 }
 
-
+var project_expertsidepanel = {
+    id: 'project_expertsidepanel',
+    type: 'panel',
+    class: 'sb_panel',
+    items:[
+          {id : 'expertsbar', type : 'bar', items: [
+                {id: 'd_experts',  type: 'label',    item: 'MQ4 Experts Folder',  class: 'sb_link', title: 'Compiled Experts that can be tested on your MT4 Terminal'},  
+                {
+                    id: 'd_commands',
+                    type: 'group',                        
+                    position: 'sb_end',
+                    direction:'row',
+                    items:[{id: 'd_refresh',   type: 'button', item: 'Refresh', class: 'sb_sbutton',   events: {onclick: "onclick_refresh_experts (this, event)"}, title: 'Refresh'}]
+                },
+                ]
+            },
+        project_tree_experts]
+    }
 //var deploypanel = {
 //    id: 'deploypanel',
 //    type: 'html',
 //    class: 'sb_panel sb_main sb_column',
-//    content: "DistributePanel ('distributepanel', 'sb_column sb_bargroup sb_formcontainer')"
+//    content: "DistributePanel ('project_distributepanel', 'sb_column sb_bargroup sb_formcontainer')"
 //}
 
 var deploypanel = {
@@ -466,8 +515,9 @@ var deploypanel = {
     type: 'panel',
     class: 'sb_panel sb_main sb_column',
     items:[
-        distributepanel,
-        project_boxexpertspanel,        
+        project_distributepanel,
+        project_expertsidepanel        
+//        project_boxexpertspanel,        
     ],
 }
 
@@ -842,20 +892,17 @@ var project_projectsbar = {
                 items: 
                     [ 
                         {id: 'project_projectselect',    type: 'select',   title: 'Select Project',      value: '--Select Project--', menu: [{text: '--Select Project--'}], events: {onchange: 'onchange_project_projectselect (this, event)'}},  
-          //              {id: 'project_projectcreate',    type:'link',       icon: icon_new,              events: {onclick: "onclick_project_projectcreate(this)"},   title: 'Create New Project'},      
-          //              {id: 'project_projectrename',    type:'link',       icon: icon_rename,           events: {onclick: "onclick_project_projectrename(this)"},  title: 'Rename Current Project'},  
-          //              {id: 'project_projectremove',    type:'link',       icon: icon_remove,           events: {onclick: "onclick_project_projectremove(this)"},  title: 'Delete Current Project'}              
                     ]
             }, 
             { 
                 position: 'sb_distance',
                 class: 'sb_transform',                
-                id:'',             
+                id:'project_projectdeploygroup',             
                 type: 'group',                           
                 items:
                     [ 
-                        {id: 'project_projectcompile',   type:'link',  icon: icon_file,   style: 'color:green',             events: {onclick: "onclick_project_projectcompile(this)"},    title: 'Compile Current Project in C'},                 
-                        {id: 'project_projectdistribute',type:'link',  icon: icon_deploy, events: {onclick: "onclick_project_projectdistribute(this)"}, title: 'Distribute Current Project on MT4 Terminal'},
+                        {id: 'project_projectcompile',   type:'link',  icon: icon_settings,  events: {onclick: "onclick_project_projectcompile(this)"},    title: 'Compile Current Project in C'},                 
+                        {id: 'project_projectdistribute',type:'link',  icon: icon_deploy,    events: {onclick: "onclick_project_projectdistribute(this)"}, title: 'Distribute Current Project on MT4 Terminal'},
                     ]
             },
             { 
@@ -906,29 +953,41 @@ var project_strategiesbar = {
     type: 'bar',            
     direction: 'row',     
     items: 
-        [              
+        [                    
             { 
                 position: 'me-auto',
                 class: 'sb_transform',
                 id:'',
                 type: 'group',                        
+                items: 
+                    [ 
+                        {id: 'project_strategyselect',    type: 'select',   title: 'Select Strategy',      value: '--Select Strategy--', style: "visibility:hidden", menu: [{text: '--Select Strategy--'}], events: {onchange: 'onchange_project_strategyselect (this, event)'}},  
+                    ]
+            }, 
+            { 
+                position: 'sb_distance',
+                class: 'sb_transform ',
+                id:'project_strategydeploygroup',
+                type: 'group',                        
                 items:
                     [ 
-                        {id: 'project_strategycreate',     type:'link',  icon: icon_new,      events: {onclick: "onclick_strategyCreate()"},  title: 'Create New Strategy'},      
-                        {id: 'project_strategyrename',     type:'link',  icon: icon_rename,   events: {onclick: "onclick_strategyRename()"}, title: 'Rename Current Strategy'},  
-                        {id: 'project_strategyremove',     type:'link',  icon: icon_remove,   events: {onclick: "onclick_strategyDelete()"},  title: 'Delete Current Strategy'}              
+                        {id: 'project_strategycompile',    type:'link',  icon: icon_settings,  events: {onclick: "onclick_project_strategycompile(this, event)"},  title: 'Generate MQ4 Expert for the Current Strategy'},      
+                        {id: 'project_strategydistribute', type:'link',  icon: icon_deploy,    events: {onclick: "onclick_project_strategydistribute(this)"},      title: 'Distribute Current Strategy MT4 Terminal'},
+
                     ]
             },
             { 
-                position: 'sb_distance',
+                position: 'sb_end',
                 class: 'sb_transform',
                 id:'',
                 type: 'group',                        
                 items:
                     [ 
-                        {id: 'project_strategycompile',    type:'link',  icon: icon_file, style:'color:green',    events: {onclick: "onclick_project_strategycompile(this, event)"},  title: 'Generate MQ4 Expert for the Current Strategy'},      
+                        {id: 'project_strategyrename',     type:'link',  icon: icon_rename,   events: {onclick: "onclick_strategyRename()"}, title: 'Rename Current Strategy'},  
+                        {id: 'project_strategyremove',     type:'link',  icon: icon_remove,   events: {onclick: "onclick_strategyDelete()"},  title: 'Delete Current Strategy'},
+                        {id: 'project_strategycreate',     type:'link',  icon: icon_new,      events: {onclick: "onclick_strategyCreate()"},  title: 'Create New Strategy'},      
                     ]
-            }
+            },            
         ]
 }
 
@@ -949,32 +1008,21 @@ var project_boxstrategiespanel = {
 
 // ---------------------------------
 
-var project_projects_headerbar = {
-    id: 'project_projects_headerbar',
+var project_projects_headerpanel = {
+    id: 'project_projects_headerpanel',
     type: 'bar',
     class: 'sb_sidebarheader ',    
     style:'z-index:6',           
     items : 
     [
         {id: '',                type: 'link',    item: 'PROJECTS EXPLORER',  class: 'sb_sidebarheadertitle'}, 
-        {id: 'label_server',    item: 'Deploy Server', type: 'link',  icon: icon_connection, events: {onclick: "onclick_button_server (this, event)"}, title: 'DEPLOY SERVER'},
-        {id: 'button_server',   type: 'button', class: 'sb_roundbutton',   events: {onclick: "onclick_button_server (this, event)"}, title: 'DEPLOY SERVER'},
+//        {id: 'label_server',    item: 'Deploy Server', type: 'link',  icon: icon_connection, events: {onclick: "onclick_button_server (this, event)"}, title: 'DEPLOY SERVER'},
+//        {id: 'button_server',   type: 'button', class: 'sb_roundbutton',   events: {onclick: "onclick_button_server (this, event)"}, title: 'DEPLOY SERVER'},
         {id: 'header_load',     type: 'link',   class: 'sb_sidebarheaderinfo',   icon:  icon_file,  events: {onclick: "onclick_jsonloadfile(this, event)"}, title: 'link to documentation'},                 
         //<a href="/Documentation/_build/html/" title="link to documentation" target="_blank" class="sb_sidebarheaderinfo"><i aria-hidden="true" class="fas fa-book"></i></a>
     ]
 }
 
-var project_projects_headerpanel = {
-    id: 'project_projects_headerpanel',
-    type : 'panel',
-    class: 'sb_column',    
-    style:'position:relative',      
-    items : 
-    [
-        project_projects_headerbar,
-        modalserverpanel('project'),
-    ]
-}
 
 var project_projects_sidepanel = {
     id: 'project_projects_sidepanel',
@@ -1001,7 +1049,8 @@ var project_bottomtabs = {
         [ 
             {id: 'tab-chart',            item: 'Chart',   type: 'link',  icon: icon_chart,        events: {onclick: "onclick_projecttabs(this, event)"}, items: [chartpanel('project')],  title: ''},           
             {id: 'tab-editor',           item: 'Editor',  type: 'link',  icon: icon_file,         events: {onclick: "onclick_projecttabs(this, event)"}, items: [editorpanels],  title: ''},           
-            {id: 'tab-error',            item: 'Feed',    type: 'link',  icon: icon_file,         events: {onclick: "onclick_projecttabs(this, event)"}, items: [error_comment], title: ''},           
+            {id: 'tab-error',            item: 'Feed',    type: 'link',  icon: icon_file,         events: {onclick: "onclick_projecttabs(this, event)"}, items: [error_comment], title: ''},          
+            {id: 'tab-helper',           item: 'Strategy Helper',   type: 'link',  icon: icon_file,         events: {onclick: "onclick_projecttabs(this, event)"}, items: [strategy_helper], title: ''},           
         ],
     groupitems:
     [    
@@ -1060,9 +1109,9 @@ var project_sidebarmenu  = {
             toggle : false,
             items: 
             [
-                {id: 'sidebar_files',   type: 'link',  icon:  icon_files,    events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Project Workspace'},                           
-                {id: 'sidebar_tester',  type: 'link',  icon:  icon_play,     events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Test Project or Strategy'},                 
-                {id: 'sidebar_deploy',  type: 'link',  icon:  icon_deploy,   events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Compile and Deploy Project on Terminals'}
+                {id: 'sidebar_files',   type: 'link',  icon:  icon_files,    events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Project Workspace'},                           
+                {id: 'sidebar_tester',  type: 'link',  icon:  icon_play,     events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Test Project or Strategy'},                 
+                {id: 'sidebar_deploy',  type: 'link',  icon:  icon_deploy,   events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Compile and Deploy Project on Terminals'}
             ]
         },
         charttoolsgroup('project'),

@@ -143,11 +143,11 @@ var emv_sidebaremenu = {
             toggle : false,
             items : 
             [
-                {id: 'sidebar_emvprojectmanager',type: 'link',  icon:  icon_files,    events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Project File Workspace'},                           
+                {id: 'sidebar_emvprojectmanager',type: 'link',  icon:  icon_files,    events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Project File Workspace'},                           
                 {id: 'sidebar_emvtestermanager', type: 'link',  icon:  icon_play,     events: {
-                    onclick: "onclick_sidebarmenu(this.id); $('#emv_tester_tab').tab('show');"}, title: 'Tester'},                           
-                {id: 'sidebar_emvdatabase',      type: 'link',  icon:  icon_database, events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Data Base'},                           
-                {id: 'sidebar_emvtools',         type: 'link',  icon:  icon_chart,    events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'EMV tools'},
+                    onclick: "sidebarmenu_select(this.id); $('#emv_tester_tab').tab('show');"}, title: 'Tester'},                           
+                {id: 'sidebar_emvdatabase',      type: 'link',  icon:  icon_database, events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Data Base'},                           
+                {id: 'sidebar_emvtools',         type: 'link',  icon:  icon_chart,    events: {onclick: "sidebarmenu_select(this.id)"}, title: 'EMV tools'},
             ]
         }, 
         settingsgroup('emv'),

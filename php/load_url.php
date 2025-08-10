@@ -1,6 +1,5 @@
 <?php
   $url       = isset($_REQUEST['url']) ? $_REQUEST['url'] : '';  
-  $cwd       = dirname(getcwd() ,1);
   $filename  = $url;
   
 

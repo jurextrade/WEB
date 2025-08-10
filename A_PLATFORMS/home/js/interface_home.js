@@ -157,7 +157,7 @@ var home_sidebarmenu  = {
             toggle : false,
             items :  
                 [
-                    {id: 'sidebar_home',     type: 'link', icon:  icon_files, title: 'Home',    events: {onclick: "onclick_sidebarmenu(this.id)"}},
+                    {id: 'sidebar_home',     type: 'link', icon:  icon_files, title: 'Home',    events: {onclick: "sidebarmenu_select(this.id)"}},
                 ]
             }, 
             settingsgroup(HOME_PLATFORM_PNAME),

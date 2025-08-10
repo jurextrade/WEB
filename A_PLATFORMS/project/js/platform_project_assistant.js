@@ -304,11 +304,11 @@ function project_assistant_init() {
             switch (currentIndex) {
                 case STEP_PROJECTSELECTION :
                     if (!solution.CurrentProject) {               
-                        DisplayOperation("Please Select a Project or Create one", true, 'operationpanel', 'var(--theme-error-color)');
+                        DisplayInfo("Please Select a Project or Create one", true, 'operationpanel', 'var(--theme-error-color)');
                         return null;
                     } else
                     if (!CurrentStrategy) {                
-                        DisplayOperation("Please Select a Strategy or Create one", true, 'operationpanel', 'var(--theme-error-color)');
+                        DisplayInfo("Please Select a Strategy or Create one", true, 'operationpanel', 'var(--theme-error-color)');
                         return null;
                     } else
                      return true;
@@ -421,22 +421,23 @@ function onclick_AssistantViewMQ4Files (elt, event) {
     let ui       = solution.get('ui') 
     let platform = ui.platform_get ('pname', 'project');     
 
-    sidebarpanel_select(platform, 'sidebarpanel_files')
+    sidebarpanel_show(platform, 'sidebarpanel_files')
 }
 
 function onclick_AssistantViewChart (elt, parent) {
     let ui       = solution.get('ui') 
     let platform = ui.platform_get ('pname', 'project');     
-
-    BottomPanel_Flat(platform, false, true);
-    sb.tab_select(project_bottomtabs, 'tab-chart');        
+    bottompanel_select (platform,'tab-chart')
+  
+  //  BottomPanel_Flat(platform, false, true);
+  //  sb.tab_select(project_bottomtabs, 'tab-chart');        
 }
 
 function onclick_AssistantTester (elt, event) {
     let ui       = solution.get('ui') 
     let platform = ui.platform_get ('pname', 'project');     
 
-    sidebarpanel_select(platform, 'sidebarpanel_tester')
+    sidebarpanel_show(platform, 'sidebarpanel_tester')
 }
 
 function StrategyAssistantGuidePanel (step) {
@@ -518,7 +519,7 @@ function StrategyAssistantGuidePanel (step) {
             bodycontent =               
             '   <div class="card-body">' +
             '       <div class="card-title">Strategy Properties</div>' +        
-                    RecoveryPanel(CurrentEngine) + (CurrentEngine ? CurrentEngine.GetDescriptionProperties () : '') +
+                    RecoveryPanel(CurrentEngine) + 
             '   </div>';                                        
             bodycontent1 = '';
 
@@ -751,7 +752,7 @@ function onclick_AssistantStrategySelect (elt) {
     let strategyname = selected_option.text();
     let strategy = solution.CurrentProject.PG.GetStrategyFromName(strategyname);
 
-    OnCloseStrategy(project_selectstrategy, strategy);
+    OnCloseStrategy(project_selecttrategy, strategy);
 }
 
 

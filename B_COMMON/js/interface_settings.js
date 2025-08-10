@@ -7,7 +7,7 @@ var settingsgroup= (id =>  {return {
     style: "display:none",
     items :
         [     
-            {id: 'sidebar_' + id  + 'settings',  type: 'link',  icon:  icon_settings,   events: {onclick: "onclick_sidebarmenu(this.id)"}, title: 'Settings'}                                
+            {id: 'sidebar_' + id  + 'settings',  type: 'link',  icon:  icon_settings,   events: {onclick: "sidebarmenu_select(this.id)"}, title: 'Settings'}                                
         ]           
 }})
 

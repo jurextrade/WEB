@@ -18,7 +18,7 @@ function project_init() {
     project_assistant_select (projectplatform.strategyview == STRATEGY_ASSISTANT_VIEW); 
 
 
-    sidebarpanel_select(projectplatform, "sidebarpanel_files");       
+    sidebarpanel_show(projectplatform, "sidebarpanel_files");       
     setInterval(project_timer, 300);         
 
 }
@@ -49,14 +49,14 @@ function project_select (name) {
     //DrawChart();
 
     if (!solution.CurrentProject) {
-  //      onclick_sidebarmenu ('sidebar_files', true);    
+  //      sidebarmenu_select ('sidebar_files', true);    
 
         $('#newprojectname').focus();           
         if (!projectplatform.strategyview == STRATEGY_ASSISTANT_VIEW) {
             AnimationDisplay ('project', 'Select or Create a Project to Start', 'project_toppanel');      
         } else {
         }
-        DisplayOperation("Select a project or create one", true, 'operationpanel');
+        DisplayInfo("Select a project or create one", true, 'operationpanel');
     }
 }
 
@@ -252,89 +252,31 @@ function project_timer () {
     
     if (solution.CurrentProject) {        
        
-//bottom panel
-      //  $('#strategy_assistant_button').css ('display', '');
-
-
 //project
         $('#project_projectsbar #project_projectrename').css ('display', '');
         $('#project_projectsbar #project_projectremove').css ('display', '');
-        $('#project_projectsbar #project_projectcompile').css ('display', '');
-        $('#project_projectsbar #project_projectdistribute').css ('display', '');
+        $('#project_projectsbar #project_projectdeploygroup').css ('display', '');
         $('#project_projectsbar #project_projectclose').css ('display', '');
-            
-
-//strategy
         $('#project_strategiesbar #project_strategycreate').css ('display', '');
-
-        if (CurrentStrategy) {
-            $('#projectstrategyfileaction').css ('display', '');            
-         //   $('#strategyfiletab').css ('display', '');
-            $('#project_strategiesbar #project_strategyrename').css ('display', '');
-            $('#project_strategiesbar #project_strategyremove').css ('display', '');
-       
-            $('#assistantbar *').css ('display', '');
-            $('#project_strategycompile').css ('display', ''); 
-            
-        }    
-        else {
-       //     $('#strategyfiletab').css ('display', 'none');
-            $('#projectstrategyfileaction').css ('display', 'none');
-            $('#project_strategiesbar #project_strategyrename').css ('display', 'none');
-            $('#project_strategiesbar #project_strategyremove').css ('display', 'none');    
-            $('#overlay_strategyhelper').remove();        
- 
-            $('#assistantbar *').css ('display', 'none'); 
-            $('#project_strategycompile').css ('display', 'none');               
-        }
  
         $('#project_conditionsbar #conditionCreate').css ('display', '');       
-        
         $("#distributeselect").css ('visibility', '');            
         $("#projectselectstrategypanel").css ('display', '');  
-
-        $('#project_root #indicatorCreate').css ('display', '');              
-                 
-/*        
-/*
-        $("#project_savestrategy .w2ui-tb-caption").prop( "disabled", shouldDisable);
-        $("#CancelStrategy .w2ui-tb-caption").prop( "disabled", shouldDisable);
-
-        if (document.getElementById('strategyname') && document.getElementById('strategyname').value != CurrentStrategy.Name) {
-            shouldDisable = false;
-        }
-        if (CurrentEngine.SCContent != CurrentEngine.Code[CODE_SS]) shouldDisable = false;
-        if (projectplatform.strategyquillbuffer != CurrentStrategy.Description)     shouldDisable = false;;
-
-        if (shouldDisable) {
-      //      if (w2ui['strategyactions'].getChanges().length > 0 || w2ui['strategyschedules'].getChanges().length > 0 || w2ui['strategyproperty'].getChanges().length > 0) 
-      //          shouldDisable = false;
-        }
-        CurrentStrategy.ShouldSave = !shouldDisable;        
-*/        
+        $('#project_root #indicatorCreate').css ('display', '');   
     }
     else {
-
-//bottom panel
-      //  $('#project_bottompanel').css ('display', 'none');
- 
 //project
         $('#project_projectsbar #project_projectrename').css ('display', 'none');
         $('#project_projectsbar #project_projectremove').css ('display', 'none');
-        $('#project_projectsbar #project_projectcompile').css ('display', 'none');
-        $('#project_projectsbar #project_projectdistribute').css ('display', 'none');
+        $('#project_projectsbar #project_projectdeploygroup').css ('display', 'none');
         $('#project_projectsbar #project_projectclose').css ('display', 'none');
              
 
-//strategy
-//        $('#strategyfiletab').css ('display', 'none');
         $('#project_strategiesbar #' + 'project_strategycreate').css ('display', 'none');        
         $('#project_strategiesbar #' + 'project_strategyrename').css ('display', 'none');
         $('#project_strategiesbar #' + 'project_strategyremove').css ('display', 'none');  
    
         $('#assistantbar *').css ('display', 'none');
-        $('#project_strategycompile').css ('display', 'none'); 
-
         $('#project_conditionsbar #' + 'conditionCreate').css ('display', 'none');    
         $('#overlay_strategyhelper').remove();     
         
@@ -343,6 +285,25 @@ function project_timer () {
         
         $('#project_root #indicatorCreate').css ('display', 'none');            
     }
+    if (CurrentStrategy) {
+        $('#projectstrategyfileaction').css ('display', '');            
+
+        $('#project_strategiesbar #project_strategyrename').css ('display', '');
+        $('#project_strategiesbar #project_strategyremove').css ('display', '');
+    
+        $('#assistantbar *').css ('display', '');
+        $('#project_strategydeploygroup').css ('display', ''); 
+        
+    }    
+    else {
+        $('#projectstrategyfileaction').css ('display', 'none');
+        $('#project_strategiesbar #project_strategyrename').css ('display', 'none');
+        $('#project_strategiesbar #project_strategyremove').css ('display', 'none');    
+        $('#overlay_strategyhelper').remove();        
+
+        $('#assistantbar *').css ('display', 'none'); 
+        $('#project_strategydeploygroup').css ('display', 'none');               
+    }    
 }
 
 
@@ -362,7 +323,7 @@ function project_home_open  (event) {
 function project_loadedproject (project) {
     if (project.Loaded) {
         clearInterval(Interval_loadproject);
-        DisplayOperation("Project " + project.Name + " loaded", true, 'operationpanel');            
+        DisplayInfo("Project " + project.Name + " loaded", true, 'operationpanel');            
         LoaderDisplay(false);         
         project_drawproject(project, true);        
     }
@@ -387,7 +348,7 @@ function project_selectproject(project, forcedisplay) {
 
     if (!project.Loaded) {
         LoaderDisplay(true);        
-        DisplayOperation("Loading Project " + project.Name + "  ... Please wait", true, 'operationpanel',  'var(--bg-strategycreator)');
+        DisplayInfo("Loading Project " + project.Name + "  ... Please wait", true, 'operationpanel',  'var(--bg-strategycreator)');
 
         Interval_loadproject = setInterval(project_loadedproject, 300, project); //5 minutes 300000     
         project.Load();
@@ -399,7 +360,7 @@ function project_selectproject(project, forcedisplay) {
         UpdateProjectExperts(project);
         UpdateProjectConditions(project);   
 
-        DisplayOperation("Project " + project.Name + " loaded", true, 'operationpanel');            
+        DisplayInfo("Project " + project.Name + " loaded", true, 'operationpanel');            
         project_drawproject(project, true);        
     }
     return project;
@@ -433,6 +394,7 @@ function project_initproject () {
 
     solution.CurrentProject.CurrentStrategy = null;
     CurrentStrategy = null;
+    CurrentEngine = null;
 
     sb.tree_removechildren ('project_tree_createdindicators');
     sb.tree_removechildren ('project_tree_conditions');
@@ -505,13 +467,13 @@ function onchange_project_projectselect (elt, event) {
 function project_saveproject(project) {
     if (!project) return;
     if (solution.UserId == "0") {
-        DisplayOperation("Project can not be saved, You are not registered", true, 'operationpanel', "coral");
+        DisplayInfo("Project can not be saved, You are not registered", true, 'operationpanel', "coral");
         return;
     }
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
     TraceErrorEditor("> START SAVING " + project.Name, 1);
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    DisplayOperation("Saving Project " + project.Name + "", true, 'operationpanel');            
+    DisplayInfo("Saving Project " + project.Name + "", true, 'operationpanel');            
 
     project_savestrategy (project.CurrentStrategy)
     project.Save();
@@ -520,7 +482,7 @@ function project_saveproject(project) {
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
     TraceErrorEditor("> FINISH SAVING " + project.Name, 1);
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    DisplayOperation("Project " + project.Name + " Saved ", true, 'operationpanel');            
+    DisplayInfo("Project " + project.Name + " Saved ", true, 'operationpanel');            
 }
 
 //------------------------------------------------------------ PROJECT STRATEGY ----------------------------------------------------------
@@ -717,7 +679,7 @@ function NewProject (name) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation('As you are not registered the project will not be saved', 'operationpanel');  
+        TreatInfo('As you are not registered the project will not be saved', 'operationpanel');  
     }
 
 
@@ -760,7 +722,7 @@ function RenameProject (project, newname) {
     let cuser = solution.get('user')
         
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
 
@@ -793,7 +755,7 @@ function RemoveProject (project) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
 
@@ -811,80 +773,6 @@ function RemoveProject (project) {
     }
 }
 
-
-//---------------------------------------------------- DISTRIBUTE PROJECT ---------------------------------------------- 
-
-function onclick_project_projectdistribute () {
-}
-
-//---------------------------------------------------- DISTRIBUTE PROJECT ---------------------------------------------- 
-
-function SelectDistribute () {
-   
-}
-
-function DistributeProject (project, terminal, type) {
-    if (!terminal || !project)
-        return;
-
-    BottomPanel_Flat (projectplatform, false);         
-    sb.tab_select(project_bottomtabs, 'tab-error');       
-    
-    DistributeProjectOnTerminal(project, terminal, type);
-}
-
-function DistributeProjectOnTerminal(project, terminal, terminaltype) {
-   
-    let cuser = solution.get('user')
-    
-    if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
-        return;
-    }
-    TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    TraceErrorEditor("> START DISTRIBUTION " + project.Name + " ON " + terminal.Name + " " +  terminaltype, 1);
-    TraceErrorEditor("-----------------------------------------------------------", 1);
-    
-    DisplayOperation("Start Distribution " + project.Name + " ON " + terminal.Name + ' ' + terminaltype, true, 'operationpanel',  'var(--bg-strategycreator)');
-    
-    
-    project.Distribute(terminal.Folder, terminaltype);
-    
-    
-    TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    TraceErrorEditor("> FINISH DISTRIBUTION " + project.Name + (returnvalue.length != 0 ? " with Error " : " OK ") +  " ON " + terminal.Name + ' ' + terminaltype, 1);
-    TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    
-    DisplayOperation("Finish Distribution" + project.Name + " ON " + terminal.Name + ' ' + terminaltype, true, 'operationpanel', 'var(--bg-strategycreator)');
-    
-    if (returnvalue.length != 0)
-        return;
-/*        
-        
-    TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    TraceErrorEditor("> START RELOADING PROJECT " + project.Name + " ON " + terminal.Name + ' ' + terminaltype, 1);
-    TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    
-    DisplayOperation("Reloading Project " + project.Name + " on " + terminal.Name + ' ' + terminaltype, true, 'operationpanel',  'var(--bg-strategycreator)');
-    
-    OnReloadProject(terminal, terminal.Name, terminaltype);
-    
-    
-    TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    TraceErrorEditor("> FINISH RELOADING PROJECT " + project.Name + " ON " + terminal.Name + ' ' + terminaltype + " OK -----------------", 1);
-    TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    
-    DisplayOperation("Finish Reloading Project " + project.Name + " on " + terminal.Name + ' ' + terminaltype , true, 'operationpanel',  'var(--bg-strategycreator)');
-    
-    
-    
-    var terminal = solution.GetTerminalFromNameType(terminal.Name, terminaltype);
-    terminal.Loaded = 0;
-    if (terminal == solution.CurrentTerminal) {
-        tradedesk_selectterminal(terminal, true);
-    }
-        */
-}
 
 //--------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1027,7 +915,7 @@ function project_editors_init (id){
         showGutter: false
     });
 
-    PropertiesEditor     = new aceeditor("propertiesdescription",  "ace/theme/nord_dark", "ace/mode/lisp");      
+    PropertiesEditor     = new aceeditor("strategy_helper",  "ace/theme/nord_dark", "ace/mode/lisp");      
     PropertiesEditor.setOptions({
         fontFamily: "Verdana, Arial, sans-serif",
         fontSize: 11,
@@ -1193,33 +1081,10 @@ function ondblclick_projecttabs(elt, event) {
     }
 } 
 
-//------------------------------------------------------------ CONDITION BAR ----------------------------------------------------------
-
-function DownloadExpertConfirm (callafter, expertfile) {
-
-    sb.confirm_modal('Download Expert Advisor ' + expertfile + ' ?').yes(function () {
-        callafter (expertfile);
-        $("#confirmmodal").modal('hide');        
-
-    }).no(function () {})
-}
-
 function onclick_conditionCreate (elt) {
     if (!solution.CurrentProject) return;
     openPopupCondition();
 }
-
-function OnDownloadExpert (callafter, expertfile) {
-    DownloadExpertConfirm (callafter, expertfile);
-}
-
-
-function onclick_expertDownload (elt) {
-    var expertfile = object.children[1].innerHTML;    
-
-    OnDownloadExpert (DownloadStrategy, expertfile)
-}
-
 
 
 //------------------------------------------------------------ STRATEGY BAR ----------------------------------------------------------
@@ -1262,30 +1127,35 @@ function CodeEditorPanel(id, classnames, type) {
     return content;
 }
 
-//------------------------------------------------------------ DISTRIBUTE SIDEBAR PANELS ----------------------------------------------------------
+//------------------------------------------------------------ DISTRIBUTE PANEL ----------------------------------------------------------
 
-function onclick_distribute (elt) {
+function onclick_distributeproject (elt) {
 
     let terminalchecked;      
     let strategytesterchecked;    
     let strategyname;
     for (var i = 0; i < distributetable.rows.length; i++) {
-        terminalchecked         = $('#terminalcheck' + '_' + i + '_0').is(":checked");    
-        strategytesterchecked   = $('#strategytestercheck' + '_' + i + '_1').is(":checked");   
 
-        if (terminalchecked)        DistributeProject(solution.CurrentProject, solution.Terminals[i], 'Terminal');            
-        if (strategytesterchecked)  DistributeProject(solution.CurrentProject, solution.Terminals[i],  'Tester'); 
+        let terminal = solution.GetTerminalsFromName ($('#distributetable_' + i + '_0 #terminalname').html())[0];
+
+        terminalchecked         = $('#terminalcheck' + '_' + i + '_0').prop('checked');    
+        strategytesterchecked   = $('#strategytestercheck' + '_' + i + '_1').prop('checked');   
+
+        if (terminalchecked)        project_projectdistribute(solution.CurrentProject, terminal, 'Terminal');            
+        if (strategytesterchecked)  project_projectdistribute(solution.CurrentProject, terminal,  'Tester'); 
 
     }        
-    
 }
-
-function onclick_refresh_terminals(elt) {
+function RefreshTerminals () {
     let  site        = solution.get('site');
     let  user        = solution.get('user')
     let  url         = site.address  + "/php/read_terminals.php"
 
     solution.project_LoadTerminals(user.id, url, SYNCHRONE, solution.UpdateDistributeTerminals, solution);    
+}
+ 
+function onclick_refresh_terminals(elt) {
+    RefreshTerminals();
 }
 
 
@@ -1302,46 +1172,32 @@ function DeployHeaderPanel () {
 
 
 
-//'       <div class="labelexplain">' +
-//'           <p>WARNING : If an Existing Project is already running on the terminal, it will close all existing orders and it will start a new session with this project. Assure You stopped all your strategies before.</p>' +
-//'       </div>' +
-
-
-
 function DistributePanel_Update (solution) {
     var tcontent = '';
     let  user        = solution.get('user')
 
     if (user.id == 0) {
-          $('#distributepanel').html(sb.render(ReturnWarningALert('You should Register to see your Terminals')))
+          $('#project_distributepanel').html(sb.render(ReturnWarningALert('You should Register to see your Terminals')))
           return;
     }
 
     distributetable.rows = [];
 
     if (solution.Terminals.length == 0) {
-        $('#distributepanel').html(sb.render(ReturnWarningALert('You do not have any MT4 Platform Configured with MT4 Terminal')))
+        $('#project_distributepanel').html(sb.render(ReturnWarningALert('You do not have any MT4 Platform Configured with MT4 Terminal')))
         return ;
     }
-
+    let j = 0;
     for (var i = 0; i < solution.Terminals.length; i++) {
         let terminal = solution.Terminals[i];        
         if (terminal.Type == 'Terminal') {        
-    
+            j
             distributetable.rows.push ([
                     '<i class="fas fa-landmark"></i><span id="terminalname" class="terminalname"+ title="' + terminal.Folder +'">' +  terminal.Name + '</span>',
-                    sb.render({id: 'terminalcheck_'+ i + '_0', type: 'checkbox', class: 'terminalcheck'}) ,               
-                    sb.render({id: 'strategytestercheck_'+ i + '_1', type: 'checkbox', class: 'terminalcheck'}) ,               
-    
-                // '<div class="sb_check custom-control custom-checkbox terminalcheck">' + 
-                // '   <input id="terminalcheck_'+ i + '_0'   + '" class="custom-control-input" type="checkbox" onchange="onchange_default_sb_item(this);" oninput="onchange_default_sb_item(this);"/>' + 
-                // '   <label for="terminalcheck_'+ i + '_0'  + '" class="custom-control-label"></label>' +                        
-                // '</div>',
-                    //'<div class="sb_check custom-control custom-checkbox terminalcheck">' + 
-                    //'   <input id="strategytestercheck_'+ i + '_1'  + '" class="custom-control-input " type="checkbox" onchange="onchange_default_sb_item(this);" oninput="onchange_default_sb_item(this);"/>' + 
-                    //'   <label for="strategytestercheck_'+ i + '_1' + '" class="custom-control-label"></label>' +                        
-                    //'</div>'                
+                    sb.render({id: 'terminalcheck_'+ j + '_0', type: 'checkbox', class: 'terminalcheck'}) ,               
+                    sb.render({id: 'strategytestercheck_'+ j + '_1', type: 'checkbox', class: 'terminalcheck'}) ,               
             ])
+            j++;
         }
     }
     sb.table_setrows (distributetable, distributetable.rows)
@@ -1523,25 +1379,20 @@ function onclick_slideindicatorbox (elt) {
 }
 
 function ShowChart () {
-    sb.tab_select (project_bottomtabs, 'tab-chart');  
-    if ($('#project_mainbottompanel .box-btn-slide').hasClass('rotate-180')) {
-        $('#project_mainbottompanel #slide').click ();    
-    }    
+
+    bottompanel_select (projectplatform,'tab-chart')        
+    //sb.tab_select (project_bottomtabs, 'tab-chart');  
+ 
+    //if ($('#project_mainbottompanel .box-btn-slide').hasClass('rotate-180')) {
+    //    $('#project_mainbottompanel #slide').click ();    
+    //}    
 }  
 
 //------------------------------------------------------------ STRATEGY FILE PANEL ----------------------------------------------------------
 
 
 function onclick_strategyother (event) {
-    var display = $('#projectpanel_other').css ('display');
-    switch (display) {
-        case 'none' :
-            $('#projectpanel_other').css ('display', 'flex');
-        break;
-        default :
-            $('#projectpanel_other').css ('display', 'none');
-        break;
-    }
+    bottompanel_select(projectplatform,  'tab-helper')
 }
 
 
@@ -1601,9 +1452,9 @@ function onclick_project_tester_commandgroup(elt, event) {
     if (TestMode) {
         Engine_Pause(CurrentEngine, !PausedSimulator);
     } else {
-        
-        sb.tab_select (project_bottomtabs, 'tab-chart');    
-        $('#tab-chart').click();
+        bottompanel_select (projectplatform,'tab-chart')    
+       // sb.tab_select (project_bottomtabs, 'tab-chart');    
+       // $('#tab-chart').click();
 
         ExpertEditor.setValue("");
         CommentEditor.setValue("");             
@@ -1751,14 +1602,35 @@ function UpdateProjectExperts (project) {
     var PG = project.PG;    
     
     let items = [];
+    let strategies = [];    
+    
+    sb.tree_removechildren ('project_tree_experts');
+    
     for (var j = 0; j < PG.Experts.length; j++) {
-        items.push({id:'expert_' + PG.Experts[j], type: 'link', item: PG.Experts[j], icon: icon_mt4expert,
+       let strategyname = PG.Experts[j].substr(0,  PG.Experts[j].length - 4);
+        if (strategies.includes (strategyname)) {
+            continue;
+        }
+        
+        items.push({
+            id:'expert_' + strategyname, 
+            type: 'tree', 
+            item: strategyname, 
+            icon: icon_folder, 
+       //     style: !PG.GetStrategyFromName (strategyname) ? "color:red" : "",
+        });
+        strategies.push (strategyname);
+    }
+    sb.tree_additems ('project_tree_experts', items);   
+
+    for (var j = 0; j < PG.Experts.length; j++) {
+        let strategyname = PG.Experts[j].substr(0, PG.Experts[j].length - 4);
+        sb.tree_additem( 'expert_' + strategyname, {id:'expert_' + PG.Experts[j], type: 'link', item: PG.Experts[j], icon: icon_file,
             attributes:{selector: 'selectexpert', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'},
             events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}                
         });        
     }
-
-    sb.tree_additems ('project_tree_experts', items);   
+   
     $("#project_tree_experts").addClass('show');       
 
 }    
@@ -1812,7 +1684,7 @@ function OnReloadProject(terminal, terminalname, terminaltype) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     for (var i = 0; i < PG.Symbols.length; i++) {
@@ -2100,7 +1972,7 @@ function SelectSaveStrategy() {
 function OnSaveStrategy(event) {
 
     if (solution.UserId == "0") {
-        DisplayOperation("Strategy can not be saved, You are not registered", true, 'operationpanel', "coral");
+        DisplayInfo("Strategy can not be saved, You are not registered", true, 'operationpanel', "coral");
         return;
     }
 
@@ -2109,7 +1981,7 @@ function OnSaveStrategy(event) {
         var new_strategyname = document.getElementById('strategyname').value;
 
         if (new_strategyname == "") {
-            DisplayOperation("Strategy Name can not be empty " + new_strategyname, true, 'operationpanel', 'var(--bg-strategycreator)');    
+            DisplayInfo("Strategy Name can not be empty " + new_strategyname, true, 'operationpanel', 'var(--bg-strategycreator)');    
             $('#strategyname').focus();
             return;
         }
@@ -2118,7 +1990,7 @@ function OnSaveStrategy(event) {
 
             var strategy = solution.CurrentProject.PG.GetStrategyFromName(new_strategyname, CurrentStrategy);
             if (strategy) {
-                DisplayOperation("Strategy Name already exists " + new_strategyname, true, 'operationpanel', 'var(--bg-strategycreator)');    
+                DisplayInfo("Strategy Name already exists " + new_strategyname, true, 'operationpanel', 'var(--bg-strategycreator)');    
                 $('#strategyname').focus();
                 return;
             }
@@ -2142,13 +2014,13 @@ function OnSaveStrategy(event) {
                 CurrentStrategy.Name = new_strategyname;        
             }
         }
-        DisplayOperation("Saving Strategy " + new_strategyname, true, 'operationpanel', 'var(--bg-strategycreator)');    
+        DisplayInfo("Saving Strategy " + new_strategyname, true, 'operationpanel', 'var(--bg-strategycreator)');    
     
         w2ui['strategyschedules'].save();
         w2ui['strategyproperty'].save();
         w2ui['strategyactions'].save();
     } else {
-         DisplayOperation("Saving Project " + solution.CurrentProject.Name, true, 'operationpanel', 'var(--bg-strategycreator)');    
+         DisplayInfo("Saving Project " + solution.CurrentProject.Name, true, 'operationpanel', 'var(--bg-strategycreator)');    
     }        
     setTimeout(project_savestrategy, 300, CurrentStrategy);        
 
@@ -2247,7 +2119,7 @@ function DrawStrategy(strategy, open) {
 
         sb.tree_selectitem ('project_tree_strategies', strategy.Name);                              
       
-        DisplayOperation("Strategy : " + strategy.Name , true, 'operationpanel', 'var(--bg-strategycreator)');          
+      //  DisplayInfo("Strategy : " + strategy.Name , true, 'operationpanel', 'var(--bg-strategycreator)');          
       
         AssistantGoToStep ('strategy_assistant_panel', Math.max ($("#strategy_assistant_panel").steps("getCurrentIndex"),STEP_STRATEGYNAME));
 
@@ -2259,7 +2131,7 @@ function DrawStrategy(strategy, open) {
         $('#project_tester_stop_button').attr('disabled',true);    
         $('#project_tester_play_button').attr('disabled',true);           
 
-        DisplayOperation("" , true, 'operationpanel'); 
+        DisplayInfo("" , true, 'operationpanel'); 
 
         StrategyAssistantFillStrategies(solution.CurrentProject);
         AssistantGoToStep ('strategy_assistant_panel', STEP_PROJECTSELECTION);
@@ -2299,29 +2171,6 @@ function CancelStrategy() {
     RefreshStrategy(CurrentStrategy);
 }
 
-//---------------------------------------------------- DOWNLOAD STRATEGY ----------------------------------------------  
-
-function DownloadStrategy(strategyfile) {
-    let  site           = solution.get('site');            
-    let  user           = solution.get('user')    
-
-    var url = user.path + '/Projects/' + solution.CurrentProject.Folder + "/MQL4/Experts/" + strategyfile;
-
-    var fileName = "//MQL4//Experts//" + strategyfile;
-    var strategyname = strategyfile.split(".ex4")[0];
-    var strategy = solution.CurrentProject.PG.GetStrategyFromName (strategyname);
-    
-    if (strategy) {
-        project_selectstrategy (strategy);
-    }
-    var sterminal = solution.GetTerminalsFromName('FP Markets MT4 Terminal');
-    if (sterminal.length) {
-        fileName = sterminal[0].DataPath + fileName; 
-    } else {
-        fileName = strategyfile;
-    }
-    SaveURIInFile (url, '')
-}
 
 //-----------------------------------------------------------------------------------------------------------------------  
 
@@ -2400,3 +2249,4 @@ function TracePropertiesEditor(value) {
 
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+

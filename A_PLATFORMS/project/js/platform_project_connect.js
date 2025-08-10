@@ -42,8 +42,8 @@ function HighlightTerminal (origin, project, connect, color) {
 
     switch (origin) {
         case DEPLOYSERVER:
-            $('#project_projects_headerpanel #button_server').css ('background', connect ? color : ''); 
-            $('#project_projects_headerpanel #button_server').css ('color', connect ? '#000000' : '');            
+            $('#project_root #button_server').css ('background', connect ? color : ''); 
+            $('#project_root #button_server').css ('color', connect ? '#000000' : '');            
 
         break;      
     }  
@@ -109,6 +109,9 @@ function TreatCommand(project, Line, values) {
     if (values[0] == "UPLOAD") {
         TreatUpload(project, values, Line);
     } 
+    if (values[0] == "DISTRIBUTE") {
+        TreatDistribute(project, values, Line);
+    }     
 }
 
 //-------------------------------------------------- COMPILE PROJECT ---------------------------------------------
@@ -126,7 +129,7 @@ function TreatCompile(project, values, Line) {
         TraceErrorEditor("> FINISH COMPILATION OK FOR " + (compiletype == 'MQL4' ? "STRATEGY " : " PROJECT " + project.Name) + " : " + values[1], 1);
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
         
-        DisplayOperation("Finish Compilation OK", true, 'project_operation');   
+        DisplayInfo("Finish Compilation OK", true, 'project_operation');   
        
         
     } else {
@@ -134,7 +137,7 @@ function TreatCompile(project, values, Line) {
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
         TraceErrorEditor("> FINISH COMPILATION WITH ERROR FOR " + (compiletype == 'MQL4' ? "STRATEGY " : " PROJECT " + project.Name) +  " : " + values[5], 1);
         TraceErrorEditor("-----------------------------------------------------------", 1);
-        DisplayOperation("Compilation Fails", true, 'project_operation', "coral");  
+        DisplayInfo("Compilation Fails", true, 'project_operation', "coral");  
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
         TraceErrorEditor("----------------- END PROCESS " + values[1] + " ON " + terminaltype + " INTERRUPTED -----------------", 1);
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
@@ -148,7 +151,7 @@ function TreatUpload(project, values, Line) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     FinishUploading = true;
@@ -158,39 +161,240 @@ function TreatUpload(project, values, Line) {
         TraceErrorEditor(">" + (compiletype == 'MQL4' ? "STRATEGY " : "PROJECT ") + "SUCCESSFULLY UPLOADED " + values[1], 1);
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
 
-        DisplayOperation("Finish Uploading OK", true, 'project_operation');  
+        DisplayInfo("Finish Uploading OK", true, 'project_operation');  
         
         if (compiletype == 'MQL4') {
-            var strategyname = values[1].split ('/')[3];
-            if (!project.PG.GetExpertFromName(strategyname)) {
-                project.PG.Experts.push (strategyname);
-            }
-
-            var item = {id:'expert_' + strategyname, type: 'link', item: strategyname, icon: icon_mt4expert,
-                        attributes:{selector: 'selectexpert', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'},
-                        events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}                     
-                        };
-                
-            sb.tree_additems ('project_tree_experts', [item])
-            onclick_sidebarmenu('sidebar_deploy', 1);
-            sb.box_toggle('project_boxexpertspanel', true);            
-            sb.tree_selectitem ('project_tree_experts', strategyname);                
+            var strategyfilename = values[1].split ('/')[3];
+       //     if (!project.PG.GetExpertFromName(strategyname)) {
+             //   project.PG.Experts.push (strategyname);
+        //    }
+            RefreshExperts();
+//            var item = {id:'expert_' + strategyname, type: 'link', item: strategyname, icon: icon_mt4expert,
+//                        attributes:{selector: 'selectexpert', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'},
+//                        events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}                     
+//                        };
+//                
+//            sb.tree_additems ('project_tree_experts', [item])
+//            sb.box_toggle('project_boxexpertspanel', true);            
+            sb.tree_selectitem ('project_tree_experts', strategyfilename);                
         }        
+        sidebarmenu_select('sidebar_deploy', 1);        
     } else {
         
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
         TraceErrorEditor(">PROJECT FILE CAN NOT BE UPLOADED : " , 1);
         TraceErrorEditor("-----------------------------------------------------------", 1);
-        DisplayOperation("Uploading Fails", true, 'project_operation', "coral"); 
+        DisplayInfo("Uploading Fails", true, 'project_operation', "coral"); 
 
     }
+}
+
+function TreatDistribute(project, values, Line) {
+    console.log(line)
+}
+
+//---------------------------------------------------- DISTRIBUTE PROJECT ---------------------------------------------- 
+
+function onclick_project_projectdistribute () {
+}
+
+
+//'       <div class="labelexplain">' +
+//'           <p>WARNING : If an Existing Project is already running on the terminal, it will close all existing orders and it will start a new session with this project. Assure You stopped all your strategies before.</p>' +
+//'       </div>' +
+
+
+//---------------------------------------------------- DISTRIBUTE PROJECT ---------------------------------------------- 
+
+function SelectDistribute () {
+   
+}
+
+function project_projectdistribute (project, terminal, type) {
+    if (!terminal || !project)
+        return;
+
+  //  BottomPanel_Flat (projectplatform, false);         
+  //  sb.tab_select(project_bottomtabs, 'tab-error');       
+    bottompanel_select (projectplatform,'tab-error') 
+    DistributeProjectOnTerminal(project, terminal, type);
+}
+
+function DistributeProjectOnTerminal(project, terminal, terminaltype) {
+   
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
+        return;
+    }
+    TraceErrorEditor("----------------------------------------------------------------------------", 1);
+    TraceErrorEditor("> START DISTRIBUTION " + project.Name + " ON " + terminal.Name + " " +  terminaltype, 1);
+    TraceErrorEditor("-----------------------------------------------------------", 1);
+    
+    DisplayInfo("Start Distribution " + project.Name + " ON " + terminal.Name + ' ' + terminaltype, true, 'operationpanel',  'var(--bg-strategycreator)');
+    
+    
+    project.Distribute(terminal.Folder, terminaltype);
+    
+    
+    TraceErrorEditor("----------------------------------------------------------------------------", 1);
+    TraceErrorEditor("> FINISH DISTRIBUTION " + project.Name + (returnvalue.length != 0 ? " with Error " : " OK ") +  " ON " + terminal.Name + ' ' + terminaltype, 1);
+    TraceErrorEditor("----------------------------------------------------------------------------", 1);
+    
+    DisplayInfo("Finish Distribution" + project.Name + " ON " + terminal.Name + ' ' + terminaltype, true, 'operationpanel', 'var(--bg-strategycreator)');
+    
+    if (returnvalue.length != 0)
+        return;
+/*        
+        
+    TraceErrorEditor("----------------------------------------------------------------------------", 1);
+    TraceErrorEditor("> START RELOADING PROJECT " + project.Name + " ON " + terminal.Name + ' ' + terminaltype, 1);
+    TraceErrorEditor("----------------------------------------------------------------------------", 1);
+    
+    DisplayInfo("Reloading Project " + project.Name + " on " + terminal.Name + ' ' + terminaltype, true, 'operationpanel',  'var(--bg-strategycreator)');
+    
+    OnReloadProject(terminal, terminal.Name, terminaltype);
+    
+    
+    TraceErrorEditor("----------------------------------------------------------------------------", 1);
+    TraceErrorEditor("> FINISH RELOADING PROJECT " + project.Name + " ON " + terminal.Name + ' ' + terminaltype + " OK -----------------", 1);
+    TraceErrorEditor("----------------------------------------------------------------------------", 1);
+    
+    DisplayInfo("Finish Reloading Project " + project.Name + " on " + terminal.Name + ' ' + terminaltype , true, 'operationpanel',  'var(--bg-strategycreator)');
+    
+    
+    
+    var terminal = solution.GetTerminalFromNameType(terminal.Name, terminaltype);
+    terminal.Loaded = 0;
+    if (terminal == solution.CurrentTerminal) {
+        tradedesk_selectterminal(terminal, true);
+    }
+        */
+}
+//-------------------------------------------------  DISTRIBUTE STRATEGY ---------------------------------------------- 
+function RefreshExperts () {
+    sb.tree_removechildren ('project_tree_experts');
+    let  site           = solution.get('site');     
+    solution.CurrentProject.PG.LoadExperts(solution,  site.address + "/php/read_experts.php", solution.CurrentProject.Folder,  SYNCHRONE, UpdateProjectExperts, solution.CurrentProject);    
+}
+
+
+function onclick_refresh_experts (elt,event) {
+    if (!solution.CurrentProject) {
+        return;
+    }
+    RefreshExperts();    
+}
+
+function DownloadExpertConfirm (callafter, expertfile) {
+
+    sb.confirm_modal('Download Expert Advisor ' + expertfile + ' ?').yes(function () {
+        callafter (expertfile);
+        $("#confirmmodal").modal('hide');        
+
+    }).no(function () {})
+}
+
+
+function OnDownloadExpert (callafter, expertfile) {
+    DownloadExpertConfirm (callafter, expertfile);
+}
+
+function onclick_expertDownload (elt) {
+    var expertfile = object.children[1].innerHTML;    
+
+    OnDownloadExpert (DownloadStrategy, expertfile)
+}
+
+
+function DownloadStrategy(strategyfile) {
+    let  site           = solution.get('site');            
+    let  user           = solution.get('user')    
+
+    var url = user.path + '/Projects/' + solution.CurrentProject.Folder + "/MQL4/Experts/" + strategyfile;
+    SaveURIInFile (url, '')    
+/*
+    var fileName = "//MQL4//Experts//" + strategyfile;
+    var strategyname = strategyfile.split(".ex4")[0];
+    var strategy = solution.CurrentProject.PG.GetStrategyFromName (strategyname);
+    
+    if (strategy) {
+        project_selectstrategy (strategy);
+    }
+    var sterminal = solution.GetTerminalsFromName('FP Markets MT4 Terminal');
+    if (sterminal.length) {
+        fileName = sterminal[0].DataPath + fileName; 
+    } else {
+        fileName = strategyfile;
+    }
+*/        
+   
+}
+
+function onclick_project_strategydistribute (elt, event) {
+
+    let terminalchecked;      
+    let strategytesterchecked;    
+    let strategyname;
+    for (var i = 0; i < distributetable.rows.length; i++) {
+
+        let terminal = solution.GetTerminalsFromName ($('#distributetable_' + i + '_0 #terminalname').html())[0];
+
+        terminalchecked         = $('#terminalcheck' + '_' + i + '_0').prop('checked');    
+        strategytesterchecked   = $('#strategytestercheck' + '_' + i + '_1').prop('checked');   
+
+        if (terminalchecked)        project_strategydistribute(solution.CurrentProject, CurrentStrategy, terminal);            
+        //if (strategytesterchecked)  project_strategydistribute(solution.CurrentProject, terminal,  'Tester'); 
+    }        
+}
+
+function project_strategydistribute (project, strategy, terminal) {
+    if (!terminal || !project || !strategy)
+        return;
+
+    //BottomPanel_Flat (projectplatform, false);         
+    //sb.tab_select(project_bottomtabs, 'tab-error');       
+    
+    bottompanel_select (projectplatform,'tab-error')    
+    DistributeStrategyOnTerminal(project, strategy, terminal);
+}
+
+
+function DistributeStrategyOnTerminal(project, strategy, terminal) {
+   
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
+        return;
+    }
+    TraceErrorEditor("----------------------------------------------------------------------------", 1);
+    TraceErrorEditor("> START DISTRIBUTION " + strategy.Name + " ON " + terminal.Name, 1);
+    TraceErrorEditor("-----------------------------------------------------------", 1);
+    
+    DisplayInfo("Start Distribution " + strategy.Name + " ON " + terminal.Name , true, 'operationpanel',  'var(--bg-strategycreator)');
+    OnDistributeStrategy (project, strategy , 'MQ4', terminal.Folder)
+}
+
+
+function OnDistributeStrategy (project, strategyname, content, langtype) {
+   
+    let cuser = solution.get('user')
+    
+    if (!cuser.is_registered()) {
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
+        return;
+    }
+
+    var sorder = "*DISTRIBUTE*" + project.Folder + "*" + strategy.Name + "*" + langtype + "*" + content;
+    project_DeployCom.Send(solution.UserId + sorder);
 }
 
 //---------------------------------------------------- COMPILE PROJECT ---------------------------------------------- 
 
 var StartCompilation = false;
 var FinishUploading  = false;
-
 
 function onclick_project_projectcompile(elt) {
     SelectCompileProject(solution.CurrentProject, 'C');
@@ -200,8 +404,9 @@ function SelectCompileProject (project, langtype) {
     if (!project)
         return;
     
-    BottomPanel_Flat (projectplatform, false);         
-    sb.tab_select(project_bottomtabs, 'tab-error');
+    bottompanel_select (projectplatform,'tab-error')    
+   // BottomPanel_Flat (projectplatform, false);         
+   // sb.tab_select(project_bottomtabs, 'tab-error');
 
   
     CompileProject(project,  langtype, 'Terminal');
@@ -212,7 +417,7 @@ function CompileProject(project, langtype, terminaltype) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     
@@ -231,7 +436,7 @@ function CompileProject(project, langtype, terminaltype) {
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
     TraceErrorEditor("> START COMPILATION OF PROJECT " + project.Name + " in " + langtype + " for " + terminaltype + "", 1);
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    DisplayOperation("Compiling " + project.Name  + ' Please Wait', project.PG.OperationSound, 'operationpanel',  'var(--bg-strategycreator)');
+    DisplayInfo("Compiling " + project.Name  + ' Please Wait', project.PG.OperationSound, 'operationpanel',  'var(--bg-strategycreator)');
     OnCompileProject(project, "Project", content, langtype, terminaltype);
 }
 
@@ -240,12 +445,15 @@ function OnCompileProject(project, filename, content, langtype, terminaltype) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     var sorder = "*COMPILE*" + project.Folder + "*" + filename + "*" + langtype + "*" + terminaltype + "*" + content;
     project_DeployCom.Send(solution.UserId + sorder);
 }
+
+
+
 
 //-------------------------------------------------- COMPILE STRATEGY ---------------------------------------------
 
@@ -268,8 +476,9 @@ function SelectCompileStrategy (project, strategy, langtype) {
         $('#popupcompile_button').addClass ('disabled');
         loopBeginLoopComplete(strategy);
     }else {
-        BottomPanel_Flat (projectplatform, false);         
-        sb.tab_select(project_bottomtabs, 'tab-error');         
+       // BottomPanel_Flat (projectplatform, false);         
+       // sb.tab_select(project_bottomtabs, 'tab-error');      
+        bottompanel_select (projectplatform,'tab-error')            
     }
     CompileStrategy(project, strategy, langtype);
 }
@@ -279,7 +488,7 @@ function CompileStrategy(project, strategy, langtype) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
 
@@ -324,7 +533,7 @@ function CompileStrategy(project, strategy, langtype) {
     TraceErrorEditor("> START COMPILATION OF THE STRATEGY " + strategy.Name + " in " + langtype, 1);
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
 
-    DisplayOperation("Compiling " + strategy.Name + ' Please Wait', true, 'operationpanel', 'var(--bg-strategycreator)');
+    DisplayInfo("Compiling " + strategy.Name + ' Please Wait', true, 'operationpanel', 'var(--bg-strategycreator)');
 
     OnCompileStrategy(project, strategy.Name, content, langtype);
 }
@@ -334,7 +543,7 @@ function OnCompileStrategy (project, strategyname, content, langtype) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
 

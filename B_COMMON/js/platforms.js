@@ -373,6 +373,14 @@ function onclick_controlsbottompanel (elt) {
     }
 }
 
+
+function bottompanel_select (platform, tabid) { 
+    if (!platform) {
+        return;
+    }
+    $('#' +  platform.pname + '_bottomtabs' +  ' #' + CSS.escape(tabid)).tab('show');    
+    BottomPanel_Flat (platform, false ,true);    
+}
 //----------------------------------------------------  ASSISTANT PANEL    ------------------------------------------------   
 
 function onclick_assistant_nextprev(elt, event) {

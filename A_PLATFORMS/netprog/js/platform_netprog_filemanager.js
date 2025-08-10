@@ -66,10 +66,19 @@ function netprog_filemanager_update () {
         sb.tree_additem (netprog_filemanager.id, ReturnWarningALert(register_needed_label)); 
         return;
     }
+    if (!cuser.fileexplorer) {
+        cuser.send({Name: 'scandir_r',Values: cuser.is_admin () ? ['.', ''] : [c.user.path  + '/NetProg', '.']}, false,  function (content, values) {
+            let dirstruct = JSON.parse (content);
+            values[0].fileexplorer = dirstruct.Values[0]}, [cuser])
+      
+    }
+
+
 //np    
     solution.Files = []
 
     sb.tree_removechildren(netprog_filemanager.id)
+
     netprog_filemanager_treefromexplorer (netprog_filemanager,  cuser.fileexplorer, [0])      
 }
 
@@ -91,6 +100,7 @@ function netprog_filemanager_treenodeitem (cname, name, type, closed, levels) {
 }
 
 function netprog_filemanager_treefromexplorer (treenode, filenode, levels) {
+
     let type   = filenode.Type;
     let name   = filenode.Name
     let cname  = filenode.CName.replace(/\\/g, '/'); 
@@ -125,6 +135,7 @@ function netprog_filemanager_treefromexplorer (treenode, filenode, levels) {
         for (var index = 0; index < filenode.Files.length; index++) {
             netprog_filemanager_treefromexplorer(sonnode, filenode.Files[index], levels)
         }
+        
     }
 }
 function netprog_file_shift (editor) {

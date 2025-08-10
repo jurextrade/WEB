@@ -530,6 +530,15 @@ function VerifyUser (socket, port, symbol, loginserver, username, password, acco
 
 /////////////////////////////////////////////////////////// COMPILATION /////////////////////////////////////////////////////////
 
+function cleanFile (filename) {
+	try {
+        fs.unlinkSync(fromfile);
+        console.log('File: ' + filename  + ' deleted successfully!');
+    } catch (err) {
+        console.error('Error deleting file ' + filename , err);
+    }
+}
+
 function SendFileExpert (userid, fromfile, tofile, filetype, projectfolder, socket, emplacement) {                //http
 
    
@@ -563,14 +572,15 @@ function SendFileExpert (userid, fromfile, tofile, filetype, projectfolder, sock
           var strerror = "\nUPLOAD " +  fromfile + " to " + response.data  + " OK successfully uploaded\n";
 	      Print(strerror);
 	      NS.SendToHTTPClient(socket, ":______**UPLOAD^" + fromfile   +  "^" + projectfolder  +  "^" + filetype +  "^OK^"  + strerror + "*");   	
+		  cleanFile (fromfile);		  
     })
     .catch(error => {
           var strerror = "\nUPLOAD " +  fromfile + " to " +   tofile  + " Failed: " + JSON.stringify(err) + "\n";    
           Print(strerror);
 		  NS.SendToHTTPClient(socket, ":______**UPLOAD^" + fromfile   +  "^" + projectfolder  +  "^" + filetype + "^ERROR^" + strerror + "*");              
+          console.error('Error uploading stream:', error);
+		  cleanFile (fromfile);		  
 
-
-        console.error('Error uploading stream:', error);
     });    
 }
 
@@ -598,13 +608,14 @@ function PutFileExpert (fromfile, tofile,  filetype, userid, projectfolder, sock
           var strerror = "\nUPLOAD " +  fromfile + " to " + tofile  + " OK successfully uploaded\n";
 	      Print(strerror);
 	      NS.SendToHTTPClient(socket, ":______**UPLOAD^" + fromfile   +  "^" + projectfolder  +  "^" + filetype +  "^OK^"  + strerror + stdout + "*");   	
-	          
+		  cleanFile (fromfile);		  
         })
         .catch(err => {
             
           var strerror = "\nUPLOAD " +  fromfile + " to " +    tofile  + " Failed: " + JSON.stringify(err) + "\n";    
           Print(strerror);
 		  NS.SendToHTTPClient(socket, ":______**UPLOAD^" + fromfile   +  "^" + projectfolder  +  "^" + filetype + "^ERROR^" + strerror + stdout + "*");              
+		  cleanFile (fromfile);		  
         });
     })
     
@@ -613,7 +624,9 @@ function PutFileExpert (fromfile, tofile,  filetype, userid, projectfolder, sock
       var strerror = "\nUPLOAD " +  fromfile + " to " +    tofile  + " Failed: " + JSON.stringify(err) + "\n";    
       NS.SendToHTTPClient(socket, ":______**UPLOAD^" + fromfile   +  "^" + projectfolder  +  "^" + filetype + "^ERROR^" + strerror + stdout + "*");              
       Print(strerror);
+      cleanFile (fromfile);		  
     });
+	
 }
 
 function CompileC (userid, terminaltype, projectfolder, filename, socket) {
@@ -669,6 +682,10 @@ function CompileMQ4 (userid, terminaltype, projectfolder, filename, socket) {
             } else {
                 let tofile   =  filename + '.ex4';			
                 SendFileExpert (userid, fromfile, tofile, 'MQL4',  projectfolder, socket, 'Experts');       
+                tofile   =  filename + '.mq4';			
+				fromfile =  MQ4_SOURCE_PATH + filename + '.mq4';				
+                SendFileExpert (userid, fromfile, tofile, 'MQL4',  projectfolder, socket, 'Experts');       
+
             }
 			return 1;
 		}

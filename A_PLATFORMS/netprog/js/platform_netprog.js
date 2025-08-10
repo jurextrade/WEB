@@ -18,7 +18,7 @@ function netprog_init () {
     netprog_gse_init('gsecanvas_netprog');
     netprog_filemanager_init();
 
-    sidebarpanel_select(netprogplatform, "sidebarpanel_netprogsiteview");   
+    sidebarpanel_show(netprogplatform, "sidebarpanel_netprogsiteview");   
 
     setInterval(netprog_timer, 300);     
 }
@@ -41,8 +41,8 @@ function netprog_select (name) {
     ui.platform_expand(name, true);
 
     if (!solution.netprog_CurrentProject) {
-        DisplayOperation("Select a project or create one", true, 'operationpanel');        
-   //     onclick_sidebarmenu ('sidebar_netprogsiteview', true);    
+        DisplayInfo("Select a project or create one", true, 'operationpanel');        
+   //     sidebarmenu_select ('sidebar_netprogsiteview', true);    
     }
 }
 
@@ -78,7 +78,7 @@ class npproject {
     
     Save = function () {
         if (solution.UserId == "0") {
-            DisplayOperation ("Saving not for possible.. Should register", true, 'operationpanel', 'var(--bg-optionterminal)')           
+            DisplayInfo ("Saving not for possible.. Should register", true, 'operationpanel', 'var(--bg-optionterminal)')           
             return;
         }
         let  user           = solution.get('user')   
@@ -284,7 +284,7 @@ function netprog_update (manager) {
 function netprog_loadedproject (project) {
     if (project.Loaded) {
         clearInterval(Interval_netprog_loadproject);
-        DisplayOperation("Project " + project.Name + " loaded", true, 'operationpanel');            
+        DisplayInfo("Project " + project.Name + " loaded", true, 'operationpanel');            
         LoaderDisplay(false);         
         netprog_drawproject(project, true);        
     }
@@ -308,13 +308,13 @@ function netprog_selectproject(project, forcedisplay) {
 
     if (!project.Loaded) {
         LoaderDisplay(true);        
-        DisplayOperation("Loading Project " + project.Name + "  ... Please wait", true, 'operationpanel',  'var(--theme-platform-color)');
+        DisplayInfo("Loading Project " + project.Name + "  ... Please wait", true, 'operationpanel',  'var(--theme-platform-color)');
 
         Interval_netprog_loadproject = setInterval(netprog_loadedproject, 300, project); //5 minutes 300000     
         project.Load();
     }
     else {
-        DisplayOperation("Project " + project.Name + " loaded", true, 'operationpanel');            
+        DisplayInfo("Project " + project.Name + " loaded", true, 'operationpanel');            
         netprog_drawproject(project, true);        
     }
     return project;
@@ -387,14 +387,14 @@ function onchange_netprog_projectselect (elt, event) {
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
 
 function netprog_update_localsite (manager) {
-
+    let site = solution.get('site');
    
     let localsite = interface_GetEntity( manager, 'Sites', 'Name', 'Local');
     if (!localsite) {
         console.log ('local site not existent')
         return;
     }
-    url_submit ('GET', 'http://www.geoplugin.net/json.gp?ip=', {} , false, 
+    url_submit ('GET',  'http://www.geoplugin.net/json.gp?ip=', {} , false, 
         function(content, values) {
             values[0].Information = JSON.parse (content); 
             values[0].IPPublic = values[0].Information.geoplugin_request;
@@ -402,7 +402,7 @@ function netprog_update_localsite (manager) {
         },
         [localsite]); 
 
-    url_submit ('GET', document.location.protocol + '//' + document.location.host + '/php/get_dname.php',{ipaddress: localsite.IPPublic} , false, 
+    url_submit ('GET', site.address + '/php/get_dname.php',{ipaddress: localsite.IPPublic} , false, 
         function (content, values) {
             localsite.AddrName = content.replace(/[\t\r\n]/gm, '');
         },
@@ -432,7 +432,7 @@ function netprog_loadproject () {
     var localsite           = MXCreateSite (manager, 'Local');
     
     
-    url_submit ('GET', 'http://www.geoplugin.net/json.gp?ip=', {} , false, 
+    url_submit ('GET', 'http//www.geoplugin.net/json.gp?ip=', {} , false, 
         function(content, values) {
             values[0].Information = JSON.parse (content); 
             values[0].IPPublic = values[0].Information.geoplugin_request;
@@ -440,7 +440,7 @@ function netprog_loadproject () {
         },
         [localsite]); 
 
-    url_submit ('GET', site.protocol + '//' + document.location.host + '/php/get_dname.php',{ipaddress: localsite.IPPublic} , false, 
+    url_submit ('GET', site.address + '/php/get_dname.php',{ipaddress: localsite.IPPublic} , false, 
         function (content, values) {
             localsite.AddrName = content.replace(/[\t\r\n]/gm, '');
         },
@@ -453,8 +453,8 @@ function netprog_loadproject () {
     getUserIP(onip, localmachine);
 
     //  url_submit ('GET', 'http://www.geoplugin.net/json.gp?ip=', {} , false, getMachineInfo, [localmachine]); 
-    //  url_submit ('GET', 'http://' + document.location.host + '/php/get_info.php', {ipaddress: localmachine.IPAddress} , false, getMachineInfo, [localmachine]); 
-    //  url_submit ('GET', 'http://' + document.location.host + '/php/get_dname.php',{ipaddress: localmachine.IPAddress} , false, getDname, [localmachine]); 
+    //  url_submit ('GET', site.address + '/php/get_info.php', {ipaddress: localmachine.IPAddress} , false, getMachineInfo, [localmachine]); 
+    //  url_submit ('GET', site.address + '/php/get_dname.php',{ipaddress: localmachine.IPAddress} , false, getDname, [localmachine]); 
 
     // WEB NAVIGATOR
 
@@ -474,7 +474,7 @@ function netprog_loadproject () {
         webservermachine    = localmachine;
     } else {
         var website  = MXCreateSite (manager, 'Web Site');
-        var ip = url_submit ('GET', 'http://' + document.location.host + '/php/get_info.php', {} , false, function(content, values) {values[0].Information = JSON.parse (content); values[0].IPPublic = values[0].Information.geoplugin_request; return values[0].IPPublic}, [website]); 
+        var ip = url_submit ('GET', site.address + '/php/get_info.php', {} , false, function(content, values) {values[0].Information = JSON.parse (content); values[0].IPPublic = values[0].Information.geoplugin_request; return values[0].IPPublic}, [website]); 
         
         var webservermachine = interface_GetEntity(netprog_manager, 'Machines', 'IPAddress', ip);    
         if (!webservermachine) {
@@ -482,7 +482,7 @@ function netprog_loadproject () {
         } 
         webserverclass  = MXCreateApplicationClass (manager, "Class:WebServer", MXApplicationClass_NetType.SERVER, MXApplicationClass_Type.EXTERNAL);
         webserver       = MXCreateApplication (manager, webserverclass, 'WebServer', webservermachine);
-        url_submit ('GET', site.protocol + '//' +  document.location.host + '/php/get_dname.php',{ipaddress: webservermachine.IPAddress} , false, getDname, [manager, webservermachine]);                 
+        url_submit ('GET', site.address + '/php/get_dname.php',{ipaddress: webservermachine.IPAddress} , false, getDname, [manager, webservermachine]);                 
     }   
     let csite = solution.get('site')
     
@@ -499,8 +499,8 @@ function netprog_loadproject () {
 
     var serversite          = MXCreateSite (manager, 'Amen VM');    
     var servermachine       = MXCreateMachine (manager, 'VP Machine', MXMachine_System.WIN32, '217.112.89.92', '', serversite);   
-    url_submit ('GET', 'http://' + document.location.host + '/php/get_info.php', {ipaddress: servermachine.IPAddress} , false, getMachineInfo, [manager, servermachine]);
-    url_submit ('GET', 'http://' + document.location.host + '/php/get_dname.php',{ipaddress: servermachine.IPAddress} , false, getDname, [manager, servermachine]);      
+    url_submit ('GET', site.address + '/php/get_info.php', {ipaddress: servermachine.IPAddress} , false, getMachineInfo, [manager, servermachine]);
+    url_submit ('GET', site.address + '/php/get_dname.php',{ipaddress: servermachine.IPAddress} , false, getDname, [manager, servermachine]);      
 
     servermachine.AddrName = 'mt4server.jurextrade.com'
     // EMV Client
@@ -629,7 +629,7 @@ function netprog_RemoveProject (project) {
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
-        TreatOperation(register_needed_label, 'operationpanel', 'red');      
+        TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
     if ($('#emv_projectsbar .box-btn-slide').hasClass('rotate-180'))    

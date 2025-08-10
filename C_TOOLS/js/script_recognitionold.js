@@ -257,14 +257,14 @@ function Recognition_set (on) {
     if (on) {
         if (CurrentRecognition)   return; 
         CurrentRecognition = on;        
-        TreatOperation("Microphone is on ");
+        TreatInfo("Microphone is on ");
         $('#button_recognition').css ('display', 'block', 'operationpanel', 'red');
 
     }
     else {
         if (!CurrentRecognition) return;
         CurrentRecognition = on;  
-        TreatOperation("Microphone is off ", 'operationpanel', 'red');      
+        TreatInfo("Microphone is off ", 'operationpanel', 'red');      
         $('#button_recognition').css ('display', '');  
         $('#overlay_recognition').remove();
         $('#button_recognition').removeClass('checked');

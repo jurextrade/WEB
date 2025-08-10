@@ -529,7 +529,7 @@ function ondblclick_chartcanvas(event, itempos, yValue, mouseXY, fullData, state
 
     
     if (symbolcanvas.Indicators.length == 0) {
-        DisplayOperation('Add an indicator to track signals')        
+        DisplayInfo('Add an indicator to track signals')        
         return;
     }
 
@@ -1047,6 +1047,8 @@ function Chart_Draw (terminal) {
 
     let canvas = document.getElementById(symbolcanvas.ID);
     if (!canvas) return;
+    if(canvas.clientWidth == 0) return;
+
     
     let period = symbolcanvas.CurrentPeriod;
     let symbol = symbolcanvas.CurrentSymbol;

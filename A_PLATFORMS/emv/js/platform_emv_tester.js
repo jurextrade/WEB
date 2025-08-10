@@ -132,8 +132,8 @@ function  onclick_emv_tester_commandgroup (elt, event) {
         case 'emv_tester_upload_transaction' :
 
             if (!solution.emv_CurrentProject) {
-                TreatOperation('Load a project to see related transactions')
-            //    onclick_sidebarmenu ('sidebar_emvprojectmanager', true);                  
+                TreatInfo('Load a project to see related transactions')
+            //    sidebarmenu_select ('sidebar_emvprojectmanager', true);                  
                 return;
             }
             let cuser = solution.user;
@@ -647,7 +647,7 @@ class CardReader {
 
         let cuser = solution.get('user')
         if (!cuser.is_registered()) {
-            TreatOperation(register_needed_label, 'operationpanel', 'red');               
+            TreatInfo(register_needed_label, 'operationpanel', 'red');               
             return;
         }
         
@@ -657,7 +657,7 @@ class CardReader {
         let transactionfile     = cuser.fileexplorer.Root +  path + "/Transactions/"  + name + '.trs';
         cuser.send ({Name: 'savefile', Values: [transactionfile,  this.RecordBuffer]}, true, 
             function (content, values) {
-                DisplayOperation("Transaction " + values[0] + " Saved", true, 'operationpanel');                             
+                DisplayInfo("Transaction " + values[0] + " Saved", true, 'operationpanel');                             
             }, 
         [name + '.trs']);  
     }
