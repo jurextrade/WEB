@@ -159,14 +159,15 @@ switch ($messagename) {
         $content       = $messagevalues[1]; 
 //        if (file_exists($filename)) {  
 
-            $fp = fopen($filename, 'w');
+        $fp = fopen($filename, 'w');
+        if ($fp) {
             fwrite($fp, $content);
             fclose($fp);
             array_push($returnmessage->Values, "ok");  
-//        } else {
-//            $returnmessage->Error = true;
-//            array_push($returnmessage->Values,  'unexisting file' . $filename);     
-//        }              
+          } else {
+            $returnmessage->Error = true;
+            array_push($returnmessage->Values,  'error on opening file' . $filename);     
+        }              
         echo json_encode($returnmessage);     
     break;
 

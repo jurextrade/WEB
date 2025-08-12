@@ -773,9 +773,9 @@ function GetIndicatorNameFromObject (object) {
 function GetSignalsFromIndicatorName (indicatorname) {
     var signalmenu = [];
 
-    for (var index = 0; index < solution.ObjectSignals.length; index++)
-        if (solution.ObjectSignals[index].objectname == indicatorname) {
-            signalmenu = solution.ObjectSignals[index].signals;
+    for (var index = 0; index < solution.PG.ObjectSignals.length; index++)
+        if (solution.PG.ObjectSignals[index].objectname == indicatorname) {
+            signalmenu = solution.PG.ObjectSignals[index].signals;
             break;
         }
     return signalmenu;
@@ -809,10 +809,10 @@ function GetActionDescriptionFromName (name) {
 }
 
 function GetSignalDescriptionFromObjectType(name, signal) {
-    for (var index = 0; index < solution.ObjectSignals.length; index++) {
-        if (solution.ObjectSignals[index].objectname == name) {
-            for (var i = 0; i < solution.ObjectSignals[index].signals.length; i++)
-                if (solution.ObjectSignals[index].signals[i].text == signal) return solution.ObjectSignals[index].signals[i].description;
+    for (var index = 0; index < solution.PG.ObjectSignals.length; index++) {
+        if (solution.PG.ObjectSignals[index].objectname == name) {
+            for (var i = 0; i < solution.PG.ObjectSignals[index].signals.length; i++)
+                if (solution.PG.ObjectSignals[index].signals[i].text == signal) return solution.PG.ObjectSignals[index].signals[i].description;
         }
     }
     return "";
@@ -821,10 +821,10 @@ function GetSignalDescriptionFromObjectType(name, signal) {
 function ReturnObjectTypeSignalDescription(objecttypename, signalname) {
     if (!objecttypename) return "";
     if (!signalname) return "";
-    for (var pos = 0; pos < solution.ObjectSignals.length; pos++) {
-        if (solution.ObjectSignals[pos].objectname == objecttypename) {
-            for (var j = 0; j < solution.ObjectSignals[pos].signals.length; j++) {
-                if (solution.ObjectSignals[pos].signals[j].text == signalname) return solution.ObjectSignals[pos].signals[j].description;
+    for (var pos = 0; pos < solution.PG.ObjectSignals.length; pos++) {
+        if (solution.PG.ObjectSignals[pos].objectname == objecttypename) {
+            for (var j = 0; j < solution.PG.ObjectSignals[pos].signals.length; j++) {
+                if (solution.PG.ObjectSignals[pos].signals[j].text == signalname) return solution.PG.ObjectSignals[pos].signals[j].description;
             }
         }
     }
@@ -833,9 +833,9 @@ function ReturnObjectTypeSignalDescription(objecttypename, signalname) {
 
 function ReturnObjectTypeSignalIndex(objecttypename, signalname) {
     var j = 1;
-    for (var index = 0; index < solution.ObjectSignals.length; index++) {
-        if (solution.ObjectSignals[index].objectname == objecttypename) {
-            if (solution.ObjectSignals[index].text == signalname) return j;
+    for (var index = 0; index < solution.PG.ObjectSignals.length; index++) {
+        if (solution.PG.ObjectSignals[index].objectname == objecttypename) {
+            if (solution.PG.ObjectSignals[index].text == signalname) return j;
             j++;
         }
     }
@@ -844,9 +844,9 @@ function ReturnObjectTypeSignalIndex(objecttypename, signalname) {
 
 function SetSignalGridFromObjectType(id, name) {
     w2ui[id].clear();
-    for (var index = 0; index < solution.ObjectSignals.length; index++) {
-        if (solution.ObjectSignals[index].objectname == name) {
-            w2ui[id].add(solution.ObjectSignals[index].signals);
+    for (var index = 0; index < solution.PG.ObjectSignals.length; index++) {
+        if (solution.PG.ObjectSignals[index].objectname == name) {
+            w2ui[id].add(solution.PG.ObjectSignals[index].signals);
             break;
         }
     }
@@ -1810,6 +1810,7 @@ function MarkerPanel_Update (terminal, show, setflag) {
 
     if (chartpanel_fromcanvas(symbolcanvas.ID).length == 0) return;
     let chartpanelid    = chartpanel_fromcanvas(symbolcanvas.ID)[0].id;
+
     let panelid         = $('#' + chartpanelid + ' .markerpanel').attr('id');
     let chartpanel      = sb.get (sb.interface, 'id', chartpanelid)[0];
 
@@ -1856,7 +1857,9 @@ function ChartPanel_Update(symbolcanvas) {
 
 function GChartPanel_UpdatePeriod (symbolcanvas, period) {
 
-    var chartpanelid = chartpanel_fromcanvas(symbolcanvas.ID)[0].id;
+    if (chartpanel_fromcanvas(symbolcanvas.ID).length == 0) return;
+    let chartpanelid = chartpanel_fromcanvas(symbolcanvas.ID)[0].id;
+
     sb.group_select('#' + chartpanelid + ' #' + period) ;  
 }
 
@@ -1865,7 +1868,6 @@ function GChartPanel_Update (terminal) {
     let symbolcanvas = solution.GetCanvasFromTerminal(terminal);
 
     if (chartpanel_fromcanvas(symbolcanvas.ID).length == 0) return;
-
     let chartpanelid = chartpanel_fromcanvas(symbolcanvas.ID)[0].id;
     
     sb.item_set('#' + chartpanelid +  ' #seperator', symbolcanvas.Seperator);
@@ -2428,7 +2430,7 @@ function PickerObjectsPanel_Update (objectname, onclick) {
     var PG = solution.GetPGFromTerminal ();
     if (!PG || PG.Objects.length == 0) {
         console.log ('picker on not loaded project')
-        objects = solution.Objects;
+        objects = solution.PG.Objects;
     } else {
         objects = PG.Objects;
     }          
@@ -2659,7 +2661,7 @@ function PickerFieldsPanel_Update (fieldtype) {
 
     $('.PickerValues').html (content);
     $('.RuleTitles .Items').removeClass('active');    
-    $('.RuleTitles .Fields').addClass('active'); 
+    $('.RuleTitles .PG.Fields').addClass('active'); 
 
     $('.PickerValuesPanel').css ("display", 'flex');  
     $('.PickerSubValuesPanel').css ("display", 'none');  
@@ -4093,9 +4095,9 @@ var IndicatorSignalsTable = {
 
 function GetSignalsTableFromIndicatorType (indicatortype) {
     var signalstable = [];
-    for (var index = 0; index < solution.ObjectSignals.length; index++) {
-        if (solution.ObjectSignals[index].objectname == indicatortype.name) {
-            var signals = solution.ObjectSignals[index].signals;
+    for (var index = 0; index < solution.PG.ObjectSignals.length; index++) {
+        if (solution.PG.ObjectSignals[index].objectname == indicatortype.name) {
+            var signals = solution.PG.ObjectSignals[index].signals;
             for (var i = 0; i < signals.length; i++) {
                 signalstable.push ([signals[i].text, signals[i].description, signals[i].type]);
             }

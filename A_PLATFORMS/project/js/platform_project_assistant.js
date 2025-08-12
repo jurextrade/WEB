@@ -147,23 +147,23 @@ function project_assistant_panel (strategy) {
                         StrategyAssistantGuidePanel (STEP_STRATEGYNAME) +     
     '               </div>' +
     '               <div class="sb_column col-8">' +
-    '                   <div id="strategy_assistant_generaldescripion" class="sb_column" >' + 
-    '                       <label class="sb_widget-title"> General description</label>' +
-                            StrategyAssistantStrategyName (strategy) +   
-    '                       <div class="sb_formgroup" >' +
-    '                           <label>Indicators</label>' +    
-                                sb.render({id: 'indicators',        item: 'Existing Indicators',  type: 'button', class: 'sb_mbutton', icon: icon_sort, 
-                                            events: {onclick: 'openPopupPickerIndicator(event, undefined, undefined, \'onclick_selectindicator(this, event);IndicatorSelect(this,event)\')'},   title: 'Add Existing Indicator to Chart'}) +
-                                StrategyAssistantIndicators () +
+    '                   <div id="strategy_assistant_generaldescripion" class="sb_panel  sb_column" >' + 
+    '                       <div class= "sb_column">' +
+    '                           <label class="sb_widget-title"> General description</label>' +
+                                StrategyAssistantStrategyName (strategy) +   
+    '                           <div class="sb_formgroup" >' +
+    '                               <label>Indicators</label>' +    
+                                    sb.render({id: 'indicators',        item: 'Existing Indicators',  type: 'button', class: 'sb_mbutton', icon: icon_sort, 
+                                                events: {onclick: 'openPopupPickerIndicator(event, undefined, undefined, \'onclick_selectindicator(this, event);IndicatorSelect(this,event)\')'},   title: 'Add Existing Indicator to Chart'}) +
+                                    StrategyAssistantIndicators () +
+    '                           </div>' +
+    '                           <div class="sb_formgroup">' +
+    '                               <label></label>' +    
+    '                               <div id="strategy_assistant_addedindicators"></div>' +       
+    '                           </div>' +  
     '                       </div>' +
-    '                       <div class="sb_formgroup">' +
-    '                           <label></label>' +    
-    '                           <div id="strategy_assistant_addedindicators"></div>' +       
-    '                       </div>' +  
-    '                       <label class="sb_widget-title">Description</label>' +    
-    '                       <div class="sb_formgroup sb_pane">' +
-                                sb.render (assistantdescriptionpanel) +
-    '                       </div>' +                                 
+    // '                       <label class="sb_widget-title">Description</label>' +    
+                            sb.render (assistantdescriptionpanel) +
     '                   </div>' +
     '               </div>' +    
     '           </div>' +    
@@ -451,20 +451,26 @@ function StrategyAssistantGuidePanel (step) {
         '   <div class="card-body">' +
         '       <div class="card-title">Project Creation</div>' +        
  
-        '       <div class="card-text">To create customized Strategies, indicators, or conditions you will need to create a new workspace or open an existing one.<br>' +
-        '       The creation of your customized workspace will enable you to run multiple strategies on the same chart.</div>' +
-        '       <div class="card-text">You can create many strategies in a project</div>' +
-        '       <br><br><br>' +
-        '       <li class="card-text">Select the Demo project or Create One</li>' +
-        '       <br><br><br>' +
-        '   </div>';    
-
+        '       <div class="card-text">' +
+        '           <div class="col alert alert-primary alert-dismissible fade show" role="alert">' +
+        '              To create customized Strategies, indicators, or conditions you will need to create a new workspace or open an existing one.<br>' +
+        '               The creation of your customized workspace will enable you to run multiple strategies on the same chart.<br>' +
+        '               You can create many strategies in a project<br>' +
+        '               <br><br><br>' +
+        '               <li class="card-text">Select the Demo project or Create One</li>' +
+        '               <br><br><br>' +
+        '           </div>';            
+        '       </div>';    
+        '   </div>';  
         bodycontent1 = 
         '   <div class="card-body">' +
-        '        <div class="card-text">You can test independantly each strategy by generating an MQ4 File for each one.</div>' + 
-        '        <div class="card-text">Here you can view the Generated MQ4 Files of your project' +
-        '           <button class="assistant_button sb_mbutton noactivate" title="View Generated MQ4 Files" type="button" onclick="onclick_AssistantViewMQ4Files(this, event)">' + 
-        '           <i class=icon_mt4expert></i><label class="sb_label">MQ4 Expert Advisors</label></button>'+
+        '        <div class="card-text">' + 
+        '           <div class="col alert alert-primary alert-dismissible fade show" role="alert">' +
+        '               You can test independantly each strategy by generating an MQ4 File for each one.</div>' + 
+        '               Here you can view the Generated MQ4 Files of your project' +
+        '               <button class="assistant_button sb_sbutton noactivate" title="View Generated MQ4 Files" type="button" onclick="onclick_AssistantViewMQ4Files(this, event)">' + 
+        '               <i class=icon_mt4expert></i><label class="sb_label">MQ4 Expert Advisors</label></button><br><br>'+
+        '           </div>' +
         '        </div>' +
         '   </div>';       
 
@@ -475,42 +481,40 @@ function StrategyAssistantGuidePanel (step) {
             '   <div class="card-body">' +   
             '       <div class="card-title">Strategy Initialisation</div>' +  
 
-            '       <div class="card-text">A Strategy is Created with Default Values</div>' + 
-            '       <br>' +                 
-            '       <div class="card-text">Give the name of your Strategy</div>' +
-            '       <br>' +            
-            '       <div class="card-text">The Initial Balance is required for local testing. In case you do not precise the size of your orders in the strategy, the lot size is calculated as 2% of your account balance</div>' +
-            '       <br>' +                        
-            '       <div class="card-text">The Time Frame also is required for local testing, At any time during the creation of your strategy, you can see the behaviour of your strategy on the chart' +
-            '       </div>' +
-            '        <div class="card-text">Testing your strategy is done in the Tester Panel' +
-            '           <button class="assistant_button sb_mbutton noactivate" title="Tester" type="button" onclick="onclick_AssistantTester(this, event)">' + 
-            '           <i class="' + icon_play + '"></i><label class="sb_label">Tester</label></button>'+
-            '        </div>' +
-            '       <br>' +  
-            '       <div class="card-text">By default the chart draws the symbol EURUSD from history, you can precise a yahoo ticker in the tester Panel</div>' +
-            '       <br>' +            
-            '       <div class="card-text">Describe your strategy : Describing your strategy makes a faster realisation</div>' +
+            '       <div class="card-text">' +
+            '           <div class="col alert alert-primary alert-dismissible fade show" role="alert">' +            
+            '               A Strategy is Created with Default Values<br>' +                 
+            '               Give the name of your Strategy<br><br>' +            
+            '               The Initial Balance is required for local testing. In case you do not precise the size of your orders in the strategy, the lot size is calculated as 2% of your account balance<br>' +                        
+            '               The Time Frame also is required for local testing, At any time during the creation of your strategy, you can see the behaviour of your strategy on the chart<br>' +
+            '               Testing your strategy is done in the Tester Panel' +
+            '               <button class="assistant_button sb_sbutton noactivate" title="Tester" type="button" onclick="onclick_AssistantTester(this, event)">' + 
+            '               <i class="' + icon_play + '"></i><label class="sb_label">Tester</label></button><br><br><br><br>' +  
+            '               By default the chart draws the symbol EURUSD from history, you can precise a yahoo ticker in the tester Panel<br>' +            
+            '               Describe your strategy : Describing your strategy makes a faster realisation' +
+            '           </div>'+                
+            '       </div>'+                
             '   </div>';                
+
             bodycontent1 = 
-            '   <div class="card-body">' +               
-            '       <div>You can precise Indicators to use in the strategy at any time or here</div>' +
-            '       <br>' +             
-            '       <div class="card-text">Drag and Drop your indicators on the chart using chart view' +
-            '           <button class="assistant_button sb_mbutton noactivate" title="Chart View"  type="button"  onclick="onclick_AssistantViewChart(this, event)">' +
-            '           <i class="' + icon_chart + '"></i><label class="sb_label">Chart View</label></button>' +             
-            '       </div>' +                    
-            '       <div class="card-text">On the chart you can track signals for each indicator added to the chart' +
-            '       <button class="assistant_button sb_mbutton noactivate" title="Show Sinals Panel"  type="button" onclick="onclick_signalstutorial(this, event)">' +
-            '        <i class="' + icon_signal + '"></i><label class="sb_label">Signals View</label></button></div>' +
-            '       <div class="card-text">Double click in the Chart to spot the bar corresponding signals' +
-            '           <button class="assistant_button sb_mbutton noactivate" title="Tracker Panel"  type="button" onclick="onclick_trackerstutorial(this, event)">' +
-            '           <i class="' + icon_track + '"></i><label class="sb_label">Tracker View</label></button>' +
-            '       </div>' +
-            '       <div class="card-text">In Tracker you can combine Signals with logical operators And Or and marks it on the chart. You can memorize the result as a condition for reusability</div>' +
-            '       <div class="card-text">To see the created conditions' +
-            '           <button class="assistant_button sb_mbutton noactivate" title=""  type="button">' +
-            '           <i class="' + icon_condition + '"></i><label class="sb_label">Condition View</label></button>' + 
+            '   <div class="card-body">' +  
+            '       <div class="card-text">' +                         
+            '           <div class="col alert alert-primary alert-dismissible fade show" role="alert">' +            
+            '               You can precise Indicators to use in the strategy at any time or here<br>' +             
+            '               Drag and Drop your indicators on the chart using chart view' +
+            '               <button class="assistant_button sb_sbutton noactivate" title="Chart View"  type="button"  onclick="onclick_AssistantViewChart(this, event)">' +
+            '               <i class="' + icon_chart + '"></i><label class="sb_label">Chart View</label></button><br><br>' +             
+            '               On the chart you can track signals for each indicator added to the chart' +
+            '               <button class="assistant_button sb_sbutton noactivate" title="Show Sinals Panel"  type="button" onclick="onclick_signalstutorial(this, event)">' +
+            '               <i class="' + icon_signal + '"></i><label class="sb_label">Signals View</label></button><br><br><br>' +
+            '               Double click in the Chart to spot the bar corresponding signals' +
+            '               <button class="assistant_button sb_sbutton noactivate" title="Tracker Panel"  type="button" onclick="onclick_trackerstutorial(this, event)">' +
+            '               <i class="' + icon_track + '"></i><label class="sb_label">Tracker View</label></button><br><br>' +
+            '               In Tracker you can combine Signals with logical operators And Or and marks it on the chart. You can memorize the result as a condition for reusability<br>' +
+            '               To see the created conditions' +
+            '               <button class="assistant_button sb_sbutton noactivate" title=""  type="button">' +
+            '               <i class="' + icon_condition + '"></i><label class="sb_label">Condition View</label></button><br><br>' + 
+            '           </div>' +
             '       </div>' +
             '   </div>';                                  
             return bodycontent + bodycontent1;                           
@@ -529,12 +533,14 @@ function StrategyAssistantGuidePanel (step) {
             bodycontent =   
             '   <div class="card-body">' +
             '       <div class="card-title">Strategy Profit</div>' +                  
-            '       <div class="card-text">In this Section you can precise the Stop Loss,Take Profit and Trailing Stop Default Values</div>' +                
-            '       <div class="card-text">This can be done on the whole strategy where the value is precised in amount or on each order and in this case it is precised in Pips</div>' +                
-            '       <br>' +              
-            '       <div class="card-text">For a variable amount like for instance the ATR value, it must be precised in Rules section</div>' +
-            '       <br>' +              
-            '       <div class="card-text">Check the Profit SL/strategy section in Properties View<button class="assistant_button sb_mbutton noactivate" title=""  type="button"><i class="' + icon_helper + '"></i>Properties View</button></div>' +
+            '       <div class="card-text">' +
+            '           <div class="col alert alert-primary alert-dismissible fade show" role="alert">' +                      
+            '               In this Section you can precise the Stop Loss,Take Profit and Trailing Stop Default Values<br>' +                
+            '               This can be done on the whole strategy where the value is precised in amount or on each order and in this case it is precised in Pips<br><br>' +              
+            '               For a variable amount like for instance the ATR value, it must be precised in Rules section<br>' +              
+            '               Check the Profit SL/strategy section in Properties View<button class="assistant_button sb_sbutton noactivate" title=""  type="button"><i class="' + icon_helper + '"></i>Properties View</button><br><br><br>' +
+            '           </div>' +             
+            '       </div>' +
             '   </div>';                       
            return bodycontent                      
         break;     
@@ -542,10 +548,13 @@ function StrategyAssistantGuidePanel (step) {
             bodycontent =   
             '   <div class="card-body">' +
             '       <div class="card-title">Strategy Exit Properties</div>' +               
-            '       <div class="card-text">The Exit Properties are related to the actions : Exit, Exit Buy and Exit Sell</div>' +                
-            '       <div class="card-text">Actions are described in the next section. Exit Action finish the strategy, all trades are closed, Exit Buy close all buy orders, no more buy trades can be performed. Same for Exit Sell</div>' +                
-            '       <br>' +  
-            '       <div class="card-text">When you precise the minimum profit, the exit action will no longer have any effect unless it has the profit that you precise here</div>' +               
+            '       <div class="card-text">' +
+            '           <div class="col alert alert-primary alert-dismissible fade show" role="alert">' +                 
+            '               The Exit Properties are related to the actions : Exit, Exit Buy and Exit Sell<br>' +                
+            '               Actions are described in the next section. Exit Action finish the strategy, all trades are closed, Exit Buy close all buy orders, no more buy trades can be performed. Same for Exit Sell<br>' +  
+            '               When you precise the minimum profit, the exit action will no longer have any effect unless it has the profit that you precise here' +
+            '           </div>' +   
+            '       </div>' +                              
             '   </div>';     
             return bodycontent                             
         break;     
@@ -553,26 +562,30 @@ function StrategyAssistantGuidePanel (step) {
             bodycontent =   
             '   <div class="card-body">' +
             '       <div class="card-title">Strategy Actions</div>' +                 
-            '       <div class="card-text"></div>' +                
-            '       <br>' +  
-            '       <div class="card-text">The system trading actions :</div>' +                
-            '       <br>' +              
-            '       <div class="card-text">Actions used in this strategy</div>' +
-            '       <br><br>' +
-                    StrategyAssistantActionsPanel() +                
+            '       <div class="card-text">' +  
+            '           <div class="col alert alert-primary alert-dismissible fade show" role="alert">' +    
+            '               The system trading actions :<br><br>' +              
+            '               Actions used in this strategy <br><br>' +
+                            StrategyAssistantActionsPanel() +      
+            '           </div>' +                                         
+            '       </div>' +                              
             '   </div>';     
             return bodycontent        
         break;     
         case STEP_STRATEGYSCHEDULE :
             bodycontent =   
             '   <div class="card-body">' +
-            '       <div class="card-title">Strategy Rules</div>' +              
-            '       <div class="card-text">In this section you precise the starting date of the strategy</div>' +
-            '       <div class="card-text">Frequency per Day :</div>' +  
-            '       <div class="card-text">Delay :</div>' +  
-            '       <div class="card-text">One Launch per Bar :</div>' +  
-            '       <div class="card-text">Frequency per Day :</div>' +  
-            '       <div class="card-text">Date Format :</div>' +                       
+            '       <div class="card-title">Strategy Rules</div>' +      
+            '       <div class="card-text">' +  
+            '           <div class="col alert alert-primary alert-dismissible fade show" role="alert">' +                        
+            '               In this section you precise the starting date of the strategy<br>' +
+            '               Frequency per Day :<br>' +  
+            '               Delay :<br>' +  
+            '               One Launch per Bar :<br>' +  
+            '               Frequency per Day :<br>' +  
+            '               Date Format :<br>' +  
+            '           </div>' +                                     
+            '       </div>' +                              
             '   </div>';     
             return bodycontent               
         break;     
@@ -580,9 +593,12 @@ function StrategyAssistantGuidePanel (step) {
             bodycontent =   
             '   <div class="card-body">' +
             '       <div class="card-title">Strategy Compilation</div>' +                  
-            '       <div class="card-text">Ready to generate an MQ4 Expert of your strategy and test it on you MT4 Platform</div>' +  
-            '       <br>' +                        
-            '       <div class="card-text">To View the Generated MQ4 File of your strategy<button class="assistant_button sb_mbutton noactivate" title=""  type="button"><i class=icon_mt4expert></i>MQ4 Expert Advisors</button></div>' +
+            '       <div class="card-text">' +
+            '           <div class="col alert alert-primary alert-dismissible fade show" role="alert">' +                 
+            '               Ready to generate an MQ4 Expert of your strategy and test it on you MT4 Platform<br>' +                        
+            '               To View the Generated MQ4 File of your strategy<button class="assistant_button sb_sbutton noactivate" title=""  type="button"><i class=icon_mt4expert></i>MQ4 Expert Advisors</button><br><br><br>' +
+            '           </div>' +                
+            '       </div>' +                              
             '   </div>';     
             return bodycontent        
         break;    

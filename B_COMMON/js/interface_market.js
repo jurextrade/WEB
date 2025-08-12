@@ -42,7 +42,7 @@ var market_newsgroup = {
     class: 'sb_marginleft', 
     items:
         [
-            {id: 'newslink',    type: 'link', item:'', class: 'NewsLink', attributes: {readonly:''}, events: {onclick: 'onclick_newsLink(event)'}, title: 'Economic News of the week'}  
+            {id: 'newslink',    type: 'link', item:'', class: 'NewsLink', attributes: {readonly:''}, events: {onclick: 'onclick_newsLink(this, event)'}, title: 'Economic News of the week'}  
         ]
 }   
 

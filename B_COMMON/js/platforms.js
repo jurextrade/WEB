@@ -1,446 +1,185 @@
 
-const emv_default_projectname         = "DemoProject";
-const project_default_projectname     = "DemoProject";
-const netprog_default_projectname     = "DemoProject";
-const tradedesk_default_terminalname  = "FP Markets MT4 Terminal";
-
-const emv_default_router_name   = 'localhost';
-const emv_default_router_port     = 5080;
-const emv_default_router_sport    = 5443;
-const emv_default_router_reconnection   = true;
-
-const project_default_server_name   = 'localhost';
-const project_default_server_port     = 2080;
-const project_default_server_sport     =2443;
-const project_default_server_reconnection   = true;
-
-const tradedesk_default_server_name   = 'localhost';
-const tradedesk_default_server_port   = 2080;
-const tradedesk_default_server_sport  = 2443;
-const tradedesk_default_server_reconnection   = true;
-
-const netprog_default_server_name   = 'localhost';
-const netprog_default_server_port     = 4080;
-const netprog_default_server_sport    = 4443;
-const netprog_default_server_reconnection   = true;
-
-//---------------------------------------------------- MAIN SIDE BAR    ------------------------------------------------ 
-
-function ondragstart_treeitem (elt, event) {
-    var name         = $(elt).find('label').html();
-    var selector     = $(elt).attr('selector');   
-
-    switch (selector) {
-        case 'selectindicator' :
-            event.dataTransfer.setData("text/plain", selector + '_' + name);
-            break;
-        case 'project_selectstrategy' :
-            event.dataTransfer.setData("text/plain", selector + '_' + name);
-            break;
-        case 'project_selectproject' :
-            event.dataTransfer.setData("text/plain", selector + '_' + name);
-            break;
-        case 'selectcondition' :
-            event.dataTransfer.setData("text/plain", selector + '_' + name);
-            break;            
-    }
-}
-
-function onclick_treeitem(elt, event) {
-
-    var name        = $(elt).find('label').html();
-    var selector    = $(elt).attr('selector');   
-    selector_select(selector, name)
-}
-
-function oncontextmenu_treeitem (elt, event) {
-
-    var name        = $(elt).find('label').html();
-    var selector    = $(elt).attr('selector');   
 
 
-    switch (selector) {
-        case "project_selectproject" :
-            var menu = ReturnProjectMenu ();
-        break;
-        case "project_selectstrategy" :
-            var menu = ReturnStrategyMenu ();
-        break;
-        default:
-            return;
-        break;    
-    }
-   sb.overlay({
-        rootelt: $(elt).closest('.sb_root'),     
-        event: event,                
-        pageX: event.pageX,
-        pageY: event.pageY,
-        par : elt.innerText,
-     //   treeparentid: treeparentid,
-        onselect: function (elt, itemtext) {
-            switch (parseInt(elt.id)) {
-                case MENU_PROJECT_RENAME_ID :
-                    var project = solution.project_GetProjectFromName(itemtext);
-                    OnRenameProject (RemoveProject, project);
-                break;
-                case MENU_PROJECT_REMOVE_ID :
-                    var project = solution.project_GetProjectFromName(itemtext);
-                    OnRemoveProject (RemoveProject, project);
-                break;
-                case MENU_STRATEGY_RENAME_ID :
-                    var strategy = solution.CurrentProject.PG.GetStrategyFromName(itemtext);
-                    if (!strategy) return;
+//------------------------------------------------------------------- HEADER BAR ---------------------------------------------------------------------
 
-                    OnRenameStrategy(solution.CurrentProject, RenameStrategy, strategy);
-                break;                        
-                case MENU_STRATEGY_COPY_ID :
-                    var strategy = solution.CurrentProject.PG.GetStrategyFromName(itemtext);
-                    if (!strategy) return;
-
-                    solution.StrategyClipBoard = strategy.Clone();
-                break;
-                case MENU_STRATEGY_CUT_ID :
-                    var strategy = solution.CurrentProject.PG.GetStrategyFromName(itemtext);
-                    if (!strategy) return;
-
-                    solution.StrategyClipBoard = strategy.Clone();
-                    DeleteStrategy(strategy);
-                break;
-                case MENU_STRATEGY_PASTE_ID :
-                    PasteStrategy(solution.StrategyClipBoard);
-                    break;
-                case MENU_STRATEGY_REMOVE_ID :
-                    var strategy = solution.CurrentProject.PG.GetStrategyFromName(itemtext);
-                    if (!strategy) return;
-
-                    OnDeleteStrategy(solution.CurrentProject, DeleteStrategy, strategy);
-                break;
-                case MENU_STRATEGY_EXPORT_ID:
-                    break;
-            }                    
-        },        
-        html: sb.menu (menu)
-    });    	
-}
-
-function AddSelectItem (selectid, name) {
-    var elt1 = document.getElementById('selectid');         
-    elt1.insertAdjacentHTML('beforeend','<option value="' + name + '">' + name + '</option>');        
-}
-
-//------------------------------------------------------------------- TREE SIDEBAR---------------------------------------------------------------------
-
-function selector_select (selector, name, type) {
-    switch (selector) {
-        case 'selectindicator' :
-            var indicatorname =name;
-            if (indicatorname == "Create Indicator") {
-                SelectIndicator();
-            } else {
-                sb.tree_selectitem ('indicatorssidebar',name);                    
-                openPopupObject (indicatorname);
-            }
-               
-        return;
-
-        case 'selectcondition' :
-            var conditionname =name;
-            if (conditionname == "Create Condition") {
-                SelectCondition();
-            } else {
-                 openPopupCondition(conditionname);
-            }
-        return;
-
-        case 'selectexpert' :
-            var expertfile =name;
-            OnDownloadExpert (DownloadStrategy, expertfile)
-            return;
-        
-        case 'sidebar_newstrategy':
-            SelectNewStrategy();
-        break;
-        
-        case 'sidebar_newproject':
-            SelectNewProject();
-        break;
-
-        case 'project_selectstrategy' :
-            var strategyname =name;
-            var strategy = solution.CurrentProject.PG.GetStrategyFromName(strategyname);
-            if (strategy == CurrentStrategy) return strategy;
-            return project_selectstrategy(strategy);
-
-        case 'project_selectproject' :
-            var projectname =name;
-            var project = solution.project_GetProjectFromName(projectname);
-            if (project == solution.CurrentProject) return project;
-            return project_selectproject(project);
-
-        case 'netprog_selectproject' :
-            var projectname =name;
-            var project = solution.netprog_GetProjectFromName(projectname);
-            if (project == solution.netprog_CurrentProject) return project;
-            return netprog_selectproject(project);
+function onclick_headerlogo (elt, event) {
     
-        case 'emv_selectproject' :
-            var projectname =name;
-            var project = solution.emv_GetProjectFromName(projectname);
-            if (project == solution.emv_CurrentProject) return project;
-            return emv_selectproject(project);
-
-        case 'tradedesk_selectterminal' :
-            var terminaltype = 'Terminal';
-            var terminal = solution.GetTerminalFromNameType (name, terminaltype);
-            return tradedesk_selectterminal(terminal);
-
-        case 'option_selectterminal' :
-            var terminals = solution.GetTerminalsFromName (name);
-            var terminal;
-            for (var i = 0; i < terminals.length; i++) {
-                if (terminals[i].DataPath == '//Main') continue;
-                terminal = terminals[i];   // terminal has priority
-            }
-            return option_selectterminal(terminal);
-    }
 }
 
-function onclick_slidehideotherbox (elt) {
-    if (!$(elt).hasClass ('rotate-180')) // opened nothing to do apart closing it
-        return; 
+function onclick_headerbaritems (elt, event) {
+    let attr     = $(elt).attr('rootpname');
+    let ui       = solution.get('ui')
 
-    var rootelt = $(elt).closest('.sb_box').parent();
-    var links = $(rootelt).find ('.sb_boxheader .box-btn-slide');
-    var linksbefore = [];
+    let platform = ui.platform_get('pname', attr);
+    ui.platform_select (platform.pname);
+}
 
-    for (var i = 0; i < links.length; i++) {
-        if (links[i] != elt) {
-            linksbefore.push (links[i]);
+function onclick_rightsidebarmenu (id, show) {
+    if (show == undefined) {   //toggle
+        if ($('#' + id).hasClass('checked')) {
+            show = 0;
         }
         else {
-            break;
+            show = 1;
         }
     }
-    $.each(linksbefore, function (index, link) {
-        if (link != elt) {
-            if (!$(link).hasClass ('rotate-180')) { //opened
-                $(link).toggleClass('rotate-180').closest('.sb_box').find('.sb_boxbody').slideToggle();         // so close it       
-            } 
-        }
-    });   
-}
+    let panelid = id.replace("sidebar", "sidebarpanel");
+    let psidebarpanel   =  $('#' + panelid).parent ();    
 
-//------------------------------------------------------------------------- BAR PANEL -------------------------------------------------------------------------
-
-function Selection_clear () {
-    if (window.getSelection) {
-        window.getSelection().removeAllRanges();
-    } else 
-    if (document.selection) {
-        document.selection.empty();    
-    }
-}
-
-//------------------------------------------------------------------------- BOTTOM PANEL -------------------------------------------------------------------------
-
-const BOTTOMPANEL_HEIGHT   = 200;
-const BOTTOMPANEL_FLATSIZE = 35;
-
-function BottomPanel_Flat (platform, flat, setflag) {
-
-    let dragelth    = $('#' + platform.pname + '_mainpanel_drag');   
-    let bottomelt = dragelth[0].nextElementSibling; 
-    let topelt = dragelth[0].previousElementSibling
-
-    let sb_bottomidarray   = sb.get(sb.interface, 'id', bottomelt.id)
-    if (sb_bottomidarray.length == 0) {
-        return;
-    }
-    let sb_bottom = sb_bottomidarray[0];
-    
-    let sb_topidarray   = sb.get(sb.interface, 'id', topelt.id)
-    if (sb_topidarray.length == 0) {
-        return;
-    }
-    let sb_top = sb_topidarray[0];
-
-
-    let isflat = true;
-
-    if ($(bottomelt).find('.box-btn-slide').hasClass ('rotate-180')) {
-        isflat = true;
-    } else {
-        isflat = false;
-    }
-
-    if (!defined (flat)) {
-        flat = !isflat;
+    if (show == 1) {
+        rightsidebarpanel_select(psidebarpanel, id);    
     } else    
-    if (flat == isflat) {
-        return;
-    }    
-    if (!defined(sb_bottom.flatsize)) {
-        sb_bottom.flatsize = BOTTOMPANEL_FLATSIZE;
+    if (show == 0) {
+        rightsidebarpanel_hide(psidebarpanel);            
     }
-    
-    if (!defined(sb_bottom.bottomheight)) {
-        sb_bottom.bottomheight = BOTTOMPANEL_HEIGHT;
-    }    
-    sb_bottom.flat = flat;        
+}
 
-    let set = (defined(setflag) ? setflag : false);
 
-    if (flat) {   
-        sb_bottom.bottomheight = $(bottomelt).height(); 
-        $(bottomelt).height(sb_bottom.flatsize);
-        if(set) {
-            $(bottomelt).find('.box-btn-slide').addClass ('rotate-180');     
+function rightsidebarpanel_hide (psidebarpanel) {
+    let psidebarmenu    = psidebarpanel.next(); 
+    let toresize        = psidebarpanel.hasClass('pinned')
+
+    psidebarpanel.css ({'transition':''});
+
+    let sbpanels = psidebarpanel.children ();
+    $.each(sbpanels, function (index, panel) {
+        if (index != 0) {
+            $(panel).removeClass("sb_active");
+            $(panel).addClass("sb_none");        
         }
-        $(bottomelt).find('.box-btn-fullscreen').addClass ('sb_none');            
-        dragelth.addClass('sb_none');               
-    }
-    else {
-        $(bottomelt).height(sb_bottom.bottomheight);
-        if(set) {
-            $(bottomelt).find('.box-btn-slide').removeClass ('rotate-180');                  
-        }
-        $(bottomelt).find('.box-btn-fullscreen').removeClass ('sb_none');                  
-        dragelth.removeClass('sb_none');     
-    }
-    sb.resize(sb_bottom)    
-    sb.resize(sb_top)        
-}
-
-function BottomPanel_Expand (platform, expand) {
-
-    let dragelth    = $('#' + platform.pname + '_mainpanel_drag');   
-    let bottomelt   = dragelth[0].nextElementSibling; 
-    let topelt      = dragelth[0].previousElementSibling
-
-    let sb_bottomidarray   = sb.get(sb.interface, 'id', bottomelt.id)
-    if (sb_bottomidarray.length == 0) {
-        return;
-    }
-    let sb_bottom = sb_bottomidarray[0];
-
-    let sb_topidarray   = sb.get(sb.interface, 'id', topelt.id)
-    if (sb_topidarray.length == 0) {
-        return;
-    }
-    let sb_top = sb_topidarray[0];
-    
-
-    if (expand) {   
-        sb_bottom.bottomheight = $(bottomelt).height();         
-        $(bottomelt).css('height', 'calc(100% - 35px)');
-
-        $(bottomelt).find('.box-btn-fullscreen').addClass ('sb_none');  
-        $(bottomelt).find('.box-btn-compressscreen').removeClass ('sb_none');    
-        $(bottomelt).find('.box-btn-slide').addClass ('sb_none');                     
-        dragelth.addClass('sb_none');               
-    }
-    else {
-        
-        $(bottomelt).height(sb_bottom.bottomheight);     
-
-        $(bottomelt).find('.box-btn-fullscreen').removeClass ('sb_none');  
-        $(bottomelt).find('.box-btn-compressscreen').addClass ('sb_none');  
-        $(bottomelt).find('.box-btn-slide').removeClass ('sb_none');                     
-        dragelth.removeClass('sb_none');               
-    }
-    sb.resize(sb_bottom)
-    sb.resize(sb_top)        
-
-}
-
-function onclick_controlsbottompanel (elt) {
-    let ui       = solution.get('ui') 
-    let platform = ui.currentplatform;
-    if (!platform) {
-        return;
-    }
-    switch (elt.id) {
-        case 'slide':
-            BottomPanel_Flat (platform);
-        break;
-        case 'fullscreen':
-            BottomPanel_Expand (platform, true);
-        break;
-        case 'compressscreen':
-            BottomPanel_Expand (platform, false);
-        break;
-
-    }
-}
-
-
-function bottompanel_select (platform, tabid) { 
-    if (!platform) {
-        return;
-    }
-    $('#' +  platform.pname + '_bottomtabs' +  ' #' + CSS.escape(tabid)).tab('show');    
-    BottomPanel_Flat (platform, false ,true);    
-}
-//----------------------------------------------------  ASSISTANT PANEL    ------------------------------------------------   
-
-function onclick_assistant_nextprev(elt, event) {
-
-    let assistantelet  = $(elt).parent().parent().parent().find('.assistant_panel ');
-    let assistantid    = $(assistantelet).attr('id');
-
-    let idstep       = assistantelet.find('.current a').attr('id')
-    let nextstep = +idstep.slice(-1) + 1;
-    let prevstep = +idstep.slice(-1) - 1;
-
-    if ($(elt).hasClass ('next')) {
-        if (nextstep >= 4) {
-            return;
-        }            
-        event.preventDefault(); 
-        $('#' + assistantid + '-t-' + nextstep).trigger('click');                                
-    }
-    else {
-        if (prevstep < 0) {
-            return;
-        }            
-        event.preventDefault();            
-        $('#' + assistantid + '-t-' + prevstep).trigger('click');                                
-    }
-}
-
-function ProfilePanel () {
-    var content =    
-'       <div id="profilepanel" class="sb_column">' +
-            ContactPanel () +
-'       </div>';
-    return content;
-}
-
-
-function ContactPanel () {
-    var content =    
-       `<div>This site is still under development</div> 
-       <div>I can assist you in software developments</div> 
-       <div>You can check other developements 
-            <button id="Platforms" class="sb_sbutton sb_link" onclick="onclick_rightsidebarmenu('rightsidebar_solution', 1);event.stopPropagation()" title="See other Platforms"> <i class="fas fa-download"></i> <label class="sb_label">Platforms</label></button>       
-       </div>
-       <br>
-       <div>Please feel free to contact me 
-       </div>
-       <br><p>JUREXTRADE<br><span style="line-height: 1.5;">Gabriel Jureidini</span><br><span style="line-height: 1.5;">Paris-France</span></p>
-       <label><i class="fas fa-envelope"></i> Email<br><span style="line-height: 1.5;">contact@jurextrade.com</span></label>`
-
-    return content;
-}
-
-function openPopupContact () {
-    sb.render ({
-        header: 'Contact', 
-        id:'popupcontact',
-        type:'modal',
-        resizable: true,
-        body: ContactPanel(),
-        footer: '<button data-bs-dismiss="modal" class="sb_mbutton">Close</button>',
     });
+
+    let sbmenus  = psidebarmenu.find('.sb_link');
+
+    $.each(sbmenus, function (index, menu) {
+        $(menu).removeClass("checked");
+    });
+
+    psidebarpanel.removeClass('toggled')
+
+    if (toresize) {0
+        sb.resize(sb.interface);        
+    }
 }
 
+
+function rightsidebarpanel_select (psidebarpanel, id) {
+    let sidebarmenu         = $('#' + id);    
+    let psidebarmenu    = psidebarpanel.next(); 
+    let toresize        = psidebarpanel.hasClass ('pinned')
+
+        
+    let sbpanels = psidebarpanel.children ();
+    $.each(sbpanels, function (index, panel) {
+        if (index != 0) {
+            $(panel).removeClass("sb_active");
+            $(panel).addClass("sb_none");        
+        }
+    });
+    
+    let sidebarpanel   =  $('#' + id.replace("sidebar", "sidebarpanel"));  
+    sidebarpanel.removeClass("sb_none");    
+    sidebarpanel.addClass("sb_active");    
+ 
+    let sbmenus         = psidebarmenu.find('.sb_link');
+    $.each(sbmenus, function (index, menu) {
+        $(menu).removeClass("checked");
+    });
+
+    sidebarmenu.addClass("checked");
+
+    psidebarpanel.addClass('toggled')
+
+    if (toresize) {
+        sb.resize(sb.interface);        
+    }
+}
+
+//------------------------------------------------------------------- MAIN SIDEBAR---------------------------------------------------------------------
+
+function sidebarmenu_select (id, show) {
+    let ui  = solution.get('ui') 
+
+    let rootelt = $('#' + id).closest('.sb_root');
+    let rootid = rootelt[0].id;
+    let platform = ui.platform_get ('id', rootid);  
+        
+    if (show == undefined) {   //toggle
+        if ($('#' + id).hasClass('checked')) {
+            show = 0;
+        }
+        else {
+            show = 1;
+        }
+    }
+    if (show == 1) {
+        sidebarpanel_show(platform, id.replace("sidebar", "sidebarpanel"));    
+    }    
+    if (show == 0) {
+        sidebarpanel_hide(platform, id.replace("sidebar", "sidebarpanel"));            
+    }
+}
+
+function sidebarpanel_show (platform, id) {
+    let sidebarpanel    =  $('#' + id);
+    let psidebarpanel   = sidebarpanel.parent ();
+    let drageltv        = psidebarpanel.next();  
+    let toresize        = !psidebarpanel.hasClass ('toggled')
+
+        
+    let sbpanels = psidebarpanel.children ();
+    $.each(sbpanels, function (index, panel) {
+        $(panel).removeClass("sb_active");
+        $(panel).addClass("sb_none");        
+    });
+
+    drageltv.removeClass('sb_none');    
+    sidebarpanel.removeClass("sb_none");    
+
+    sidebarpanel.addClass("sb_active");    
+    
+
+
+    let sidebarmenu     = $('#' + id.replace("sidebarpanel", "sidebar"))
+    
+    let psidebarmenu    = sidebarmenu.closest('.sb_sidebarmenu'); 
+    let sbmenus         = psidebarmenu.find('.sb_link');
+    $.each(sbmenus, function (index, menu) {
+        $(menu).removeClass("checked");
+    });
+
+    sidebarmenu.addClass("checked");
+
+    if (toresize) {
+        psidebarpanel.addClass('toggled')
+        sb.resize(platform);
+    }
+}
+
+function sidebarpanel_hide (platform) {
+    let psidebarmenu    = $('#' + platform.id + ' .sb_sidebarmenu'); 
+    let psidebarpanel   = $('#' + platform.id + ' .sb_sidebarpanel'); 
+    let drageltv        = psidebarpanel.next();  
+    let toresize        = psidebarpanel.hasClass('toggled')
+
+
+    let sbpanels = psidebarpanel.children ();
+    $.each(sbpanels, function (index, panel) {
+        $(panel).removeClass("sb_active");
+        $(panel).addClass("sb_none");        
+    });
+
+    drageltv.addClass('sb_none');
+
+    let sbmenus         = psidebarmenu.find('.sb_link');
+    $.each(sbmenus, function (index, menu) {
+        $(menu).removeClass("checked");
+    });
+
+
+    if (toresize) {
+        psidebarpanel.removeClass('toggled')
+        sb.resize(platform);
+    }
+}

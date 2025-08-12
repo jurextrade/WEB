@@ -213,7 +213,7 @@ window.wp = window.wp || {};
 
 	revisions.model.Field = Backbone.Model.extend({});
 
-	revisions.model.Fields = Backbone.Collection.extend({
+	revisions.model.PG.Fields = Backbone.Collection.extend({
 		model: revisions.model.Field
 	});
 
@@ -222,7 +222,7 @@ window.wp = window.wp || {};
 			var fields = this.get('fields');
 			this.unset('fields');
 
-			this.fields = new revisions.model.Fields( fields );
+			this.fields = new revisions.model.PG.Fields( fields );
 		}
 	});
 

@@ -277,9 +277,9 @@
     border: 1px solid var(--theme-color);
 }
 
-#distributeselect {
-    flex: none;
-    width: 200px;
+#distributeproject,
+#distributeexpert {
+    flex: 1;
     margin-top: 25px;    
 }
 
@@ -300,6 +300,15 @@
     width: 20px !important;
 }
 
+
+#project_expertsidepanel {
+    border: 1px solid var(--theme-color);
+    margin-top: 10px;
+}
+
+#project_tree_expertspanel {
+    overflow:auto;
+}
 /*--------------------------------------------------------- TREE PANELS ------------------------------------------------------*/
 
 
@@ -413,6 +422,15 @@
 #strategy_assistant_panel  .content .body {
    /* padding: 0px 55px; */ 
 }
+
+#strategy_assistant_panel .alert-primary {
+    border-color: var(--theme-button-border-color);
+    border-radius: 0px;
+    color: var(--theme-color);
+    background: var(--theme-bg-color);
+}
+
+
 
 /*STEP 1--------------------------------------------------------------------*/  
 

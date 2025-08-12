@@ -30,19 +30,19 @@ function onclick_right_sidebarpin(elt, event) {
 }
 
 function onclick_right_sidebarsave(elt, event) {
-    
-    let cuser = solution.get('user')
+        let cuser = solution.get('user')
 
-    if (!cuser.is_registered()) {
-        return;
-    }
-    let ui = solution.get('ui');
-    solution.configuration.theme = ui.sb.theme;
-    cuser.send ({Name: 'savefile', Values: [cuser.fileexplorer.Root + cuser.path + '/configuration.json', JSON.stringify(solution.configuration, null, 2)]}, true, 
-                function (content, values) {
-                    DisplayInfo("Configutation Saved ", true, 'operationpanel',  'var(--theme-platform-color)');
-                }, 
-                ['configuration.json']);  
+        if (!cuser.is_registered()) {
+            TreatInfo(register_needed_label, 'operationpanel', 'red');             
+            return ;
+        }
+        let ui = solution.get('ui');
+        solution.configuration.theme = ui.sb.theme;
+        cuser.send ({Name: 'savefile', Values: ['../' + cuser.path + '/configuration.json', JSON.stringify(solution.configuration, null, 2)]}, true, 
+                    function (content, values) {
+                        DisplayInfo("Configutation Saved ", true, 'operationpanel',  'var(--theme-platform-color)');
+                    }, 
+                    ['configuration.json']);     
 }
 
 function solution_configurationpanel_init () {

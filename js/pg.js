@@ -15,10 +15,7 @@ function pg_solution () {
     solution.UserUrl        = solution.UserId != 0 ? 'Hello ' + solution.UserName : '';
     solution.UserAdmin      = solution.UserId != 1 ? false : true;
 
-    solution.ObjectSignals  = [];
-    solution.Fields         = [];
-    solution.Objects        = []; //Loaded objects
-
+    solution.PG             = null;
     solution.PL             = null;
     solution.PLSELL         = null;
     
@@ -28,9 +25,9 @@ function pg_solution () {
     solution.Terminals      = [];
     solution.DefaultLoaded  = false;
 
-    solution.tradedesk_PG  = new pg ('tradedesk');
-    solution.project_PG    = new pg ('project');
-    solution.option_PG     = new pg ('option');
+//    solution.tradedesk_PG  = new pg ('tradedesk');
+//    solution.project_PG    = new pg ('project');
+  //  solution.option_PG     = new pg ('option');
     
 
     solution.LoadProfile = function (async, interfacecallback, par) {
@@ -80,7 +77,7 @@ function pg_solution () {
         var xhttp = new XMLHttpRequest();
        
         xhttp.onreadystatechange = function () {
-            solution.Objects = [];
+            solution.PG.Objects = [];
             if (this.readyState == 4 && this.status == 200) {
                 var data = this.responseText;
                 var lines = data.split(/\r\n|\n/);
@@ -103,7 +100,7 @@ function pg_solution () {
                             pobject.Level[a][i] = values[15 + k] == "--" ? EMPTY_VALUE : +values[15 + k];
                             k = k + 1;
                         }
-                    solution.Objects.push(pobject);
+                    solution.PG.Objects.push(pobject);
                 }
                 if (interfacecallback)  interfacecallback (par);            
             }
@@ -134,7 +131,7 @@ function pg_solution () {
                 for (var j = 1; j < lines.length; j++) {
                     if (lines[j] == "") continue;
                     var values = lines[j].split(',');
-                    solution.Fields.push({
+                    solution.PG.Fields.push({
                         recid: 500 + i,
                         Type: values[0],
                         name: values[1],
@@ -189,7 +186,7 @@ function pg_solution () {
                     if (objname != values[0]) {
                         i = 0;
                         object = {objectname: values[0], signals: []};
-                        solution.ObjectSignals.push(object);
+                        solution.PG.ObjectSignals.push(object);
                         objname = values[0];
                     }
                     object.signals.push({recid: i, text: values[1], type: SignalType[SignalName.indexOf(values[1])], description: values[2]});
@@ -212,22 +209,19 @@ function pg_solution () {
         var interfacecallback = null;
         this.LoadSignals(site.address + "/Terminal/MQL4/Files/PG_Signals.csv",   ASYNCHRONE, interfacecallback, null);
         this.LoadFields(site.address + "/Terminal/MQL4/Files/PG_Fields.csv",     ASYNCHRONE, interfacecallback, null);
-        this.LoadObjects(site.address + "/Terminal/MQL4/Files/PG_Objects.csv",   SYNCHRONE, this.UpdateObjects, pname);
+        this.LoadObjects(site.address + "/Terminal/MQL4/Files/PG_Objects.csv",   SYNCHRONE, null, pname);
 
     }
    
     solution.UpdateObjects = function (pname) {
-       solution.tradedesk_PG.Objects  = solution.Objects;
-       solution.project_PG.Objects    = solution.Objects;
-       solution.option_PG.Objects     = solution.Objects;
-
+       solution.PG.Objects  = solution.Objects;
     }
 
     solution.UpdatePredefinedIndicators = function (pname) {
         let menu = [];
-        for (var j = 0; j < solution.Objects.length; j++) {
+        for (var j = 0; j < solution.PG.Objects.length; j++) {
             menu.push({
-                id:'indicator_' + solution.Objects[j].Name, type: 'link', item: solution.Objects[j].Name, icon: icon_indicator,
+                id:'indicator_' + solution.PG.Objects[j].Name, type: 'link', item: solution.PG.Objects[j].Name, icon: icon_indicator,
                 attributes:{selector: 'selectindicator', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'},
                 events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}                         
             });
@@ -295,8 +289,8 @@ function pg_solution () {
             return terminal.PG;
         }
         else {
-            return this.ui.currentplatform ?  eval('this.' + this.ui.currentplatform_pname + '_PG') : null;
-            }                
+            return this.PG;
+        }                
     }
 
     solution.GetCanvasFromTerminal = function (terminal) {
@@ -329,8 +323,8 @@ function pg_solution () {
     }
   // option
     solution.GetFieldFromName = function (fieldname) {
-        for (var i = 0; i < this.Fields.length; i++) {
-            if (this.Fields[i].name == fieldname) return this.Fields[i];
+        for (var i = 0; i < this.PG.Fields.length; i++) {
+            if (this.PG.Fields[i].name == fieldname) return this.PG.Fields[i];
         }
         return null;
     }
@@ -352,6 +346,13 @@ function pg_solution () {
         http.send(null);
     }
 
+    solution.InitPG = function () {
+            solution.PG = new pg('project');
+            solution.PG.ObjectSignals  = [];
+            solution.PG.Fields         = [];
+       
+        }
+ 
     solution.InitPL = function () {
         solution.PL = new pl(parser);
         solution.PL.Trace = function (text) {
@@ -370,7 +371,9 @@ function pg_solution () {
             if (textarea) textarea.val("");
         }
     }
+    
     solution.InitPL();
+    solution.InitPG()
    // AnimationInit(); 
 }
 
@@ -569,7 +572,7 @@ function pgproject (pname, name, path) {
     this.Port                    = solution.DeployServer_Port;    
     this.Com                     = null;
 
-    this.PG                      = solution.project_PG;        //new pg(this.pname);
+    this.PG                      = new pg(this.pname);
     this.PG.Canvas.ShowLeftAxis  = false;          
 
     this.CurrentStrategy         = null;
@@ -874,9 +877,8 @@ function pgproject (pname, name, path) {
 
 function pgterminal (pname, type, main) {
 
-
     this.pname          = pname;
-    this.PG             = solution.tradedesk_PG;     //new pg(this.pname);    
+    this.PG             = new pg(this.pname);    
 
     this.Name           = '';
     this.Path           = '---';
@@ -926,7 +928,7 @@ function pgterminal (pname, type, main) {
             this.PG.LoadConditions(site.address + rootterminal + "input/ss/",   ASYNCHRONE);
             this.PG.LoadAlerts(site.address + rootterminal,   ASYNCHRONE,   Tradedesk_UpdateAlerts,   this);
             this.PG.LoadPanel(site.address + rootterminal,    ASYNCHRONE,   UpdatePanel,    this);
-            this.PG.LoadProfile(site.address + rootterminal,  ASYNCHRONE,   UpdateProfile,  this);
+       //     this.PG.LoadProfile(site.address + rootterminal,  ASYNCHRONE,   UpdateProfile,  this);
             this.PG.LoadMarkers(site.address + rootterminal,  ASYNCHRONE);
             
 
@@ -1415,7 +1417,7 @@ function pg (pname) {
 
         xhttp.onreadystatechange = function () {
             var PG = this.PG;
-            PG.Objects = solution.Objects.slice(0);
+            PG.Objects = solution.PG.Objects.slice(0);
             var nextid = PG.ReturnNextObjectId ();
 
             if (this.readyState == 4 && this.status == 200) {

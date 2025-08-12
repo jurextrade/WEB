@@ -95,7 +95,8 @@ function Chart_UpdateMT4Data(terminal, Symbol, Period, close, date, open, high, 
 //----------------------------------------------------------------------------------------------------
 
 function chartpanel_fromcanvas (canvasid) {
-    return $('#' + canvasid).closest('.chartpanel');    
+    let chartpanel = $('#' + canvasid).closest('.chartpanel');
+    return chartpanel;    
 }
 
 function rootid_fromcanvas (canvasid) {
@@ -240,9 +241,9 @@ var onmousemove_chartcanvas = function (event, itempos, yValue, mouseXY, fullDat
 
         var indicatorname =  GetIndicatorNameFromObject (object);
 
-        for (var index = 0; index < solution.ObjectSignals.length; index++) {
-            if (solution.ObjectSignals[index].objectname == indicatorname) {
-                var signals = solution.ObjectSignals[index].signals;
+        for (var index = 0; index < solution.PG.ObjectSignals.length; index++) {
+            if (solution.PG.ObjectSignals[index].objectname == indicatorname) {
+                var signals = solution.PG.ObjectSignals[index].signals;
 
                 for (var j = 0; j < signals.length; j++) {
                     var signaltype = SignalName.indexOf(signals[j].text);
@@ -597,7 +598,9 @@ function onchange_barstyle(elt, event) {
     var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;
 
-    var chartpanelid = chartpanel_fromcanvas(symbolcanvas.ID)[0].id;    
+    if (chartpanel_fromcanvas(symbolcanvas.ID).length == 0) return;
+    let chartpanelid = chartpanel_fromcanvas(symbolcanvas.ID)[0].id;
+
 
 
     var item= $('#' + chartpanelid + ' #' + elt.id + ' option:selected').val();    

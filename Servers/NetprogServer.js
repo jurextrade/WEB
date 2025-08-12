@@ -21,7 +21,7 @@ function Require (module) {
     return null;
 }
 
-const http         = Require('http1');
+const http         = Require('http');
 const https        = Require('https');
 const socket       = Require('socket.io');
 const fs           = Require('fs');
@@ -182,11 +182,11 @@ function files_explore  (servername, filenode, levels) {
 }
 
 
-send ('localhost', {Name: 'scandir_r', Values: ['conf', '']}, function (content, values) {
-    let fileexplorer = content.Values[0]
-    files_explore (values[0], fileexplorer, [0])
-    }, 
-    ['localhost'])
+//send ('localhost', {Name: 'scandir_r', Values: ['conf', '']}, function (content, values) {
+//    let fileexplorer = content.Values[0]
+//    files_explore (values[0], fileexplorer, [0])
+//    }, 
+//    ['localhost'])
 
   
 

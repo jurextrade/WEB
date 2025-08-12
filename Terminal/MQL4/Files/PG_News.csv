@@ -7,16 +7,23 @@
 	</previous>,
 		<url>https://www.forexfactory.com/calendar/393-jn-bank-holiday</url>
 	
-08-11-2025,08:03,CNY,New Loans,Medium,360B,360B,2240B
-08-11-2025,08:03,CNY,M2 Money Supply y/y,Low,8.3%,8.3%,8.3%
 08-11-2025,09:00,EUR,Italian Trade Balance,Low,7.12B,7.12B,6.16B
-08-11-2025,13:48,USD,Cleveland Fed Inflation Expectations,Low,
+08-11-2025,13:35,USD,Cleveland Fed Inflation Expectations,Low,
 		<previous>3.9%</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/909-us-cleveland-fed-inflation-expectations]]--></url>
 	,
 		<previous>3.9%</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/909-us-cleveland-fed-inflation-expectations]]--></url>
 	,3.9%
+08-11-2025,14:00,USD,President Trump Speaks,Medium,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/645-us-president-trump-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/645-us-president-trump-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/645-us-president-trump-speaks</url>
+	
 08-11-2025,23:01,GBP,BRC Retail Sales Monitor y/y,Low,2.1%,2.1%,2.7%
 08-11-2025,23:50,JPY,M2 Money Stock y/y,Low,0.8%,0.8%,0.9%
 08-12-2025,01:30,AUD,NAB Business Confidence,Low,
@@ -55,12 +62,12 @@
 		<url>https://www.forexfactory.com/calendar/906-au-rba-press-conference</url>
 	
 08-12-2025,06:00,GBP,Average Earnings Index 3m/y,Medium,4.7%,4.7%,5.0%
-08-12-2025,06:00,GBP,Claimant Count Change,Medium,20.8K,20.8K,25.9K
+08-12-2025,06:00,GBP,Claimant Count Change,Medium,19.7K,19.7K,25.9K
 08-12-2025,06:00,GBP,Unemployment Rate,Low,4.7%,4.7%,4.7%
-08-12-2025,09:00,EUR,German ZEW Economic Sentiment,Medium,39.7,39.7,52.7
+08-12-2025,09:00,EUR,German ZEW Economic Sentiment,Medium,39.5,39.5,52.7
 08-12-2025,09:00,EUR,ZEW Economic Sentiment,Low,28.1,28.1,36.1
-08-12-2025,10:00,USD,NFIB Small Business Index,Low,98.6,98.6,98.6
-08-12-2025,12:30,CAD,Building Permits m/m,Low,-4.3%,-4.3%,12.0%
+08-12-2025,10:00,USD,NFIB Small Business Index,Low,98.9,98.9,98.6
+08-12-2025,12:30,CAD,Building Permits m/m,Low,-3.9%,-3.9%,12.0%
 08-12-2025,12:30,USD,Core CPI m/m,High,0.3%,0.3%,0.2%
 08-12-2025,12:30,USD,CPI m/m,High,0.2%,0.2%,0.3%
 08-12-2025,12:30,USD,CPI y/y,High,2.8%,2.8%,2.7%
@@ -73,13 +80,16 @@
 	</previous>,
 		<url>https://www.forexfactory.com/calendar/728-us-fomc-member-barkin-speaks</url>
 	
-08-12-2025,18:00,USD,Federal Budget Balance,Low,
-		<previous>27.0B</previous>
-		<url><!--[CDATA[https://www.forexfactory.com/calendar/322-us-federal-budget-balance]]--></url>
-	,
-		<previous>27.0B</previous>
-		<url><!--[CDATA[https://www.forexfactory.com/calendar/322-us-federal-budget-balance]]--></url>
-	,27.0B
+08-12-2025,14:30,USD,FOMC Member Schmid Speaks,Low,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/912-us-fomc-member-schmid-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/912-us-fomc-member-schmid-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/912-us-fomc-member-schmid-speaks</url>
+	
+08-12-2025,18:00,USD,Federal Budget Balance,Low,-206.7B,-206.7B,27.0B
 08-12-2025,20:30,USD,API Weekly Statistical Bulletin,Low,
 		<previous>
 		<url>https://www.forexfactory.com/calendar/754-us-api-weekly-statistical-bulletin</url>
@@ -100,6 +110,8 @@
 		<previous>-0.5%</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/321-jn-prelim-machine-tool-orders-yy]]--></url>
 	,-0.5%
+08-13-2025,09:03,CNY,New Loans,Medium,305B,305B,2240B
+08-13-2025,09:03,CNY,M2 Money Supply y/y,Low,8.3%,8.3%,8.3%
 08-13-2025,09:42,EUR,German 10-y Bond Auction,Low,
 		<previous>2.62|1.5</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/522-ge-10-y-bond-auction]]--></url>
@@ -107,7 +119,7 @@
 		<previous>2.62|1.5</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/522-ge-10-y-bond-auction]]--></url>
 	,2.62|1.5
-08-13-2025,11:45,USD,FOMC Member Barkin Speaks,Low,
+08-13-2025,12:00,USD,FOMC Member Barkin Speaks,Low,
 		<previous>
 		<url>https://www.forexfactory.com/calendar/728-us-fomc-member-barkin-speaks</url>
 	</previous>,
@@ -160,13 +172,7 @@
 08-14-2025,06:00,GBP,Index of Services 3m/3m,Low,0.2%,0.2%,0.4%
 08-14-2025,06:00,GBP,Industrial Production m/m,Low,0.4%,0.4%,-0.9%
 08-14-2025,06:00,GBP,Manufacturing Production m/m,Low,0.4%,0.4%,-1.0%
-08-14-2025,06:00,GBP,Prelim Business Investment q/q,Low,
-		<previous>5.9%</previous>
-		<url><!--[CDATA[https://www.forexfactory.com/calendar/204-uk-prelim-business-investment-qq]]--></url>
-	,
-		<previous>5.9%</previous>
-		<url><!--[CDATA[https://www.forexfactory.com/calendar/204-uk-prelim-business-investment-qq]]--></url>
-	,5.9%
+08-14-2025,06:00,GBP,Prelim Business Investment q/q,Low,-0.9%,-0.9%,5.9%
 08-14-2025,06:30,CHF,PPI m/m,Low,0.0%,0.0%,-0.1%
 08-14-2025,06:45,EUR,French Final CPI m/m,Low,0.2%,0.2%,0.2%
 08-14-2025,09:00,EUR,Flash Employment Change q/q,Low,0.2%,0.2%,0.3%
@@ -183,7 +189,7 @@
 	
 08-14-2025,12:30,USD,Core PPI m/m,High,0.2%,0.2%,0.0%
 08-14-2025,12:30,USD,PPI m/m,High,0.2%,0.2%,0.0%
-08-14-2025,12:30,USD,Unemployment Claims,High,220K,220K,226K
+08-14-2025,12:30,USD,Unemployment Claims,High,225K,225K,226K
 08-14-2025,13:30,GBP,CB Leading Index m/m,Low,
 		<previous>-0.3%</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/299-uk-cb-leading-index-mm]]--></url>
@@ -192,14 +198,12 @@
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/299-uk-cb-leading-index-mm]]--></url>
 	,-0.3%
 08-14-2025,14:00,USD,Mortgage Delinquencies,Low,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/489-us-mortgage-delinquencies</url>
-	</previous>,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/489-us-mortgage-delinquencies</url>
-	</previous>,
-		<url>https://www.forexfactory.com/calendar/489-us-mortgage-delinquencies</url>
-	
+		<previous>4.04%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/489-us-mortgage-delinquencies]]--></url>
+	,
+		<previous>4.04%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/489-us-mortgage-delinquencies]]--></url>
+	,4.04%
 08-14-2025,14:30,AUD,CB Leading Index m/m,Low,
 		<previous>0.3%</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/247-au-cb-leading-index-mm]]--></url>
@@ -247,14 +251,12 @@
 08-14-2025,23:50,JPY,Prelim GDP Price Index y/y,Low,3.1%,3.1%,3.3%
 08-14-2025,23:50,JPY,Prelim GDP q/q,Low,0.1%,0.1%,-0.2%
 08-15-2025,01:30,CNY,New Home Prices m/m,Low,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/902-ch-new-home-prices-mm</url>
-	</previous>,
-		<previous>
-		<url>https://www.forexfactory.com/calendar/902-ch-new-home-prices-mm</url>
-	</previous>,
-		<url>https://www.forexfactory.com/calendar/902-ch-new-home-prices-mm</url>
-	
+		<previous>-0.27%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/902-ch-new-home-prices-mm]]--></url>
+	,
+		<previous>-0.27%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/902-ch-new-home-prices-mm]]--></url>
+	,-0.27%
 08-15-2025,02:00,CNY,Industrial Production y/y,Medium,6.0%,6.0%,6.8%
 08-15-2025,02:00,CNY,Retail Sales y/y,Medium,4.6%,4.6%,4.8%
 08-15-2025,02:00,CNY,Fixed Asset Investment ytd/y,Low,2.7%,2.7%,2.8%
@@ -296,15 +298,15 @@
 	</previous>,
 		<url>https://www.forexfactory.com/calendar/504-ez-ecofin-meetings</url>
 	
-08-15-2025,12:30,CAD,Manufacturing Sales m/m,Low,0.5%,0.5%,-0.9%
+08-15-2025,12:30,CAD,Manufacturing Sales m/m,Low,0.4%,0.4%,-0.9%
 08-15-2025,12:30,CAD,Wholesale Sales m/m,Low,0.7%,0.7%,0.1%
 08-15-2025,12:30,USD,Core Retail Sales m/m,High,0.3%,0.3%,0.5%
 08-15-2025,12:30,USD,Retail Sales m/m,High,0.5%,0.5%,0.6%
 08-15-2025,12:30,USD,Empire State Manufacturing Index,Medium,-1.2,-1.2,5.5
-08-15-2025,12:30,USD,Import Prices m/m,Low,0.0%,0.0%,0.1%
+08-15-2025,12:30,USD,Import Prices m/m,Low,0.1%,0.1%,0.1%
 08-15-2025,13:15,USD,Capacity Utilization Rate,Low,77.6%,77.6%,77.6%
 08-15-2025,13:15,USD,Industrial Production m/m,Low,0.0%,0.0%,0.3%
-08-15-2025,14:00,USD,Prelim UoM Consumer Sentiment,High,62.2,62.2,61.8
+08-15-2025,14:00,USD,Prelim UoM Consumer Sentiment,High,61.9,61.9,61.8
 08-15-2025,14:00,USD,Prelim UoM Inflation Expectations,High,
 		<previous>4.4%</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/236-us-prelim-uom-inflation-expectations]]--></url>

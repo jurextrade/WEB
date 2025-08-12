@@ -195,7 +195,7 @@
           "index": 2,
           "dependency": [
             "speech"
-          ] ,         
+          ],
           "header": {
             "title": "EMV",
             "logo": "/A_PLATFORMS/emv/res/emv.svg",
@@ -339,7 +339,7 @@
           "type": "root",
           "dependency": [
             "market",
-            "news", 
+            "news",
             "speech"
           ],
           "active": true,
@@ -380,6 +380,8 @@
               "/js/expert_signals.js",
               "/js/expert.js",
               "/js/MT4-indicators.js",
+              "/A_PLATFORMS/project/js/interface_project_deploy.js",
+              "/A_PLATFORMS/project/js/platform_project_deploy.js",              
               "/A_PLATFORMS/project/js/interface_project_assistant.js",
               "/A_PLATFORMS/project/js/platform_project_assistant.js",
               "/A_PLATFORMS/project/js/platform_project_connect.js",
@@ -446,7 +448,7 @@
           "type": "root",
           "dependency": [
             "market",
-            "news", 
+            "news",
             "speech"
           ],
           "active": false,

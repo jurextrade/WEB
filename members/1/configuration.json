@@ -103,7 +103,8 @@
               "/B_COMMON/js/interface_speech.js",
               "/B_COMMON/js/platform_speech.js"
             ]
-          }
+          },
+          "Init": true
         },
         {
           "pname": "news",
@@ -119,7 +120,8 @@
               "/B_COMMON/js/interface_news.js",
               "/B_COMMON/js/platform_news.js"
             ]
-          }
+          },
+          "Init": true
         },
         {
           "pname": "solution",
@@ -133,7 +135,8 @@
               "/B_COMMON/js/interface_solution.js",
               "/B_COMMON/js/platform_solution.js"
             ]
-          }
+          },
+          "Init": true
         }
       ]
     },
@@ -165,7 +168,8 @@
               "/B_COMMON/js/interface_market.js",
               "/B_COMMON/js/platform_market.js"
             ]
-          }
+          },
+          "Init": true
         },
         {
           "id": "home_root",
@@ -271,7 +275,8 @@
               "/A_PLATFORMS/netprog/js/platform_netprog.js",
               "/A_PLATFORMS/netprog/js/interface_netprog.js"
             ]
-          }
+          },
+          "Init": true
         },
         {
           "id": "chinese_root",
@@ -342,7 +347,7 @@
             "news",
             "speech"
           ],
-          "active": true,
+          "active": false,
           "library": {
             "stylesheet": [
               "/C_TOOLS/css/quill.snow.css",
@@ -380,13 +385,16 @@
               "/js/expert_signals.js",
               "/js/expert.js",
               "/js/MT4-indicators.js",
+              "/A_PLATFORMS/project/js/interface_project_deploy.js",
+              "/A_PLATFORMS/project/js/platform_project_deploy.js",
               "/A_PLATFORMS/project/js/interface_project_assistant.js",
               "/A_PLATFORMS/project/js/platform_project_assistant.js",
               "/A_PLATFORMS/project/js/platform_project_connect.js",
               "/A_PLATFORMS/project/js/interface_project.js",
               "/A_PLATFORMS/project/js/platform_project.js"
             ]
-          }
+          },
+          "Init": true
         },
         {
           "id": "option_root",

@@ -260,7 +260,7 @@ function project_timer () {
         $('#project_strategiesbar #project_strategycreate').css ('display', '');
  
         $('#project_conditionsbar #conditionCreate').css ('display', '');       
-        $("#distributeselect").css ('visibility', '');            
+        $("#project_distributebuttons").css ('visibility', '');            
         $("#projectselectstrategypanel").css ('display', '');  
         $('#project_root #indicatorCreate').css ('display', '');   
     }
@@ -280,7 +280,7 @@ function project_timer () {
         $('#project_conditionsbar #' + 'conditionCreate').css ('display', 'none');    
         $('#overlay_strategyhelper').remove();     
         
-        $("#distributeselect").css ('visibility', 'hidden');          
+        $("#project_distributebuttons").css ('visibility', 'hidden');          
         $("#projectselectstrategypanel").css ('display', 'none');  
         
         $('#project_root #indicatorCreate').css ('display', 'none');            
@@ -641,6 +641,30 @@ function CloseSavedStrategies() {
         }
     }
 }
+
+//---------------------------------------------------- DISTRIBUTE STRATEGY ---------------------------------------------- 
+
+function onclick_project_strategydistribute (elt, event) {
+
+}
+
+function onclick_project_strategycompile(elt, event) {
+    let ui       = solution.get('ui') 
+    let platform = ui.currentplatform;    
+  //  BottomPanel_Flat(platform, false);    
+    SelectCompileStrategy (solution.CurrentProject, CurrentStrategy, 'MQL4')
+}
+//---------------------------------------------------- DISTRIBUTE PROJECT ---------------------------------------------- 
+
+function onclick_project_projectdistribute () {
+    sidebarmenu_select('sidebar_deploy', 1);
+    DisplayInfo("Select Terminal you want to deploy the project", true, 'project_operation', "coral");       
+}
+
+function onclick_project_projectcompile(elt) {
+    SelectCompileProject(solution.CurrentProject, 'C');
+}
+
 //---------------------------------------------------- CLOSE PROJECT ---------------------------------------------- 
 
 function onclick_project_projectclose () {
@@ -1125,82 +1149,6 @@ function CodeEditorPanel(id, classnames, type) {
     else 
         content = '<div id="' + id + '" class=" ' + (classnames ? classnames : '') + '" ondrop="OnDrop_Ace(event, this)"></div>';
     return content;
-}
-
-//------------------------------------------------------------ DISTRIBUTE PANEL ----------------------------------------------------------
-
-function onclick_distributeproject (elt) {
-
-    let terminalchecked;      
-    let strategytesterchecked;    
-    let strategyname;
-    for (var i = 0; i < distributetable.rows.length; i++) {
-
-        let terminal = solution.GetTerminalsFromName ($('#distributetable_' + i + '_0 #terminalname').html())[0];
-
-        terminalchecked         = $('#terminalcheck' + '_' + i + '_0').prop('checked');    
-        strategytesterchecked   = $('#strategytestercheck' + '_' + i + '_1').prop('checked');   
-
-        if (terminalchecked)        project_projectdistribute(solution.CurrentProject, terminal, 'Terminal');            
-        if (strategytesterchecked)  project_projectdistribute(solution.CurrentProject, terminal,  'Tester'); 
-
-    }        
-}
-function RefreshTerminals () {
-    let  site        = solution.get('site');
-    let  user        = solution.get('user')
-    let  url         = site.address  + "/php/read_terminals.php"
-
-    solution.project_LoadTerminals(user.id, url, SYNCHRONE, solution.UpdateDistributeTerminals, solution);    
-}
- 
-function onclick_refresh_terminals(elt) {
-    RefreshTerminals();
-}
-
-
-function DeployHeaderPanel () {
-    var content =     
-    '<span class="togglesidebar ' + icon_toggle + '" onclick="OnToggle(PROJECT_ID, this);"></span>' +     
-    '<div class="sb_sidebarheader sb_bar">' +
-            '<div class="sb_sidebarheadertitle">DEPLOY PROJECT</div>' +
-            '<button id="distributerefresh" class="sb_button"  type="button" onclick="onclick_refresh(this)">Refresh</button>' +             
-            '<a href="/Documentation/_build/html/" title="link to documentation" target="_blank" class="sb_sidebarheaderinfo"><i aria-hidden="true" class="fas fa-book"></i></a>' +
-    '</div>';
-    return content;
-}
-
-
-
-function DistributePanel_Update (solution) {
-    var tcontent = '';
-    let  user        = solution.get('user')
-
-    if (user.id == 0) {
-          $('#project_distributepanel').html(sb.render(ReturnWarningALert('You should Register to see your Terminals')))
-          return;
-    }
-
-    distributetable.rows = [];
-
-    if (solution.Terminals.length == 0) {
-        $('#project_distributepanel').html(sb.render(ReturnWarningALert('You do not have any MT4 Platform Configured with MT4 Terminal')))
-        return ;
-    }
-    let j = 0;
-    for (var i = 0; i < solution.Terminals.length; i++) {
-        let terminal = solution.Terminals[i];        
-        if (terminal.Type == 'Terminal') {        
-            j
-            distributetable.rows.push ([
-                    '<i class="fas fa-landmark"></i><span id="terminalname" class="terminalname"+ title="' + terminal.Folder +'">' +  terminal.Name + '</span>',
-                    sb.render({id: 'terminalcheck_'+ j + '_0', type: 'checkbox', class: 'terminalcheck'}) ,               
-                    sb.render({id: 'strategytestercheck_'+ j + '_1', type: 'checkbox', class: 'terminalcheck'}) ,               
-            ])
-            j++;
-        }
-    }
-    sb.table_setrows (distributetable, distributetable.rows)
 }
 
 //---------------------------------------------------------- PROJECT MENUS  --------------------------------------------------------   

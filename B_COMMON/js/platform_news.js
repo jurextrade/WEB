@@ -568,7 +568,9 @@ function NextCalendarNews_Update () {
 
 //------------------------------------------------------------ NEWS LINK  ----------------------------------------------------------
 
-function onclick_newsLink () {
+function onclick_newsLink (elt, event) {
+    event.stopPropagation();
+    
     onclick_rightsidebarmenu('rightsidebar_news', 1)    
     sb.box_toggle ('news_nextcalendarbox', 1);     
 }

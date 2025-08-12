@@ -19,9 +19,7 @@ var FTPRootPath 	    = "/public_html/members/"; //"/public_html/members/";
 var FTPMODE             = false;
 
 
-var MQ4_SOURCE_PATH     = "./Compile/MQL4/";
-var C_SOURCE_PATH       = "./Compile/C/Files/input/";
-var C_OBJ_PATH          = "./Compile/C/Files/output/";
+
 var HTTPPort            = 2080;
 var SHTTPPort           = 2443;
 
@@ -29,8 +27,14 @@ var SHTTPPort           = 2443;
 var MT4Port             = 2007;
 var IBPort			    = 2008;
 
-var MAKE_COMMAND        = "mingw32-make";
-var COMPILE_COMMAND     = "g++";
+const C_MAKE_COMMAND        = "mingw32-make";
+const C_COMPILE_COMMAND     = "g++";
+const C_SOURCE_PATH         = "./Compile/C/Files/input/";
+const C_OBJ_PATH            = "./Compile/C/Files/output/";
+
+const MQ4_COMPILE_COMMAND   = "metaeditor.exe";
+const MQ4_COMPILE_PATH      = "./Compile/MQL4/";
+const MQ4_SOURCE_PATH       = "./Compile/MQL4/Experts/";
 
 function Print (sdisplay) {
     const today = moment();
@@ -238,16 +242,28 @@ function ListenHTTP (port) {
 			else		
 // COMPILE				
 			if (values[1] == "COMPILE") {
-				var userid          = values[0];
-				var projectfolder   = values[2];
-				var filename        = values[3];	
-				var langtype        = values[4];
-                var terminaltype    = values[5];
+				let userid          = values[0];
+				let projectfolder   = values[2];
+				let filename        = values[3];	
+				let langtype        = values[4];
+                let terminaltype    = values[5];
 
 				var n = message.search(terminaltype);
 				var data = message.substring (n + terminaltype.length + 1);
 				Print('<====  HTTP COMPILE : [' + userid  + ']' + ' Language : ' + langtype + ' Project Folder : ' + projectfolder + ' File Name : '  + filename + ' Terminal Type : ' + terminaltype);
 				Compile (socket, userid, projectfolder, filename, data, langtype, terminaltype);
+			}	
+			else
+// DISTRIBUTE					
+			if (values[1] == "DISTRIBUTE") {
+				let userid          = values[0];
+				let projectfolder   = values[2];
+				let filename        = values[3];	
+				let langtype        = values[4];
+				let terminalpath    = values[5];
+
+				Print('<====  HTTP DISTRIBUTE : [' + userid  + ']' + ' Language : ' + langtype + ' Project Folder : ' + projectfolder + ' File Name : '  + filename + ' Terminal Path : ' + terminalpath);
+				Distribute (socket, userid, projectfolder, filename, langtype, terminalpath);
 			}	
 			else
 // RELOADPROJECT			
@@ -266,9 +282,9 @@ function ListenHTTP (port) {
 				connection.Client.write('*RELOADPROJECT ' + terminaltype + '*');
 			}						
 			else {			
-				var userid          = values[0];
-				var symbol          = values[1];
-				var command         = values[2];
+				let userid          = values[0];
+				let symbol          = values[1];
+				let command         = values[2];
 
 				Print('recu message de HTTP : ' + userid + ' ' + symbol + ' ' + command);
 				var connection = NS.GetConnectionFromTerminal(userid, client.TerminalName, client.TerminalType, symbol);
@@ -532,7 +548,7 @@ function VerifyUser (socket, port, symbol, loginserver, username, password, acco
 
 function cleanFile (filename) {
 	try {
-        fs.unlinkSync(fromfile);
+        fs.unlinkSync(filename);
         console.log('File: ' + filename  + ' deleted successfully!');
     } catch (err) {
         console.error('Error deleting file ' + filename , err);
@@ -572,7 +588,7 @@ function SendFileExpert (userid, fromfile, tofile, filetype, projectfolder, sock
           var strerror = "\nUPLOAD " +  fromfile + " to " + response.data  + " OK successfully uploaded\n";
 	      Print(strerror);
 	      NS.SendToHTTPClient(socket, ":______**UPLOAD^" + fromfile   +  "^" + projectfolder  +  "^" + filetype +  "^OK^"  + strerror + "*");   	
-		  cleanFile (fromfile);		  
+//		  cleanFile (fromfile);		  
     })
     .catch(error => {
           var strerror = "\nUPLOAD " +  fromfile + " to " +   tofile  + " Failed: " + JSON.stringify(err) + "\n";    
@@ -635,7 +651,7 @@ function CompileC (userid, terminaltype, projectfolder, filename, socket) {
 
 	const { exec } = require('child_process'); 
 
-	return exec(MAKE_COMMAND + ' ' + projectfile, (err, stdout, stderr) => {
+	return exec(C_MAKE_COMMAND + ' ' + projectfile, (err, stdout, stderr) => {
 
 		if (err) {
 			Print('Compile error!');
@@ -666,9 +682,9 @@ function CompileMQ4 (userid, terminaltype, projectfolder, filename, socket) {
     Print ("START COMPILING MQ4 STRATEGY " + filename + " for PROJECT : " + projectfolder  + " USERID = " + userid + " Experts : " + projectfile);
 
 	const { exec } = require('child_process'); 
-	return exec('compile.exe  /compile:' + projectfile + ' /inc:' + './' + ' /log:' + '' + 'error.log', {"cwd": MQ4_SOURCE_PATH}, (err, stdout, stderr) => {
+	return exec(MQ4_COMPILE_COMMAND + ' /compile:' +  './Experts/' + projectfile + ' /inc:' + './' + ' /log:' + 'error.log', {"cwd": MQ4_COMPILE_PATH}, (err, stdout, stderr) => {
 		
-		var myLines = fs.readFileSync(MQ4_SOURCE_PATH + 'error.log', "ascii").toString("ascii").split('\n');			
+		var myLines = fs.readFileSync(MQ4_COMPILE_PATH + 'error.log', "ascii").toString("ascii").split('\n');			
 				
 		if (err) {
 	        Print('File MQ4 Compile OK');            
@@ -724,12 +740,12 @@ function MakeFile (projectfolder, filename, data, langtype) {
 		s += "PG_TEntryRules.dll: $(TEXEC)\n\n";
 		
 		s += C_OBJ_PATH + "PG_EntryRules.dll: $(OBJ) " + C_OBJ_PATH + "PG_EntryRules.o\n";
-		s += "	" + COMPILE_COMMAND + "  " + "-shared -o $@ $^\n"; 
+		s += "	" + C_COMPILE_COMMAND + "  " + "-shared -o $@ $^\n"; 
 		s += C_OBJ_PATH + "PG_TEntryRules.dll: $(OBJ) " + C_OBJ_PATH + "PG_TEntryRules.o\n";
-		s += "	" + COMPILE_COMMAND + "  " + "-shared -o $@ $^\n\n"; 
+		s += "	" + C_COMPILE_COMMAND + "  " + "-shared -o $@ $^\n\n"; 
 		
 		s += C_OBJ_PATH + "%.o: " + C_SOURCE_PATH + "%.cpp\n";
-		s += "	" + COMPILE_COMMAND + "  " + "-o $@ -c $<\n";	
+		s += "	" + C_COMPILE_COMMAND + "  " + "-o $@ -c $<\n";	
 
 		fs.writeFileSync('makefile', s);
 		Print('File C OK make!');
@@ -752,7 +768,35 @@ function GenerateExpert (userid, projectfolder, filename, data, socket, langtype
 }
 
 function Compile (socket, userid, projectfolder, filename, data, langtype, terminaltype) {
-
 	var result = GenerateExpert (userid, projectfolder, filename, data, socket, langtype, terminaltype);
-	
+}
+
+function Distribute (socket, userid, projectfolder, filename, langtype, terminalpath) {
+	let sfilename = 'members/' + userid + '/Projects/' + projectfolder + '/MQL4/Experts/' + filename;
+	download_file(socket, ServerName, sfilename, terminalpath + '/MQL4/Experts/' + filename); 
+}
+
+async function download_file(socket, servername, filename, tofilename) {
+
+	let url = 'http://' + servername + '/' + filename;  
+	try {
+	  const downloadLink = url;
+	  const response = await require('axios').get(downloadLink, { responseType: 'arraybuffer' });
+
+	  const fileData = Buffer.from(response.data, 'binary');
+	  
+	  await fs.writeFileSync(tofilename, fileData);
+	  
+	  let strerror = "DOWNLOAD " +  filename + " to " + tofilename  + " OK successfully downloaded";
+	  Print(strerror);
+
+	  NS.SendToHTTPClient(socket, ":______**DISTRIBUTE^" + filename   +  "^" + tofilename +  "^OK^"  + strerror + "*"); 	  
+
+
+	} catch (error) {
+	  
+		let strerror = "DOWNLOAD " +  filename + " to " +  tofilename  + " Failed: " + error;    
+		Print(strerror);
+		NS.SendToHTTPClient(socket, ":______**DISTRIBUTE^" + filename   +  "^" + tofilename  +  "^ERROR^" + strerror  + "*");              
+	}
 }

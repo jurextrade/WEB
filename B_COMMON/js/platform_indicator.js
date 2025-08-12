@@ -34,9 +34,9 @@ var Accessor_BAR = function(d, props, object, dataset) {
     expertcontext.FindBar(period, object, symbol.chartData[period], d.idx.index);
 
     var tracevalue = "";
-    for (var index = 0; index < solution.ObjectSignals.length; index++) {
-        if (solution.ObjectSignals[index].objectname == object.Name) {
-            var signals = solution.ObjectSignals[index].signals;
+    for (var index = 0; index < solution.PG.ObjectSignals.length; index++) {
+        if (solution.PG.ObjectSignals[index].objectname == object.Name) {
+            var signals = solution.PG.ObjectSignals[index].signals;
 
             for (var j = 0; j < signals.length; j++) {
                 var signaltype = SignalName.indexOf(signals[j].text);
