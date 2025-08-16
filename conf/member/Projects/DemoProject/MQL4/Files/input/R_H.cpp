@@ -20,7 +20,7 @@ if ((RValue (OP_BUYSELL, T_BUYLOTTS, R_H) == 0))
 
 { Set_Rule(OP_BUYSELL, T_BUYLOTTS, R_H, P_SIGNAL, Pips((SValue(ATR_14, S_CURRENT, P_H4) * 2)));}
 }
-sdsds
+
 if ((Bid < (SValue(LOW, S_FIRSTINWEEK, P_H4) - PipValue(5))))
 
 { Set_Rule(OP_SELL, T_STATUS, R_H, P_SIGNAL);

@@ -332,11 +332,11 @@ function oncontextmenu_chartcanvas(event, itempos, yValue, mouseXY, fullData, st
 
             if (yValue) {
                 if (yValue > symbol.Ask) {
-                    menu.push({id: MENU_CHART_BUYSTOP_ID,   text: 'Buy Stop',      icon: 'buyicon  fas fa-arrow-alt-circle-right',     style:'color:' + theme_buy,   disabled: false});
-                    menu.push({id: MENU_CHART_SELLLIMIT_ID, text: 'Sell Limit',    icon: 'sellicon fas fa-arrow-alt-circle-right',     style:'color:' + theme_sell,  disabled: false});
+                    menu.push({id: MENU_CHART_BUYSTOP_ID,   text: 'Buy Stop',      icon: 'buyicon  fas fa-arrow-alt-circle-right',     style:'color:' + theme_buy});
+                    menu.push({id: MENU_CHART_SELLLIMIT_ID, text: 'Sell Limit',    icon: 'sellicon fas fa-arrow-alt-circle-right',     style:'color:' + theme_sell});
                 } else {
-                    menu.push({id: MENU_CHART_BUYLIMIT_ID,  text: 'Buy Limit',     icon: 'buyicon  fas fa-arrow-alt-circle-right',     style:'color:' + theme_buy,   disabled: false});
-                    menu.push({id: MENU_CHART_SELLSTOP_ID,  text: 'Sell Stop',     icon: 'sellicon fas fa-arrow-alt-circle-right',     style:'color:' + theme_sell,  disabled: false});
+                    menu.push({id: MENU_CHART_BUYLIMIT_ID,  text: 'Buy Limit',     icon: 'buyicon  fas fa-arrow-alt-circle-right',     style:'color:' + theme_buy});
+                    menu.push({id: MENU_CHART_SELLSTOP_ID,  text: 'Sell Stop',     icon: 'sellicon fas fa-arrow-alt-circle-right',     style:'color:' + theme_sell});
                 }
             }
         } else
@@ -345,8 +345,8 @@ function oncontextmenu_chartcanvas(event, itempos, yValue, mouseXY, fullData, st
         } else
         if (solution.get('ui').currentplatform_pname == OPTION_PLATFORM_PNAME) {        
             menu.push({id: 0,  text: ''});            
-            menu.push({id: MENU_CHART_INSERTCALL_ID,  text: 'Insert Closest Call',  icon: '',     style:'color:' + theme_sell,  disabled: false});
-            menu.push({id: MENU_CHART_INSERTPUT_ID,   text: 'Insert Closest Put',   icon: '',     style:'color:' + theme_sell,  disabled: false});
+            menu.push({id: MENU_CHART_INSERTCALL_ID,  text: 'Insert Closest Call',  icon: '',     style:'color:' + theme_sell});
+            menu.push({id: MENU_CHART_INSERTPUT_ID,   text: 'Insert Closest Put',   icon: '',     style:'color:' + theme_sell});
         }
 
 
@@ -367,28 +367,16 @@ function oncontextmenu_chartcanvas(event, itempos, yValue, mouseXY, fullData, st
                         RemoveChartIndicator(symbolcanvas, "-1");
                         break;
                     case MENU_CHART_BUYSTOP_ID:
-                        symbol.BuyEntry = +(yValue).toFixed(symbol.Digits);
-                        symbol.TradeOrder = OP_BUYSTOP;
-                        SetOrderType(event, "BUYSTOP");
-                        OrderPanel_Show(true);
+                        SetOrderType(+(yValue).toFixed(symbol.Digits), OP_BUYSTOP);
                         break;                        
                     case MENU_CHART_BUYLIMIT_ID:                        
-                        symbol.BuyEntry = +(yValue).toFixed(symbol.Digits);
-                        symbol.TradeOrder = OP_BUYLIMIT;
-                        SetOrderType(event, "BUYLIMIT");
-                        OrderPanel_Show(true);
+                        SetOrderType(+(yValue).toFixed(symbol.Digits), OP_BUYLIMIT);
                         break;
                     case MENU_CHART_SELLSTOP_ID:                            
-                        symbol.SellEntry = +(yValue).toFixed(symbol.Digits);
-                        symbol.TradeOrder = OP_SELLSTOP;
-                        SetOrderType(event, "SELLSTOP");
-                        OrderPanel_Show(true);
+                        SetOrderType(+(yValue).toFixed(symbol.Digits), OP_SELLSTOP);
                         break;
                     case MENU_CHART_SELLLIMIT_ID:                           
-                        symbol.SellEntry = +(yValue).toFixed(symbol.Digits);
-                        symbol.TradeOrder = OP_SELLLIMIT;
-                        SetOrderType(event, "SELLLIMIT");
-                        OrderPanel_Show(true);
+                        SetOrderType(+(yValue).toFixed(symbol.Digits), OP_SELLLIMIT);
                         break;
                     case MENU_CHART_INSERTCALL_ID:          
                         closestoption (symbol, 'C', yValue, mouseXY, fullData, state)
@@ -1000,6 +988,7 @@ function onclick_period (elt) {
     var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;       
     
+   
     if (symbolcanvas.CurrentPeriod != elt.id) {    
         var terminal = solution.GetCurrentTerminal();
     
@@ -1014,6 +1003,7 @@ function onclick_period (elt) {
             Symbol_Select(solution.CurrentTerminal,  symbolcanvas.CurrentSymbol,elt.id);      
 //            SelectPeriod(solution.CurrentTerminal, symbolcanvas.CurrentSymbol, elt.id);
         }
+        ontick_orderpanel(symbolcanvas.CurrentSymbol);        
     }    
 }   
 
@@ -1801,36 +1791,53 @@ var react_optionmain  = function (objects, xGrid, yGrid, width, height, margin, 
     }
 	
     // SLTP
-	
-    if ((Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) && Symbol.RightType == TRADE_STOCK) {
-        if (+Symbol.BuyTP != 0) {
-    	    parameters.push (React.createElement(EdgeIndicator, {itemType: "last", orient: "left", edgeAt: "left", fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), yAccessor: function yAccessor(d) {return +Symbol.BuyEntry + (+Symbol.BuyTP * Symbol.SysPoint);},	lineStroke:  theme_buy, fill: function fill(d) {return theme_buy;} }));            
-            parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue:+Symbol.BuyEntry + (+Symbol.BuyTP * Symbol.SysPoint), strokeWidth : 1,      stroke: theme_buy,      label: ""}));   
+
+    if (Symbol.Order.operation == OP_BUY ) {
+        let tradeorder = symbol.Order.getorder (OP_BUY);
+        let takeprofit = tradeorder.get_takeprofit_value();
+
+        if (takeprofit != 0) {
+            let price = tradeorder.get_tradeentry_value() + (takeprofit * Symbol.SysPoint);
+    	    
+            parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return price;},	itemType: "last", orient: "left", edgeAt: "left", fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  theme_buy, fill: function fill(d) {return theme_buy;} }));            
+            parameters.push (React.createElement(StraightLine , {yValue:price, type: "horizontal",  strokeWidth : 1,      stroke: theme_buy,      label: ""}));   
         }
-        if (+Symbol.BuySL != 0) {
-    	    parameters.push (React.createElement(EdgeIndicator, {itemType: "last", orient: "left", edgeAt: "left",  fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), yAccessor: function yAccessor(d) {return +Symbol.BuyEntry - (+Symbol.BuySL * Symbol.SysPoint) ;},	lineStroke:  'transparent', fill: function fill(d) {return theme_sell;} }));
-            parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue:+Symbol.BuyEntry - (+Symbol.BuySL * Symbol.SysPoint), strokeWidth : 1,      stroke: theme_sell,     label: ""}));   
+        let stoploss = tradeorder.get_stoploss_value();
+        
+        if (stoploss != 0) {
+            let price = tradeorder.get_tradeentry_value() - (stoploss * Symbol.SysPoint)
+    	    
+            parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return price;},	itemType: "last", orient: "left", edgeAt: "left",  fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  'transparent', fill: function fill(d) {return theme_sell;} }));
+            parameters.push (React.createElement(StraightLine , {yValue: price, type: "horizontal",  strokeWidth : 1,      stroke: theme_sell,     label: ""}));   
         }
     	
-    	parameters.push (React.createElement(EdgeIndicator, {itemType: "last", orient: "left", edgeAt: "left",  fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), yAccessor: function yAccessor(d) {return +Symbol.BuyEntry;},	                                                            lineStroke:  "green", fill: function fill(d) {return theme_buy;} }));
-        parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue:+Symbol.BuyEntry, strokeWidth : 1,      stroke: theme_buy,      label: ""}));   
+    	parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value}, itemType: "last", orient: "left", edgeAt: "left",  fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"),  lineStroke:  "green", fill: function fill(d) {return theme_buy;} }));
+        parameters.push (React.createElement(StraightLine , {yValue:+tradeorder.tradeentry_value[tradeorder.tradeentry_type].value, type: "horizontal", strokeWidth : 1,      stroke: theme_buy,      label: ""}));   
     }
     else 
-    if ((Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) && Symbol.RightType == TRADE_STOCK) {
-    
-        if (+Symbol.SellSL != 0) {    
-        	parameters.push (React.createElement(EdgeIndicator, {itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), yAccessor: function yAccessor(d) {return +Symbol.SellEntry + (+Symbol.SellSL * Symbol.SysPoint);},	lineStroke:  theme_sell, fill: function fill(d) {return theme_sell;} }));
-            parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue:+Symbol.SellEntry + (+Symbol.SellSL * Symbol.SysPoint), strokeWidth : 1,      stroke: theme_sell,      label: ""}));  
+    if (Symbol.Order.operation == OP_SELL)  {
+        let tradeorder = symbol.Order.getorder (OP_SELL);
+        let stoploss = tradeorder.get_stoploss_value();
+
+        if (stoploss != 0) {    
+            let price = tradeorder.get_tradeentry_value() + (stoploss * Symbol.SysPoint)            
+
+        	parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return price},	itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  theme_sell, fill: function fill(d) {return theme_sell;} }));
+            parameters.push (React.createElement(StraightLine , {yValue: price, type: "horizontal",  strokeWidth : 1,      stroke: theme_sell,      label: ""}));  
         }
-        if (+Symbol.SellTP != 0) {    
-        	parameters.push (React.createElement(EdgeIndicator, {itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), yAccessor: function yAccessor(d) {return +Symbol.SellEntry - (+Symbol.SellTP * Symbol.SysPoint) ;},	lineStroke:  'transparent', fill: function fill(d) {return theme_buy;} }));
-            parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue: +Symbol.SellEntry - (+Symbol.SellTP * Symbol.SysPoint), strokeWidth : 1,      stroke: theme_buy,     label: ""}));    
+        let takeprofit = tradeorder.get_takeprofit_value();
+
+        if (takeprofit != 0) {    
+            let price =  tradeorder.get_tradeentry_value()  - (takeprofit * Symbol.SysPoint)
+
+        	parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return price},	itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  'transparent', fill: function fill(d) {return theme_buy;} }));
+            parameters.push (React.createElement(StraightLine , {yValue: price, type: "horizontal",  strokeWidth : 1,      stroke: theme_buy,     label: ""}));    
         }    
-	    parameters.push (React.createElement(EdgeIndicator, {itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), yAccessor: function yAccessor(d)                                                         {return +Symbol.SellEntry;},	lineStroke:  "green", fill: function fill(d) {return theme_sell;} }));
-        parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue: +Symbol.SellEntry, strokeWidth : 1,      stroke: theme_sell,      label: ""}));   
+	    parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value},	itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  "green", fill: function fill(d) {return theme_sell;} }));
+        parameters.push (React.createElement(StraightLine , {yValue: +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value, type: "horizontal",  strokeWidth : 1,      stroke: theme_sell,      label: ""}));   
     }
 
-	parameters.push (React.createElement(OHLCTooltip,       {origin: [0 , -3],  ohlcFormat: d3.format(",." + Symbol.Digits +"f"),  volumeFormat: d3.format("d"), symbolName : Symbol.Name,
+	parameters.push (React.createElement(OHLCTooltip,    {origin: [0 , -3],  ohlcFormat: d3.format(",." + Symbol.Digits +"f"),  volumeFormat: d3.format("d"), symbolName : Symbol.Name,
         onClick : function onClick(e) {
             OptionSetRightType ({value : "Stock"});    
             return OptionOrderPanel_Show(true);}
@@ -2118,96 +2125,53 @@ var react_chartmain  = function (objects, xGrid, yGrid, width, height, margin, x
         fill: function fill(d) {return d.close > d.open ? theme_bull : theme_bear;} 
     }));
 	
-    // LEFT
-    // SLTP
-	
 
- if ((Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) && Symbol.RightType == TRADE_STOCK) {
-        if (+Symbol.BuyTP != 0) {
-    	    parameters.push (React.createElement(EdgeIndicator, {
-                itemType: "last", 
-                orient: "left", 
-                edgeAt: "left", 
-                fontSize: 10, 
-                fontFamily:"sans-serif", 
-                displayFormat: d3.format(",." + Symbol.Digits +"f"), 
-                yAccessor: function yAccessor(d) {return +Symbol.BuyEntry + (+Symbol.BuyTP * Symbol.SysPoint);},	
-                lineStroke:  theme_buy, 
-                fill: function fill(d) {return theme_buy;} 
-            }));            
-            parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue:+Symbol.BuyEntry + (+Symbol.BuyTP * Symbol.SysPoint), strokeWidth : 1,      stroke: theme_buy,      label: ""}));   
+   
+    if (Symbol.Order.operation == OP_BUY ) {
+        let tradeorder = symbol.Order.getorder (OP_BUY);
+        let takeprofit = tradeorder.get_takeprofit_value();
+
+        if (takeprofit != 0) {
+            let price = tradeorder.get_tradeentry_value() + (takeprofit * Symbol.SysPoint);
+    	    
+            parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return price;},	itemType: "last", orient: "left", edgeAt: "left", fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  theme_buy, fill: function fill(d) {return theme_buy;} }));            
+            parameters.push (React.createElement(StraightLine , {yValue:price, type: "horizontal",  strokeWidth : 1,      stroke: theme_buy,      label: ""}));   
         }
-        if (+Symbol.BuySL != 0) {
-    	    parameters.push (React.createElement(EdgeIndicator, {
-                itemType: "last", 
-                orient: "left", 
-                edgeAt: "left",  
-                fontSize: 10, 
-                fontFamily:"sans-serif", 
-                displayFormat: d3.format(",." + Symbol.Digits +"f"), 
-                yAccessor: function yAccessor(d) {return +Symbol.BuyEntry - (+Symbol.BuySL * Symbol.SysPoint) ;},	
-                lineStroke:  'transparent', 
-                fill: function fill(d) {return theme_sell;} 
-            }));
-            parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue:+Symbol.BuyEntry - (+Symbol.BuySL * Symbol.SysPoint), strokeWidth : 1,      stroke: theme_sell,     label: ""}));   
+        let stoploss = tradeorder.get_stoploss_value();
+        
+        if (stoploss != 0) {
+            let price = tradeorder.get_tradeentry_value() - (stoploss * Symbol.SysPoint)
+    	    
+            parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return price;},	itemType: "last", orient: "left", edgeAt: "left",  fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  'transparent', fill: function fill(d) {return theme_sell;} }));
+            parameters.push (React.createElement(StraightLine , {yValue: price, type: "horizontal",  strokeWidth : 1,      stroke: theme_sell,     label: ""}));   
         }
     	
-    	parameters.push (React.createElement(EdgeIndicator, {
-            itemType: "last", 
-            orient: "left", 
-            edgeAt: "left",  
-            fontSize: 10, 
-            fontFamily:"sans-serif", 
-            displayFormat: d3.format(",." + Symbol.Digits +"f"), 
-            yAccessor: function yAccessor(d) {return +Symbol.BuyEntry;
-            },	                                                            lineStroke:  "green", fill: function fill(d) {return theme_buy;} }));
-        parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue:+Symbol.BuyEntry, strokeWidth : 1,      stroke: theme_buy,      label: ""}));   
+    	parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value}, itemType: "last", orient: "left", edgeAt: "left",  fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"),  lineStroke:  "green", fill: function fill(d) {return theme_buy;} }));
+        parameters.push (React.createElement(StraightLine , {yValue:+tradeorder.tradeentry_value[tradeorder.tradeentry_type].value, type: "horizontal", strokeWidth : 1,      stroke: theme_buy,      label: ""}));   
     }
     else 
-    if ((Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) && Symbol.RightType == TRADE_STOCK) {
-    
-        if (+Symbol.SellSL != 0) {    
-        	parameters.push (React.createElement(EdgeIndicator, {
-                itemType: "last", 
-                orient: "left", 
-                edgeAt: "left",
-                fontSize: 10, 
-                fontFamily:"sans-serif", 
-                displayFormat: d3.format(",." + Symbol.Digits +"f"), 
-                yAccessor: function yAccessor(d) {return +Symbol.SellEntry + (+Symbol.SellSL * Symbol.SysPoint);},	
-                lineStroke:  theme_sell, 
-                fill: function fill(d) {return theme_sell;}
-             }));
-            parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue:+Symbol.SellEntry + (+Symbol.SellSL * Symbol.SysPoint), strokeWidth : 1,      stroke: theme_sell,      label: ""}));  
+    if (Symbol.Order.operation == OP_SELL)  {
+        let tradeorder = symbol.Order.getorder (OP_SELL);
+        let stoploss = tradeorder.get_stoploss_value();
+
+        if (stoploss != 0) {    
+            let price = tradeorder.get_tradeentry_value() + (stoploss * Symbol.SysPoint)            
+
+        	parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return price},	itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  theme_sell, fill: function fill(d) {return theme_sell;} }));
+            parameters.push (React.createElement(StraightLine , {yValue: price, type: "horizontal",  strokeWidth : 1,      stroke: theme_sell,      label: ""}));  
         }
-        if (+Symbol.SellTP != 0) {    
-        	parameters.push (React.createElement(EdgeIndicator, {
-                itemType: "last", 
-                orient: "left", 
-                edgeAt: "left",    
-                fontSize: 10, 
-                fontFamily:"sans-serif", 
-                displayFormat: d3.format(",." + Symbol.Digits +"f"), 
-                yAccessor: function yAccessor(d) {return +Symbol.SellEntry - (+Symbol.SellTP * Symbol.SysPoint) ;},	
-                lineStroke:  'transparent', 
-                fill: function fill(d) {return theme_buy;} 
-            }));
-            parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue:+Symbol.SellEntry - (+Symbol.SellTP * Symbol.SysPoint), strokeWidth : 1,      stroke: theme_buy,     label: ""}));    
+        let takeprofit = tradeorder.get_takeprofit_value();
+
+        if (takeprofit != 0) {    
+            let price =  tradeorder.get_tradeentry_value()  - (takeprofit * Symbol.SysPoint)
+
+        	parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return price},	itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  'transparent', fill: function fill(d) {return theme_buy;} }));
+            parameters.push (React.createElement(StraightLine , {yValue: price, type: "horizontal",  strokeWidth : 1,      stroke: theme_buy,     label: ""}));    
         }    
-	    parameters.push (React.createElement(EdgeIndicator, {
-            itemType: "last", 
-            orient: "left", 
-            edgeAt: "left",    
-            fontSize: 10, 
-            fontFamily:"sans-serif", 
-            displayFormat: d3.format(",." + Symbol.Digits +"f"), 
-            yAccessor: function yAccessor(d) {return +Symbol.SellEntry;},	
-            lineStroke:  "green", 
-            fill: function fill(d) {return theme_sell;}
-         }));
-        parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue:+Symbol.SellEntry, strokeWidth : 1,      stroke: theme_sell,      label: ""}));   
+	    parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value},	itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  "green", fill: function fill(d) {return theme_sell;} }));
+        parameters.push (React.createElement(StraightLine , {yValue: +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value, type: "horizontal",  strokeWidth : 1,      stroke: theme_sell,      label: ""}));   
     }
-  
+
 //LEVELS
 
     if (symbolcanvas.Levels) {
@@ -2216,49 +2180,6 @@ var react_chartmain  = function (objects, xGrid, yGrid, width, height, margin, x
             parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue: Symbol.DownLevel[i] , strokeWidth : 1, stroke: theme_bear,   labelpos: i,  labelcolor: 'white', label: sPeriodName[i]}));      
         }
     }            
-    
-/*    
-<ClickCallback
-						onMouseMove={ (moreProps, e) => { console.log("onMouseMove", moreProps, e); } }
-						onMouseDown={ (moreProps, e) => { console.log("onMouseDown", moreProps, e); } }
-						onClick={ (moreProps, e) => { console.log("onClick", moreProps, e); } }
-						onDoubleClick={ (moreProps, e) => { console.log("onDoubleClick", moreProps, e); } }
-						onContextMenu={ (moreProps, e) => { console.log("onContextMenu", moreProps, e); } }
-						onPan={ (moreProps, e) => { console.log("onPan", moreProps, e); } }
-						onPanEnd={ (moreProps, e) => { console.log("onPanEnd", moreProps, e); } }
-					/>
-*/					  
-//	parameters.push (React.createElement(ClickCallback,     {enabled: true,  /*onClick : onclick_chartcanvas,*/ onContextMenu : OnRClickCanvasChart, onDoubleClick : onclick_chartcanvas}));
-/*
-    if (!alldeleted) {
-        parameters.push (React.createElement(TrendLine , {trends: symbolcanvas.Trends, init : {trends: []}, subtype : "trendline", enabled: (symbolcanvas.Selection == 'trendline'),  type: "XLINE" , snap: false, strokeWidth : 1, onStart: onTrendLineStart, onComplete : onTrendLineComplete, stroke: "yellow"}));    
-    
-        parameters.push (React.createElement(FibonacciRetracement , {ref : "fib", retracements: symbolcanvas.Retracements, init : {retracements: []}, enabled: (symbolcanvas.Selection == 'fiblines'),  type: "BOUND" , onStart: onFibStart, onComplete : onFibComplete, strokeWidth : 1, stroke: "yellow"}));    
-    
-        if (symbolcanvas.HLines.length != 0) 
-            parameters.push (React.createElement(TrendLine , {trends: symbolcanvas.HLines, init : {trends: symbolcanvas.HLines}, subtype : "horizontal", enabled: false, type: "LINE", strokeWidth : 1, stroke: "Magenta", onStart: onTrendLineStart, onComplete : onTrendLineComplete}));    
-    
-        if (symbolcanvas.VLines.length != 0) 
-            parameters.push (React.createElement(TrendLine , {trends: symbolcanvas.VLines, init : {trends: symbolcanvas.VLines}, subtype : "vertical", enabled: false, type: "LINE", strokeWidth : 1, stroke: "Magenta", onStart: onTrendLineStart, onComplete : onTrendLineComplete}));    
-    }
-
-    for (var i = 0; i < symbolcanvas.Marks.length; i++) {
-        parameters.push (React.createElement(StraightLine , {type: "vertical",  xValue: symbolcanvas.Marks[i] , stroke: "yellow", strokeDasharray:"ShortDash"}));    
-
-    }
-
-    
-    for (var i = 0; i < symbolcanvas.Lines.length; i++) {
-        parameters.push (React.createElement(TrendLine , {trends: symbolcanvas.Lines[i].trends, enabled: symbolcanvas.Lines[i].enabled,  recid : i, subtype : symbolcanvas.Lines[i].subtype, type:  symbolcanvas.Lines[i].type , onStart: onTrendLineStart, onComplete : onTrendLineComplete, stroke: symbolcanvas.Lines[i].stroke}));
-    }
-*/
-/*        
-    for (var i = 0; i < symbolcanvas.Lines.length; i++) {
-        parameters.push (React.createElement(StraightLine , {type: "horizontal",  yValue: symbolcanvas.Lines[i] , stroke: "tomato", strokeDasharray:"ShortDash"}));    
-//        parameters.push (React.createElement(InteractiveYCoordinate , {ref: saveInteractiveNodes("InteractiveYCoordinate", 1), enabled: state.enableInteractiveObject, onDragComplete: onDragComplete, onDelete: onDelete, yCoordinateList: state.yCoordinateList_1 }));          
-
-    }
-*/
 // Cursor
     parameters.push (React.createElement(CrossHairCursor, {strokeDasharray: "Solid",  snapX: snapx, stroke: 'gray'}));
 

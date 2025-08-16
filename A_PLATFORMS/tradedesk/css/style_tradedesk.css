@@ -68,6 +68,16 @@
     overflow:hidden;
 }
 
+
+#buy.checked {
+    color: var(--theme-main-color);
+    background-color: #36a845;
+}
+
+#sell.checked {
+    color: var(--theme-main-color);
+    background-color: #d11d17;
+}
 /*--------------------------------------------------------- SERVERS PANEL ------------------------------------------------------*/
 
 #serverpanel_tradedesk  th, #serverpanel_tradedesk td { 
@@ -319,11 +329,15 @@
     color: var(--theme-main-color);
     background-clip: padding-box;
     border: 1px solid var(--theme-border-color);        
+    padding: 0px;
+    width: 39px;
 }
 
 .enginecontrol_button:hover {
+    /*
     background-color: var(--theme-select-bg-color) !important;
     color: var(--theme-select-color); 
+    */
 }
 
 /*------------------------------------------------------------ TSIGNALS PANEL ------------------------------------------------------*/

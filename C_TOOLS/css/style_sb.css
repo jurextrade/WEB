@@ -1276,15 +1276,16 @@
 }
 
 .sb_buttongroup {
-    padding: 0 10px 0 10px;
-    display: inline-flex;  
-    border-color: var(--theme-special-border)!important;      
-    width: 100%;    
-    justify-content: space-around;    
+    padding: 7px 7px 10px 10px;
+    display: inline-flex;
+    border-color: var(--theme-special-border) !important;
+    width: 100%;
+    justify-content: space-around;
 }
 
 .sb_buttongroup .sb_button{
-    min-width:100px;
+    min-width: 100px;
+    margin: unset;
 }
  
 .sb_buttonprepend,  #AllIndicators button {

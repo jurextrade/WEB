@@ -382,14 +382,30 @@ var asynchronous = false;
 var serverlink;
 
 
-var TRADE_STOCK = 2;
-var TRADE_PUT = 3;
-var TRADE_CALL = 4;
+var     TRADE_STOCK     = 2;
+var TRADE_PUT       = 3;
+var TRADE_CALL      = 4;
+
 
 var TRADE_VOLUME = 0;
 var TRADE_RISK = 1;
+
 var PIPS_SLTP = 0;
 var ATR_SLTP = 1;
+
+const ENTRY_SPOT        = 0;
+const ENTRY_PRECISE     = 1;
+
+const TRADE_ENTRY_MENU = [{id: ENTRY_SPOT, text: 'Spot'}, {id: ENTRY_PRECISE, text: 'Set Price'}];
+
+const VOLUME_PIPS       = 0;
+const VOLUME_RISK       = 1;
+const TRADE_VOLUME_MENU = [{id: VOLUME_PIPS, text: 'Volume'}, {id: VOLUME_RISK, text: 'Account %'}]
+
+const SLTP_PIPS         = 0;
+const SLTP_ATR          = 1;
+const TRADE_SLTP_MENU = [{id: SLTP_PIPS, text: 'PIPS'}, {id: SLTP_ATR, text: 'ATR (14)'}]
+
 
 const EMPTY_VALUE = 0x7FFFFFFF;
 
@@ -424,7 +440,85 @@ function pgcurrency(name, pname, soundname, description) {
     
 }
 
+function pgtradeorders (symbol)  {
+    this.buyorder  = new pgtradeorder(symbol, OP_BUY);
+    this.sellorder = new pgtradeorder(symbol, OP_SELL);
+    this.operation = null;
+
+    this.reset  = function (type) {
+        if (type == OP_BUY) {
+            this.buyorder.Init(); 
+        } else
+        if (type == OP_SELL) {
+            this.sellorder.Init(); 
+        } 
+    } 
+    this.getorder = function (type) {
+        if (type == OP_BUY) {
+            return this.buyorder; 
+        } else
+        if (type == OP_SELL) {
+            return this.sellorder; 
+        } 
+        return null;
+    }    
+}
+
+function pgtradeorder (symbol, type)  {
+    this.type             = type;
+    this.Init = function () {
+        this.tradeentry_type  =  TRADE_ENTRY_MENU[ENTRY_SPOT].id;
+        this.tradeentry_value =  [{value: symbol.Bid, fields: {min: '0', max: '', step:  symbol.Point}},  {value: symbol.Bid, fields: {min: '0', max: '', step:  symbol.Point}}];
+        this.tradesize_type   =  TRADE_VOLUME_MENU[VOLUME_PIPS].id;
+        this.tradesize_value  =  [{value: symbol.MinLot, fields: {min: symbol.AdjustSLTPPips, max: symbol.MaxLot, step: symbol.LotStep}},  {value:'2.0', value_a : symbol.MinLot, fields: {min:'0.1', max:'100', step: '0.50'}}];       
+        this.stoploss_type    =  TRADE_SLTP_MENU[SLTP_PIPS].id;
+        this.stoploss_value   =  [{value:'0', fields: {min: '0', max: '', step: '0.5'}}, {value: '0', value_a: '0', fields: {min: '0', max: '10', step: '0.1'}}];  
+        this.takeprofit_type  =  TRADE_SLTP_MENU[SLTP_PIPS].id;
+        this.takeprofit_value = [{value:'0', fields: {min: '0', max: '', step: '0.5'}}, {value: '0', value_a: '0', fields: {min: '0', max: '10', step: '0.1'}}];       
+    }
+    this.get_tradeentry_value = function () {
+        return +this.tradeentry_value[this.tradeentry_type].value;
+    }
+    this.get_tradesize_value = function () {
+        return this.tradesize_type == VOLUME_RISK ? +this.tradesize_value[this.tradesize_type].value_a : +this.tradesize_value[this.tradesize_type].value;
+    }
+    this.get_stoploss_value = function () {
+        return this.stoploss_type == SLTP_ATR ? +this.stoploss_value[this.stoploss_type].value_a : +this.stoploss_value[this.stoploss_type].value;
+    }
+    this.get_takeprofit_value = function () {
+        return this.takeprofit_type == SLTP_ATR ? +this.takeprofit_value[this.takeprofit_type].value_a : +this.takeprofit_value[this.takeprofit_type].value;
+    }
+    this.Init ()
+}
+
 function pgsymbol(name, pname, minlot, maxlot, lotstep, spread, stoplevel, point, digits, lotsize, tester, period) {
+
+    this.CalculateLotValue = function (accountequity, percent) {
+        let digits = numDecimals(this.MinLot);
+        let value = (+accountequity  * percent / 1000000).toFixed(digits);    
+        return value;
+    }
+    this.CalcultatePipValue = function (accountcurrency) {
+        if (this.PipValue != 0) {
+            return -1;  // already calculated;
+        }
+        // calculate PIP VALUE     
+        let currencypair = GetCurrencyPair(this.Name);
+        if (currencypair.length != 2) {
+            console.log ('currency pair not found')
+            this.PipValue = -2;
+            return -2;
+        }
+    
+        this.FCurrency = currencypair[0];
+        this.TCurrency = currencypair[1];
+        if (this.TCurrency.Name == accountcurrency) {
+            this.PipValue = (this.SysPoint * this.LotSize).toFixed(2);
+        } else
+        if (this.FCurrency.Name == accountcurrency) {
+            this.PipValue = ((this.SysPoint * this.LotSize) / this.Ask).toFixed(2);
+        }
+    }
     this.Set = function (name, pname, minlot, maxlot, lotstep, spread, stoplevel, point, digits, lotsize, tester, period) {
         this.Name = name;
         this.PName = pname;
@@ -444,16 +538,16 @@ function pgsymbol(name, pname, minlot, maxlot, lotstep, spread, stoplevel, point
         if (digits == 6) multiplier = 100;
         if (digits == 7) multiplier = 1000;
         this.SysPoint = point * multiplier;
-        this.BuyVolume = 0;
-        this.SellVolume = 0;
         this.Contracts = [];
         this.Expiries = [];
         this.Strikes = [];   
         this.SelectedContracts = [];    
         this.NbrContracts = 0;
         this.NbrContractRead = 0;
+        this.Order = new pgtradeorders(this); // BUY OR SELL                
 
     }
+    
     this.Name = name;
     this.PName = "";
     this.Connected = false;
@@ -466,34 +560,31 @@ function pgsymbol(name, pname, minlot, maxlot, lotstep, spread, stoplevel, point
     this.Ticker;
     this.PipValue = 0;
     this.Slippage;
+    
     this.Description;
     this.TimeCurrent;
+  
     this.Ask = 0;
     this.Bid = 0;
     this.Last = 0;
-    this.UpTPSLType = PIPS_SLTP; //pips 0 atr 1 
-    this.DownTPSLType = PIPS_SLTP; //pips 0 atr 1 
+    this.ATR = [];
+     
+    this.TradeOrder = -1; // BUY OR SELL        
+    this.BuyEntry = 0;    //price
+    this.SellEntry = 0;
     this.BuyTP = 0;
     this.BuySL = 0;
     this.SellTP = 0;
     this.SellSL = 0;
-    this.ATRBuyTP = 1;
-    this.ATRBuySL = 1;
-    this.ATRSellTP = 1;
-    this.ATRSellSL = 1;
-    this.BuyEntry = 0;
-    this.SellEntry = 0;
-    this.TradeType = TRADE_VOLUME; //Volume 0 risk 1 
-    this.TradeRisk = 2.0;
-    this.RightType = TRADE_STOCK;  // can be also put or call
     this.BuyVolume = 0;
     this.SellVolume = 0;
-    this.ATR = [];
-    this.Risk = [];
-    this.TradeOrder = -1; // BUY OR SELL
-    this.LastSLType = 0; //pips 0, price 1
-    this.LastTPType = 0; //pips 0, price 1
-    this.LastEntryType = 0; //pips 0, price 1
+
+
+    this.RightType = TRADE_STOCK;  // can be also put or call
+  
+
+
+
     this.BuyNbrLots = 0;
     this.SellNbrLots = 0;
     this.BuyProfit = 0;
@@ -514,7 +605,8 @@ function pgsymbol(name, pname, minlot, maxlot, lotstep, spread, stoplevel, point
     this.Contracts = [];  
     this.Strikes = [];
     this.Expiries = [];
-    this.SelectedContracts = [];        
+    this.SelectedContracts = [];    
+
     for (var i = 0; i < PeriodName.length; i++) {
         this.chartData[i] = [];
         this.WaitHistory[i] = false;
@@ -1057,9 +1149,10 @@ function pg (pname) {
         for (var i = 0; i < this.Engines.length; i++) {
             Symbol.profitData[i] = [];
         }
-//        CurrencyPair = GetCurrencyPair(Symbol.Name);
-//        if (CurrencyPair.length != 2) return;
-/*        
+/*
+        CurrencyPair = GetCurrencyPair(Symbol.Name);
+        if (CurrencyPair.length != 2) return;
+        
         Symbol.FCurrency = CurrencyPair[0];
         Symbol.TCurrency = CurrencyPair[1];
         if (Symbol.TCurrency.Name == this.User.AccountCurrency) {

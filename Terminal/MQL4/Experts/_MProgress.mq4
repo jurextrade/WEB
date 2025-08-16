@@ -5,13 +5,13 @@
 //+---------------------------------------------------------------------------------------------------------------+
 #property copyright   "Copyright 2021,Gabriel Jureidini"
 #property link        "http://www.mt4-progress.com"
-#property version     "700.000"                                                      // Version
+#property version     "500.000"                                                      // Version
 #property description "Running Expert Advisors created in MT4-Progress Software." // Description (line 1)
 #property description "Interactive Monitoring of Strategies"         // Description (line 2)
 #property icon        "\\Images\\Progress.ico";   
 
   
-                            
+                                 // A file with the product icon
 #include <Progress.mqh>
 #include <stdlib.mqh>
 
@@ -39,6 +39,7 @@ int           A_NbrAlert                   = 0;
 int           CurrentPeriod      = 0;
 datetime      CurrentTime        = 0;
 
+int           ShouldExit           = 0;
 int           FirstPass          = -1;
 int           SecondPass         = 0;
 
@@ -60,13 +61,98 @@ bool          C_COMPILE          = false;
 //#define       NBR_RULES            1
 bool          GlobalComment      = true;
 
+//================================================= RULES ==========================================
+int           RuleTab[NBR_OPERATIONS][NBR_FIELDS];
+int           BeforeRuleTab[NBR_OPERATIONS][NBR_FIELDS];
+double        RuleTabValue[NBR_OPERATIONS][NBR_FIELDS][NBR_RULES];
+double        BeforeRuleTabValue[NBR_OPERATIONS][NBR_FIELDS][NBR_RULES];
+int           RuleFilterTab[NBR_OPERATIONS][NBR_FIELDS][NBR_RULES];
 
 
+int           RuleNbrBuy, RuleNbrSell, RuleNbrExitBuy, RuleNbrExitSell;
+int           RuleObjFilter[NBR_OBJECTS];
+int           RuleOrder[NBR_RULES];
+
+ //================================================= SIGNALS ==========================================
+int           SignalTab[NBR_OBJECTS][NBR_SIGNALS];
+
+int           BSignalTab[NBR_OBJECTS][NBR_SIGNALS];
+int           TSignalTab[NBR_OBJECTS][NBR_SIGNALS];
+
+int           BeforeSignalTab[NBR_OBJECTS][NBR_SIGNALS];
+int           BeforeSignalTickTab[NBR_OBJECTS][NBR_SIGNALS];
+
+double        SignalTabValue[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
+double        SignalTabTime[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
+double        SignalTabPrice[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
+
+double        BeforeSignalTabValue[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
+double        BeforeSignalTabTime[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
+double        BeforeSignalTabPrice[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
+
+
+int           SignalFilterTab[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
+
+datetime      SignalFilterTabTime[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];   // interval in seconds
+
+//=============================================ENGINES==========================================
+
+string        EngineName[NBR_ENGINES] ;
+int           EngineTab[NBR_ENGINES][2];
+double        EngineTabValue[NBR_ENGINES][NBR_ATTRIBUTES];
+int           EngineStartRule[NBR_ENGINES];
+//======================================
 datetime      TimeOpenBar[NBR_PERIODS];
+//=============================================SCHEDULES========================================
 
+double        S_StartM[NBR_RULES][3][NBR_SCHEDULES];  // this should be set to 0 when not used
+double        S_StartW[NBR_RULES][3][NBR_SCHEDULES];
+double        S_StartD[NBR_RULES][3][NBR_SCHEDULES];
+datetime      S_StartT[NBR_RULES][3][NBR_SCHEDULES];
+double        S_EndM[NBR_RULES][3][NBR_SCHEDULES];
+double        S_EndW[NBR_RULES][3][NBR_SCHEDULES];
+double        S_EndD[NBR_RULES][3][NBR_SCHEDULES];
+datetime      S_EndT[NBR_RULES][3][NBR_SCHEDULES];
+double        S_FrequencyD[NBR_RULES][3][NBR_SCHEDULES];
+double        S_OnSameBar[NBR_RULES][3][NBR_SCHEDULES];
+
+
+double        S_BetweenT[NBR_RULES][3][NBR_SCHEDULES];
+double        S_TimeZone[NBR_RULES][3][NBR_SCHEDULES];
+
+double        S_NbrRuleStart[NBR_RULES + 1][3];
+double        S_NbrRuleStartW[NBR_RULES + 1][3];
+double        S_NbrRuleStartD[NBR_RULES + 1][3];
+double        S_LastCloseTime[NBR_RULES + 1][3];
 //=============================================OBJECTS========================================
 
 
+#define		  NBR_SYSOBJECTS     45  // level = 5 * nbr_periods = 9
+
+
+bool		  ObjUsed[NBR_OBJECTS];
+int           ObjId[NBR_OBJECTS];
+string        ObjName[NBR_OBJECTS];  
+int           ObjType[NBR_OBJECTS];
+int           ObjMethod[NBR_OBJECTS];
+int           ObjApply[NBR_OBJECTS];
+int           ObjMode[NBR_OBJECTS];
+int           ObjShift[NBR_OBJECTS];
+int           ObjPeriod[NBR_OBJECTS];
+int           ObjDeviations[NBR_OBJECTS];
+string        ObjProgName[NBR_OBJECTS];
+double        ObjStep[NBR_OBJECTS];
+double        ObjMaximum[NBR_OBJECTS];
+string        ObjCross[NBR_OBJECTS];
+int           ObjDisplayType[NBR_OBJECTS];
+int           ObjDisplay[NBR_OBJECTS];
+int           ObjLevelType[NBR_OBJECTS];
+int           ObjValue[NBR_OBJECTS][4];    // values trend = 3 up = 0 down = 1 sideway = 2
+double        ObjLevel[NBR_OBJECTS][5][NBR_PERIODS];    // mid level 0 up level = 1 downlevel = 2 ex up = 3 ex down = 4
+string        P_ObjName[NBR_OBJECTS];             
+int           P_ObjOrder[NBR_OBJECTS];
+string        SysObjName[NBR_OBJECTS];             
+string        SysObjDependency[NBR_OBJECTS][NBR_SYSOBJECTS];
 
 //======================================
 //minutes
@@ -77,6 +163,33 @@ bool   AlertOnStartRule   = false;
 bool   ShellTrace         = true;
 bool   FileTrace          = false;
 
+
+
+// MONEY MANAGEMENT
+double        MMDailyTargetAmount  = 0;
+double        MMDailyStopLoss      = 0;
+double        MMDailyPercentTargetAmount  = 0;
+double        MMDailyPercentStopLoss      = 0;
+bool          MMDailyTargetReached = false;
+double        MMDailyClosedProfit  = -1;
+
+double        MMDailySymbolTargetAmount  = -1;
+double        MMDailySymbolStopLoss      = -1;
+bool          MMDailySymbolTargetReached = false;
+double        MMDailySymbolClosedProfit  = -1;
+
+double        MMWeeklyTargetAmount  = 0;
+double        MMWeeklyStopLoss      = 0;
+double        MMWeeklyPercentTargetAmount  = 0;
+double        MMWeeklyPercentStopLoss      = 0;
+
+bool          MMWeeklyTargetReached = false;
+double        MMWeeklyClosedProfit  = -1;
+
+double        MMWeeklySymbolTargetAmount  = -1;
+double        MMWeeklySymbolStopLoss      = -1;
+bool          MMWeeklySymbolTargetReached = false;
+double        MMWeeklySymbolClosedProfit  = -1;
 
 
 //+------------------------------------------------------------------+ GENERAL
@@ -138,6 +251,23 @@ int           SymbolRunning;
 
 //=============================================SYSTEM==========================================
 
+
+
+//=============================================SIGNALS==========================================
+
+string        ObjTypeName[]      = {"MA", "ADX", "CCI", "ICHIMOKU", "BOLLINGER", "SAR", "RSI", "MACD", "STOCHASTIC", "WPR", "ATR", "CUSTOM", "PREDEFINED", "SYSTEM"};
+string        SignalName[]       =  {"UP","DOWN","SIDEWAY","ABOVE","BELOW", "TOUCHED", "ALERT", "CROSS_UP", "CROSS_DOWN", "REVERSE_UP", "REVERSE_DOWN",           
+         								"MIDDLE", "CHANGED","TARGET", "DISTANCE","CURRENT","PREVIOUS","BULL","BEAR","RANGE","OVERBOUGHT","OVERSOLD",
+         								"EXT_OVERBOUGHT","EXT_OVERSOLD","VERYWEAK","WEAK","NEUTRAL","STRONG","VERYSTRONG",
+         								"ANGLE","PANGLE","NBRBARS","RCROSSED","BUY","SELL","EXIT_BUY","EXIT_SELL","DOJI",         								 
+         								"BULL_QUAD", "BULL_HAMMER", "BULL_HAMMER1", "BULL_HAMMER2", "BULL_ENGULFING", "BULL_HARAMI",
+         								"BULL_INVERTED_HAMMER", "BULL_INVERTED_HAMMER1", "BULL_INVERTED_HAMMER2", "BULL_PIERCING_LINE", "BULL_MORNING_STAR", "BULL_MORNING_DOJI_STAR", 
+         								"BULL_THREE_WHITE_SOLDIERS", "BULL_THREE_INSIDE_UP", "BULL_THREE_OUTSIDE_UP", 
+         								"BEAR_QUAD", "BEAR_HANGING_MAN", "BEAR_HANGING_MAN1", "BEAR_HANGING_MAN2", "BEAR_ENGULFING", "BEAR_HARAMI", 
+         								"BEAR_SHOOTING_STAR", "BEAR_SHOOTING_STAR1", "BEAR_SHOOTING_STAR2", "BEAR_DARK_CLOUD_COVER", "BEAR_EVENING_STAR", "BEAR_EVENING_DOJI_STAR", 
+         								"BEAR_THREE_BLACK_CROWS","BEAR_THREE_INSIDE_DOWN", "BEAR_THREE_OUTSIDE_DOWN", 
+         								"MAXINDAY", "MININDAY", "FIRSTINDAY", "MAXINWEEK", "MININWEEK", "FIRSTINWEEK","MAXINMONTH", "MININMONTH", "FIRSTINMONTH", "MAXINYEAR", "MININYEAR", "FIRSTINYEAR"};  
+       								
 
 
 
@@ -447,6 +577,7 @@ color         ColorNewsToday[MAXNBRNEWS];
 //============================================= NEWS ==========================================
 
 
+string        SlopeObject      = "PG_Slope";
 string        VelocityObject   = "PG_TPO_Velocity";
 string        CoralObject      = "PG_THV_Coral";
 string        TVIObject        = "PG_TVI";
@@ -769,6 +900,7 @@ int init() {
 
     PG_Print(TYPE_INFO, "________________________________________________________________________           Running in " + ((C_COMPILE == true) ? " C MODE " : " MQ4 MODE ") + "          ________________________________________________________________________");
 
+    ShouldExit = 0;
     FirstPass = -1;
     SecondPass = 0;
 
@@ -814,6 +946,11 @@ int end_init() {
 }
 
 int start() {
+
+    if (ShouldExit == 1) {
+    //    ExpertRemove ();
+        return 0;
+    }
 
     if (FirstPass == -1) {
         FirstPass = 1;
@@ -1019,6 +1156,1572 @@ int OrderType2Int(string stype) {
         if (OrderTypeName[i] == StringTrimRight(stype)) return (i);
     return (-1);
 }
+
+//=========================================RULES FUNCTIONS============================================================
+
+bool AndR(int Operation, int OperationType, int rule, int rule1 = -1, int rule2 = -1, int rule3 = -1, int rule4 = -1, int rule5 = -1) {
+    int result = 0;
+    result |= (1 << rule);
+    if (rule1 != -1) result |= (1 << rule1);
+    if (rule2 != -1) result |= (1 << rule2);
+    if (rule3 != -1) result |= (1 << rule3);
+    if (rule4 != -1) result |= (1 << rule4);
+    if (rule5 != -1) result |= (1 << rule5);
+    return ((RuleTab[Operation][OperationType] & result) == result);
+}
+
+bool OrR(int Operation, int OperationType, int rule, int rule1 = -1, int rule2 = -1, int rule3 = -1, int rule4 = -1, int rule5 = -1) {
+    int result = 0;
+    result |= (1 << rule);
+    if (rule1 != -1) result |= (1 << rule1);
+    if (rule2 != -1) result |= (1 << rule2);
+    if (rule3 != -1) result |= (1 << rule3);
+    if (rule4 != -1) result |= (1 << rule4);
+    if (rule5 != -1) result |= (1 << rule5);
+    return ((RuleTab[Operation][OperationType] & result) != 0);
+}
+
+bool AndCR(int Operation, int OperationType, int rule) {
+    return ((RuleTab[Operation][OperationType] & rule) == rule);
+}
+
+bool OrCR(int Operation, int OperationType, int rule) {
+    return ((RuleTab[Operation][OperationType] & rule) != 0);
+}
+
+int Get_Rule(int Operation, int OperationType, int rule) {
+    return (RuleTab[Operation][OperationType] & (1 << rule));
+}
+
+int Get_Previous_Rule(int Operation, int OperationType, int rule) {
+    return (BeforeRuleTab[Operation][OperationType] & (1 << rule));
+}
+
+double Get_Previous_Filter_Value(int Operation, int OperationType, int rule) {
+    return (BeforeRuleTabValue[Operation][OperationType][rule]);
+}
+
+void SetRuleFilter(int add, int Operation, int OperationType, int rule) {
+    int i, j;
+    if (rule == -1)
+        for (int x = 0; x < NBR_RULES; x++)
+            if (OperationType == -1)
+                if (Operation == -1)
+                    for (i = 0; i < NBR_OPERATIONS; i++)
+                        for (j = 0; j < NBR_FIELDS; j++)
+                            RuleFilterTab[i][j][x] = add;
+                else
+                    for (j = 0; j < NBR_FIELDS; j++)
+                        RuleFilterTab[Operation][j][x] = add;
+    else
+    if (Operation == -1)
+        for (i = 0; i < NBR_OPERATIONS; i++)
+            RuleFilterTab[i][OperationType][x] = add;
+    else
+        RuleFilterTab[Operation][OperationType][x] = add;
+    else
+    if (OperationType == -1)
+        if (Operation == -1)
+            for (i = 0; i < NBR_OPERATIONS; i++)
+                for (j = 0; j < NBR_FIELDS; j++)
+                    RuleFilterTab[i][j][rule] = add;
+        else
+            for (j = 0; j < NBR_FIELDS; j++)
+                RuleFilterTab[Operation][j][rule] = add;
+    else
+        RuleFilterTab[Operation][OperationType][rule] = add;
+}
+
+void ResetRuleFilters() {
+    for (int i = 0; i < NBR_OPERATIONS; i++)
+        for (int j = 0; j < NBR_FIELDS; j++)
+            for (int x = 0; x < NBR_RULES; x++)
+                RuleFilterTab[i][j][x] = 0;
+}
+
+int GetRuleFilter(int Operation, int OperationType, int rule) {
+    return (RuleFilterTab[Operation][OperationType][rule]);
+}
+
+//========================================SIGNALS FUNCTIONS============================================================
+
+int AndS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) export {
+    int result = 0;
+    if (period != -1) result |= (1 << period);
+    if (period1 != -1) result |= (1 << period1);
+    if (period2 != -1) result |= (1 << period2);
+    if (period3 != -1) result |= (1 << period3);
+    if (period4 != -1) result |= (1 << period4);
+    if (period5 != -1) result |= (1 << period5);
+    if (period6 != -1) result |= (1 << period6);
+    if (period7 != -1) result |= (1 << period7);
+    if (period8 != -1) result |= (1 << period8);
+
+    return ((SignalTab[Object][signaltype] & result) == result ? SignalTab[Object][signaltype] & result : 0);
+}
+
+int AndPS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) export {
+    int result = 0;
+    if (period != -1) result |= (1 << period);
+    if (period1 != -1) result |= (1 << period1);
+    if (period2 != -1) result |= (1 << period2);
+    if (period3 != -1) result |= (1 << period3);
+    if (period4 != -1) result |= (1 << period4);
+    if (period5 != -1) result |= (1 << period5);
+    if (period6 != -1) result |= (1 << period6);
+    if (period7 != -1) result |= (1 << period7);
+    if (period8 != -1) result |= (1 << period8);
+
+    return ((BeforeSignalTab[Object][signaltype] & result) == result ? BeforeSignalTab[Object][signaltype] & result : 0);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+double RValue(int Operation, int OperationType, int rule) {
+    return (RuleTabValue[Operation][OperationType][rule]);
+}
+
+void Set_Rule_Value(int Operation, int OperationType, int rule, double Value) {
+    RuleTabValue[Operation][OperationType][rule] = Value;
+}
+
+void Set_Rule(int Operation, int OperationType, int rule, int signal, double value = -1) {
+    if (signal == P_SIGNAL)
+        RuleTab[Operation][OperationType] |= (1 << rule);
+    else
+        RuleTab[Operation][OperationType] &= ~(1 << rule);
+
+    Set_Rule_Value(Operation, OperationType, rule, value);
+}
+
+double SValue(int Object, int signaltype, int period) {
+    return (SignalTabValue[Object][signaltype][period]);
+}
+
+/////////////////////////////////////////////////////  VALUE //////////////////////////////////////////////////////////////////////
+
+double MaxV(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    double result = -EMPTY_VALUE;
+    if (period != -1) result = SValue(Object, signaltype, period);
+    if (period1 != -1) result = MathMax(result, SValue(Object, signaltype, period1));
+    if (period2 != -1) result = MathMax(result, SValue(Object, signaltype, period2));
+    if (period3 != -1) result = MathMax(result, SValue(Object, signaltype, period3));
+    if (period4 != -1) result = MathMax(result, SValue(Object, signaltype, period4));
+    if (period5 != -1) result = MathMax(result, SValue(Object, signaltype, period5));
+    if (period6 != -1) result = MathMax(result, SValue(Object, signaltype, period6));
+    if (period7 != -1) result = MathMax(result, SValue(Object, signaltype, period7));
+    if (period8 != -1) result = MathMax(result, SValue(Object, signaltype, period8));
+
+    return (result);
+
+}
+
+double MinV(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    double result = EMPTY_VALUE;
+    if (period != -1) result = SValue(Object, signaltype, period);
+    if (period1 != -1) result = MathMin(result, SValue(Object, signaltype, period1));
+    if (period2 != -1) result = MathMin(result, SValue(Object, signaltype, period2));
+    if (period3 != -1) result = MathMin(result, SValue(Object, signaltype, period3));
+    if (period4 != -1) result = MathMin(result, SValue(Object, signaltype, period4));
+    if (period5 != -1) result = MathMin(result, SValue(Object, signaltype, period5));
+    if (period6 != -1) result = MathMin(result, SValue(Object, signaltype, period6));
+    if (period7 != -1) result = MathMin(result, SValue(Object, signaltype, period7));
+    if (period8 != -1) result = MathMin(result, SValue(Object, signaltype, period8));
+
+    return (result);
+
+}
+
+double MaxPV(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    double result = -EMPTY_VALUE;
+    if (period != -1) result = SPValue(Object, signaltype, period);
+    if (period1 != -1) result = MathMax(result, SPValue(Object, signaltype, period1));
+    if (period2 != -1) result = MathMax(result, SPValue(Object, signaltype, period2));
+    if (period3 != -1) result = MathMax(result, SPValue(Object, signaltype, period3));
+    if (period4 != -1) result = MathMax(result, SPValue(Object, signaltype, period4));
+    if (period5 != -1) result = MathMax(result, SPValue(Object, signaltype, period5));
+    if (period6 != -1) result = MathMax(result, SPValue(Object, signaltype, period6));
+    if (period7 != -1) result = MathMax(result, SPValue(Object, signaltype, period7));
+    if (period8 != -1) result = MathMax(result, SPValue(Object, signaltype, period8));
+
+    return (result);
+
+}
+double MinPV(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    double result = EMPTY_VALUE;
+    if (period != -1) result = SPValue(Object, signaltype, period);
+    if (period1 != -1) result = MathMin(result, SPValue(Object, signaltype, period1));
+    if (period2 != -1) result = MathMin(result, SPValue(Object, signaltype, period2));
+    if (period3 != -1) result = MathMin(result, SPValue(Object, signaltype, period3));
+    if (period4 != -1) result = MathMin(result, SPValue(Object, signaltype, period4));
+    if (period5 != -1) result = MathMin(result, SPValue(Object, signaltype, period5));
+    if (period6 != -1) result = MathMin(result, SPValue(Object, signaltype, period6));
+    if (period7 != -1) result = MathMin(result, SPValue(Object, signaltype, period7));
+    if (period8 != -1) result = MathMin(result, SPValue(Object, signaltype, period8));
+
+    return (result);
+
+}
+
+int AndS_G(int Object1, int Object2, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object1, signaltype, period) > SValue(Object2, signaltype, period));
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = (SValue(Object1, signaltype, period1) > SValue(Object2, signaltype, period1));
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = (SValue(Object1, signaltype, period2) > SValue(Object2, signaltype, period2));
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = (SValue(Object1, signaltype, period3) > SValue(Object2, signaltype, period3));
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = (SValue(Object1, signaltype, period4) > SValue(Object2, signaltype, period4));
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = (SValue(Object1, signaltype, period5) > SValue(Object2, signaltype, period5));
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = (SValue(Object1, signaltype, period6) > SValue(Object2, signaltype, period6));
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = (SValue(Object1, signaltype, period7) > SValue(Object2, signaltype, period7));
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = (SValue(Object1, signaltype, period8) > SValue(Object2, signaltype, period8));
+        if (result) rperiod |= (1 << period8);
+    }
+    return ((result) ? rperiod : 0);
+}
+
+int AndS_L(int Object1, int Object2, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object1, signaltype, period) < SValue(Object2, signaltype, period));
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = (SValue(Object1, signaltype, period1) < SValue(Object2, signaltype, period1));
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = (SValue(Object1, signaltype, period2) < SValue(Object2, signaltype, period2));
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = (SValue(Object1, signaltype, period3) < SValue(Object2, signaltype, period3));
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = (SValue(Object1, signaltype, period4) < SValue(Object2, signaltype, period4));
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = (SValue(Object1, signaltype, period5) < SValue(Object2, signaltype, period5));
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = (SValue(Object1, signaltype, period6) < SValue(Object2, signaltype, period6));
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = (SValue(Object1, signaltype, period7) < SValue(Object2, signaltype, period7));
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = (SValue(Object1, signaltype, period8) < SValue(Object2, signaltype, period8));
+        if (result) rperiod |= (1 << period8);
+    }
+    return ((result) ? rperiod : 0);
+}
+
+int AndS_G_AndPS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object, signaltype, period) > SPValue(Object, signaltype, period));
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = (SValue(Object, signaltype, period1) > SPValue(Object, signaltype, period1));
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = (SValue(Object, signaltype, period2) > SPValue(Object, signaltype, period2));
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = (SValue(Object, signaltype, period3) > SPValue(Object, signaltype, period3));
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = (SValue(Object, signaltype, period4) > SPValue(Object, signaltype, period4));
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = (SValue(Object, signaltype, period5) > SPValue(Object, signaltype, period5));
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = (SValue(Object, signaltype, period6) > SPValue(Object, signaltype, period6));
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = (SValue(Object, signaltype, period7) > SPValue(Object, signaltype, period7));
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = (SValue(Object, signaltype, period8) > SPValue(Object, signaltype, period8));
+        if (result) rperiod |= (1 << period8);
+    }
+    return ((result) ? rperiod : 0);
+}
+
+int AndS_L_AndPS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object, signaltype, period) < SPValue(Object, signaltype, period));
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = (SValue(Object, signaltype, period1) < SPValue(Object, signaltype, period1));
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = (SValue(Object, signaltype, period2) < SPValue(Object, signaltype, period2));
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = (SValue(Object, signaltype, period3) < SPValue(Object, signaltype, period3));
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = (SValue(Object, signaltype, period4) < SPValue(Object, signaltype, period4));
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = (SValue(Object, signaltype, period5) < SPValue(Object, signaltype, period5));
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = (SValue(Object, signaltype, period6) < SPValue(Object, signaltype, period6));
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = (SValue(Object, signaltype, period7) < SPValue(Object, signaltype, period7));
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = (SValue(Object, signaltype, period7) < SPValue(Object, signaltype, period8));
+        if (result) rperiod |= (1 << period8);
+    }
+    return ((result) ? rperiod : 0);
+}
+
+int AndV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 1;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object, signaltype, period) == value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result && (SValue(Object, signaltype, period1) == value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result && (SValue(Object, signaltype, period2) == value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result && (SValue(Object, signaltype, period3) == value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result && (SValue(Object, signaltype, period4) == value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result && (SValue(Object, signaltype, period5) == value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result && (SValue(Object, signaltype, period6) == value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result && (SValue(Object, signaltype, period7) == value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result && (SValue(Object, signaltype, period8) == value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+
+int AndV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 1;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object, signaltype, period) < value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result && (SValue(Object, signaltype, period1) < value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result && (SValue(Object, signaltype, period2) < value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result && (SValue(Object, signaltype, period3) < value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result && (SValue(Object, signaltype, period4) < value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result && (SValue(Object, signaltype, period5) < value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result && (SValue(Object, signaltype, period6) < value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result && (SValue(Object, signaltype, period7) < value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result && (SValue(Object, signaltype, period8) < value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+
+int AndV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 1;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object, signaltype, period) <= value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result && (SValue(Object, signaltype, period1) <= value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result && (SValue(Object, signaltype, period2) <= value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result && (SValue(Object, signaltype, period3) <= value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result && (SValue(Object, signaltype, period4) <= value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result && (SValue(Object, signaltype, period5) <= value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result && (SValue(Object, signaltype, period6) <= value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result && (SValue(Object, signaltype, period7) <= value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result && (SValue(Object, signaltype, period8) <= value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+
+int AndV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 1;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object, signaltype, period) > value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result && (SValue(Object, signaltype, period1) > value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result && (SValue(Object, signaltype, period2) > value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result && (SValue(Object, signaltype, period3) > value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result && (SValue(Object, signaltype, period4) > value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result && (SValue(Object, signaltype, period5) > value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result && (SValue(Object, signaltype, period6) > value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result && (SValue(Object, signaltype, period7) > value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result && (SValue(Object, signaltype, period8) > value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+
+int AndV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 1;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object, signaltype, period) >= value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result && (SValue(Object, signaltype, period1) >= value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result && (SValue(Object, signaltype, period2) >= value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result && (SValue(Object, signaltype, period3) >= value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result && (SValue(Object, signaltype, period4) >= value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result && (SValue(Object, signaltype, period5) >= value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result && (SValue(Object, signaltype, period6) >= value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result && (SValue(Object, signaltype, period7) >= value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result && (SValue(Object, signaltype, period8) >= value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+int AndPV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 1;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SPValue(Object, signaltype, period) == value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result && (SPValue(Object, signaltype, period1) == value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result && (SPValue(Object, signaltype, period2) == value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result && (SPValue(Object, signaltype, period3) == value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result && (SPValue(Object, signaltype, period4) == value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result && (SPValue(Object, signaltype, period5) == value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result && (SPValue(Object, signaltype, period6) == value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result && (SPValue(Object, signaltype, period7) == value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result && (SPValue(Object, signaltype, period8) == value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+
+int AndPV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 1;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SPValue(Object, signaltype, period) < value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result && (SPValue(Object, signaltype, period1) < value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result && (SPValue(Object, signaltype, period2) < value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result && (SPValue(Object, signaltype, period3) < value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result && (SPValue(Object, signaltype, period4) < value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result && (SPValue(Object, signaltype, period5) < value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result && (SPValue(Object, signaltype, period6) < value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result && (SPValue(Object, signaltype, period7) < value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result && (SPValue(Object, signaltype, period8) < value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+
+int AndPV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 1;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SPValue(Object, signaltype, period) <= value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result && (SPValue(Object, signaltype, period1) <= value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result && (SPValue(Object, signaltype, period2) <= value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result && (SPValue(Object, signaltype, period3) <= value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result && (SPValue(Object, signaltype, period4) <= value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result && (SPValue(Object, signaltype, period5) <= value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result && (SPValue(Object, signaltype, period6) <= value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result && (SPValue(Object, signaltype, period7) <= value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result && (SPValue(Object, signaltype, period8) <= value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+
+int AndPV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 1;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SPValue(Object, signaltype, period) > value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result && (SPValue(Object, signaltype, period1) > value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result && (SPValue(Object, signaltype, period2) > value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result && (SPValue(Object, signaltype, period3) > value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result && (SPValue(Object, signaltype, period4) > value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result && (SPValue(Object, signaltype, period5) > value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result && (SPValue(Object, signaltype, period6) > value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result && (SPValue(Object, signaltype, period7) > value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result && (SPValue(Object, signaltype, period8) > value);
+        if (result) rperiod |= (1 << period8);
+    } {}
+    return ((result) ? rperiod : 0);
+}
+
+int AndPV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 1;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SPValue(Object, signaltype, period) >= value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result && (SPValue(Object, signaltype, period1) >= value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result && (SPValue(Object, signaltype, period2) >= value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result && (SPValue(Object, signaltype, period3) >= value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result && (SPValue(Object, signaltype, period4) >= value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result && (SPValue(Object, signaltype, period5) >= value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result && (SPValue(Object, signaltype, period6) >= value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result && (SPValue(Object, signaltype, period7) >= value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result && (SPValue(Object, signaltype, period8) >= value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+
+int OrV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object, signaltype, period) == value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result || (SValue(Object, signaltype, period1) == value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result || (SValue(Object, signaltype, period2) == value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result || (SValue(Object, signaltype, period3) == value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result || (SValue(Object, signaltype, period4) == value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result || (SValue(Object, signaltype, period5) == value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result || (SValue(Object, signaltype, period6) == value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result || (SValue(Object, signaltype, period7) == value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result || (SValue(Object, signaltype, period8) == value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+int OrV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object, signaltype, period) < value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result || (SValue(Object, signaltype, period1) < value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result || (SValue(Object, signaltype, period2) < value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result || (SValue(Object, signaltype, period3) < value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result || (SValue(Object, signaltype, period4) < value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result || (SValue(Object, signaltype, period5) < value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result || (SValue(Object, signaltype, period6) < value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result || (SValue(Object, signaltype, period7) < value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result || (SValue(Object, signaltype, period8) < value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+int OrV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object, signaltype, period) <= value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result || (SValue(Object, signaltype, period1) <= value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result || (SValue(Object, signaltype, period2) <= value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result || (SValue(Object, signaltype, period3) <= value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result || (SValue(Object, signaltype, period4) <= value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result || (SValue(Object, signaltype, period5) <= value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result || (SValue(Object, signaltype, period6) <= value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result || (SValue(Object, signaltype, period7) <= value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result || (SValue(Object, signaltype, period8) <= value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+int OrV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object, signaltype, period) > value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result || (SValue(Object, signaltype, period1) > value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result || (SValue(Object, signaltype, period2) > value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result || (SValue(Object, signaltype, period3) > value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result || (SValue(Object, signaltype, period4) > value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result || (SValue(Object, signaltype, period5) > value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result || (SValue(Object, signaltype, period6) > value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result || (SValue(Object, signaltype, period7) > value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result || (SValue(Object, signaltype, period8) > value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+
+int OrV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SValue(Object, signaltype, period) >= value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result || (SValue(Object, signaltype, period1) >= value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result || (SValue(Object, signaltype, period2) >= value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result || (SValue(Object, signaltype, period3) >= value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result || (SValue(Object, signaltype, period4) >= value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result || (SValue(Object, signaltype, period5) >= value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result || (SValue(Object, signaltype, period6) >= value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result || (SValue(Object, signaltype, period7) >= value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result || (SValue(Object, signaltype, period8) >= value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+
+int OrPV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SPValue(Object, signaltype, period) == value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result || (SPValue(Object, signaltype, period1) == value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result || (SPValue(Object, signaltype, period2) == value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result || (SPValue(Object, signaltype, period3) == value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result || (SPValue(Object, signaltype, period4) == value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result || (SPValue(Object, signaltype, period5) == value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result || (SPValue(Object, signaltype, period6) == value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result || (SPValue(Object, signaltype, period7) == value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result || (SPValue(Object, signaltype, period8) == value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+int OrPV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SPValue(Object, signaltype, period) < value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result || (SPValue(Object, signaltype, period1) < value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result || (SPValue(Object, signaltype, period2) < value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result || (SPValue(Object, signaltype, period3) < value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result || (SPValue(Object, signaltype, period4) < value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result || (SPValue(Object, signaltype, period5) < value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result || (SPValue(Object, signaltype, period6) < value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result || (SPValue(Object, signaltype, period7) < value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result || (SPValue(Object, signaltype, period8) < value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+int OrPV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SPValue(Object, signaltype, period) <= value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result || (SPValue(Object, signaltype, period1) <= value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result || (SPValue(Object, signaltype, period2) <= value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result || (SPValue(Object, signaltype, period3) <= value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result || (SPValue(Object, signaltype, period4) <= value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result || (SPValue(Object, signaltype, period5) <= value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result || (SPValue(Object, signaltype, period6) <= value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result || (SPValue(Object, signaltype, period7) <= value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result || (SPValue(Object, signaltype, period8) <= value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+
+int OrPV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SPValue(Object, signaltype, period) > value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result || (SPValue(Object, signaltype, period1) > value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result || (SPValue(Object, signaltype, period2) > value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result || (SPValue(Object, signaltype, period3) > value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result || (SPValue(Object, signaltype, period4) > value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result || (SPValue(Object, signaltype, period5) > value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result || (SPValue(Object, signaltype, period6) > value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result || (SPValue(Object, signaltype, period7) > value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result || (SPValue(Object, signaltype, period8) > value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+int OrPV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    bool result = 0;
+    int rperiod = 0;
+    if (period != -1) {
+        result = (SPValue(Object, signaltype, period) >= value);
+        if (result) rperiod |= (1 << period);
+    }
+    if (period1 != -1) {
+        result = result || (SPValue(Object, signaltype, period1) >= value);
+        if (result) rperiod |= (1 << period1);
+    }
+    if (period2 != -1) {
+        result = result || (SPValue(Object, signaltype, period2) >= value);
+        if (result) rperiod |= (1 << period2);
+    }
+    if (period3 != -1) {
+        result = result || (SPValue(Object, signaltype, period3) >= value);
+        if (result) rperiod |= (1 << period3);
+    }
+    if (period4 != -1) {
+        result = result || (SPValue(Object, signaltype, period4) >= value);
+        if (result) rperiod |= (1 << period4);
+    }
+    if (period5 != -1) {
+        result = result || (SPValue(Object, signaltype, period5) >= value);
+        if (result) rperiod |= (1 << period5);
+    }
+    if (period6 != -1) {
+        result = result || (SPValue(Object, signaltype, period6) >= value);
+        if (result) rperiod |= (1 << period6);
+    }
+    if (period7 != -1) {
+        result = result || (SPValue(Object, signaltype, period7) >= value);
+        if (result) rperiod |= (1 << period7);
+    }
+    if (period8 != -1) {
+        result = result || (SPValue(Object, signaltype, period8) >= value);
+        if (result) rperiod |= (1 << period8);
+    }
+
+    return ((result) ? rperiod : 0);
+}
+
+int AndBV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (AndV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !AndPV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool AndBV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (AndV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !AndPV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool AndBV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (AndV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !AndPV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool AndBV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (AndV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !AndPV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool AndBV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (AndV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !AndPV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+
+bool OrBV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (OrV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !OrPV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool OrBV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (OrV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !OrPV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool OrBV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (OrV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !OrPV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool OrBV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (OrV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !OrPV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool OrBV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (OrV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !OrPV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+
+//TICK
+bool AndTV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (AndV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !AndPV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool AndTV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (AndV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !AndPV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool AndTV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (AndV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !AndPV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool AndTV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (AndV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !AndPV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool AndTV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (AndV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !AndPV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+
+bool OrTV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (OrV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !OrPV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool OrTV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (OrV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !OrPV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool OrTV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (OrV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !OrPV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool OrTV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (OrV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !OrPV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+bool OrTV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (OrV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
+        !OrPV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+
+int AngleAbove(int Object, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (AndV_G(Object, S_ANGLE, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+
+int AngleBelow(int Object, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    return (AndV_L(Object, S_ANGLE, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
+}
+int AngleDivergence(int Object, int period) {
+    return ((AndS(Object, S_UP, period) && AngleBelow(Object, 0, period)) ||
+        (AndS(Object, S_DOWN, period) && AngleAbove(Object, 0, period)));
+}
+
+////////////////////////////////////////////////////////// END VALUE ///////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////BOOLEAN ////////////////////////////////////////////////////
+
+int AndPTS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    int result = 0;
+    if (period != -1) result |= (1 << period);
+    if (period1 != -1) result |= (1 << period1);
+    if (period2 != -1) result |= (1 << period2);
+    if (period3 != -1) result |= (1 << period3);
+    if (period4 != -1) result |= (1 << period4);
+    if (period5 != -1) result |= (1 << period5);
+    if (period6 != -1) result |= (1 << period6);
+    if (period7 != -1) result |= (1 << period7);
+    if (period8 != -1) result |= (1 << period8);
+
+    return ((BeforeSignalTickTab[Object][signaltype] & result) == result ? BeforeSignalTickTab[Object][signaltype] & result : 0);
+}
+
+int OrS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    int result = 0;
+    if (period != -1) result |= (1 << period);
+    if (period1 != -1) result |= (1 << period1);
+    if (period2 != -1) result |= (1 << period2);
+    if (period3 != -1) result |= (1 << period3);
+    if (period4 != -1) result |= (1 << period4);
+    if (period5 != -1) result |= (1 << period5);
+    if (period6 != -1) result |= (1 << period6);
+    if (period7 != -1) result |= (1 << period7);
+    if (period8 != -1) result |= (1 << period8);
+
+    return ((SignalTab[Object][signaltype] & result) != 0 ? SignalTab[Object][signaltype] & result : 0);
+}
+
+int OrPS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    int result = 0;
+    if (period != -1) result |= (1 << period);
+    if (period1 != -1) result |= (1 << period1);
+    if (period2 != -1) result |= (1 << period2);
+    if (period3 != -1) result |= (1 << period3);
+    if (period4 != -1) result |= (1 << period4);
+    if (period5 != -1) result |= (1 << period5);
+    if (period6 != -1) result |= (1 << period6);
+    if (period7 != -1) result |= (1 << period7);
+    if (period8 != -1) result |= (1 << period8);
+
+    return ((BeforeSignalTab[Object][signaltype] & result) != 0 ? BeforeSignalTab[Object][signaltype] & result : 0);
+}
+
+int OrPTS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    int result = 0;
+    if (period != -1) result |= (1 << period);
+    if (period1 != -1) result |= (1 << period1);
+    if (period2 != -1) result |= (1 << period2);
+    if (period3 != -1) result |= (1 << period3);
+    if (period4 != -1) result |= (1 << period4);
+    if (period5 != -1) result |= (1 << period5);
+    if (period6 != -1) result |= (1 << period6);
+    if (period7 != -1) result |= (1 << period7);
+    if (period8 != -1) result |= (1 << period8);
+
+    return ((BeforeSignalTickTab[Object][signaltype] & result) != 0 ? BeforeSignalTickTab[Object][signaltype] & result : 0);
+}
+
+int AndTS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    int result = AndS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8);
+    return ((result && !AndPTS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8)) ? result : 0);
+}
+
+int AndBS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    int result = AndS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8);
+    return ((result && !AndPS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8)) ? result : 0);
+}
+
+int OrTS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    int result = OrS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8);
+    return ((result && !OrPTS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8)) ? result : 0);
+}
+
+int OrBS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
+    int result = OrS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8);
+    return ((result && !OrPS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8)) ? result : 0);
+}
+
+int All(int Object, int signaltype, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1) {
+    int result = MathMod(SignalTab[Object][signaltype], 256); // month
+    result = MathMod(result, 128); // week
+    result = MathMod(result, 64); // day
+
+    if (period1 != -1) result = MathMod(result, period1);
+    if (period2 != -1) result = MathMod(result, period2);
+    if (period3 != -1) result = MathMod(result, period3);
+    if (period4 != -1) result = MathMod(result, period4);
+    if (period5 != -1) result = MathMod(result, period5);
+    if (period6 != -1) result = MathMod(result, period6);
+
+    return (result);
+}
+
+int All_s(int Object, int signaltype, int period1 = -1, int period2 = -1, int period3 = -1) {
+    int result = MathMod(SignalTab[Object][signaltype], 256); // month
+    result = MathMod(result, 128);
+    result = MathMod(result, 64);
+    result = MathMod(result, 32);
+    result = MathMod(result, 16);
+    result = MathMod(result, 8);
+
+    if (period1 != -1) result = MathMod(result, period1);
+    if (period2 != -1) result = MathMod(result, period2);
+    if (period3 != -1) result = MathMod(result, period3);
+    return (result);
+}
+
+void SETSIGNAL(int shift, int Object, int signaltype, int period, int signal, double value = -1) {
+    if (shift == 0)
+        Set_Signal(Object, signaltype, period, signal, value);
+    else
+        Set_Previous_Signal(Object, signaltype, period, signal, value);
+}
+
+void Set_Signal(int Object, int signaltype, int period, int signal, double value = -1) {
+    if (signal == P_SIGNAL) {
+        SignalTab[Object][signaltype] |= (1 << period);
+        if (!AndPTS(Object, signaltype, period)) {
+            Set_Signal_Time(Object, signaltype, period, TimeCurrent());
+            Set_Signal_Price(Object, signaltype, period, _Bid);
+        }
+    } else {
+        SignalTab[Object][signaltype] &= ~(1 << period);
+        if (AndPTS(Object, signaltype, period)) {
+            Set_Signal_Time(Object, signaltype, period, -1);
+            Set_Signal_Price(Object, signaltype, period, -1);
+        }
+    }
+    if (value != -1)
+        Set_Signal_Value(Object, signaltype, period, value);
+}
+
+int Get_Signal(int Object, int signaltype, int period) {
+    return (SignalTab[Object][signaltype] & (1 << period));
+}
+
+void Set_Previous_Signal(int Object, int signaltype, int period, int signal, double value = -1) {
+    if (signal == P_SIGNAL)
+        BeforeSignalTab[Object][signaltype] |= (1 << period);
+    else
+        BeforeSignalTab[Object][signaltype] &= ~(1 << period);
+    if (value != -1)
+        Set_Previous_Signal_Value(Object, signaltype, period, value);
+}
+
+int Get_Previous_Signal(int Object, int signaltype, int period) {
+    return (BeforeSignalTab[Object][signaltype] & (1 << period));
+}
+
+void Set_Signal_Value(int Object, int signaltype, int period, double Value) {
+    SignalTabValue[Object][signaltype][period] = Value;
+}
+
+void Set_Signal_Time(int Object, int signaltype, int period, double Value) {
+    SignalTabTime[Object][signaltype][period] = Value;
+}
+
+void Set_Signal_Price(int Object, int signaltype, int period, double Value) {
+    SignalTabPrice[Object][signaltype][period] = Value;
+}
+
+void Set_Previous_Signal_Value(int Object, int signaltype, int period, double Value) {
+    BeforeSignalTabValue[Object][signaltype][period] = Value;
+}
+
+double SPValue(int Object, int signaltype, int period) {
+    return (BeforeSignalTabValue[Object][signaltype][period]);
+}
+
+datetime STime(int Object, int signaltype, int period) {
+    return (SignalTabTime[Object][signaltype][period]);
+}
+
+datetime SPTime(int Object, int signaltype, int period) {
+    return (BeforeSignalTabTime[Object][signaltype][period]);
+}
+
+double SPrice(int Object, int signaltype, int period) {
+    return (SignalTabPrice[Object][signaltype][period]);
+}
+
+double SPPrice(int Object, int signaltype, int period) {
+    return (BeforeSignalTabPrice[Object][signaltype][period]);
+}
+
+void SetSignalFilter(int add, int Object, int signaltype, int periode, datetime interval = -1) {
+    int j;
+    if (add == -1) {
+        ResetSignalFilters();
+        return;
+    }
+    if (add == -2) {
+        ResetSignalFilters();
+        add = 1;
+    }
+    if (periode == -1) {
+        for (int x = 0; x < NBR_PERIODS; x++)
+            if (signaltype == -1)
+                for (j = 0; j < NBR_SIGNALS; j++) {
+                    SignalFilterTab[Object][j][x] = add;
+                    if (interval == -1) SignalFilterTabTime[Object][j][x] = 5 * 60; // seconds
+                    else SignalFilterTabTime[Object][j][x] = interval;
+                }
+        else {
+            SignalFilterTab[Object][signaltype][x] = add;
+            if (interval == -1) SignalFilterTabTime[Object][signaltype][x] = 5 * 60; // seconds
+            else SignalFilterTabTime[Object][signaltype][x] = interval;
+        }
+    } else {
+        if (signaltype == -1)
+            for (j = 0; j < NBR_SIGNALS; j++) {
+                SignalFilterTab[Object][j][periode] = add;
+                if (interval == -1) SignalFilterTabTime[Object][j][periode] = 5 * 60; // seconds
+                else SignalFilterTabTime[Object][j][periode] = interval;
+
+            }
+        else {
+            SignalFilterTab[Object][signaltype][periode] = add;
+            if (interval == -1) SignalFilterTabTime[Object][signaltype][periode] = 5 * 60; // seconds
+            else SignalFilterTabTime[Object][signaltype][periode] = interval;
+
+        }
+    }
+}
+
+int GetSignalFilter(int Object, int signaltype, int period) {
+    return (SignalFilterTab[Object][signaltype][period]);
+}
+
+//////////////////////////////////////////////////////////////// INDICATORS /////////////////////////////////////////////////////////////////
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////SOUND
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////END SOUND

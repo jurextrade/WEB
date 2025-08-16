@@ -5,16 +5,18 @@
 //+---------------------------------------------------------------------------------------------------------------+
 #property copyright   "Copyright 2025,JurexTrade Author: Gabriel Jureidini"
 #property link        "http://www.jurextrade.com"
-#property version     "600.000"                                                      // Version
+#property version     "700.000"                                                      // Version
 #property description "Running Expert Advisors created in Strategy Creator" // Description (line 1)
 #property description "Interactive Monitoring of Strategies"         // Description (line 2)
 #property icon        "\\Images\\Progress.ico";   
 
   
                                  // A file with the product icon
-#include <Progress.mqh>
-#include <PG_Orientation.mqh>
 #include <PG_TCPFunctions.mqh>
+#include <WinUser32.mqh>
+#include <PG_WinUser32Ext.mqh>                                   
+#include <Progress.mqh>
+
  
 
 //+------------------------------------------------------------------+ CONNECTION
@@ -45,23 +47,20 @@ int    RPort                    = 2008;                 // Listening Port for Re
 int    SPort                    = 2009;                 // Listening Port for Simulated Platform on MT4 Software
 bool   LaunchOnStart            = false;       
 
-datetime  AttemptToReconnect    = 0;
-int       AttemptToReloadDLL    = 0;
-int 	  AttemptToLoadEntryRules = 0;
+datetime  AttemptToStart    = 0;
+
 
 //+------------------------------------------------------------------+ CONNECTION
+        
 
-         
-
-int    AngleShift               = 2;
-double CloseOpenShift           = 3;                     //Slippage between close and Open in Pips
-int    TimeBetweenSession       = 0;
-bool   CloseNowBuy              = false;
-bool   CloseNowSell             = false;
-bool   CloseNowAll              = false;
-bool   SuspendAll               = false;
-bool   ResumeAll                = false;
-bool   EndSessions              = false;    // don'tey  start sessions anymore after finish
+int             AngleShift               = 2;
+int             TimeBetweenSession       = 0;
+bool            CloseNowBuy              = false;
+bool            CloseNowSell             = false;
+bool            CloseNowAll              = false;
+bool            SuspendAll               = false;
+bool            ResumeAll                = false;
+bool            EndSessions              = false;    // don'tey  start sessions anymore after finish
 
 int           E_NbrEngine       = 0;
 int           O_NbrObject       = 0;
@@ -98,98 +97,13 @@ string        UserPath           = "";
 string        DataFolder         = "";
 string        MembersPath        = "/members/";
 bool          DistantTrace       = false;
-//================================================= RULES ==========================================
-int           RuleTab[NBR_OPERATIONS][NBR_FIELDS];
-int           BeforeRuleTab[NBR_OPERATIONS][NBR_FIELDS];
-double        RuleTabValue[NBR_OPERATIONS][NBR_FIELDS][NBR_RULES];
-double        BeforeRuleTabValue[NBR_OPERATIONS][NBR_FIELDS][NBR_RULES];
-int           RuleFilterTab[NBR_OPERATIONS][NBR_FIELDS][NBR_RULES];
 
 
-int           RuleNbrBuy, RuleNbrSell, RuleNbrExitBuy, RuleNbrExitSell;
-int           RuleObjFilter[NBR_OBJECTS];
-int           RuleOrder[NBR_RULES];
-
- //================================================= SIGNALS ==========================================
-int           SignalTab[NBR_OBJECTS][NBR_SIGNALS];
-
-int           BSignalTab[NBR_OBJECTS][NBR_SIGNALS];
-int           TSignalTab[NBR_OBJECTS][NBR_SIGNALS];
-
-int           BeforeSignalTab[NBR_OBJECTS][NBR_SIGNALS];
-int           BeforeSignalTickTab[NBR_OBJECTS][NBR_SIGNALS];
-
-double        SignalTabValue[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
-double        SignalTabTime[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
-double        SignalTabPrice[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
-
-double        BeforeSignalTabValue[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
-double        BeforeSignalTabTime[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
-double        BeforeSignalTabPrice[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
 
 
-int           SignalFilterTab[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];
-
-datetime      SignalFilterTabTime[NBR_OBJECTS][NBR_SIGNALS][NBR_PERIODS];   // interval in seconds
-
-//=============================================ENGINES==========================================
-
-string        EngineName[NBR_ENGINES] ;
-int           EngineTab[NBR_ENGINES][2];
-double        EngineTabValue[NBR_ENGINES][NBR_ATTRIBUTES];
-int           EngineStartRule[NBR_ENGINES];
 //======================================
 datetime      TimeOpenBar[NBR_PERIODS];
-//=============================================SCHEDULES========================================
 
-double        S_StartM[NBR_RULES][3][NBR_SCHEDULES];  // this should be set to 0 when not used
-double        S_StartW[NBR_RULES][3][NBR_SCHEDULES];
-double        S_StartD[NBR_RULES][3][NBR_SCHEDULES];
-datetime      S_StartT[NBR_RULES][3][NBR_SCHEDULES];
-double        S_EndM[NBR_RULES][3][NBR_SCHEDULES];
-double        S_EndW[NBR_RULES][3][NBR_SCHEDULES];
-double        S_EndD[NBR_RULES][3][NBR_SCHEDULES];
-datetime      S_EndT[NBR_RULES][3][NBR_SCHEDULES];
-double        S_FrequencyD[NBR_RULES][3][NBR_SCHEDULES];
-double        S_OnSameBar[NBR_RULES][3][NBR_SCHEDULES];
-
-
-double        S_BetweenT[NBR_RULES][3][NBR_SCHEDULES];
-double        S_TimeZone[NBR_RULES][3][NBR_SCHEDULES];
-
-double        S_NbrRuleStart[NBR_RULES + 1][3];
-double        S_NbrRuleStartW[NBR_RULES + 1][3];
-double        S_NbrRuleStartD[NBR_RULES + 1][3];
-double        S_LastCloseTime[NBR_RULES + 1][3];
-//=============================================OBJECTS========================================
-
-
-#define		  NBR_SYSOBJECTS     45  // level = 5 * nbr_periods = 9
-
-
-bool		     ObjUsed[NBR_OBJECTS];
-int           ObjId[NBR_OBJECTS];
-string        ObjName[NBR_OBJECTS];  
-int           ObjType[NBR_OBJECTS];
-int           ObjMethod[NBR_OBJECTS];
-int           ObjApply[NBR_OBJECTS];
-int           ObjMode[NBR_OBJECTS];
-int           ObjShift[NBR_OBJECTS];
-int           ObjPeriod[NBR_OBJECTS];
-int           ObjDeviations[NBR_OBJECTS];
-string        ObjProgName[NBR_OBJECTS];
-double        ObjStep[NBR_OBJECTS];
-double        ObjMaximum[NBR_OBJECTS];
-string        ObjCross[NBR_OBJECTS];
-int           ObjDisplayType[NBR_OBJECTS];
-int           ObjDisplay[NBR_OBJECTS];
-int           ObjLevelType[NBR_OBJECTS];
-int           ObjValue[NBR_OBJECTS][4];    // values trend = 3 up = 0 down = 1 sideway = 2
-double        ObjLevel[NBR_OBJECTS][5][NBR_PERIODS];    // mid level 0 up level = 1 downlevel = 2 ex up = 3 ex down = 4
-string        P_ObjName[NBR_OBJECTS];             
-int           P_ObjOrder[NBR_OBJECTS];
-string        SysObjName[NBR_OBJECTS];             
-string        SysObjDependency[NBR_OBJECTS][NBR_SYSOBJECTS];
 
 //======================================
 //minutes
@@ -197,35 +111,6 @@ string        SysObjDependency[NBR_OBJECTS][NBR_SYSOBJECTS];
 bool          AlertOnStartRule   = false;
 bool          ShellTrace         = true;
 bool          FileTrace          = false;
-
-
-
-// MONEY MANAGEMENT
-double        MMDailyTargetAmount  = 0;
-double        MMDailyStopLoss      = 0;
-double        MMDailyPercentTargetAmount  = 0;
-double        MMDailyPercentStopLoss      = 0;
-bool          MMDailyTargetReached = false;
-double        MMDailyClosedProfit  = -1;
-
-double        MMDailySymbolTargetAmount  = -1;
-double        MMDailySymbolStopLoss      = -1;
-bool          MMDailySymbolTargetReached = false;
-double        MMDailySymbolClosedProfit  = -1;
-
-double        MMWeeklyTargetAmount  = 0;
-double        MMWeeklyStopLoss      = 0;
-double        MMWeeklyPercentTargetAmount  = 0;
-double        MMWeeklyPercentStopLoss      = 0;
-
-bool          MMWeeklyTargetReached = false;
-double        MMWeeklyClosedProfit  = -1;
-
-double        MMWeeklySymbolTargetAmount  = -1;
-double        MMWeeklySymbolStopLoss      = -1;
-bool          MMWeeklySymbolTargetReached = false;
-double        MMWeeklySymbolClosedProfit  = -1;
-
 
 //+------------------------------------------------------------------+ GENERAL
 
@@ -249,7 +134,6 @@ int           HedgeMagicNumber   = 40;
 int           Slippage           = 3;
 int           TerminalBuffer[400];
 int           SymbolBuffer[20];
-int           MainWindowHandle   = -1;
 
 
 #define       NEWSSOUND          0
@@ -312,13 +196,6 @@ double        TIME_NYOpen       = 13;
 double        TIME_NYClose      = 22;
 
 
-//=============================================SYSTEM==========================================
-
-
-
-//=============================================SIGNALS==========================================
-
-
 #define       PANEL_ID            0 
 #define       PANEL_FEED         -1 
 #define       PANEL_SEPARATOR    -2
@@ -326,113 +203,6 @@ double        TIME_NYClose      = 22;
 #define       PANEL_END          -4
 
 
-
-//A ENLEVER
-
-
-//END of PREDEFINED INDICATORS
-
-#define       VELOCITY           25
-
-#define       FTRIX              26
-#define       STRIX              27
-
-#define       TMA_UB             28
-#define       TMA                29
-#define       TMA_LB             30
-
-
-#define       TMA_S              31       // TMA SLOPE
-#define       TVI                32     //PG_SYMP_Extreme_V3
-#define       TRENDLINE          33
-#define       EMOTION            34
-#define       SENTIMENT          35
-
-
-#define       T3_2               36     // GENESIS
-#define       GANN_HILO          37
-#define       TMA_T_S            38       // bob TMA SLOPE
-#define       EXTREME            39    //PG_SYMP_Extreme_V3
-#define       MINOR_EXTREME      40     // TMA Extreme
-
-
-#define       SLOPE              42
-#define       CORAL              43
-
-
-#define       CCI                44
-#define       ADX                45
-
-#define       ICHIMOKU           46
-#define       STOCHASTIC         47
-#define       MACD               48
-#define       DIVERGENCE         49
-
-#define       MA_200             50
-#define       MA_5_3             51
-#define       MA_5_5             52
-#define       MA_5_1             53
-#define       MA_7               54  
-#define       MA_20              55
-#define       BB_UB              56       // bolinger bands
-#define       BB_LB              57
-#define       SAR                58
-#define       WPR                59
-#define       RSI                60
-
-
-
-
-
-
-string        ObjTypeName[]      = {"MA", "ADX", "CCI", "ICHIMOKU", "BOLLINGER", "SAR", "RSI", "MACD", "STOCHASTIC", "WPR", "ATR", "CUSTOM", "PREDEFINED", "SYSTEM"};
-string        SignalName[]       =  {"UP","DOWN","SIDEWAY","ABOVE","BELOW", "TOUCHED", "ALERT", "CROSS_UP", "CROSS_DOWN", "REVERSE_UP", "REVERSE_DOWN",           
-         								"MIDDLE", "CHANGED","TARGET", "DISTANCE","CURRENT","PREVIOUS","BULL","BEAR","RANGE","OVERBOUGHT","OVERSOLD",
-         								"EXT_OVERBOUGHT","EXT_OVERSOLD","VERYWEAK","WEAK","NEUTRAL","STRONG","VERYSTRONG",
-         								"ANGLE","PANGLE","NBRBARS","RCROSSED","BUY","SELL","EXIT_BUY","EXIT_SELL","DOJI",         								 
-         								"BULL_QUAD", "BULL_HAMMER", "BULL_HAMMER1", "BULL_HAMMER2", "BULL_ENGULFING", "BULL_HARAMI",
-         								"BULL_INVERTED_HAMMER", "BULL_INVERTED_HAMMER1", "BULL_INVERTED_HAMMER2", "BULL_PIERCING_LINE", "BULL_MORNING_STAR", "BULL_MORNING_DOJI_STAR", 
-         								"BULL_THREE_WHITE_SOLDIERS", "BULL_THREE_INSIDE_UP", "BULL_THREE_OUTSIDE_UP", 
-         								"BEAR_QUAD", "BEAR_HANGING_MAN", "BEAR_HANGING_MAN1", "BEAR_HANGING_MAN2", "BEAR_ENGULFING", "BEAR_HARAMI", 
-         								"BEAR_SHOOTING_STAR", "BEAR_SHOOTING_STAR1", "BEAR_SHOOTING_STAR2", "BEAR_DARK_CLOUD_COVER", "BEAR_EVENING_STAR", "BEAR_EVENING_DOJI_STAR", 
-         								"BEAR_THREE_BLACK_CROWS","BEAR_THREE_INSIDE_DOWN", "BEAR_THREE_OUTSIDE_DOWN", 
-         								"MAXINDAY", "MININDAY", "FIRSTINDAY", "MAXINWEEK", "MININWEEK", "FIRSTINWEEK","MAXINMONTH", "MININMONTH", "FIRSTINMONTH", "MAXINYEAR", "MININYEAR", "FIRSTINYEAR"};  
-       								
-int           SignalCode[]       = {246,248,240,221,222,220,164,233,234,200,201,
-									214,109,81,32,32,32,241,242,104,203,204,
-									203,204,115,116,139,140,141,
-									32,32,32,253,233,234,232,231,72,
-									72,72,72,72,72,72,
-									72,72,72,72,72,72,
-									72,72,72,         								
-									72,72,72,72,72,72,
-									72,72,72,72,72,72,
-									72,72,72,
-									72,72,72,72,72,72,72,72,72,72,72,72};     								
-          								
-color           SignalColor[]     = {Green,FireBrick,Gold,Green,FireBrick,Gold,Yellow,Turquoise,Red,Turquoise,Red,
-									Gold,Green,Pink,White,White,White,Green,FireBrick,Gold,Lime,DeepPink,
-									LawnGreen,Red,C'204,253,253',C'126,250,250',C'10,239,239',C'5,246,246',C'5,246,246',
-									White,White,White,Yellow,Lime,Red,Gold,Gold,Blue,
-									Turquoise,Turquoise,Turquoise,Turquoise,Turquoise,Turquoise,
-									Turquoise,Turquoise,Turquoise,Turquoise,Turquoise,Turquoise,
-									Turquoise,Turquoise,Turquoise,         								
-									Red,Red,Red,Red,Red,Red,
-									Red,Red,Red,Red,Red,Red,
-									Red,Red,Red, 
-									Yellow, Yellow, Yellow, Yellow, Yellow, Yellow, Yellow, Yellow, Yellow,Yellow, Yellow, Yellow};  
-									   								
-int			    SignalType[]    =  {SBoolean, SBoolean, SBoolean, SBoolean, SBoolean, SBoolean, SBoolean, SBoolean, SBoolean, SBoolean,SBoolean, 
-								    SBoth, SBoolean, SNumeric, SNumeric, SNumeric, SNumeric, SBoolean, SBoolean, SBoolean, SBoolean, SBoolean, 
-								    SBoolean, SBoolean, SBoolean, SBoolean, SBoolean, SBoolean, SBoolean,
-								    SNumeric, SNumeric, SNumeric, SBoolean, SBoolean, SBoolean, SBoolean, SBoolean,
-								    SBoolean, SBoolean, SBoolean, SBoolean, SBoolean, SBoolean, SBoolean,
-								    SBoolean, SBoolean, SBoolean, SBoolean, SBoolean, 
-								    SBoolean, SBoolean, SBoolean, SBoolean, SBoolean,
-								    SBoolean, SBoolean, SBoolean, SBoolean, SBoolean,
-								    SBoolean, SBoolean, SBoolean, SBoolean, SBoolean, SBoolean,
-								    SBoolean, SBoolean, SBoolean, 
-								    SNumeric, SNumeric, SNumeric, SNumeric, SNumeric, SNumeric, SNumeric, SNumeric, SNumeric, SNumeric, SNumeric, SNumeric};
 								             								
 int           SignalVisible[NBR_SIGNALS];
          								
@@ -807,89 +577,7 @@ int           RS_Sell            = 0;
 
 bool          AllowTrading       = false;
 
-int           FiboNumber[] = {1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144};
 
-double        angle_offset      = 15;
-
-
-
-
-
-int           ADX_TrendLevel    = 23; 
-
-int           TMA_Atr_Period    = 100;  
-double        TMA_Atr_Multiplier= 2.0;
-int           TMA_Period        = 56;
-double        TMA_S_High        = 0.4;
-double        TMA_S_Low         = -0.4;
-
-int           TMA_T_Period      = 20;
-double        TMA_T_S_High      = 0.3;
-double        TMA_T_S_Low       = -0.3;
-double        TMA_T_S_BOHigh    = 0.6;
-double        TMA_T_S_SOLow     = -0.6;
-
-
-// TVI 
-int           extreme_type      = 0;
-
-int           Length            = 3;
-int           MajorCycle        = 2;
-int           alertsExtreme     = 3;
-
-//============================================= ASSISTANT ==========================================
-
-#define      NBR_COMMENTS         30
-
-int          LTerm_Orientation[NBR_COMMENTS];                    // treat D1 only
-int          MTerm_Orientation[NBR_COMMENTS];                    // treat M30 H1 H4
-int          STerm_Orientation[NBR_COMMENTS];                    // M1 M5 M15 
-
-int          LTerm_TOrientation[NBR_COMMENTS];                    // treat D1 only
-int          MTerm_TOrientation[NBR_COMMENTS];                    // treat M30 H1 H4
-int          STerm_TOrientation[NBR_COMMENTS];                    // M1 M5 M15 
-
-int          LTerm_LastOrientation[NBR_COMMENTS];
-int          MTerm_LastOrientation[NBR_COMMENTS];
-int          STerm_LastOrientation[NBR_COMMENTS];
-
-datetime     LTerm_TimeOrientation[NBR_COMMENTS];
-datetime     MTerm_TimeOrientation[NBR_COMMENTS];
-datetime     STerm_TimeOrientation[NBR_COMMENTS];
-
-
-int          LTerm_Analyse[NBR_COMMENTS];                    // treat D1 only
-int          MTerm_Analyse[NBR_COMMENTS];                    // treat M30 H1 H4
-int          STerm_Analyse[NBR_COMMENTS];                    // M1 M5 M15 
-
-int          LTerm_LastAnalyse[NBR_COMMENTS];                    
-int          MTerm_LastAnalyse[NBR_COMMENTS];                    
-int          STerm_LastAnalyse[NBR_COMMENTS];                    
-
-datetime     LTerm_TimeAnalyse[NBR_COMMENTS];                    
-datetime     MTerm_TimeAnalyse[NBR_COMMENTS];                    
-datetime     STerm_TimeAnalyse[NBR_COMMENTS];                     
-
-
-int          LTerm_Action[NBR_COMMENTS];                    // treat D1 only
-int          MTerm_Action[NBR_COMMENTS];                    // treat M30 H1 H4
-int          STerm_Action[NBR_COMMENTS];                    // M1 M5 M15 
-
-int          LTerm_LastAction[NBR_COMMENTS];                    
-int          MTerm_LastAction[NBR_COMMENTS];                    
-int          STerm_LastAction[NBR_COMMENTS];                     
-
-datetime     LTerm_TimeAction[NBR_COMMENTS];                    
-datetime     MTerm_TimeAction[NBR_COMMENTS];                    
-datetime     STerm_TimeAction[NBR_COMMENTS];                     
-
-string       LTerm_Comments[NBR_COMMENTS];
-string       MTerm_Comments[NBR_COMMENTS];
-string       STerm_Comments[NBR_COMMENTS];
-
-
-double D_BuySell          = 0.0007;
-double D_StayOut          = 0.0079;
 
 //============================================= GENERAL ==========================================
 
@@ -1040,20 +728,13 @@ int           HStyle[]           = {STYLE_DOT, STYLE_DOT, STYLE_DOT, STYLE_DOT, 
 color         ResistanceColor    = Turquoise;
 color         SupportColor       = OrangeRed;         
 
-int           Trix_Window        = 0;
-int           Trix_Corner        = 3;
 
-int           System_Window      = 0;
-int           System_Corner      = 2;
+
 
 int           Panel_Window       = 0;
 int           Panel_Corner       = 2;
 
-int           Assistant_Window   = 0;
-int           Assistant_Corner   = 2;
 
-int           Engine_Window      = 0;
-int           Engine_Corner      = 2;
 
 //============================================= NEWS ==========================================
 
@@ -1107,67 +788,14 @@ bool          Display_Hammer_4 = true;
 bool          Display_Bear_Quad = true;
 bool          Display_Bull_Quad = true;
 
-//=========================================TCP=====================================================
 
-#define       COM_STARTAUTOMATIC   0
-#define       COM_EXITAUTOMATIC    1
-#define       COM_HEDGEAUTOMATIC   2
-#define       COM_DEHEDGEAUTOMATIC 3
-#define       COM_BUYSELLAUTOMATIC 4
-#define       COM_HM               5
-#define       COM_DATA             6
-#define       COM_EXIT             7
-#define       COM_VALUES           8
-#define       COM_START            9
-#define       COM_HEDGE            10
-#define       COM_KBS              11
-#define       COM_GETVALUES        13
-#define       COM_EXITALL          14
-#define       COM_CLOSEALL         15
-
-#define       COM_HEDGEALL         16
-#define       COM_CLOSE            17
-#define       COM_CLOSEORDER       18
-#define       COM_HISTORY          19
-#define       COM_EXITRULE	       20
-#define       COM_AUTOMANUAL	   21
 
 //=============================================BROKERSS==========================================
 
-string        SlopeObject      = "PG_Slope";
-string        VelocityObject   = "PG_TPO_Velocity";
-string        CoralObject      = "PG_THV_Coral";
-string        TVIObject        = "PG_TVI";
 string        ExtremeObject    = "PG_TMA_ExtremeSpike";
 string        TrixObject       = "PG_THV_Trix";
 
-int nbr = 0;
-int exit_divergence = 0;
 
-int nbr1= 0;
-int exit_divergence1= 0;
-
-
-int nbr2= 0;
-int exit_divergence2= 0;
-
-int nbr3= 0;
-int exit_divergence3= 0;
-
-int nbr4= 0;
-int exit_divergence4= 0;
-
-int nbr5= 0;
-int exit_divergence5= 0;
-
-int nbr6= 0;
-int exit_divergence6= 0;
-int nbr7= 0;
-int exit_divergence7= 0;
-
-
-
-string        sPivotZone;
 
 #define NBR_BROKERS     20
 
@@ -1183,6 +811,309 @@ int    CurrencyPort[NBR_SYMBOLS];
 
 double _Ask;   
 double _Bid;
+
+const int INVALID_USER         = -1;
+const int CONNECTION_FAILED    = -5;
+const int CONNECTION_SUCCEED   = 1;
+
+
+
+void OnTimer () {
+    int result = ConnectNodeServer();
+
+    if (result ==  CONNECTION_FAILED) {
+        PG_Print(TYPE_ERROR, "Server is not running or incorrect server parameters MT4 Server ", NO_SEND);
+        PG_Print(TYPE_INFO, "__________________________________________________ERROR IDENTIFICATION SERVER WILL CONNECT EVERY SECOND ________________________________________________________________________");
+        return;         
+    }       
+
+    EventKillTimer(); 
+    end_init();
+}
+
+
+int init() {
+
+    PG_Print(TYPE_INFO, "________________________________________________________________________  PROGRESS START INITIALISATION  ________________________________________________________________________");
+
+    PG_Print(TYPE_INFO, "________________________________________________________________________           Running in " + ((C_COMPILE == true) ? " C MODE " : " MQ4 MODE ") + "          ________________________________________________________________________");
+/*
+    for (int i = 0; i < NBR_PERIODS; i++) {
+    	while(!IsStopped()) {
+            ResetLastError();
+            int n = iBars(_Symbol, PeriodIndex[i]);
+            bool error = is_error();
+            if(!error && n > 0)
+            break;
+        }
+    }
+ */   
+
+    AttemptToStart = 1;
+
+    ShouldExit = 0;
+    FirstPass = -1;
+    SecondPass = 0;
+
+    DataFolder = ExtractDataFolder(TerminalInfoString(TERMINAL_DATA_PATH));
+
+    SymbolRunning = FileOpen("Lock" + _Symbol, FILE_WRITE | FILE_BIN);
+    if (SymbolRunning == -1) {
+        Print("Expert is running already on symbol " + SYS_SYMBOL);
+        return (INIT_FAILED);
+    }
+
+    if (MQLInfoInteger(MQL_TESTER) == 1)
+        TestMode = true;
+
+    CurrentTime = TimeCurrent();
+    GMTShift = GetShiftGMT();
+    StartDate = ReturnStartDate();
+    
+     Print("Expert is running on chart period " + _Period);
+    
+    CurrentPeriod = Period2Int(_Period);
+     Print("Expert is running on CurrentPeriod " + CurrentPeriod);
+    InitMarketInfo();
+
+    str2struct(TerminalBuffer, ArraySize(TerminalBuffer) << 18, TerminalPath());
+    str2struct(SymbolBuffer, ArraySize(SymbolBuffer) << 18, SYS_SYMBOL);
+    ResetAll(1);
+
+    InitIndicators(SYS_POINT);
+
+
+    if (TCP_init() < 0) {
+        ShouldExit = 1;
+        ExpertRemove ();
+        PG_Print(TYPE_ERROR, "Client: WSAStartup() failed with error ", NO_SEND);
+        PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR TCP START INIT END INITIALISATION  ________________________________________________________________________");
+        return (INIT_FAILED);
+    }
+    
+    int result = ConnectNodeServer();
+    if (result ==  INVALID_USER) {
+        ShouldExit = 1;
+        ExpertRemove ();
+        PG_Print(TYPE_ERROR, "Invalid User/Password ", NO_SEND);
+        PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR IDENTIFICATION FAILED  ________________________________________________________________________");
+        return (INIT_FAILED);
+    }   
+
+    if (result ==  CONNECTION_FAILED) {
+        EventSetTimer(1);      
+        PG_Print(TYPE_ERROR, "Server is not running or incorrect server parameters MT4 Server ", NO_SEND);
+        PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR IDENTIFICATION SERVER  ________________________________________________________________________");
+        return 0;
+    }    
+   
+
+    return  end_init();
+}
+
+int end_init() {
+   int result;
+   
+   if (C_COMPILE) {
+      PG_Print(TYPE_INFO, "______________________________________________________________  PROGRESS  WAITING FOR DOWNLOADING EXT_FUNCIONS DLL IN START INITIALISATION     ________________________________________________________");
+      Send_Operation("PROGRESS  WAITING FOR DOWNLOADING EXTENSION ON CURRENCY " + _Symbol);
+     
+      result = Load_WinExtension_DLL("PG_ExtFunctions.dll");
+      if (result < 0) {
+        ShouldExit = 1;
+        ExpertRemove ();
+        PG_Print(TYPE_ERROR, "Loading PG_ExtFunctions Failed", NO_SEND);
+        PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR IDENTIFICATION FAILED  ________________________________________________________________________");
+        return (INIT_FAILED);
+      }
+
+      PG_Print(TYPE_INFO, "______________________________________________________________  PROGRESS  WAITING FOR DOWNLOADING ENTRY RULES DLL IN START INITIALISATION    ________________________________________________________");
+      Send_Operation("PROGRESS WAITING FOR DOWNLOADING ENTRY RULES ON CURRENCY " + _Symbol);
+      result == LoadEntryRulesDLL();
+      if (result < 0) {
+        ShouldExit = 1;
+        ExpertRemove ();
+        PG_Print(TYPE_ERROR, "Loading Entry Rules Faied", NO_SEND);
+        PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR IDENTIFICATION FAILED  ________________________________________________________________________");
+        return (INIT_FAILED);
+      }
+     
+    }   
+    if (LoadProject() < 0) {
+        PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR LOAD PROJECT  ________________________________________________________________________");
+        ShouldExit = 1;
+        ExpertRemove ();
+        return (INIT_FAILED);
+    }
+    
+    ReadFlagEngines(); // properties Automatic or manual     
+    ReadSessions(); // init sessions && load
+    InitEngines();
+   
+    
+  
+    if (!TestMode || TestModeGraphic) {
+   
+        InitGraphics();
+    }
+   
+    PG_Print(TYPE_INFO, "________________________________________________________________________ PROGRESS END INITIALISATION  ________________________________________________________________________");
+
+    PG_Print(TYPE_INFO, "________________________________________________________________________ PROGRESS START PROCESSING  ________________________________________________________________________");
+    Send_Operation("PROGRESS START PROCESSING OK ON CURRENCY " + _Symbol);
+    
+    FirstPass = 1;
+    AttemptToStart = 0;
+    return (0);
+}
+
+void start() {
+
+    if (AttemptToStart) {
+    //    ExpertRemove ();
+        return;
+    }
+
+     int i = 0;
+    GMTShift = GetShiftGMT();
+
+    _Bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
+    _Ask = SymbolInfoDouble(_Symbol, SYMBOL_ASK);
+
+    if (SymbolRunning == -1) {
+        Print("Expert is running already on symbol " + SYS_SYMBOL);
+        return (-1);
+    }
+
+    if (TestMode)
+        Send_Symbol(_Symbol, CurrentPeriod);
+    else
+        Send_Symbol(_Symbol, P_M1);
+
+    AccountMinFreeMargin = MathMin(AccountFreeMargin(), AccountMinFreeMargin);
+
+    CurrentTime = TimeCurrent();
+
+    if (_Bid > Old_Price) FontColor = LawnGreen;
+    if (_Bid < Old_Price) FontColor = Red;
+
+    Old_Price = _Bid;
+
+    ResetSignals();
+    ResetRules(1);
+
+    AlertNews();
+
+    if (!TestMode || TestModeToSend) {
+
+        if (CSocket != -1)
+            PG_Recv(CSocket);
+
+        if (SiteConnection && NodeSocket != -1)
+            PG_Recv(NodeSocket);
+            
+    }
+
+    IfShouldClose();
+
+    for (i = (NBR_PERIODS - 1); i >= P_M1; i--)
+        MarketMovement(i, FirstPass);
+
+    // once a day
+    if (TimeOpenBar[P_D1] != iTime(NULL, PeriodIndex[P_D1], 0)) {
+        LoadNews();
+        MMDailySymbolTargetReached = false;
+        MMDailyTargetReached = false;
+    }
+    if (TimeOpenBar[P_W1] != iTime(NULL, PeriodIndex[P_W1], 0)) {
+        MMWeeklySymbolTargetReached = false;
+        MMWeeklyTargetReached = false;
+    }
+
+    //////////////////////////////////////////////////////////// MT4 Passage de parametres //////////////////////////////////////////////////////////////      
+
+    if (C_COMPILE) {
+
+        MT4_SetSystemObjects(_Ask, _Bid, TimeCurrent(), CurrentPeriod, SymbolBuffer, SYS_POINT, SYS_DIGITS,
+            SignalTab, SignalTabValue, SignalTabTime, SignalTabPrice,
+            BeforeSignalTab, BeforeSignalTabValue, BeforeSignalTabTime, BeforeSignalTabPrice,
+            BeforeSignalTickTab, RuleTab, RuleTabValue, BeforeRuleTab, BeforeRuleTabValue);
+            
+    } else {
+        for (i = (NBR_PERIODS - 1); i >= P_M1; i--)
+            SetSystemObjects(i);
+    }
+
+    //////////////////////////////////////////////////////////// MT4 Passage de parametres //////////////////////////////////////////////////////////////      
+
+    if (!TestMode || TestModeGraphic) {
+
+        MainPanel_DrawGraphics();
+        Panel_DrawGraphics();
+        DrawGraphics();
+    }
+
+ 
+    AccountNbrLots = ReturnAccountNbrLots();
+
+
+    TreatMM();
+
+    if (SecondPass) TreatAlerts();
+    TreatSignals();
+    TreatInRules(); // engine to rule
+
+    if (SecondPass) {
+        TreatSystemRules(); // rules
+    }
+
+    TreatOutRules(); // rules to engine  
+    TreatEngines();
+
+    Send_EngineFlags();
+    Send_RuleFlags();
+    Send_MM();
+
+    
+    if (GlobalComment)
+        PG_Comment();
+
+    for (i = 0; i < NBR_PERIODS; i++)
+        TimeOpenBar[i] = iTime(NULL, PeriodIndex[i], 0);
+
+    if (FirstPass == 0)
+        SecondPass = 1;
+
+    FirstPass = 0;
+    return (0);
+}
+
+//+------------------------------------------------------------------+ END 
+
+int deinit() {
+
+    printf("PROGRESS END PROCESSING BYE BYE  **********************************************************************");
+    PG_Print(TYPE_INFO, "________________________________________________________________________ PROGRESS END PROCESSING  ________________________________________________________________________");
+    Send_Operation("PROGRESS END PROCESSING ON CURRENCY " + _Symbol);
+
+    ObjectsDeleteAll();
+
+    if (CSocket > 0)
+        closesocket(CSocket);
+
+    if (NodeSocket > 0)
+        closesocket(NodeSocket);
+
+    NodeSocket = -1;
+    CSocket = -1;
+
+    Panel_Window = 0;
+
+    if (SymbolRunning != -1)
+        FileClose(SymbolRunning);
+
+    return (0);
+}
 
 //============================================= TCP MAIN ========================================
 
@@ -1202,6 +1133,43 @@ void PG_Send(int& socket, string s) {
 void PG_SendBuffer(int & socket, char buffer[], int buffersize) {
     TCP_sendBuffer(socket, buffer, buffersize, 0);
 }
+
+int ConnectNodeServer() {
+    if (SiteConnection && NodeSocket == -1) {
+
+        NodeSocket = TCP_connect(NodeServer, NodePort);
+        if (NodeSocket < 0) {
+            PG_Print(TYPE_ERROR, "NO SYNCHRONISATION WITH NODE CENTER ON PORT : " + NodePort, NO_SEND);
+            return CONNECTION_FAILED;
+        } else {
+            PG_Print(TYPE_ERROR, "SUCCEEDED SYNCHRONISATION WITH NODE CENTER ON PORT : " + NodePort, NO_SEND);
+            TCP_SetBlockingMode(NodeSocket, 1);
+            Send_Login(NodeSocket, NodePort);
+
+            string receive_buffer;
+            int ret = TCP_recv(NodeSocket, receive_buffer);
+            if (ret <= 0) {
+                PG_Print(TYPE_ERROR, "IDENTIFICATION FAILED  : Please Register on site", NO_SEND);
+                closesocket(NodeSocket);
+                NodeSocket = -1;
+                return INVALID_USER;
+            }
+            if (FTPMODE) {
+                UserPath = MembersPath + receive_buffer + "/Terminal/" + DataFolder;
+            }
+            else {
+                UserPath = MembersPath + receive_buffer + "/Terminal/" + DataFolder;
+            }
+            
+//            HTTPUploadHistoryFile(_Symbol, 0);
+//            Reload_EntryRules_DLL ("PG_EntryRules.dll");
+            TCP_SetBlockingMode(NodeSocket, 0);
+            Send_Init(NodeSocket, NodePort);
+        }
+    }
+    return CONNECTION_SUCCEED;
+}
+
 
 //=============================================RESET ALL ========================================
 
@@ -1250,32 +1218,6 @@ void ResetSignals(int first = -1) {
             SignalTab[i][j] = 0;
         }
         if (first == 1) RuleObjFilter[i] = 1;
-    }
-}
-
-void ResetRules(int first = -1) // only status is reset
-{
-    for (int i = 0; i < NBR_OPERATIONS; i++)
-        for (int j = 0; j < NBR_FIELDS; j++) {
-            BeforeRuleTab[i][j] = RuleTab[i][j];
-            RuleTab[i][j] = 0;
-            if (first == 1)
-                for (int k = 0; k < NBR_RULES; k++)
-                    if (j == T_BUYNBRTRADE || j == T_SELLNBRTRADE)
-                        RuleTabValue[i][j][k] = 0;
-                    else
-                        RuleTabValue[i][j][k] = 0;
-        }
-}
-
-void ResetSignalFilters() {
-    int i;
-
-    for (int z = 0; z < O_NbrObject; z++) {
-        i = ObjId[z];
-        for (int j = 0; j < NBR_SIGNALS; j++)
-            for (int x = 0; x < NBR_PERIODS; x++)
-                SignalFilterTab[i][j][x] = 0;
     }
 }
 
@@ -1508,115 +1450,66 @@ int InitMarketInfo() {
 }
 
 //=============================================INIT  ========================================
-
-int ConnectNodeServer() {
-    if (SiteConnection && NodeSocket == -1 && (TimeCurrent() - AttemptToReconnect) > 60) {
-
-         NodeSocket = TCP_connect(NodeServer, NodePort);
-        if (NodeSocket < 0) {
-            PG_Print(TYPE_ERROR, "NO SYNCHRONISATION WITH NODE CENTER ON PORT : " + NodePort, NO_SEND);
-            AttemptToReconnect = 0;
-            return -5;
-        } else {
-            PG_Print(TYPE_ERROR, "SUCCEEDED SYNCHRONISATION WITH NODE CENTER ON PORT : " + NodePort, NO_SEND);
-            TCP_SetBlockingMode(NodeSocket, 1);
-            Send_Login(NodeSocket, NodePort);
-
-            string receive_buffer;
-            int ret = TCP_recv(NodeSocket, receive_buffer);
-            if (ret <= 0) {
-                PG_Print(TYPE_ERROR, "IDENTIFICATION FAILED  : Please Register on site", NO_SEND);
-                closesocket(NodeSocket);
-                NodeSocket = -1;
-                return -1;
-            }
-            if (FTPMODE) {
-                UserPath = MembersPath + receive_buffer + "/Terminal/" + DataFolder;
-            }
-            else {
-                UserPath = MembersPath + receive_buffer + "/Terminal/" + DataFolder;
-            }
-            
-//            HTTPUploadHistoryFile(_Symbol, 0);
-//            Reload_EntryRules_DLL ("PG_EntryRules.dll");
-            TCP_SetBlockingMode(NodeSocket, 0);
-            Send_Init(NodeSocket, NodePort);
-        }
-    }
-    AttemptToReconnect = TimeCurrent();    
-    return 1;
-}
-
 int Load_WinExtension_DLL(string filename) {
+     string LocalFile = TerminalInfoString(TERMINAL_DATA_PATH) + "\\MQL4\\Libraries\\" + filename;
 
-    if (TimeCurrent() - AttemptToReloadDLL > 10) {
+     int HMOD = GetModuleHandleW(LocalFile);
+     // Handle to DLL
+     if (HMOD != 0) {
 
-        AttemptToReloadDLL = TimeCurrent();
+         Print("Library " +  filename + " ALREADY Loaded");
+         return 1;
+     }
+     
+     Print("NEED EXTENSION LIBRARY ********************************************");
 
-        string LocalFile = TerminalInfoString(TERMINAL_DATA_PATH) + "\\MQL4\\Libraries\\" + filename;
+     int returnvalue = DownloadLibrary(filename);
 
-        int HMOD = GetModuleHandleW(LocalFile);
-        // Handle to DLL
-        if (HMOD != 0) {
+     if (returnvalue < 0) {
+         Print("CAN NOT GET DLL " + filename);
 
-            Print("Library " +  filename + " ALREADY Loaded");
-            return 1;
-        }
-        
-        Print("NEED EXTENSION LIBRARY ********************************************");
+         return -1;
+     } else
+         Print("GET DLL SUCCEED " + filename);
+     
 
-        int returnvalue = DownloadLibrary(filename);
+     int ret = MessageBoxW (0, "Running Progress For the first time ,  You need to restart your terminal", "PROGRESS INITIALISATION", MB_YESNO|MB_ICONQUESTION|MB_TOPMOST); 
+     if (ret == IDYES) {                   
+         string terminalpath = TerminalPath() + "\\terminal.exe";
 
-        if (returnvalue < 0) {
-            Print("CAN NOT GET DLL " + filename);
-            AttemptToReloadDLL = 0;
-            return -1;
-        } else
-            Print("GET DLL SUCCEED " + filename);
-        
+         PostMessageA (GetParent(GetParent(GetParent(WindowHandle(Symbol(), Period())))), WM_CLOSE, 0, 0);
+         int r = WinExec (terminalpath , 0);
+         return 1;
+     } else {  
+         ExpertRemove ();
+         return 1;
+     }
+     int hDLL = LoadLibraryW(LocalFile);
 
-        int ret = MessageBoxW (0, "Running Progress For the first time ,  You need to restart your terminal", "PROGRESS INITIALISATION", MB_YESNO|MB_ICONQUESTION|MB_TOPMOST); 
-        if (ret == IDYES) {                   
-            string terminalpath = TerminalPath() + "\\terminal.exe";
+     if (!hDLL) {
+         Print("CAN NOT LOAD DLL " + filename);
 
-            PostMessageA (GetParent(GetParent(GetParent(WindowHandle(Symbol(), Period())))), WM_CLOSE, 0, 0);
-            int r = WinExec (terminalpath , 0);
-            return 1;
-        } else {  
-            ExpertRemove ();
-            return 1;
-        }
-        int hDLL = LoadLibraryW(LocalFile);
-
-        if (!hDLL) {
-            Print("CAN NOT LOAD DLL " + filename);
-            AttemptToReloadDLL = 0;
-            return -1;
-        } else {
-            Print("LOAD DLL  SUCCEED " + filename);
-        }
-        
-    }
+         return -1;
+     } else {
+         Print("LOAD DLL  SUCCEED " + filename);
+     }
     return 1;
 }
 
 int LoadEntryRulesDLL() {
 
-    if (TimeCurrent() - AttemptToLoadEntryRules > 10) {
+  
+   string dllfile = "";
    
-        string dllfile = "";
-
-        if (!TestMode)
-            dllfile = "PG_EntryRules.dll";
-        else
-            dllfile = "PG_TEntryRules.dll";
-
-        if (Reload_EntryRules_DLL(dllfile) < 0) {
-            return (-1);
-        }
-    }
-    AttemptToLoadEntryRules = TimeCurrent();   
-    return 1;
+   if (!TestMode)
+      dllfile = "PG_EntryRules.dll";
+   else
+      dllfile = "PG_TEntryRules.dll";
+   
+   if (Reload_EntryRules_DLL(dllfile) < 0) {
+      return (-1);
+   }
+   return 1;
 }
 
 int Load_EntryRules_DLL1(string filename) {
@@ -1768,291 +1661,6 @@ bool is_error(){
     return false;
 }
 
-int init() {
-
-    PG_Print(TYPE_INFO, "________________________________________________________________________  PROGRESS START INITIALISATION  ________________________________________________________________________");
-
-    PG_Print(TYPE_INFO, "________________________________________________________________________           Running in " + ((C_COMPILE == true) ? " C MODE " : " MQ4 MODE ") + "          ________________________________________________________________________");
-/*
-    for (int i = 0; i < NBR_PERIODS; i++) {
-    	while(!IsStopped()) {
-            ResetLastError();
-            int n = iBars(_Symbol, PeriodIndex[i]);
-            bool error = is_error();
-            if(!error && n > 0)
-            break;
-        }
-    }
- */   
-
-    AttemptToReconnect = 0;
-    AttemptToReloadDLL = 0;
-    AttemptToLoadEntryRules = 0;
-    ShouldExit = 0;
-    FirstPass = -1;
-    SecondPass = 0;
-
-    DataFolder = ExtractDataFolder(TerminalInfoString(TERMINAL_DATA_PATH));
-
-    SymbolRunning = FileOpen("Lock" + _Symbol, FILE_WRITE | FILE_BIN);
-    if (SymbolRunning == -1) {
-        Print("Expert is running already on symbol " + SYS_SYMBOL);
-        return (INIT_FAILED);
-    }
-
-    if (MQLInfoInteger(MQL_TESTER) == 1)
-        TestMode = true;
-
-    CurrentTime = TimeCurrent();
-    GMTShift = GetShiftGMT();
-    StartDate = ReturnStartDate();
-    CurrentPeriod = Period2Int(_Period);
-
-    InitMarketInfo();
-
-    str2struct(TerminalBuffer, ArraySize(TerminalBuffer) << 18, TerminalPath());
-    str2struct(SymbolBuffer, ArraySize(SymbolBuffer) << 18, SYS_SYMBOL);
-    ResetAll(1);
-
-    InitIndicators(SYS_POINT);
-
-
-    if (TCP_init() < 0) {
-        ShouldExit = 1;
-        ExpertRemove ();
-        PG_Print(TYPE_ERROR, "Client: WSAStartup() failed with error ", NO_SEND);
-        PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR TCP START INIT END INITIALISATION  ________________________________________________________________________");
-        return (INIT_FAILED);
-    }
-    int result = ConnectNodeServer();
-
-    if (result == -1) {
-        ShouldExit = 1;
-        ExpertRemove ();
-        PG_Print(TYPE_INFO, "________________________________________________________________________  CHECK YOUR USER AND PASSWORD REGISRATION  END INITIALISATION  ________________________________________________________________________");
-        return (INIT_FAILED);
-    } else
-    if (result == -5) { //result == -5 means problem problem with server or connection 
-        PG_Print(TYPE_INFO, "________________________________________________________________________                  PROBLEM WITH SERVER 						  ________________________________________________________________________");
-        return (0); // let's try later;
-    }
-
-    return 0;
-
-}
-
-int end_init() {
-
-    if (LoadProject() < 0) {
-        PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR LOAD PROJECT  ________________________________________________________________________");
-    }
-    ReadFlagEngines(); // properties Automatic or manual     
-    ReadSessions(); // init sessions && load
-    InitEngines();
-
-    MainWindowHandle = WindowHandle(_Symbol, _Period);
-
-
-    if (!TestMode || TestModeGraphic) {
-
-        GrabIndicatorWindow();
-
-        InitGraphics();
-    }
-
-    PG_Print(TYPE_INFO, "________________________________________________________________________ PROGRESS END INITIALISATION  ________________________________________________________________________");
-
-    return (0);
-}
-
-int start() {
-
-    if (ShouldExit == 1) {
-    //    ExpertRemove ();
-        return 0;
-    }
-
-    if (AttemptToReconnect == 0) {
-
-        PG_Print(TYPE_INFO, "______________________________________________________________   PROGRESS  WAITING FOR CONNECTION BEFORE ENDING INITIALISATION________________________________________________________");
-        ConnectNodeServer();
-        return 0;
-    }
-    if (C_COMPILE) {
-        if (AttemptToReloadDLL == 0) {
-
-            PG_Print(TYPE_INFO, "______________________________________________________________  PROGRESS  WAITING FOR DOWNLOADING EXT_FUNCIONS DLL IN START INITIALISATION     ________________________________________________________");
-            Send_Operation("PROGRESS  WAITING FOR DOWNLOADING EXTENSION ON CURRENCY " + _Symbol);
-            Load_WinExtension_DLL("PG_ExtFunctions.dll");
-            return 0;
-        }
-
-        if (AttemptToLoadEntryRules == 0) {
-            PG_Print(TYPE_INFO, "______________________________________________________________  PROGRESS  WAITING FOR DOWNLOADING ENTRY RULES DLL IN START INITIALISATION    ________________________________________________________");
-            Send_Operation("PROGRESS WAITING FOR DOWNLOADING ENTRY RULES ON CURRENCY " + _Symbol);
-            LoadEntryRulesDLL();
-            return 0;
-        }
-    }    
-    if (FirstPass == -1) {
-        end_init();
-        FirstPass = 1;
-        PG_Print(TYPE_INFO, "________________________________________________________________________ PROGRESS START PROCESSING  ________________________________________________________________________");
-        Send_Operation("PROGRESS START PROCESSING OK ON CURRENCY " + _Symbol);
-    }
-
-    int i = 0;
-    GMTShift = GetShiftGMT();
-
-    _Bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
-    _Ask = SymbolInfoDouble(_Symbol, SYMBOL_ASK);
-
-    if (SymbolRunning == -1) {
-        Print("Expert is running already on symbol " + SYS_SYMBOL);
-        return (-1);
-    }
-
-    if (TestMode)
-        Send_Symbol(_Symbol, CurrentPeriod);
-    else
-        Send_Symbol(_Symbol, P_M1);
-
-    AccountMinFreeMargin = MathMin(AccountFreeMargin(), AccountMinFreeMargin);
-
-    CurrentTime = TimeCurrent();
-
-    if (_Bid > Old_Price) FontColor = LawnGreen;
-    if (_Bid < Old_Price) FontColor = Red;
-
-    Old_Price = _Bid;
-
-    ResetSignals();
-    ResetRules(1);
-
-    AlertNews();
-
-    if (!TestMode || TestModeToSend) {
-
-        if (CSocket != -1)
-            PG_Recv(CSocket);
-
-        if (SiteConnection && NodeSocket != -1)
-            PG_Recv(NodeSocket);
-            
-        if (NodeSocket == -1) 
-            AttemptToReconnect = 0;    
-    }
-
-    IfShouldClose();
-
-    for (i = (NBR_PERIODS - 1); i >= P_M1; i--)
-        MarketMovement(i, FirstPass);
-
-    // once a day
-    if (TimeOpenBar[P_D1] != iTime(NULL, PeriodIndex[P_D1], 0)) {
-        LoadNews();
-        MMDailySymbolTargetReached = false;
-        MMDailyTargetReached = false;
-    }
-    if (TimeOpenBar[P_W1] != iTime(NULL, PeriodIndex[P_W1], 0)) {
-        MMWeeklySymbolTargetReached = false;
-        MMWeeklyTargetReached = false;
-    }
-
-    //////////////////////////////////////////////////////////// MT4 Passage de parametres //////////////////////////////////////////////////////////////      
-
-    if (C_COMPILE) {
-
-        MT4_SetSystemObjects(_Ask, _Bid, TimeCurrent(), CurrentPeriod, SymbolBuffer, SYS_POINT, SYS_DIGITS,
-            SignalTab, SignalTabValue, SignalTabTime, SignalTabPrice,
-            BeforeSignalTab, BeforeSignalTabValue, BeforeSignalTabTime, BeforeSignalTabPrice,
-            BeforeSignalTickTab, RuleTab, RuleTabValue, BeforeRuleTab, BeforeRuleTabValue);
-            
-    } else {
-        for (i = (NBR_PERIODS - 1); i >= P_M1; i--)
-            SetSystemObjects(i);
-    }
-
-    //////////////////////////////////////////////////////////// MT4 Passage de parametres //////////////////////////////////////////////////////////////      
-
-    if (!TestMode || TestModeGraphic) {
-
-        GrabIndicatorWindow();
-
-        MainPanel_DrawGraphics();
-        Panel_DrawGraphics();
-        Assistant_DrawGraphics();
-        DrawGraphics();
-    }
-
-    //    CalculateGAverage();
-
-    AccountNbrLots = ReturnAccountNbrLots();
-
-
-    TreatMM();
-
-    if (SecondPass) TreatAlerts();
-    TreatSignals();
-    TreatInRules(); // engine to rule
-
-    if (SecondPass) {
-        TreatSystemRules(); // rules
-    }
-
-    TreatOutRules(); // rules to engine  
-    TreatEngines();
-
-    Send_EngineFlags();
-    Send_RuleFlags();
-    Send_MM();
-
-    if (!TestMode || TestModeGraphic) {
-        System_DrawGraphics();
-        Engine_DrawGraphics();
-    }
-
-    if (GlobalComment)
-        PG_Comment();
-
-    for (i = 0; i < NBR_PERIODS; i++)
-        TimeOpenBar[i] = iTime(NULL, PeriodIndex[i], 0);
-
-    if (FirstPass == 0)
-        SecondPass = 1;
-
-    FirstPass = 0;
-    return (0);
-}
-
-//+------------------------------------------------------------------+ END 
-
-int deinit() {
-
-    printf("PROGRESS END PROCESSING BYE BYE  **********************************************************************");
-    PG_Print(TYPE_INFO, "________________________________________________________________________ PROGRESS END PROCESSING  ________________________________________________________________________");
-    Send_Operation("PROGRESS END PROCESSING ON CURRENCY " + _Symbol);
-
-    ObjectsDeleteAll();
-
-    if (CSocket > 0)
-        closesocket(CSocket);
-
-    if (NodeSocket > 0)
-        closesocket(NodeSocket);
-
-    NodeSocket = -1;
-    CSocket = -1;
-
-    Assistant_Window = 0;
-    Panel_Window = 0;
-    Trix_Window = 0;
-
-    if (SymbolRunning != -1)
-        FileClose(SymbolRunning);
-
-    return (0);
-}
 
 //=============================================LOGICAL  ========================================
 
@@ -2163,1626 +1771,10 @@ int OrderType2Int(string stype) {
     return (-1);
 }
 
-//=========================================RULES FUNCTIONS============================================================
 
-bool AndR(int Operation, int OperationType, int rule, int rule1 = -1, int rule2 = -1, int rule3 = -1, int rule4 = -1, int rule5 = -1) {
-    int result = 0;
-    result |= (1 << rule);
-    if (rule1 != -1) result |= (1 << rule1);
-    if (rule2 != -1) result |= (1 << rule2);
-    if (rule3 != -1) result |= (1 << rule3);
-    if (rule4 != -1) result |= (1 << rule4);
-    if (rule5 != -1) result |= (1 << rule5);
-    return ((RuleTab[Operation][OperationType] & result) == result);
-}
-
-bool OrR(int Operation, int OperationType, int rule, int rule1 = -1, int rule2 = -1, int rule3 = -1, int rule4 = -1, int rule5 = -1) {
-    int result = 0;
-    result |= (1 << rule);
-    if (rule1 != -1) result |= (1 << rule1);
-    if (rule2 != -1) result |= (1 << rule2);
-    if (rule3 != -1) result |= (1 << rule3);
-    if (rule4 != -1) result |= (1 << rule4);
-    if (rule5 != -1) result |= (1 << rule5);
-    return ((RuleTab[Operation][OperationType] & result) != 0);
-}
-
-bool AndCR(int Operation, int OperationType, int rule) {
-    return ((RuleTab[Operation][OperationType] & rule) == rule);
-}
-
-bool OrCR(int Operation, int OperationType, int rule) {
-    return ((RuleTab[Operation][OperationType] & rule) != 0);
-}
-
-int Get_Rule(int Operation, int OperationType, int rule) {
-    return (RuleTab[Operation][OperationType] & (1 << rule));
-}
-
-int Get_Previous_Rule(int Operation, int OperationType, int rule) {
-    return (BeforeRuleTab[Operation][OperationType] & (1 << rule));
-}
-
-double Get_Previous_Filter_Value(int Operation, int OperationType, int rule) {
-    return (BeforeRuleTabValue[Operation][OperationType][rule]);
-}
-
-void SetRuleFilter(int add, int Operation, int OperationType, int rule) {
-    int i, j;
-    if (rule == -1)
-        for (int x = 0; x < NBR_RULES; x++)
-            if (OperationType == -1)
-                if (Operation == -1)
-                    for (i = 0; i < NBR_OPERATIONS; i++)
-                        for (j = 0; j < NBR_FIELDS; j++)
-                            RuleFilterTab[i][j][x] = add;
-                else
-                    for (j = 0; j < NBR_FIELDS; j++)
-                        RuleFilterTab[Operation][j][x] = add;
-    else
-    if (Operation == -1)
-        for (i = 0; i < NBR_OPERATIONS; i++)
-            RuleFilterTab[i][OperationType][x] = add;
-    else
-        RuleFilterTab[Operation][OperationType][x] = add;
-    else
-    if (OperationType == -1)
-        if (Operation == -1)
-            for (i = 0; i < NBR_OPERATIONS; i++)
-                for (j = 0; j < NBR_FIELDS; j++)
-                    RuleFilterTab[i][j][rule] = add;
-        else
-            for (j = 0; j < NBR_FIELDS; j++)
-                RuleFilterTab[Operation][j][rule] = add;
-    else
-        RuleFilterTab[Operation][OperationType][rule] = add;
-}
-
-void ResetRuleFilters() {
-    for (int i = 0; i < NBR_OPERATIONS; i++)
-        for (int j = 0; j < NBR_FIELDS; j++)
-            for (int x = 0; x < NBR_RULES; x++)
-                RuleFilterTab[i][j][x] = 0;
-}
-
-int GetRuleFilter(int Operation, int OperationType, int rule) {
-    return (RuleFilterTab[Operation][OperationType][rule]);
-}
-
-//========================================SIGNALS FUNCTIONS============================================================
-
-int AndS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) export {
-    int result = 0;
-    if (period != -1) result |= (1 << period);
-    if (period1 != -1) result |= (1 << period1);
-    if (period2 != -1) result |= (1 << period2);
-    if (period3 != -1) result |= (1 << period3);
-    if (period4 != -1) result |= (1 << period4);
-    if (period5 != -1) result |= (1 << period5);
-    if (period6 != -1) result |= (1 << period6);
-    if (period7 != -1) result |= (1 << period7);
-    if (period8 != -1) result |= (1 << period8);
-
-    return ((SignalTab[Object][signaltype] & result) == result ? SignalTab[Object][signaltype] & result : 0);
-}
-
-int AndPS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) export {
-    int result = 0;
-    if (period != -1) result |= (1 << period);
-    if (period1 != -1) result |= (1 << period1);
-    if (period2 != -1) result |= (1 << period2);
-    if (period3 != -1) result |= (1 << period3);
-    if (period4 != -1) result |= (1 << period4);
-    if (period5 != -1) result |= (1 << period5);
-    if (period6 != -1) result |= (1 << period6);
-    if (period7 != -1) result |= (1 << period7);
-    if (period8 != -1) result |= (1 << period8);
-
-    return ((BeforeSignalTab[Object][signaltype] & result) == result ? BeforeSignalTab[Object][signaltype] & result : 0);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-double RValue(int Operation, int OperationType, int rule) {
-    return (RuleTabValue[Operation][OperationType][rule]);
-}
-
-void Set_Rule_Value(int Operation, int OperationType, int rule, double Value) {
-    RuleTabValue[Operation][OperationType][rule] = Value;
-}
-
-void Set_Rule(int Operation, int OperationType, int rule, int signal, double value = -1) {
-    if (signal == P_SIGNAL)
-        RuleTab[Operation][OperationType] |= (1 << rule);
-    else
-        RuleTab[Operation][OperationType] &= ~(1 << rule);
-
-    Set_Rule_Value(Operation, OperationType, rule, value);
-}
-
-double SValue(int Object, int signaltype, int period) {
-    return (SignalTabValue[Object][signaltype][period]);
-}
-
-/////////////////////////////////////////////////////  VALUE //////////////////////////////////////////////////////////////////////
-
-double MaxV(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    double result = -EMPTY_VALUE;
-    if (period != -1) result = SValue(Object, signaltype, period);
-    if (period1 != -1) result = MathMax(result, SValue(Object, signaltype, period1));
-    if (period2 != -1) result = MathMax(result, SValue(Object, signaltype, period2));
-    if (period3 != -1) result = MathMax(result, SValue(Object, signaltype, period3));
-    if (period4 != -1) result = MathMax(result, SValue(Object, signaltype, period4));
-    if (period5 != -1) result = MathMax(result, SValue(Object, signaltype, period5));
-    if (period6 != -1) result = MathMax(result, SValue(Object, signaltype, period6));
-    if (period7 != -1) result = MathMax(result, SValue(Object, signaltype, period7));
-    if (period8 != -1) result = MathMax(result, SValue(Object, signaltype, period8));
-
-    return (result);
-
-}
-
-double MinV(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    double result = EMPTY_VALUE;
-    if (period != -1) result = SValue(Object, signaltype, period);
-    if (period1 != -1) result = MathMin(result, SValue(Object, signaltype, period1));
-    if (period2 != -1) result = MathMin(result, SValue(Object, signaltype, period2));
-    if (period3 != -1) result = MathMin(result, SValue(Object, signaltype, period3));
-    if (period4 != -1) result = MathMin(result, SValue(Object, signaltype, period4));
-    if (period5 != -1) result = MathMin(result, SValue(Object, signaltype, period5));
-    if (period6 != -1) result = MathMin(result, SValue(Object, signaltype, period6));
-    if (period7 != -1) result = MathMin(result, SValue(Object, signaltype, period7));
-    if (period8 != -1) result = MathMin(result, SValue(Object, signaltype, period8));
-
-    return (result);
-
-}
-
-double MaxPV(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    double result = -EMPTY_VALUE;
-    if (period != -1) result = SPValue(Object, signaltype, period);
-    if (period1 != -1) result = MathMax(result, SPValue(Object, signaltype, period1));
-    if (period2 != -1) result = MathMax(result, SPValue(Object, signaltype, period2));
-    if (period3 != -1) result = MathMax(result, SPValue(Object, signaltype, period3));
-    if (period4 != -1) result = MathMax(result, SPValue(Object, signaltype, period4));
-    if (period5 != -1) result = MathMax(result, SPValue(Object, signaltype, period5));
-    if (period6 != -1) result = MathMax(result, SPValue(Object, signaltype, period6));
-    if (period7 != -1) result = MathMax(result, SPValue(Object, signaltype, period7));
-    if (period8 != -1) result = MathMax(result, SPValue(Object, signaltype, period8));
-
-    return (result);
-
-}
-
-double MinPV(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    double result = EMPTY_VALUE;
-    if (period != -1) result = SPValue(Object, signaltype, period);
-    if (period1 != -1) result = MathMin(result, SPValue(Object, signaltype, period1));
-    if (period2 != -1) result = MathMin(result, SPValue(Object, signaltype, period2));
-    if (period3 != -1) result = MathMin(result, SPValue(Object, signaltype, period3));
-    if (period4 != -1) result = MathMin(result, SPValue(Object, signaltype, period4));
-    if (period5 != -1) result = MathMin(result, SPValue(Object, signaltype, period5));
-    if (period6 != -1) result = MathMin(result, SPValue(Object, signaltype, period6));
-    if (period7 != -1) result = MathMin(result, SPValue(Object, signaltype, period7));
-    if (period8 != -1) result = MathMin(result, SPValue(Object, signaltype, period8));
-
-    return (result);
-
-}
-
-int AndS_G(int Object1, int Object2, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object1, signaltype, period) > SValue(Object2, signaltype, period));
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = (SValue(Object1, signaltype, period1) > SValue(Object2, signaltype, period1));
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = (SValue(Object1, signaltype, period2) > SValue(Object2, signaltype, period2));
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = (SValue(Object1, signaltype, period3) > SValue(Object2, signaltype, period3));
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = (SValue(Object1, signaltype, period4) > SValue(Object2, signaltype, period4));
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = (SValue(Object1, signaltype, period5) > SValue(Object2, signaltype, period5));
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = (SValue(Object1, signaltype, period6) > SValue(Object2, signaltype, period6));
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = (SValue(Object1, signaltype, period7) > SValue(Object2, signaltype, period7));
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = (SValue(Object1, signaltype, period8) > SValue(Object2, signaltype, period8));
-        if (result) rperiod |= (1 << period8);
-    }
-    return ((result) ? rperiod : 0);
-}
-
-int AndS_L(int Object1, int Object2, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object1, signaltype, period) < SValue(Object2, signaltype, period));
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = (SValue(Object1, signaltype, period1) < SValue(Object2, signaltype, period1));
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = (SValue(Object1, signaltype, period2) < SValue(Object2, signaltype, period2));
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = (SValue(Object1, signaltype, period3) < SValue(Object2, signaltype, period3));
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = (SValue(Object1, signaltype, period4) < SValue(Object2, signaltype, period4));
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = (SValue(Object1, signaltype, period5) < SValue(Object2, signaltype, period5));
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = (SValue(Object1, signaltype, period6) < SValue(Object2, signaltype, period6));
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = (SValue(Object1, signaltype, period7) < SValue(Object2, signaltype, period7));
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = (SValue(Object1, signaltype, period8) < SValue(Object2, signaltype, period8));
-        if (result) rperiod |= (1 << period8);
-    }
-    return ((result) ? rperiod : 0);
-}
-
-int AndS_G_AndPS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object, signaltype, period) > SPValue(Object, signaltype, period));
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = (SValue(Object, signaltype, period1) > SPValue(Object, signaltype, period1));
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = (SValue(Object, signaltype, period2) > SPValue(Object, signaltype, period2));
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = (SValue(Object, signaltype, period3) > SPValue(Object, signaltype, period3));
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = (SValue(Object, signaltype, period4) > SPValue(Object, signaltype, period4));
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = (SValue(Object, signaltype, period5) > SPValue(Object, signaltype, period5));
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = (SValue(Object, signaltype, period6) > SPValue(Object, signaltype, period6));
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = (SValue(Object, signaltype, period7) > SPValue(Object, signaltype, period7));
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = (SValue(Object, signaltype, period8) > SPValue(Object, signaltype, period8));
-        if (result) rperiod |= (1 << period8);
-    }
-    return ((result) ? rperiod : 0);
-}
-
-int AndS_L_AndPS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object, signaltype, period) < SPValue(Object, signaltype, period));
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = (SValue(Object, signaltype, period1) < SPValue(Object, signaltype, period1));
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = (SValue(Object, signaltype, period2) < SPValue(Object, signaltype, period2));
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = (SValue(Object, signaltype, period3) < SPValue(Object, signaltype, period3));
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = (SValue(Object, signaltype, period4) < SPValue(Object, signaltype, period4));
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = (SValue(Object, signaltype, period5) < SPValue(Object, signaltype, period5));
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = (SValue(Object, signaltype, period6) < SPValue(Object, signaltype, period6));
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = (SValue(Object, signaltype, period7) < SPValue(Object, signaltype, period7));
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = (SValue(Object, signaltype, period7) < SPValue(Object, signaltype, period8));
-        if (result) rperiod |= (1 << period8);
-    }
-    return ((result) ? rperiod : 0);
-}
-
-int AndV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 1;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object, signaltype, period) == value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result && (SValue(Object, signaltype, period1) == value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result && (SValue(Object, signaltype, period2) == value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result && (SValue(Object, signaltype, period3) == value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result && (SValue(Object, signaltype, period4) == value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result && (SValue(Object, signaltype, period5) == value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result && (SValue(Object, signaltype, period6) == value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result && (SValue(Object, signaltype, period7) == value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result && (SValue(Object, signaltype, period8) == value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int AndV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 1;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object, signaltype, period) < value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result && (SValue(Object, signaltype, period1) < value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result && (SValue(Object, signaltype, period2) < value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result && (SValue(Object, signaltype, period3) < value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result && (SValue(Object, signaltype, period4) < value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result && (SValue(Object, signaltype, period5) < value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result && (SValue(Object, signaltype, period6) < value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result && (SValue(Object, signaltype, period7) < value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result && (SValue(Object, signaltype, period8) < value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int AndV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 1;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object, signaltype, period) <= value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result && (SValue(Object, signaltype, period1) <= value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result && (SValue(Object, signaltype, period2) <= value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result && (SValue(Object, signaltype, period3) <= value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result && (SValue(Object, signaltype, period4) <= value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result && (SValue(Object, signaltype, period5) <= value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result && (SValue(Object, signaltype, period6) <= value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result && (SValue(Object, signaltype, period7) <= value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result && (SValue(Object, signaltype, period8) <= value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int AndV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 1;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object, signaltype, period) > value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result && (SValue(Object, signaltype, period1) > value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result && (SValue(Object, signaltype, period2) > value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result && (SValue(Object, signaltype, period3) > value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result && (SValue(Object, signaltype, period4) > value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result && (SValue(Object, signaltype, period5) > value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result && (SValue(Object, signaltype, period6) > value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result && (SValue(Object, signaltype, period7) > value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result && (SValue(Object, signaltype, period8) > value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int AndV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 1;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object, signaltype, period) >= value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result && (SValue(Object, signaltype, period1) >= value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result && (SValue(Object, signaltype, period2) >= value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result && (SValue(Object, signaltype, period3) >= value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result && (SValue(Object, signaltype, period4) >= value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result && (SValue(Object, signaltype, period5) >= value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result && (SValue(Object, signaltype, period6) >= value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result && (SValue(Object, signaltype, period7) >= value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result && (SValue(Object, signaltype, period8) >= value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int AndPV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 1;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SPValue(Object, signaltype, period) == value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result && (SPValue(Object, signaltype, period1) == value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result && (SPValue(Object, signaltype, period2) == value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result && (SPValue(Object, signaltype, period3) == value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result && (SPValue(Object, signaltype, period4) == value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result && (SPValue(Object, signaltype, period5) == value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result && (SPValue(Object, signaltype, period6) == value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result && (SPValue(Object, signaltype, period7) == value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result && (SPValue(Object, signaltype, period8) == value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int AndPV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 1;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SPValue(Object, signaltype, period) < value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result && (SPValue(Object, signaltype, period1) < value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result && (SPValue(Object, signaltype, period2) < value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result && (SPValue(Object, signaltype, period3) < value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result && (SPValue(Object, signaltype, period4) < value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result && (SPValue(Object, signaltype, period5) < value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result && (SPValue(Object, signaltype, period6) < value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result && (SPValue(Object, signaltype, period7) < value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result && (SPValue(Object, signaltype, period8) < value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int AndPV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 1;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SPValue(Object, signaltype, period) <= value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result && (SPValue(Object, signaltype, period1) <= value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result && (SPValue(Object, signaltype, period2) <= value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result && (SPValue(Object, signaltype, period3) <= value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result && (SPValue(Object, signaltype, period4) <= value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result && (SPValue(Object, signaltype, period5) <= value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result && (SPValue(Object, signaltype, period6) <= value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result && (SPValue(Object, signaltype, period7) <= value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result && (SPValue(Object, signaltype, period8) <= value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int AndPV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 1;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SPValue(Object, signaltype, period) > value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result && (SPValue(Object, signaltype, period1) > value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result && (SPValue(Object, signaltype, period2) > value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result && (SPValue(Object, signaltype, period3) > value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result && (SPValue(Object, signaltype, period4) > value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result && (SPValue(Object, signaltype, period5) > value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result && (SPValue(Object, signaltype, period6) > value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result && (SPValue(Object, signaltype, period7) > value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result && (SPValue(Object, signaltype, period8) > value);
-        if (result) rperiod |= (1 << period8);
-    } {}
-    return ((result) ? rperiod : 0);
-}
-
-int AndPV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 1;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SPValue(Object, signaltype, period) >= value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result && (SPValue(Object, signaltype, period1) >= value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result && (SPValue(Object, signaltype, period2) >= value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result && (SPValue(Object, signaltype, period3) >= value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result && (SPValue(Object, signaltype, period4) >= value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result && (SPValue(Object, signaltype, period5) >= value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result && (SPValue(Object, signaltype, period6) >= value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result && (SPValue(Object, signaltype, period7) >= value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result && (SPValue(Object, signaltype, period8) >= value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int OrV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object, signaltype, period) == value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result || (SValue(Object, signaltype, period1) == value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result || (SValue(Object, signaltype, period2) == value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result || (SValue(Object, signaltype, period3) == value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result || (SValue(Object, signaltype, period4) == value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result || (SValue(Object, signaltype, period5) == value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result || (SValue(Object, signaltype, period6) == value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result || (SValue(Object, signaltype, period7) == value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result || (SValue(Object, signaltype, period8) == value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int OrV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object, signaltype, period) < value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result || (SValue(Object, signaltype, period1) < value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result || (SValue(Object, signaltype, period2) < value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result || (SValue(Object, signaltype, period3) < value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result || (SValue(Object, signaltype, period4) < value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result || (SValue(Object, signaltype, period5) < value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result || (SValue(Object, signaltype, period6) < value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result || (SValue(Object, signaltype, period7) < value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result || (SValue(Object, signaltype, period8) < value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int OrV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object, signaltype, period) <= value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result || (SValue(Object, signaltype, period1) <= value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result || (SValue(Object, signaltype, period2) <= value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result || (SValue(Object, signaltype, period3) <= value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result || (SValue(Object, signaltype, period4) <= value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result || (SValue(Object, signaltype, period5) <= value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result || (SValue(Object, signaltype, period6) <= value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result || (SValue(Object, signaltype, period7) <= value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result || (SValue(Object, signaltype, period8) <= value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int OrV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object, signaltype, period) > value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result || (SValue(Object, signaltype, period1) > value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result || (SValue(Object, signaltype, period2) > value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result || (SValue(Object, signaltype, period3) > value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result || (SValue(Object, signaltype, period4) > value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result || (SValue(Object, signaltype, period5) > value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result || (SValue(Object, signaltype, period6) > value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result || (SValue(Object, signaltype, period7) > value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result || (SValue(Object, signaltype, period8) > value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int OrV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SValue(Object, signaltype, period) >= value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result || (SValue(Object, signaltype, period1) >= value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result || (SValue(Object, signaltype, period2) >= value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result || (SValue(Object, signaltype, period3) >= value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result || (SValue(Object, signaltype, period4) >= value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result || (SValue(Object, signaltype, period5) >= value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result || (SValue(Object, signaltype, period6) >= value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result || (SValue(Object, signaltype, period7) >= value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result || (SValue(Object, signaltype, period8) >= value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int OrPV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SPValue(Object, signaltype, period) == value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result || (SPValue(Object, signaltype, period1) == value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result || (SPValue(Object, signaltype, period2) == value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result || (SPValue(Object, signaltype, period3) == value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result || (SPValue(Object, signaltype, period4) == value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result || (SPValue(Object, signaltype, period5) == value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result || (SPValue(Object, signaltype, period6) == value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result || (SPValue(Object, signaltype, period7) == value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result || (SPValue(Object, signaltype, period8) == value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int OrPV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SPValue(Object, signaltype, period) < value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result || (SPValue(Object, signaltype, period1) < value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result || (SPValue(Object, signaltype, period2) < value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result || (SPValue(Object, signaltype, period3) < value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result || (SPValue(Object, signaltype, period4) < value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result || (SPValue(Object, signaltype, period5) < value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result || (SPValue(Object, signaltype, period6) < value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result || (SPValue(Object, signaltype, period7) < value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result || (SPValue(Object, signaltype, period8) < value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int OrPV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SPValue(Object, signaltype, period) <= value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result || (SPValue(Object, signaltype, period1) <= value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result || (SPValue(Object, signaltype, period2) <= value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result || (SPValue(Object, signaltype, period3) <= value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result || (SPValue(Object, signaltype, period4) <= value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result || (SPValue(Object, signaltype, period5) <= value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result || (SPValue(Object, signaltype, period6) <= value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result || (SPValue(Object, signaltype, period7) <= value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result || (SPValue(Object, signaltype, period8) <= value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int OrPV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SPValue(Object, signaltype, period) > value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result || (SPValue(Object, signaltype, period1) > value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result || (SPValue(Object, signaltype, period2) > value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result || (SPValue(Object, signaltype, period3) > value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result || (SPValue(Object, signaltype, period4) > value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result || (SPValue(Object, signaltype, period5) > value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result || (SPValue(Object, signaltype, period6) > value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result || (SPValue(Object, signaltype, period7) > value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result || (SPValue(Object, signaltype, period8) > value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int OrPV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    bool result = 0;
-    int rperiod = 0;
-    if (period != -1) {
-        result = (SPValue(Object, signaltype, period) >= value);
-        if (result) rperiod |= (1 << period);
-    }
-    if (period1 != -1) {
-        result = result || (SPValue(Object, signaltype, period1) >= value);
-        if (result) rperiod |= (1 << period1);
-    }
-    if (period2 != -1) {
-        result = result || (SPValue(Object, signaltype, period2) >= value);
-        if (result) rperiod |= (1 << period2);
-    }
-    if (period3 != -1) {
-        result = result || (SPValue(Object, signaltype, period3) >= value);
-        if (result) rperiod |= (1 << period3);
-    }
-    if (period4 != -1) {
-        result = result || (SPValue(Object, signaltype, period4) >= value);
-        if (result) rperiod |= (1 << period4);
-    }
-    if (period5 != -1) {
-        result = result || (SPValue(Object, signaltype, period5) >= value);
-        if (result) rperiod |= (1 << period5);
-    }
-    if (period6 != -1) {
-        result = result || (SPValue(Object, signaltype, period6) >= value);
-        if (result) rperiod |= (1 << period6);
-    }
-    if (period7 != -1) {
-        result = result || (SPValue(Object, signaltype, period7) >= value);
-        if (result) rperiod |= (1 << period7);
-    }
-    if (period8 != -1) {
-        result = result || (SPValue(Object, signaltype, period8) >= value);
-        if (result) rperiod |= (1 << period8);
-    }
-
-    return ((result) ? rperiod : 0);
-}
-
-int AndBV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (AndV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !AndPV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool AndBV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (AndV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !AndPV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool AndBV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (AndV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !AndPV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool AndBV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (AndV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !AndPV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool AndBV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (AndV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !AndPV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool OrBV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (OrV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !OrPV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool OrBV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (OrV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !OrPV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool OrBV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (OrV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !OrPV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool OrBV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (OrV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !OrPV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool OrBV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (OrV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !OrPV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-//TICK
-bool AndTV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (AndV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !AndPV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool AndTV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (AndV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !AndPV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-bool AndTV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (AndV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !AndPV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool AndTV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (AndV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !AndPV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool AndTV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (AndV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !AndPV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool OrTV_Eq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (OrV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !OrPV_Eq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool OrTV_LEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (OrV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !OrPV_LEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool OrTV_L(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (OrV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !OrPV_L(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool OrTV_G(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (OrV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !OrPV_G(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-bool OrTV_GEq(int Object, int signaltype, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (OrV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8) &&
-        !OrPV_GEq(Object, signaltype, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-int AngleAbove(int Object, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (AndV_G(Object, S_ANGLE, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-int AngleBelow(int Object, double value, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    return (AndV_L(Object, S_ANGLE, value, period, period1, period2, period3, period4, period5, period6, period7, period8));
-}
-
-int AngleDivergence(int Object, int period) {
-    return ((AndS(Object, S_UP, period) && AngleBelow(Object, 0, period)) ||
-        (AndS(Object, S_DOWN, period) && AngleAbove(Object, 0, period)));
-}
-
-////////////////////////////////////////////////////////// END VALUE ///////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////BOOLEAN ////////////////////////////////////////////////////
-
-int AndPTS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    int result = 0;
-    if (period != -1) result |= (1 << period);
-    if (period1 != -1) result |= (1 << period1);
-    if (period2 != -1) result |= (1 << period2);
-    if (period3 != -1) result |= (1 << period3);
-    if (period4 != -1) result |= (1 << period4);
-    if (period5 != -1) result |= (1 << period5);
-    if (period6 != -1) result |= (1 << period6);
-    if (period7 != -1) result |= (1 << period7);
-    if (period8 != -1) result |= (1 << period8);
-
-    return ((BeforeSignalTickTab[Object][signaltype] & result) == result ? BeforeSignalTickTab[Object][signaltype] & result : 0);
-}
-
-int OrS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    int result = 0;
-    if (period != -1) result |= (1 << period);
-    if (period1 != -1) result |= (1 << period1);
-    if (period2 != -1) result |= (1 << period2);
-    if (period3 != -1) result |= (1 << period3);
-    if (period4 != -1) result |= (1 << period4);
-    if (period5 != -1) result |= (1 << period5);
-    if (period6 != -1) result |= (1 << period6);
-    if (period7 != -1) result |= (1 << period7);
-    if (period8 != -1) result |= (1 << period8);
-
-    return ((SignalTab[Object][signaltype] & result) != 0 ? SignalTab[Object][signaltype] & result : 0);
-}
-
-int OrPS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    int result = 0;
-    if (period != -1) result |= (1 << period);
-    if (period1 != -1) result |= (1 << period1);
-    if (period2 != -1) result |= (1 << period2);
-    if (period3 != -1) result |= (1 << period3);
-    if (period4 != -1) result |= (1 << period4);
-    if (period5 != -1) result |= (1 << period5);
-    if (period6 != -1) result |= (1 << period6);
-    if (period7 != -1) result |= (1 << period7);
-    if (period8 != -1) result |= (1 << period8);
-
-    return ((BeforeSignalTab[Object][signaltype] & result) != 0 ? BeforeSignalTab[Object][signaltype] & result : 0);
-}
-
-int OrPTS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    int result = 0;
-    if (period != -1) result |= (1 << period);
-    if (period1 != -1) result |= (1 << period1);
-    if (period2 != -1) result |= (1 << period2);
-    if (period3 != -1) result |= (1 << period3);
-    if (period4 != -1) result |= (1 << period4);
-    if (period5 != -1) result |= (1 << period5);
-    if (period6 != -1) result |= (1 << period6);
-    if (period7 != -1) result |= (1 << period7);
-    if (period8 != -1) result |= (1 << period8);
-
-    return ((BeforeSignalTickTab[Object][signaltype] & result) != 0 ? BeforeSignalTickTab[Object][signaltype] & result : 0);
-}
-
-int AndTS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    int result = AndS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8);
-    return ((result && !AndPTS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8)) ? result : 0);
-}
-
-int AndBS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    int result = AndS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8);
-    return ((result && !AndPS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8)) ? result : 0);
-}
-
-int OrTS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    int result = OrS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8);
-    return ((result && !OrPTS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8)) ? result : 0);
-}
-
-int OrBS(int Object, int signaltype, int period, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1, int period7 = -1, int period8 = -1) {
-    int result = OrS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8);
-    return ((result && !OrPS(Object, signaltype, period, period1, period2, period3, period4, period5, period6, period7, period8)) ? result : 0);
-}
-
-int All(int Object, int signaltype, int period1 = -1, int period2 = -1, int period3 = -1, int period4 = -1, int period5 = -1, int period6 = -1) {
-    int result = MathMod(SignalTab[Object][signaltype], 256); // month
-    result = MathMod(result, 128); // week
-    result = MathMod(result, 64); // day
-
-    if (period1 != -1) result = MathMod(result, period1);
-    if (period2 != -1) result = MathMod(result, period2);
-    if (period3 != -1) result = MathMod(result, period3);
-    if (period4 != -1) result = MathMod(result, period4);
-    if (period5 != -1) result = MathMod(result, period5);
-    if (period6 != -1) result = MathMod(result, period6);
-
-    return (result);
-}
-
-int All_s(int Object, int signaltype, int period1 = -1, int period2 = -1, int period3 = -1) {
-    int result = MathMod(SignalTab[Object][signaltype], 256); // month
-    result = MathMod(result, 128);
-    result = MathMod(result, 64);
-    result = MathMod(result, 32);
-    result = MathMod(result, 16);
-    result = MathMod(result, 8);
-
-    if (period1 != -1) result = MathMod(result, period1);
-    if (period2 != -1) result = MathMod(result, period2);
-    if (period3 != -1) result = MathMod(result, period3);
-    return (result);
-}
-
-void SETSIGNAL(int shift, int Object, int signaltype, int period, int signal, double value = -1) {
-    if (shift == 0)
-        Set_Signal(Object, signaltype, period, signal, value);
-    else
-        Set_Previous_Signal(Object, signaltype, period, signal, value);
-}
-
-void Set_Signal(int Object, int signaltype, int period, int signal, double value = -1) {
-    if (signal == P_SIGNAL) {
-        SignalTab[Object][signaltype] |= (1 << period);
-        if (!AndPTS(Object, signaltype, period)) {
-            Set_Signal_Time(Object, signaltype, period, TimeCurrent());
-            Set_Signal_Price(Object, signaltype, period, _Bid);
-        }
-    } else {
-        SignalTab[Object][signaltype] &= ~(1 << period);
-        if (AndPTS(Object, signaltype, period)) {
-            Set_Signal_Time(Object, signaltype, period, -1);
-            Set_Signal_Price(Object, signaltype, period, -1);
-        }
-    }
-    if (value != -1)
-        Set_Signal_Value(Object, signaltype, period, value);
-}
-
-int Get_Signal(int Object, int signaltype, int period) {
-    return (SignalTab[Object][signaltype] & (1 << period));
-}
-
-void Set_Previous_Signal(int Object, int signaltype, int period, int signal, double value = -1) {
-    if (signal == P_SIGNAL)
-        BeforeSignalTab[Object][signaltype] |= (1 << period);
-    else
-        BeforeSignalTab[Object][signaltype] &= ~(1 << period);
-    if (value != -1)
-        Set_Previous_Signal_Value(Object, signaltype, period, value);
-}
-
-int Get_Previous_Signal(int Object, int signaltype, int period) {
-    return (BeforeSignalTab[Object][signaltype] & (1 << period));
-}
-
-void Set_Signal_Value(int Object, int signaltype, int period, double Value) {
-    SignalTabValue[Object][signaltype][period] = Value;
-}
-
-void Set_Signal_Time(int Object, int signaltype, int period, double Value) {
-    SignalTabTime[Object][signaltype][period] = Value;
-}
-
-void Set_Signal_Price(int Object, int signaltype, int period, double Value) {
-    SignalTabPrice[Object][signaltype][period] = Value;
-}
-
-void Set_Previous_Signal_Value(int Object, int signaltype, int period, double Value) {
-    BeforeSignalTabValue[Object][signaltype][period] = Value;
-}
-
-double SPValue(int Object, int signaltype, int period) {
-    return (BeforeSignalTabValue[Object][signaltype][period]);
-}
-
-datetime STime(int Object, int signaltype, int period) {
-    return (SignalTabTime[Object][signaltype][period]);
-}
-
-datetime SPTime(int Object, int signaltype, int period) {
-    return (BeforeSignalTabTime[Object][signaltype][period]);
-}
-
-double SPrice(int Object, int signaltype, int period) {
-    return (SignalTabPrice[Object][signaltype][period]);
-}
-
-double SPPrice(int Object, int signaltype, int period) {
-    return (BeforeSignalTabPrice[Object][signaltype][period]);
-}
-
-void SetSignalFilter(int add, int Object, int signaltype, int periode, datetime interval = -1) {
-    int j;
-    if (add == -1) {
-        ResetSignalFilters();
-        return;
-    }
-    if (add == -2) {
-        ResetSignalFilters();
-        add = 1;
-    }
-    if (periode == -1) {
-        for (int x = 0; x < NBR_PERIODS; x++)
-            if (signaltype == -1)
-                for (j = 0; j < NBR_SIGNALS; j++) {
-                    SignalFilterTab[Object][j][x] = add;
-                    if (interval == -1) SignalFilterTabTime[Object][j][x] = 5 * 60; // seconds
-                    else SignalFilterTabTime[Object][j][x] = interval;
-                }
-        else {
-            SignalFilterTab[Object][signaltype][x] = add;
-            if (interval == -1) SignalFilterTabTime[Object][signaltype][x] = 5 * 60; // seconds
-            else SignalFilterTabTime[Object][signaltype][x] = interval;
-        }
-    } else {
-        if (signaltype == -1)
-            for (j = 0; j < NBR_SIGNALS; j++) {
-                SignalFilterTab[Object][j][periode] = add;
-                if (interval == -1) SignalFilterTabTime[Object][j][periode] = 5 * 60; // seconds
-                else SignalFilterTabTime[Object][j][periode] = interval;
-
-            }
-        else {
-            SignalFilterTab[Object][signaltype][periode] = add;
-            if (interval == -1) SignalFilterTabTime[Object][signaltype][periode] = 5 * 60; // seconds
-            else SignalFilterTabTime[Object][signaltype][periode] = interval;
-
-        }
-    }
-}
-
-int GetSignalFilter(int Object, int signaltype, int period) {
-    return (SignalFilterTab[Object][signaltype][period]);
-}
 
 //////////////////////////////////////////////////////////////// INDICATORS /////////////////////////////////////////////////////////////////
 
-string GeneralMarketMovement(int x) {
-    string sway = "";
-    int uptarget = 0;
-    int downtarget = 0;
-
-    double MA_MovingPeriod = 20;
-    double MA_MovingShift = 0;
-
-    double up_ma = iMA(NULL, PeriodIndex[x], MA_MovingPeriod, MA_MovingShift, MODE_SMA, PRICE_CLOSE, UpFractals[x]);
-    double down_ma = iMA(NULL, PeriodIndex[x], MA_MovingPeriod, MA_MovingShift, MODE_SMA, PRICE_CLOSE, DownFractals[x]);
-
-    if (SValue(UPFRACTAL, S_CURRENT, x) > up_ma &&
-        SValue(DOWNFRACTAL, S_CURRENT, x) >= down_ma) {
-        sway = "UP";
-        uptarget = SValue(UPFRACTAL, S_TARGET, x);
-    } else
-    if (SValue(UPFRACTAL, S_CURRENT, x) > up_ma &&
-        SValue(DOWNFRACTAL, S_CURRENT, x) < down_ma) {
-
-        sway = "SIDEWAY";
-        downtarget = SValue(DOWNFRACTAL, S_TARGET, x);
-        uptarget = SValue(UPFRACTAL, S_TARGET, x);
-
-        if (AndS(DOWNFRACTAL, S_DOWN, x) != 0) {
-            sway = "DOWN";
-        }
-        if (AndS(UPFRACTAL, S_UP, x) != 0) {
-            sway = "UP";
-        }
-    } else
-    if (SValue(UPFRACTAL, S_CURRENT, x) <= up_ma &&
-        SValue(DOWNFRACTAL, S_CURRENT, x) < down_ma) {
-        downtarget = SValue(DOWNFRACTAL, S_TARGET, x);
-        sway = "DOWN";
-    }
-    return (sway);
-}
 
 void MarketResistance(int start_period, int period1, int exit_period) {
     bool Bull = false;
@@ -4011,94 +2003,7 @@ int GetIndexFromSymbolName(string name) {
 
 }
 
-/*
 
-void GrabKey (int Key, int left = 0, int top = 0, int right = 50, int bottom = 50)
-{
-    int iCoords[2], hWin,liKS;
-    bool lbutton = false;
-    
-    hWin =   WindowHandle( _Symbol, _Period); 
-    
-    liKS = GetAsyncKeyState(Key);
-    
-    if (liKS == 0) 
-    {
-       liKS = GetAsyncKeyState(VK_LBUTTON);
-       lbutton = true;
-    } 
-    if (liKS != 0)
-    {
-		MT4_ScreenToClient(hWin, iCoords);  
-		
-		if (!lbutton ||
-		    (iCoords[0] > left && iCoords[0] < left + right && iCoords[1] > top && iCoords[1] < top + bottom))
-		{
-			 MT4_WinExec (hWin, TerminalBuffer);
-
-			 if (CSocket < 0) 
-			 {
-				CSocket = TCP_connect (CServer, CPort);
-				if (CSocket < 0)
-				{
-				   PG_Print (TYPE_ERROR, "NO SYNCHRONISATION WITH COMMAND CENTER ON PORT : " + CPort, NO_SEND);        
-				}
-				else
-				{
-				   Send_Init (CSocket, CPort);
-				   Send_History (_Symbol, P_H1, 100);
-				   Send_Pivot (_Symbol, P_D1);
-				   ReloadSchedules ();               
-				   ReloadPanel ();
-				   ReloadAlerts ();
-				   ReloadFilters ();
-				   ReloadMM();
-				   ReadFlagEngines ();                  
-				}         
-			 }
-		  }      
-     }
-}
-*/
-
-void GrabIndicatorWindow() {
-    int ind_window = WindowFind("PG_System " + _Period);
-    if (ind_window == -1) System_Window = 0;
-    else
-    if (System_Window != ind_window) {
-        System_Window = ind_window;
-        System_DeleteGraphics();
-        System_InitGraphics();
-    }
-
-    ind_window = WindowFind("PG_Panel " + _Period);
-    if (ind_window == -1) Panel_Window = 0;
-    else
-    if (Panel_Window != ind_window) {
-        Panel_Window = ind_window;
-        Panel_DeleteGraphics();
-        Panel_InitGraphics();
-        // LoadNews ();
-    }
-
-    ind_window = WindowFind("PG_Assistant " + _Period);
-    if (ind_window == -1) Assistant_Window = 0;
-    else
-    if (Assistant_Window != ind_window) {
-        Assistant_Window = ind_window;
-        Assistant_DeleteGraphics();
-        Assistant_InitGraphics();
-    }
-
-    ind_window = WindowFind("PG_Engine " + _Period);
-    if (ind_window == -1) Engine_Window = 0;
-    else
-    if (Engine_Window != ind_window) {
-        Engine_Window = ind_window;
-        Engine_DeleteGraphics();
-        Engine_InitGraphics();
-    }
-}
 
 bool NewDay() {
     if (TimeHour(TimeCurrent()) == 0 &&
@@ -4282,336 +2187,8 @@ void DrawGraphics() {
 
 //****************************************************************************************************************************************
 
-void DrawFractals(int x) {
-
-    ObjectCreate("FractalUpLine" + "," + PeriodName[x], OBJ_HLINE, 0, 0, 0);
-    ObjectSet("FractalUpLine" + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
-    ObjectSet("FractalUpLine" + "," + PeriodName[x], OBJPROP_STYLE, HStyle[x]);
-
-    ObjectCreate("FractalDownLine" + "," + PeriodName[x], OBJ_HLINE, 0, 0, 0);
-    ObjectSet("FractalDownLine" + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
-    ObjectSet("FractalDownLine" + "," + PeriodName[x], OBJPROP_STYLE, HStyle[x]);
-
-    ObjectSet("FractalUpLine" + "," + PeriodName[x], OBJPROP_WIDTH, 3);
-    ObjectSet("FractalDownLine" + "," + PeriodName[x], OBJPROP_WIDTH, 3);
-
-    ObjectCreate("PivotHighLine" + "," + PeriodName[x], OBJ_HLINE, 0, 0, 0);
-    ObjectSet("PivotHighLine" + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
-    ObjectSet("PivotHighLine" + "," + PeriodName[x], OBJPROP_STYLE, HStyle[x]);
-
-    ObjectCreate("PivotLowLine" + "," + PeriodName[x], OBJ_HLINE, 0, 0, 0);
-    ObjectSet("PivotLowLine" + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
-    ObjectSet("PivotLowLine" + "," + PeriodName[x], OBJPROP_STYLE, HStyle[x]);
-
-    ObjectCreate("PivotLine" + "," + PeriodName[x], OBJ_HLINE, 0, 0, 0);
-    ObjectSet("PivotLine" + "," + PeriodName[x], OBJPROP_COLOR, Yellow);
-    ObjectSet("PivotLine" + "," + PeriodName[x], OBJPROP_WIDTH, 1);
-
-    ObjectSet("PivotHighLine" + "," + PeriodName[x], OBJPROP_PRICE1, LastHigh[1][x]);
-    ObjectSet("PivotHighLine" + "," + PeriodName[x], OBJPROP_PRICE1, LastHigh[1][x]);
-    ObjectSet("PivotHighLine" + "," + PeriodName[x], OBJPROP_TIME1, Time[0] + 360);
-
-    ObjectSet("PivotLowLine" + "," + PeriodName[x], OBJPROP_PRICE1, LastLow[1][x]);
-    ObjectSet("PivotLowLine" + "," + PeriodName[x], OBJPROP_PRICE1, LastLow[1][x]);
-    ObjectSet("PivotLowLine" + "," + PeriodName[x], OBJPROP_TIME1, Time[0] + 360);
-
-    ObjectSet("PivotLine" + "," + PeriodName[x], OBJPROP_PRICE1, LastPivotPoint[1][x]);
-    ObjectSet("PivotLine" + "," + PeriodName[x], OBJPROP_PRICE1, LastPivotPoint[1][x]);
-    ObjectSet("PivotLine" + "," + PeriodName[x], OBJPROP_TIME1, Time[0] + 360);
-
-    if (UpFractals[x] != -1) {
-        ObjectSet("FractalUpLine" + "," + PeriodName[x], OBJPROP_PRICE1, iHigh(NULL, PeriodIndex[x], UpFractals[x]));
-        ObjectSet("FractalUpText" + "," + PeriodName[x], OBJPROP_PRICE1, iHigh(NULL, PeriodIndex[x], UpFractals[x]));
-        ObjectSet("FractalUpText" + "," + PeriodName[x], OBJPROP_TIME1, Time[0] + 360);
-    }
-    if (DownFractals[x] != -1) {
-        ObjectSet("FractalDownLine" + "," + PeriodName[x], OBJPROP_PRICE1, iLow(NULL, PeriodIndex[x], DownFractals[x]));
-        ObjectSet("FractalDownText" + "," + PeriodName[x], OBJPROP_PRICE1, iLow(NULL, PeriodIndex[x], DownFractals[x]));
-        ObjectSet("FractalDownText" + "," + PeriodName[x], OBJPROP_TIME1, Time[0] + 360);
-    }
-
-    if (AndS(PROGRESS, S_BUY, P_D1)) {
-        ObjectCreate("probuylined1", OBJ_TREND, 0, SPrice(PROGRESS, S_BUY, P_D1), 0);
-        ObjectSet("probuylined1", OBJPROP_COLOR, LawnGreen);
-        ObjectSet("probuylined1", OBJPROP_WIDTH, 2);
-        ObjectSet("probuylined1", OBJPROP_RAY, false);
-        ObjectSet("probuylined1", OBJPROP_PRICE1, SPrice(PROGRESS, S_BUY, P_D1));
-        ObjectSet("probuylined1", OBJPROP_TIME1, STime(PROGRESS, S_BUY, P_D1));
-        ObjectSet("probuylined1", OBJPROP_PRICE2, SPrice(PROGRESS, S_BUY, P_D1));
-        ObjectSet("probuylined1", OBJPROP_TIME2, Time[0]);
-    }
-    if (AndS(PROGRESS, S_EXIT_BUY, P_D1)) {
-        ObjectCreate("exitprobuylined1", OBJ_TREND, 0, SPrice(PROGRESS, S_EXIT_BUY, P_D1), 0);
-        ObjectSet("exitprobuylined1", OBJPROP_COLOR, Yellow);
-        ObjectSet("exitprobuylined1", OBJPROP_WIDTH, 2);
-        ObjectSet("exitprobuylined1", OBJPROP_RAY, false);
-        ObjectSet("exitprobuylined1", OBJPROP_PRICE1, SPrice(PROGRESS, S_EXIT_BUY, P_D1));
-        ObjectSet("exitprobuylined1", OBJPROP_TIME1, STime(PROGRESS, S_EXIT_BUY, P_D1));
-        ObjectSet("exitprobuylined1", OBJPROP_PRICE2, SPrice(PROGRESS, S_EXIT_BUY, P_D1));
-        ObjectSet("exitprobuylined1", OBJPROP_TIME2, Time[0]);
-    }
-
-    if (AndS(PROGRESS, S_SELL, P_D1)) {
-        ObjectCreate("proselllined1", OBJ_TREND, 0, SPrice(PROGRESS, S_SELL, P_D1), 0);
-        ObjectSet("proselllined1", OBJPROP_COLOR, Pink);
-        ObjectSet("proselllined1", OBJPROP_WIDTH, 2);
-        ObjectSet("proselllined1", OBJPROP_RAY, false);
-        ObjectSet("proselllined1", OBJPROP_PRICE1, SPrice(PROGRESS, S_SELL, P_D1));
-        ObjectSet("proselllined1", OBJPROP_TIME1, STime(PROGRESS, S_SELL, P_D1));
-        ObjectSet("proselllined1", OBJPROP_PRICE2, SPrice(PROGRESS, S_SELL, P_D1));
-        ObjectSet("proselllined1", OBJPROP_TIME2, Time[0]);
-    }
-    if (AndS(PROGRESS, S_EXIT_SELL, P_D1)) {
-        ObjectCreate("exitproselllined1", OBJ_TREND, 0, SPrice(PROGRESS, S_EXIT_SELL, P_D1), 0);
-        ObjectSet("exitproselllined1", OBJPROP_COLOR, Purple);
-        ObjectSet("exitproselllined1", OBJPROP_WIDTH, 2);
-        ObjectSet("exitproselllined1", OBJPROP_RAY, false);
-        ObjectSet("exitproselllined1", OBJPROP_PRICE1, SPrice(PROGRESS, S_EXIT_SELL, P_D1));
-        ObjectSet("exitproselllined1", OBJPROP_TIME1, STime(PROGRESS, S_EXIT_SELL, P_D1));
-        ObjectSet("exitproselllined1", OBJPROP_PRICE2, SPrice(PROGRESS, S_EXIT_SELL, P_D1));
-        ObjectSet("exitproselllined1", OBJPROP_TIME2, Time[0]);
-    }
-    if (AndS(PROGRESS, S_BUY, P_H4)) {
-        ObjectCreate("probuylineh4", OBJ_TREND, 0, SPrice(PROGRESS, S_BUY, P_H4), 0);
-        ObjectSet("probuylineh4", OBJPROP_COLOR, Lime);
-        ObjectSet("probuylineh4", OBJPROP_WIDTH, 2);
-        ObjectSet("probuylineh4", OBJPROP_RAY, false);
-        ObjectSet("probuylineh4", OBJPROP_PRICE1, SPrice(PROGRESS, S_BUY, P_H4));
-        ObjectSet("probuylineh4", OBJPROP_TIME1, STime(PROGRESS, S_BUY, P_H4));
-        ObjectSet("probuylineh4", OBJPROP_PRICE2, SPrice(PROGRESS, S_BUY, P_H4));
-        ObjectSet("probuylineh4", OBJPROP_TIME2, Time[0]);
-    }
-    if (AndS(PROGRESS, S_EXIT_BUY, P_H4)) {
-        ObjectCreate("exitprobuylineh4", OBJ_TREND, 0, SPrice(PROGRESS, S_EXIT_BUY, P_H4), 0);
-        ObjectSet("exitprobuylineh4", OBJPROP_COLOR, Orange);
-        ObjectSet("exitprobuylineh4", OBJPROP_WIDTH, 2);
-        ObjectSet("exitprobuylineh4", OBJPROP_RAY, false);
-        ObjectSet("exitprobuylineh4", OBJPROP_PRICE1, SPrice(PROGRESS, S_EXIT_BUY, P_H4));
-        ObjectSet("exitprobuylineh4", OBJPROP_TIME1, STime(PROGRESS, S_EXIT_BUY, P_H4));
-        ObjectSet("exitprobuylineh4", OBJPROP_PRICE2, SPrice(PROGRESS, S_EXIT_BUY, P_H4));
-        ObjectSet("exitprobuylineh4", OBJPROP_TIME2, Time[0]);
-    }
-
-    if (AndS(PROGRESS, S_SELL, P_H4)) {
-        ObjectCreate("proselllineh4", OBJ_TREND, 0, SPrice(PROGRESS, S_SELL, P_H4), 0);
-        ObjectSet("proselllineh4", OBJPROP_COLOR, DeepPink);
-        ObjectSet("proselllineh4", OBJPROP_WIDTH, 2);
-        ObjectSet("proselllineh4", OBJPROP_RAY, false);
-        ObjectSet("proselllineh4", OBJPROP_PRICE1, SPrice(PROGRESS, S_SELL, P_H4));
-        ObjectSet("proselllineh4", OBJPROP_TIME1, STime(PROGRESS, S_SELL, P_H4));
-        ObjectSet("proselllineh4", OBJPROP_PRICE2, SPrice(PROGRESS, S_SELL, P_H4));
-        ObjectSet("proselllineh4", OBJPROP_TIME2, Time[0]);
-    }
-    if (AndS(PROGRESS, S_EXIT_SELL, P_H4)) {
-        ObjectCreate("exitproselllineh4", OBJ_TREND, 0, SPrice(PROGRESS, S_EXIT_SELL, P_H4), 0);
-        ObjectSet("exitproselllineh4", OBJPROP_COLOR, Turquoise);
-        ObjectSet("exitproselllineh4", OBJPROP_WIDTH, 2);
-        ObjectSet("exitproselllineh4", OBJPROP_RAY, false);
-        ObjectSet("exitproselllineh4", OBJPROP_PRICE1, SPrice(PROGRESS, S_EXIT_SELL, P_H4));
-        ObjectSet("exitproselllineh4", OBJPROP_TIME1, STime(PROGRESS, S_EXIT_SELL, P_H4));
-        ObjectSet("exitproselllineh4", OBJPROP_PRICE2, SPrice(PROGRESS, S_EXIT_SELL, P_H4));
-        ObjectSet("exitproselllineh4", OBJPROP_TIME2, Time[0]);
-    }
-}
-
-void DrawDistance(int Object, int Object1, int period, int distance, double angle, int & exit_divergence, int & nbr) {
-
-    if (MathAbs(SValue(Object, S_CURRENT, period) - SValue(Object1, S_CURRENT, period)) <= distance * SYS_POINT &&
-        MathAbs(SValue(Object, S_ANGLE, period)) <= angle) {
-        if (exit_divergence == 0) {
-            ObjectCreate("box" + Object + period + nbr, OBJ_RECTANGLE, 0, Time[0], _Ask, Time[0], _Bid);
-            exit_divergence = 1;
-        }
-        ObjectSet("box" + Object + period + nbr, OBJPROP_SCALE, 1.0);
-        ObjectSet("box" + Object + period + nbr, OBJPROP_TIME2, Time[0]);
-        ObjectSet("box" + Object + period + nbr, OBJPROP_PRICE2, _Bid);
-        if (Object == MA_200)
-            ObjectSet("box" + Object + period + nbr, OBJPROP_COLOR, Red);
-    } else {
-        if (exit_divergence == 1) {
-            nbr++;
-            exit_divergence = 0;
-        }
-    }
-}
-
-void DrawDistance1(int Object, int period, double angle, int & exit_divergence, int & nbr) {
-
-    if (MathAbs(SValue(Object, S_ANGLE, period)) <= angle) {
-        if (exit_divergence == 0) {
-            ObjectCreate("box" + Object + period + nbr, OBJ_RECTANGLE, 0, Time[0], _Ask, Time[0], _Bid);
-            exit_divergence = 1;
-        }
-        ObjectSet("box" + Object + period + nbr, OBJPROP_SCALE, 1.0);
-        ObjectSet("box" + Object + period + nbr, OBJPROP_TIME2, Time[0]);
-        ObjectSet("box" + Object + period + nbr, OBJPROP_PRICE2, _Bid);
-        if (Object == MA_200)
-            ObjectSet("box" + Object + period + nbr, OBJPROP_COLOR, Blue);
-    } else {
-        if (exit_divergence == 1) {
-            nbr++;
-            exit_divergence = 0;
-        }
-    }
-}
 
 
-void DrawSharpAngles(int & exit_up, int & nbrup, int & exit_down, int & nbrdown) {
-    if (AndS(MA_200, S_ABOVE, P_M1) &&
-        AngleAbove(MA_200, 10, P_M1) &&
-        AngleAbove(MA_200, 5, P_M5) &&
-        SValue(DIVERGENCE, S_CURRENT, P_M1) >= D_BuySell) {
-        if (exit_up == 0) {
-            ObjectCreate("boxangleup" + nbrup, OBJ_RECTANGLE, 0, Time[0], _Ask, Time[0], _Bid);
-            ObjectSet("boxangleup" + nbrup, OBJPROP_COLOR, SkyBlue);
-
-            exit_up = 1;
-        }
-        ObjectSet("boxangleup" + nbrup, OBJPROP_SCALE, 1.0);
-        ObjectSet("boxangleup" + nbrup, OBJPROP_TIME2, Time[0]);
-        ObjectSet("boxangleup" + nbrup, OBJPROP_PRICE2, _Bid);
-    } else {
-        if (exit_up == 1) {
-            nbrup++;
-            exit_up = 0;
-        }
-    }
-
-    if (AndS(MA_200, S_BELOW, P_M1) &&
-        AngleBelow(MA_200, -10, P_M1) &&
-        AngleBelow(MA_200, -5, P_M5) &&
-        SValue(DIVERGENCE, S_CURRENT, P_M1) <= (D_BuySell * (-1))) {
-        if (exit_down == 0) {
-
-            ObjectCreate("boxangledown" + nbrdown, OBJ_RECTANGLE, 0, Time[0], _Ask, Time[0], _Bid);
-            ObjectSet("boxangledown" + nbrdown, OBJPROP_COLOR, Yellow);
-
-            exit_down = 1;
-        }
-        ObjectSet("boxangledown" + nbrdown, OBJPROP_SCALE, 1.0);
-        ObjectSet("boxangledown" + nbrdown, OBJPROP_TIME2, Time[0]);
-        ObjectSet("boxangledown" + nbrdown, OBJPROP_PRICE2, _Bid);
-    } else {
-        if (exit_down == 1) {
-            nbrdown++;
-            exit_down = 0;
-        }
-    }
-}
-
-void DrawTMA(int & exit_up, int & nbrup, int & exit_down, int & nbrdown) {
-    if (AndS(TMA_S, S_BUY, P_H1) && !AndS(TMA_S, S_BULL, P_H1)) {
-
-        if (exit_up == 0) {
-            ObjectCreate("boxuptma" + nbrup, OBJ_RECTANGLE, 0, Time[0], _Ask, Time[0], _Bid);
-            ObjectSet("boxuptma" + nbrup, OBJPROP_COLOR, Gray);
-
-            exit_up = 1;
-        }
-        ObjectSet("boxuptma" + nbrup, OBJPROP_SCALE, 1.0);
-        ObjectSet("boxuptma" + nbrup, OBJPROP_TIME2, Time[0]);
-        ObjectSet("boxuptma" + nbrup, OBJPROP_PRICE2, _Bid);
-    } else {
-        if (exit_up == 1) {
-            nbrup++;
-            exit_up = 0;
-        }
-    }
-
-    if (AndS(TMA_S, S_SELL, P_H1) && !AndS(TMA_S, S_BEAR, P_H1)) {
-
-        if (exit_down == 0) {
-
-            ObjectCreate("boxdowntma" + nbrdown, OBJ_RECTANGLE, 0, Time[0], _Ask, Time[0], _Bid);
-            ObjectSet("boxdowntma" + nbrdown, OBJPROP_COLOR, DarkGray);
-
-            exit_down = 1;
-        }
-        ObjectSet("boxdowntma" + nbrdown, OBJPROP_SCALE, 1.0);
-        ObjectSet("boxdowntma" + nbrdown, OBJPROP_TIME2, Time[0]);
-        ObjectSet("boxdowntma" + nbrdown, OBJPROP_PRICE2, _Bid);
-    } else {
-        if (exit_down == 1) {
-            nbrdown++;
-            exit_down = 0;
-        }
-    }
-}
-
-void DrawUpDown(int & exit_up, int & nbrup, int & exit_down, int & nbrdown) {
-    if (AndR(OP_BUY, T_STATUS, R_Q)) {
-        if (exit_up == 0) {
-            ObjectCreate("boxup" + nbrup, OBJ_RECTANGLE, 0, Time[0], _Ask, Time[0], _Bid);
-            ObjectSet("boxup" + nbrup, OBJPROP_COLOR, Green);
-
-            exit_up = 1;
-        }
-        ObjectSet("boxup" + nbrup, OBJPROP_SCALE, 1.0);
-        ObjectSet("boxup" + nbrup, OBJPROP_TIME2, Time[0]);
-        ObjectSet("boxup" + nbrup, OBJPROP_PRICE2, _Bid);
-    } else {
-        if (exit_up == 1) {
-            nbrup++;
-            exit_up = 0;
-        }
-    }
-
-    if (AndR(OP_SELL, T_STATUS, R_Q)) {
-        if (exit_down == 0) {
-
-            ObjectCreate("boxdown" + nbrdown, OBJ_RECTANGLE, 0, Time[0], _Ask, Time[0], _Bid);
-            ObjectSet("boxdown" + nbrdown, OBJPROP_COLOR, Pink);
-
-            exit_down = 1;
-        }
-        ObjectSet("boxdown" + nbrdown, OBJPROP_SCALE, 1.0);
-        ObjectSet("boxdown" + nbrdown, OBJPROP_TIME2, Time[0]);
-        ObjectSet("boxdown" + nbrdown, OBJPROP_PRICE2, _Bid);
-    } else {
-        if (exit_down == 1) {
-            nbrdown++;
-            exit_down = 0;
-        }
-    }
-}
-
-void DrawDivergence(int Object, int period, int & exit_divergence, int & nbr) {
-
-    if (AngleDivergence(Object, period)) {
-        if (exit_divergence == 0) {
-            ObjectCreate("box" + Object + period + nbr, OBJ_RECTANGLE, 0, Time[0], _Ask, Time[0] + 3000, _Bid);
-            exit_divergence = 1;
-        }
-        ObjectSet("box" + Object + period + nbr, OBJPROP_SCALE, 1.0);
-        ObjectSet("box" + Object + period + nbr, OBJPROP_TIME2, Time[0] + 3000);
-        ObjectSet("box" + Object + period + nbr, OBJPROP_PRICE2, _Bid);
-        if (Object == MA_200)
-            ObjectSet("box" + Object + period + nbr, OBJPROP_COLOR, Red);
-    } else {
-        if (exit_divergence == 1) {
-            nbr++;
-            exit_divergence = 0;
-        }
-    }
-}
-
-bool CloseEnough(double num1, double num2) {
-    /*
-    This function addresses the problem of the way in which mql4 compares doubles. It often messes up the 8th
-    decimal point.
-    For example, if A = 1.5 and B = 1.5, then these numbers are clearly equal. Unseen by the coder, mql4 may
-    actually be giving B the value of 1.50000001, and so the variable are not equal, even though they are.
-    This nice little quirk explains some of the problems I have endured in the past when comparing doubles. This
-    is common to a lot of program languages, so watch out for it if you program elsewhere.
-    Gary (garyfritz) offered this solution, so our thanks to him.
-    */
-
-    if (MathAbs(num1 - num2) < 0.00001) return (true); //Doubles are equal
-
-    //Doubles are unequal
-    return (false);
-
-}
 
 void B_InitGraphics(int session) {
     ObjectCreate("box" + session, OBJ_RECTANGLE, 0, B_StartDate[session], B_Max[session], Time[0], B_Min[session]);
@@ -7940,6 +5517,10 @@ void Send_Symbol(string symbol, int x) {
     s = s + DoubleToString(iClose(symbol, PeriodIndex[x], 0), _Digits);
     s = s + "^";
     s = s + DoubleToString(iVolume(symbol, PeriodIndex[x], 0), 0);
+    s = s + "^";
+    s = s + DoubleToString( MarketInfo(Symbol(),MODE_TICKVALUE), 0);
+    s = s + "^";
+    s = s + DoubleToString( MarketInfo(Symbol(),MODE_TICKSIZE), 0);
     s = s + "*";
     PG_Send(NodeSocket, s);
 }
@@ -8129,6 +5710,13 @@ void Send_RuleFlags() {
     s = s + "*";
     PG_Send(NodeSocket, s);
 }
+
+string ns2(double a) {
+    return (DoubleToString(a, 2));
+}
+
+
+
 
 void Send_Command(int number, int sessionnumber, int engine, int start, double buyprofit, double sellprofit, double profit, double totalprofit, int nbrbuy, int nbrsell, double buylot, double selllot, int hedgetype, double hedgebuyprofit, double hedgesellprofit, double buyaverage, double sellaverage, double min, double max) {
     if (NoConnection()) return;
@@ -11844,102 +9432,6 @@ int GetSarNbrBars(int x, int Object, int from = 0) {
     return (SarNbrBars);
 }
 
-double velocity(int x) {
-
-    double ob, exob, ld_0;
-
-    if (x == 0) {
-        ld_0 = 10;
-        ob = 10;
-        exob = 20;
-    }
-    if (x == 1) {
-        ld_0 = 15;
-        ob = 20;
-        exob = 30;
-    }
-    if (x == 2) {
-        ld_0 = 30;
-        ob = 30;
-        exob = 40;
-    }
-    if (x == 3) {
-        ld_0 = 40;
-        ob = 40;
-        exob = 60;
-    }
-    if (x == 4) {
-        ld_0 = 50;
-        ob = 50;
-        exob = 70;
-    }
-    if (x == 5) {
-        ld_0 = 80;
-        ob = 80;
-        exob = 100;
-    }
-    if (x == 6) {
-        ld_0 = 100;
-        ob = 100;
-        exob = 150;
-    }
-    if (x == 7) {
-        ld_0 = 500;
-        ob = 500;
-        exob = 800;
-    }
-    if (x == 8) {
-        ld_0 = 1500;
-        ob = 1500;
-        exob = 2000;
-    }
-
-    double velocity = iCustom(NULL, PeriodIndex[x], VelocityObject, 0, 0);
-    double pvelocity = iCustom(NULL, PeriodIndex[x], VelocityObject, 0, 1);
-
-    Set_Signal_Value(VELOCITY, S_CURRENT, x, velocity);
-    Set_Signal_Value(VELOCITY, S_PREVIOUS, x, pvelocity);
-
-    if (pvelocity < velocity)
-        Set_Signal(VELOCITY, S_UP, x, P_SIGNAL);
-    else
-    if (pvelocity > velocity)
-        Set_Signal(VELOCITY, S_DOWN, x, P_SIGNAL);
-    else
-        Set_Signal(VELOCITY, S_SIDEWAY, x, P_SIGNAL);
-
-    if (velocity > 0)
-        Set_Signal(VELOCITY, S_ABOVE, x, P_SIGNAL);
-    else
-        Set_Signal(VELOCITY, S_BELOW, x, P_SIGNAL);
-
-    if (pvelocity < 0 && velocity > 0)
-        Set_Signal(VELOCITY, S_CROSS_UP, x, P_SIGNAL);
-    if (pvelocity > 0 && velocity < 0)
-        Set_Signal(VELOCITY, S_CROSS_DOWN, x, P_SIGNAL);
-
-    if (velocity > ob)
-        if (velocity < exob) {
-            Set_Signal(VELOCITY, S_OVERBOUGHT, x, P_SIGNAL);
-            Set_Signal_Value(VELOCITY, S_OVERBOUGHT, x, velocity);
-        }
-    else {
-        Set_Signal(VELOCITY, S_EXT_OVERBOUGHT, x, P_SIGNAL);
-        Set_Signal_Value(VELOCITY, S_EXT_OVERBOUGHT, x, velocity);
-    }
-
-    if (velocity < (-1) * ob)
-        if (velocity > (-1) * exob) {
-            Set_Signal(VELOCITY, S_OVERSOLD, x, P_SIGNAL);
-            Set_Signal_Value(VELOCITY, S_OVERSOLD, x, velocity);
-        }
-    else {
-        Set_Signal(VELOCITY, S_EXT_OVERSOLD, x, P_SIGNAL);
-        Set_Signal_Value(VELOCITY, S_EXT_OVERSOLD, x, velocity);
-    }
-    return (velocity);
-}
-
 void ichimoku(int x, int Object) {
     int ObjectId = ObjId[Object];
 
@@ -12010,577 +9502,11 @@ void ichimoku(int x, int Object) {
     }
 }
 
-double getTma(int tmaperiod, string symbol, int timeFrame, int index) {
-    double dblSum = (tmaperiod + 1) * iClose(symbol, timeFrame, index);
-    double dblSumw = (tmaperiod + 1);
-    int jnx, knx;
 
-    for (jnx = 1, knx = tmaperiod; jnx <= tmaperiod; jnx++, knx--) {
-        dblSum += (knx * iClose(symbol, timeFrame, index + jnx));
-        dblSumw += knx;
 
-        if (jnx <= index) {
-            dblSum += (knx * iClose(symbol, timeFrame, index - jnx));
-            dblSumw += knx;
-        }
-    }
-    return (dblSum / dblSumw);
-}
 
-void bob(int x) {
-    RuleObjFilter[TMA_T_S] = 1;
-    RuleObjFilter[MA_5_3] = 1;
-    RuleObjFilter[PIVOT_POINT] = 1;
 
-    double tma = getTma(TMA_T_Period, _Symbol, PeriodIndex[x], 0);
-    double tmaPrev = getTma(TMA_T_Period, _Symbol, PeriodIndex[x], 1);
-    double tmaPrev1 = getTma(TMA_T_Period, _Symbol, PeriodIndex[x], 2);
 
-    double tmaAtr = iATR(NULL, PeriodIndex[x], TMA_Atr_Period, 10);
-    double tmaAtrPrev = iATR(NULL, PeriodIndex[x], TMA_Atr_Period, 10 + 1);
-
-    if (tmaAtr == 0 || tmaAtrPrev == 0) return;
-
-    double tmaSlope = (tma - tmaPrev) / (tmaAtr * 0.1);
-    double tmaSlope1 = (tmaPrev - tmaPrev1) / (tmaAtrPrev * 0.1);
-
-    Set_Signal_Value(TMA_T_S, S_CURRENT, x, tmaSlope);
-    Set_Signal_Value(TMA_T_S, S_PREVIOUS, x, tmaSlope1);
-
-    if (tmaSlope < tmaSlope1)
-        Set_Signal(TMA_T_S, S_DOWN, x, P_SIGNAL);
-    else
-    if (tmaSlope > tmaSlope1)
-        Set_Signal(TMA_T_S, S_UP, x, P_SIGNAL);
-    else
-        Set_Signal(TMA_T_S, S_SIDEWAY, x, P_SIGNAL);
-
-    if (tmaSlope > TMA_T_S_High) {
-        Set_Signal(TMA_T_S, S_ABOVE, x, P_SIGNAL);
-        Set_Signal(TMA_T_S, S_BULL, x, P_SIGNAL);
-        if (tmaSlope1 <= TMA_T_S_High) {
-            Set_Signal(TMA_T_S, S_CROSS_UP, x, P_SIGNAL);
-            Set_Signal_Value(TMA_T_S, S_CROSS_UP, x, _Bid);
-        }
-    } else
-    if (tmaSlope < TMA_T_S_Low) {
-        Set_Signal(TMA_T_S, S_BELOW, x, P_SIGNAL);
-        Set_Signal(TMA_T_S, S_BEAR, x, P_SIGNAL);
-
-        if (tmaSlope1 >= TMA_T_S_Low) {
-            Set_Signal(TMA_T_S, S_CROSS_DOWN, x, P_SIGNAL);
-            Set_Signal_Value(TMA_T_S, S_CROSS_DOWN, x, _Bid);
-        }
-    } else {
-        Set_Signal(TMA_T_S, S_RANGE, x, P_SIGNAL);
-    }
-
-}
-
-void tma(int x) {
-    RuleObjFilter[TMA] = 1;
-    RuleObjFilter[TMA_UB] = 1;
-    RuleObjFilter[TMA_LB] = 1;
-    RuleObjFilter[TMA_S] = 1;
-
-    double tma = getTma(TMA_Period, _Symbol, PeriodIndex[x], 0);
-    double tmaPrev = getTma(TMA_Period, _Symbol, PeriodIndex[x], 1);
-    double tmaPrev1 = getTma(TMA_Period, _Symbol, PeriodIndex[x], 2);
-
-    Set_Signal_Value(TMA, S_CURRENT, x, tma);
-    Set_Signal_Value(TMA, S_PREVIOUS, x, tmaPrev);
-    Set_Signal_Value(TMA, S_DISTANCE, x, LastClose[0][x] - tma);
-
-    if (iOpen(NULL, PeriodIndex[x], 1) < tma && iHigh(NULL, PeriodIndex[x], 1) > tma) {
-        Set_Signal(TMA, S_CROSS_UP, x, P_SIGNAL);
-        Set_Signal_Value(TMA, S_CROSS_UP, x, _Bid);
-    }
-    if (iOpen(NULL, PeriodIndex[x], 1) > tma && iLow(NULL, PeriodIndex[x], 1) < tma) {
-        Set_Signal(TMA, S_CROSS_DOWN, x, P_SIGNAL);
-        Set_Signal_Value(TMA, S_CROSS_DOWN, x, _Bid);
-    }
-
-    if (Upper(tma, 0)) {
-        Set_Signal(TMA, S_ABOVE, x, P_SIGNAL);
-        Set_Signal_Value(TMA, S_ABOVE, x, tma);
-
-        if (MathAbs(SValue(TMA, S_DISTANCE, x)) < AlertDistance[x]) {
-            Set_Signal(TMA, S_ALERT, x, P_SIGNAL);
-            Set_Signal_Value(TMA, S_ALERT, x, LastClose[0][x] - tma);
-        }
-    } else
-    if (Lower(tma, 0)) {
-        Set_Signal(TMA, S_BELOW, x, P_SIGNAL);
-        Set_Signal_Value(TMA, S_BELOW, x, tma);
-
-        if (MathAbs(SValue(TMA, S_DISTANCE, x)) < AlertDistance[x]) {
-            Set_Signal(TMA, S_ALERT, x, P_SIGNAL);
-            Set_Signal_Value(TMA, S_ALERT, x, tma - LastClose[0][x]);
-        }
-    } else {
-        Set_Signal(TMA, S_TOUCHED, x, P_SIGNAL);
-        Set_Signal_Value(TMA, S_TOUCHED, x, LastClose[0][x]);
-    }
-
-    if (tma < tmaPrev)
-        Set_Signal(TMA, S_DOWN, x, P_SIGNAL);
-    else
-    if (tma > tmaPrev)
-        Set_Signal(TMA, S_UP, x, P_SIGNAL);
-    else
-        Set_Signal(TMA, S_SIDEWAY, x, P_SIGNAL);
-
-    double tmaAtr = iATR(NULL, PeriodIndex[x], TMA_Atr_Period, 10);
-    double tmaAtrPrev = iATR(NULL, PeriodIndex[x], TMA_Atr_Period, 10 + 1);
-
-    double upperBand = tma + (tmaAtr * TMA_Atr_Multiplier);
-    double lowerBand = tma - (tmaAtr * TMA_Atr_Multiplier);
-
-    // UPPER BAND
-
-    Set_Signal_Value(TMA_UB, S_CURRENT, x, upperBand);
-    Set_Signal_Value(TMA_UB, S_DISTANCE, x, LastClose[0][x] - upperBand);
-
-    if (iOpen(NULL, PeriodIndex[x], 1) < upperBand && iHigh(NULL, PeriodIndex[x], 1) > upperBand) {
-        Set_Signal(TMA_UB, S_CROSS_UP, x, P_SIGNAL);
-        Set_Signal_Value(TMA_UB, S_CROSS_UP, x, _Bid);
-    }
-    if (iOpen(NULL, PeriodIndex[x], 1) > upperBand && iHigh(NULL, PeriodIndex[x], 1) < upperBand) {
-        Set_Signal(TMA_UB, S_CROSS_DOWN, x, P_SIGNAL);
-        Set_Signal_Value(TMA_UB, S_CROSS_DOWN, x, _Bid);
-    }
-
-    if (Upper(upperBand, 0)) {
-        Set_Signal(TMA_UB, S_ABOVE, x, P_SIGNAL);
-        Set_Signal_Value(TMA_UB, S_ABOVE, x, upperBand);
-
-        if (MathAbs(SValue(TMA_UB, S_DISTANCE, x)) < AlertDistance[x]) {
-            Set_Signal(TMA_UB, S_ALERT, x, P_SIGNAL);
-            Set_Signal_Value(TMA_UB, S_ALERT, x, LastClose[0][x] - upperBand);
-        }
-    } else
-    if (Lower(upperBand, 0)) {
-        if (MathAbs(SValue(TMA_UB, S_DISTANCE, x)) < AlertDistance[x]) {
-            Set_Signal(TMA_UB, S_ALERT, x, P_SIGNAL);
-            Set_Signal_Value(TMA_UB, S_ALERT, x, tma - LastClose[0][x]);
-        }
-    } else {
-        Set_Signal(TMA_UB, S_TOUCHED, x, P_SIGNAL);
-        Set_Signal_Value(TMA_UB, S_TOUCHED, x, LastClose[0][x]);
-    }
-
-    // LOWER BAND
-
-    Set_Signal_Value(TMA_LB, S_CURRENT, x, lowerBand);
-    Set_Signal_Value(TMA_LB, S_DISTANCE, x, LastClose[0][x] - lowerBand);
-
-    if (iOpen(NULL, PeriodIndex[x], 1) < lowerBand && iHigh(NULL, PeriodIndex[x], 1) > lowerBand) {
-        Set_Signal(TMA_LB, S_CROSS_UP, x, P_SIGNAL);
-        Set_Signal_Value(TMA_LB, S_CROSS_UP, x, _Bid);
-    }
-    if (iOpen(NULL, PeriodIndex[x], 1) > lowerBand && iHigh(NULL, PeriodIndex[x], 1) < lowerBand) {
-        Set_Signal(TMA_LB, S_CROSS_DOWN, x, P_SIGNAL);
-        Set_Signal_Value(TMA_LB, S_CROSS_DOWN, x, _Bid);
-    }
-
-    if (Upper(lowerBand, 0)) {
-        if (MathAbs(SValue(TMA_LB, S_DISTANCE, x)) < AlertDistance[x]) {
-            Set_Signal(TMA_LB, S_ALERT, x, P_SIGNAL);
-            Set_Signal_Value(TMA_LB, S_ALERT, x, LastClose[0][x] - lowerBand);
-        }
-    } else
-    if (Lower(lowerBand, 0)) {
-        Set_Signal(TMA_LB, S_BELOW, x, P_SIGNAL);
-        Set_Signal_Value(TMA_LB, S_BELOW, x, lowerBand);
-
-        if (MathAbs(SValue(TMA_LB, S_DISTANCE, x)) < AlertDistance[x]) {
-            Set_Signal(TMA_LB, S_ALERT, x, P_SIGNAL);
-            Set_Signal_Value(TMA_LB, S_ALERT, x, lowerBand - LastClose[0][x]);
-        }
-    } else {
-        Set_Signal(TMA_LB, S_TOUCHED, x, P_SIGNAL);
-        Set_Signal_Value(TMA_LB, S_TOUCHED, x, LastClose[0][x]);
-    }
-
-    // TMA SLOPE       gadblSlope[inx] = (dblTma - dblPrev) / atr;
-
-    if (tmaAtr == 0 || tmaAtrPrev == 0) return;
-
-    double tmaSlope = (tma - tmaPrev) / (tmaAtr * 0.1);
-    double tmaSlope1 = (tmaPrev - tmaPrev1) / (tmaAtrPrev * 0.1);
-
-    Set_Signal_Value(TMA_S, S_CURRENT, x, tmaSlope);
-    Set_Signal_Value(TMA_S, S_PREVIOUS, x, tmaSlope1);
-
-    if (tmaSlope < tmaSlope1)
-        Set_Signal(TMA_S, S_DOWN, x, P_SIGNAL);
-    else
-    if (tmaSlope > tmaSlope1)
-        Set_Signal(TMA_S, S_UP, x, P_SIGNAL);
-    else
-        Set_Signal(TMA_S, S_SIDEWAY, x, P_SIGNAL);
-
-    if (tmaSlope > 0)
-        Set_Signal(TMA_S, S_ABOVE, x, P_SIGNAL);
-    else
-    if (tmaSlope < 0)
-        Set_Signal(TMA_S, S_BELOW, x, P_SIGNAL);
-    else
-        Set_Signal(TMA_S, S_TOUCHED, x, P_SIGNAL);
-
-    if (tmaSlope > TMA_S_High) {
-        Set_Signal(TMA_S, S_BULL, x, P_SIGNAL);
-        if (tmaSlope1 <= TMA_S_High) {
-            Set_Signal(TMA_S, S_CROSS_UP, x, P_SIGNAL);
-            Set_Signal_Value(TMA_S, S_CROSS_UP, x, _Bid);
-        }
-    } else
-    if (tmaSlope < TMA_S_Low) {
-        Set_Signal(TMA_S, S_BEAR, x, P_SIGNAL);
-
-        if (tmaSlope1 >= TMA_S_Low) {
-            Set_Signal(TMA_S, S_CROSS_DOWN, x, P_SIGNAL);
-            Set_Signal_Value(TMA_S, S_CROSS_DOWN, x, _Bid);
-        }
-    } else {
-        Set_Signal(TMA_S, S_RANGE, x, P_SIGNAL);
-    }
-}
-
-void tma_past(int x, int nbrshift) {
-    int shift = 0;
-
-    while (shift >= 0 && shift < nbrshift) {
-        double tma = getTma(TMA_Period, _Symbol, PeriodIndex[x], shift);
-        double tmaPrev = getTma(TMA_Period, _Symbol, PeriodIndex[x], shift + 1);
-        double tmaPrev1 = getTma(TMA_Period, _Symbol, PeriodIndex[x], shift + 2);
-
-        double tmaAtr = iATR(NULL, PeriodIndex[x], TMA_Atr_Period, 10 + shift);
-        double tmaAtrPrev = iATR(NULL, PeriodIndex[x], TMA_Atr_Period, 10 + shift + 1);
-
-        double upperBand = tma + (tmaAtr * TMA_Atr_Multiplier);
-        double lowerBand = tma - (tmaAtr * TMA_Atr_Multiplier);
-
-        if (tmaAtr == 0 || tmaAtrPrev == 0) return;
-
-        double tmaSlope = (tma - tmaPrev) / (tmaAtr * 0.1);
-        double tmaSlope1 = (tmaPrev - tmaPrev1) / (tmaAtrPrev * 0.1);
-
-        if (iHigh(NULL, PeriodIndex[x], shift) > upperBand && tmaSlope < tmaSlope1 && AndS(TMA, S_ABOVE, x) && AndS(TMA_S, S_DOWN, x)) //&& tmaSlope <= TMA_S_High) 
-        {
-            Set_Signal(TMA_S, S_SELL, x, P_SIGNAL);
-            Set_Signal_Time(TMA_S, S_SELL, x, iTime(NULL, PeriodIndex[x], shift));
-            Set_Signal_Price(TMA_S, S_SELL, x, iOpen(NULL, PeriodIndex[x], shift));
-
-            return;
-        } else
-        if (iLow(NULL, PeriodIndex[x], shift) < lowerBand && tmaSlope > tmaSlope1 && AndS(TMA, S_BELOW, x) && AndS(TMA_S, S_UP, x)) //&& tmaSlope >= TMA_S_Low)
-        {
-            Set_Signal(TMA_S, S_BUY, x, P_SIGNAL);
-            Set_Signal_Time(TMA_S, S_BUY, x, iTime(NULL, PeriodIndex[x], shift));
-            Set_Signal_Price(TMA_S, S_BUY, x, iOpen(NULL, PeriodIndex[x], shift));
-
-            return;
-        }
-        shift++;
-    }
-}
-
-double GetHAClose(int index, int timeFrame) {
-    return ((iOpen(NULL, timeFrame, index) + iHigh(NULL, timeFrame, index) +
-        iLow(NULL, timeFrame, index) + iClose(NULL, timeFrame, index)) / 4);
-}
-
-double GetHAOpen(int index, int timeFrame) {
-    //The higher you make this lookback the lower the error with the true Heiken Ashi Open)
-    int lookback = 8;
-    double open = GetHAClose(index + lookback, timeFrame);
-    lookback--;
-    for (int j = index + lookback; j > index; j--) {
-        open = (open + GetHAClose(j, timeFrame)) / 2;
-    }
-    return (open);
-}
-
-void tma_pastexit(int x, int from, int signal) {
-    int shift = from - 1;
-
-    double tmaAtr = iATR(NULL, PeriodIndex[x], TMA_Atr_Period, 10 + shift);
-    double n = tmaAtr * 0.1;
-
-    while (shift >= 0) {
-
-        double tma = getTma(TMA_Period, _Symbol, PeriodIndex[x], shift);
-        double tmaPrev = getTma(TMA_Period, _Symbol, PeriodIndex[x], shift + 1);
-        double tmaPrev2 = getTma(TMA_Period, _Symbol, PeriodIndex[x], shift + 2);
-
-        double tmaSlope = (tma - tmaPrev) / (iATR(NULL, PeriodIndex[x], TMA_Atr_Period, 10 + shift) * 0.1);
-        double tmaSlope1 = (tmaPrev - tmaPrev2) / (iATR(NULL, PeriodIndex[x], TMA_Atr_Period, 10 + shift + 1) * 0.1);
-
-        double upperBand = tma + (tmaAtr * TMA_Atr_Multiplier);
-        double lowerBand = tma - (tmaAtr * TMA_Atr_Multiplier);
-
-        if (signal == S_BUY && (iClose(NULL, PeriodIndex[x], shift) > upperBand && tmaSlope > TMA_S_High) ||
-            (iClose(NULL, PeriodIndex[x], shift) > tma && tmaSlope <= TMA_S_High && tmaSlope >= TMA_S_Low)) {
-            if (SValue(TMA_S, S_EXIT_BUY, x) == -1) {
-                Set_Signal_Value(TMA_S, S_EXIT_BUY, x, iTime(NULL, PeriodIndex[x], shift));
-                Set_Signal_Value(TMA_S, S_CHANGED, x, iClose(NULL, PeriodIndex[x], shift));
-                return;
-            }
-        }
-        if (signal == S_SELL && (iClose(NULL, PeriodIndex[x], shift) < lowerBand && tmaSlope < TMA_S_Low) ||
-            (iClose(NULL, PeriodIndex[x], shift) < tma && tmaSlope <= TMA_S_High && tmaSlope >= TMA_S_Low)) {
-            if (SValue(TMA_S, S_EXIT_SELL, x) == -1) {
-                Set_Signal_Value(TMA_S, S_EXIT_SELL, x, iTime(NULL, PeriodIndex[x], shift));
-                Set_Signal_Value(TMA_S, S_CHANGED, x, iClose(NULL, PeriodIndex[x], shift));
-                return;
-            }
-        }
-        shift--;
-    }
-}
-
-void tvi(int x) {
-    double tviUpUp = iCustom(NULL, PeriodIndex[x], TVIObject, 0, 0);
-    double tviUpDown = iCustom(NULL, PeriodIndex[x], TVIObject, 2, 0);
-    double tviUpUpP = iCustom(NULL, PeriodIndex[x], TVIObject, 0, 1);
-    double tviUpDownP = iCustom(NULL, PeriodIndex[x], TVIObject, 2, 1);
-
-    if (tviUpUp != EMPTY_VALUE || tviUpDown != EMPTY_VALUE) {
-
-        Set_Signal(TVI, S_UP, x, P_SIGNAL);
-        Set_Signal(TVI, S_BULL, x, P_SIGNAL);
-        if (tviUpUpP == EMPTY_VALUE && tviUpDownP == EMPTY_VALUE)
-            Set_Signal(TVI, S_CHANGED, x, P_SIGNAL);
-    } else {
-        Set_Signal(TVI, S_DOWN, x, P_SIGNAL);
-        Set_Signal(TVI, S_BEAR, x, P_SIGNAL);
-        if (tviUpUpP != EMPTY_VALUE || tviUpDownP != EMPTY_VALUE)
-            Set_Signal(TVI, S_CHANGED, x, P_SIGNAL);
-    }
-
-}
-
-void trix_past(int x) {
-    double Slow[3];
-    double Fast[3];
-    double FastGreen[3];
-    double FastRed[3];
-    int shift = 0;
-    int i;
-
-    while (shift >= 0) {
-        for (i = 0; i < 3; i++) {
-            FastGreen[i] = iCustom(_Symbol, PeriodIndex[x], TrixObject, 2, i + shift);
-            FastRed[i] = iCustom(_Symbol, PeriodIndex[x], TrixObject, 3, i + shift);
-            Fast[i] = iCustom(_Symbol, PeriodIndex[x], TrixObject, 6, i + shift);
-            Slow[i] = iCustom(_Symbol, PeriodIndex[x], TrixObject, 7, i + shift);
-        }
-        //AlertOnTrixSigCross
-
-        if (Fast[2] < Slow[2] && Fast[1] > Slow[1]) {
-            // BUY
-            if (SValue(FTRIX, S_BUY, x) == -1) {
-                Set_Signal_Value(FTRIX, S_CROSS_UP, x, iOpen(NULL, PeriodIndex[x], shift));
-                Set_Signal_Value(FTRIX, S_BUY, x, iTime(NULL, PeriodIndex[x], shift));
-                Set_Signal_Value(FTRIX, S_EXIT_SELL, x, -1);
-                Set_Signal_Value(FTRIX, S_CROSS_DOWN, x, -1);
-                Set_Signal_Value(FTRIX, S_SELL, x, -1);
-                return;
-            }
-        } else
-        if (Fast[2] > Slow[2] && Fast[1] < Slow[1]) {
-            if (SValue(FTRIX, S_SELL, x) == -1) {
-                Set_Signal_Value(FTRIX, S_CROSS_DOWN, x, iOpen(NULL, PeriodIndex[x], shift));
-                Set_Signal_Value(FTRIX, S_SELL, x, iTime(NULL, PeriodIndex[x], shift));
-                Set_Signal_Value(FTRIX, S_EXIT_BUY, x, -1);
-                Set_Signal_Value(FTRIX, S_CROSS_UP, x, -1);
-                Set_Signal_Value(FTRIX, S_BUY, x, -1);
-                return;
-            }
-        }
-
-        if (Fast[1] > Slow[1] && FastGreen[2] != EMPTY_VALUE && FastGreen[1] == EMPTY_VALUE) {
-            if (SValue(FTRIX, S_EXIT_BUY, x) == -1) {
-                Set_Signal_Value(FTRIX, S_CHANGED, x, iOpen(NULL, PeriodIndex[x], shift));
-                Set_Signal_Value(FTRIX, S_EXIT_BUY, x, iTime(NULL, PeriodIndex[x], shift));
-            }
-        } else
-        if (Fast[1] < Slow[1] && FastRed[2] != EMPTY_VALUE && FastRed[1] == EMPTY_VALUE) {
-            if (SValue(FTRIX, S_EXIT_SELL, x) == -1) {
-                Set_Signal_Value(FTRIX, S_CHANGED, x, iOpen(NULL, PeriodIndex[x], shift));
-                Set_Signal_Value(FTRIX, S_EXIT_SELL, x, iTime(NULL, PeriodIndex[x], shift));
-            }
-        }
-        shift++;
-    }
-}
-
-void trix(int x) {
-    double ob, exob, ld_0;
-    if (x == 0) {
-        ld_0 = 0.00018;
-        ob = 0.00018;
-        exob = 0.00030;
-    }
-    if (x == 1) {
-        ld_0 = 0.00025;
-        ob = 0.00025;
-        exob = 0.00050;
-    }
-    if (x == 2) {
-        ld_0 = 0.0005;
-        ob = 0.0005;
-        exob = 0.0008;
-    }
-    if (x == 3) {
-        ld_0 = 0.008;
-        ob = 0.0010;
-        exob = 0.0015;
-    }
-    if (x == 4) {
-        ld_0 = 0.0012;
-        ob = 0.0012;
-        exob = 0.0013;
-    }
-    if (x == 5) {
-        ld_0 = 0.003;
-        ob = 0.0030;
-        exob = 0.0040;
-    }
-    if (x == 6) {
-        ld_0 = 0.005;
-        ob = 0.0050;
-        exob = 0.0060;
-    }
-    if (x == 7) {
-        ld_0 = 0.08;
-        ob = 0.08;
-        exob = 0.1;
-    }
-    if (x == 8) {
-        ld_0 = 0.015;
-        ob = 0.015;
-        exob = 0.02;
-    }
-
-    double Slow[3];
-    double SlowGreen[3];
-    double SlowRed[3];
-    double Fast[3];
-    double FastGreen[3];
-    double FastRed[3];
-
-    for (int i = 0; i < 3; i++) {
-        SlowGreen[i] = iCustom(_Symbol, PeriodIndex[x], ObjProgName[FTRIX], 0, i);
-        SlowRed[i] = iCustom(_Symbol, PeriodIndex[x], ObjProgName[STRIX], 1, i);
-        FastGreen[i] = iCustom(_Symbol, PeriodIndex[x], ObjProgName[FTRIX], 2, i);
-        FastRed[i] = iCustom(_Symbol, PeriodIndex[x], ObjProgName[STRIX], 3, i);
-        Fast[i] = iCustom(_Symbol, PeriodIndex[x], ObjProgName[FTRIX], 6, i);
-        Slow[i] = iCustom(_Symbol, PeriodIndex[x], ObjProgName[STRIX], 7, i);
-    }
-
-    Set_Signal_Value(FTRIX, S_CURRENT, x, Fast[0]);
-    Set_Signal_Value(FTRIX, S_PREVIOUS, x, Fast[1]);
-
-    Set_Signal_Value(STRIX, S_CURRENT, x, Slow[0]);
-    Set_Signal_Value(STRIX, S_PREVIOUS, x, Slow[1]);
-
-    if (Fast[0] > ob)
-        if (Fast[0] < exob) {
-            Set_Signal(FTRIX, S_OVERBOUGHT, x, P_SIGNAL);
-        }
-    else {
-        Set_Signal(FTRIX, S_EXT_OVERBOUGHT, x, P_SIGNAL);
-    }
-
-    if (Fast[0] < (-1) * ob)
-        if (Fast[0] > (-1) * exob) {
-            Set_Signal(FTRIX, S_OVERSOLD, x, P_SIGNAL);
-        }
-    else {
-        Set_Signal(FTRIX, S_EXT_OVERSOLD, x, P_SIGNAL);
-    }
-
-    if (Fast[0] > 0.0) {
-        Set_Signal(FTRIX, S_ABOVE, x, P_SIGNAL);
-
-    } else
-    if (Fast[0] < 0.0) {
-        Set_Signal(FTRIX, S_BELOW, x, P_SIGNAL);
-
-    } else {
-        Set_Signal(STRIX, S_TOUCHED, x, P_SIGNAL);
-
-    }
-    if (Slow[0] > 0.0) {
-        Set_Signal(STRIX, S_ABOVE, x, P_SIGNAL);
-
-    } else
-    if (Slow[0] < 0.0) {
-        Set_Signal(STRIX, S_BELOW, x, P_SIGNAL);
-
-    } else {
-        Set_Signal(STRIX, S_TOUCHED, x, P_SIGNAL);
-
-    }
-    if (Fast[1] < 0 && Fast[0] > 0) {
-        Set_Signal(FTRIX, S_CROSS_UP, x, P_SIGNAL);
-
-    } else
-    if (Fast[1] > 0 && Fast[0] < 0) {
-        Set_Signal(FTRIX, S_CROSS_DOWN, x, P_SIGNAL);
-
-    }
-    if (Slow[1] < 0 && Slow[0] > 0) {
-        Set_Signal(STRIX, S_CROSS_UP, x, P_SIGNAL);
-
-    } else
-    if (Slow[1] > 0 && Slow[0] < 0) {
-        Set_Signal(STRIX, S_CROSS_DOWN, x, P_SIGNAL);
-    }
-
-    //AlertOnTrixSigCross
-    if (Fast[2] < Slow[2] && Fast[1] > Slow[1]) {
-        // BUY
-        Set_Signal(FTRIX, S_RCROSSED, x, P_SIGNAL);
-        Set_Signal(STRIX, S_RCROSSED, x, P_SIGNAL);
-        Set_Signal_Value(STRIX, S_RCROSSED, x, 1);
-        Set_Signal_Value(FTRIX, S_RCROSSED, x, 0);
-
-    } else
-    if (Fast[2] > Slow[2] && Fast[1] < Slow[1]) {
-        Set_Signal(FTRIX, S_RCROSSED, x, P_SIGNAL);
-        Set_Signal(STRIX, S_RCROSSED, x, P_SIGNAL);
-        Set_Signal_Value(STRIX, S_RCROSSED, x, 0);
-        Set_Signal_Value(FTRIX, S_RCROSSED, x, 1);
-
-    }
-
-    if (FastGreen[0] != EMPTY_VALUE) {
-        Set_Signal(FTRIX, S_BULL, x, P_SIGNAL);
-        Set_Signal(FTRIX, S_UP, x, P_SIGNAL);
-    } else
-    if (FastRed[0] != EMPTY_VALUE) {
-        Set_Signal(FTRIX, S_BEAR, x, P_SIGNAL);
-        Set_Signal(FTRIX, S_DOWN, x, P_SIGNAL);
-    }
-
-    if (SlowGreen[0] != EMPTY_VALUE) {
-        Set_Signal(STRIX, S_UP, x, P_SIGNAL);
-        Set_Signal(STRIX, S_BULL, x, P_SIGNAL);
-    } else
-    if (SlowRed[0] != EMPTY_VALUE) {
-        Set_Signal(STRIX, S_DOWN, x, P_SIGNAL);
-        Set_Signal(STRIX, S_BEAR, x, P_SIGNAL);
-    }
-
-    if (FastGreen[2] != EMPTY_VALUE && FastGreen[1] == EMPTY_VALUE) Set_Signal(FTRIX, S_CHANGED, x, P_SIGNAL);
-    if (FastRed[2] != EMPTY_VALUE && FastRed[1] == EMPTY_VALUE) Set_Signal(FTRIX, S_CHANGED, x, P_SIGNAL);
-
-    if (SlowGreen[2] != EMPTY_VALUE && SlowGreen[1] == EMPTY_VALUE) Set_Signal(STRIX, S_CHANGED, x, P_SIGNAL);
-    if (SlowRed[2] != EMPTY_VALUE && SlowRed[1] == EMPTY_VALUE) Set_Signal(STRIX, S_CHANGED, x, P_SIGNAL);
-}
 
 int FindUpDownTrixFrom(int x, int i, double ExtremeValue) {
     int shift;
@@ -12796,170 +9722,7 @@ void progress(int x, int shift = 0) {
 
 }
 
-void slopeIndicator(int x) {
 
-    double uptrend = iCustom(NULL, PeriodIndex[x], SlopeObject, 0, 0);
-    double downtrend = iCustom(NULL, PeriodIndex[x], SlopeObject, 1, 0);
-
-    double prev_slope;
-    int i;
-    if (uptrend != EMPTY_VALUE) {
-        if (x <= P_D1) {
-            prev_slope = uptrend;
-            i = 0;
-            while (prev_slope != EMPTY_VALUE) {
-                i++;
-                prev_slope = iCustom(NULL, PeriodIndex[x], SlopeObject, 0, i);
-            }
-            ObjectDelete("slopelinedown," + PeriodName[x]);
-            if (ObjectFind("slopelineup," + PeriodName[x]) == -1) {
-                ObjectCreate("slopelineup," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0);
-                ObjectSet("slopelineup," + PeriodName[x], OBJPROP_COLOR, PaleTurquoise);
-                ObjectSet("slopelineup," + PeriodName[x], OBJPROP_WIDTH, x - 1);
-                ObjectSet("slopelineup," + PeriodName[x], OBJPROP_RAY, false);
-            }
-            ObjectMove("slopelineup," + PeriodName[x], 0, iTime(_Symbol, PeriodIndex[x], i - 1), iCustom(NULL, PeriodIndex[x], SlopeObject, 0, i - 1));
-            ObjectMove("slopelineup," + PeriodName[x], 1, Time[0], iCustom(NULL, PeriodIndex[x], SlopeObject, 0, i - 1));
-        }
-    } else {
-        if (x <= P_D1) {
-            prev_slope = downtrend;
-            i = 0;
-            while (prev_slope != EMPTY_VALUE) {
-                i++;
-                prev_slope = iCustom(NULL, PeriodIndex[x], SlopeObject, 1, i);
-            }
-            ObjectDelete("slopelineup," + PeriodName[x]);
-            if (ObjectFind("slopelinedown," + PeriodName[x]) == -1) {
-                ObjectCreate("slopelinedown," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0);
-                ObjectSet("slopelinedown," + PeriodName[x], OBJPROP_COLOR, Pink);
-                ObjectSet("slopelinedown," + PeriodName[x], OBJPROP_WIDTH, 1);
-                ObjectSet("slopelinedown," + PeriodName[x], OBJPROP_RAY, false);
-            }
-            ObjectMove("slopelinedown," + PeriodName[x], 0, iTime(_Symbol, PeriodIndex[x], i - 1), iCustom(NULL, PeriodIndex[x], SlopeObject, 1, i - 1));
-            ObjectMove("slopelinedown," + PeriodName[x], 1, Time[0], iCustom(NULL, PeriodIndex[x], SlopeObject, 1, i - 1));
-        }
-    }
-}
-
-void coralIndicator(int x) {
-
-    double uptrend = iCustom(NULL, PeriodIndex[x], CoralObject, 1, 0);
-    double downtrend = iCustom(NULL, PeriodIndex[x], CoralObject, 2, 0);
-
-    double prev_coral;
-    int i;
-
-    if (uptrend != EMPTY_VALUE) {
-        if (x <= P_D1) {
-            prev_coral = uptrend;
-            i = 0;
-            while (prev_coral != EMPTY_VALUE) {
-                i++;
-                prev_coral = iCustom(NULL, PeriodIndex[x], CoralObject, 1, i);
-            }
-            ObjectDelete("corallineup," + PeriodName[x]);
-            if (ObjectFind("corallineup," + PeriodName[x]) == -1) {
-                ObjectCreate("corallineup," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0);
-                ObjectSet("corallineup," + PeriodName[x], OBJPROP_COLOR, SignalColor_ABOVE);
-                ObjectSet("corallineup," + PeriodName[x], OBJPROP_WIDTH, x - 1);
-                ObjectSet("corallineup," + PeriodName[x], OBJPROP_RAY, false);
-            }
-            ObjectMove("corallineup," + PeriodName[x], 0, iTime(_Symbol, PeriodIndex[x], i - 1), iCustom(NULL, PeriodIndex[x], CoralObject, 0, i - 1));
-            ObjectMove("corallineup," + PeriodName[x], 1, Time[0], iCustom(NULL, PeriodIndex[x], CoralObject, 0, i - 1));
-        }
-    } else {
-        if (x <= P_D1) {
-            prev_coral = downtrend;
-            i = 0;
-            while (prev_coral != EMPTY_VALUE) {
-                i++;
-                prev_coral = iCustom(NULL, PeriodIndex[x], CoralObject, 2, i);
-            }
-            ObjectDelete("corallineup," + PeriodName[x]);
-            if (ObjectFind("corallinedown," + PeriodName[x]) == -1) {
-                ObjectCreate("corallinedown," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0);
-                ObjectSet("corallinedown," + PeriodName[x], OBJPROP_COLOR, SignalColor_BELOW);
-                ObjectSet("corallinedown," + PeriodName[x], OBJPROP_WIDTH, 2);
-                ObjectSet("corallinedown," + PeriodName[x], OBJPROP_RAY, false);
-            }
-            ObjectMove("corallinedown," + PeriodName[x], 0, iTime(_Symbol, PeriodIndex[x], i - 1), iCustom(NULL, PeriodIndex[x], CoralObject, 2, i - 1));
-            ObjectMove("corallinedown," + PeriodName[x], 1, Time[0], iCustom(NULL, PeriodIndex[x], CoralObject, 2, i - 1));
-        }
-    }
-}
-
-void TrixIndicator(int x) {
-
-    if (Trix_Window == 0) return;
-    int y = 2;
-    ObjectDelete("trix_ftrix" + x);
-    ObjectCreate("trix_ftrix" + x, OBJ_LABEL, Trix_Window, 0, 0, 0, 0);
-    ObjectSet("trix_ftrix" + x, OBJPROP_CORNER, Trix_Corner);
-    ObjectSet("trix_ftrix" + x, OBJPROP_XDISTANCE, ((NBR_PERIODS - 1) - x) * PG_scaleX + PG_offsetX + PG_originX);
-    ObjectSet("trix_ftrix" + x, OBJPROP_YDISTANCE, y * PG_scaleY + PG_offsetY + PG_originY);
-    if (AndS(FTRIX, S_ABOVE, x) != 0) {
-        int color1 = SignalColor_ABOVE;
-        if (AndS(FTRIX, S_OVERBOUGHT, x) != 0) color1 = SignalColor_OVERBOUGHT;
-        else
-        if (AndS(FTRIX, S_EXT_OVERBOUGHT, x) != 0) color1 = SignalColor_EXT_OVERBOUGHT;
-
-        ObjectSetText("trix_ftrix" + x, CharToString(SymbolCode_NOSIGNAL), ObjectFontSize, "Wingdings", color1);
-    } else
-    if (AndS(FTRIX, S_BELOW, x) != 0) {
-        color1 = SignalColor_BELOW;
-        if (AndS(FTRIX, S_OVERSOLD, x) != 0) color1 = SignalColor_OVERSOLD;
-        else
-        if (AndS(FTRIX, S_EXT_OVERSOLD, x) != 0) color1 = SignalColor_EXT_OVERSOLD;
-
-        ObjectSetText("trix_ftrix" + x, CharToString(SymbolCode_NOSIGNAL), ObjectFontSize, "Wingdings", color1);
-    }
-    y--;
-
-    //AlertOnTrixSigCross
-
-    if (AndS(FTRIX, S_BUY, x)) {
-        ObjectDelete("trix_cross" + x);
-        ObjectCreate("trix_cross" + x, OBJ_LABEL, Trix_Window, 0, 0, 0, 0);
-        ObjectSet("trix_cross" + x, OBJPROP_CORNER, Trix_Corner);
-        ObjectSet("trix_cross" + x, OBJPROP_XDISTANCE, ((NBR_PERIODS - 1) - x) * PG_scaleX + PG_offsetX + PG_originX);
-        ObjectSet("trix_cross" + x, OBJPROP_YDISTANCE, y * PG_scaleY + PG_offsetY + PG_originY);
-        ObjectSetText("trix_cross" + x, CharToString(SymbolCode_NOSIGNAL), ObjectFontSize, "Wingdings", SignalColor_BUY);
-    } else
-    if (AndS(FTRIX, S_SELL, x)) {
-        ObjectDelete("trix_cross" + x);
-        ObjectCreate("trix_cross" + x, OBJ_LABEL, Trix_Window, 0, 0, 0, 0);
-        ObjectSet("trix_cross" + x, OBJPROP_CORNER, Trix_Corner);
-        ObjectSet("trix_cross" + x, OBJPROP_XDISTANCE, ((NBR_PERIODS - 1) - x) * PG_scaleX + PG_offsetX + PG_originX);
-        ObjectSet("trix_cross" + x, OBJPROP_YDISTANCE, y * PG_scaleY + PG_offsetY + PG_originY);
-        ObjectSetText("trix_cross" + x, CharToString(SymbolCode_NOSIGNAL), ObjectFontSize, "Wingdings", SignalColor_SELL);
-    }
-    y--;
-    // AlertOnSlopeChange
-
-    if (ObjectFind("trix_exit" + x + Time[0]) == -1) {
-        if (AndS(FTRIX, S_EXIT_SELL, x)) {
-
-            ObjectDelete("trix_exit" + x);
-            ObjectCreate("trix_exit" + x + Time[0], OBJ_LABEL, Trix_Window, 0, 0, 0, 0);
-            ObjectSet("trix_exit" + x + Time[0], OBJPROP_CORNER, Trix_Corner);
-            ObjectSet("trix_exit" + x + Time[0], OBJPROP_XDISTANCE, ((NBR_PERIODS - 1) - x) * PG_scaleX + PG_offsetX + PG_originX);
-            ObjectSet("trix_exit" + x + Time[0], OBJPROP_YDISTANCE, y * PG_scaleY + PG_offsetY + PG_originY);
-            ObjectSet("trix_exit" + x + Time[0], OBJPROP_COLOR, Gold);
-            ObjectSetText("trix_exit" + x + Time[0], CharToString(SymbolCode_NOSIGNAL), ObjectFontSize, "Wingdings", SignalColor_EXIT_SELL);
-        } else
-        if (AndS(FTRIX, S_EXIT_BUY, x)) {
-            ObjectDelete("trix_exit" + x);
-            ObjectCreate("trix_exit" + x + Time[0], OBJ_LABEL, Trix_Window, 0, 0, 0, 0);
-            ObjectSet("trix_exit" + x + Time[0], OBJPROP_CORNER, Trix_Corner);
-            ObjectSet("trix_exit" + x + Time[0], OBJPROP_XDISTANCE, ((NBR_PERIODS - 1) - x) * PG_scaleX + PG_offsetX + PG_originX);
-            ObjectSet("trix_exit" + x + Time[0], OBJPROP_YDISTANCE, y * PG_scaleY + PG_offsetY + PG_originY);
-            ObjectSet("trix_exit" + x + Time[0], OBJPROP_COLOR, Gold);
-            ObjectSetText("trix_exit" + x + Time[0], CharToString(SymbolCode_NOSIGNAL), ObjectFontSize, "Wingdings", SignalColor_EXIT_BUY);
-        }
-    }
-    if (ObjectFind("trix_exit" + x + Time[1]) != -1) ObjectDelete("trix_exit" + x + Time[1]);
-}
 
 void FindVolume(int x) {
 
@@ -14273,89 +11036,6 @@ void MainPanel_DeleteGraphics() {
     DeleteSeperators();
 }
 
-void Assistant_InitGraphics() {
-    int i = 0;
-    int CurrentPeriod = Period2Int(_Period);
-
-    if (Assistant_Window == 0) return;
-
-    Assistant_InitOrientation();
-
-    AssistantTextColor = Gray;
-    int h = 1;
-
-    for (int b = 0; b < 3; b++) {
-        ObjectCreate("Assistant_background_v" + b, OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-        ObjectSet("Assistant_background_v" + b, OBJPROP_CORNER, 1);
-        ObjectSet("Assistant_background_v" + b, OBJPROP_XDISTANCE, 1);
-        ObjectSet("Assistant_background_v" + b, OBJPROP_YDISTANCE, h);
-        ObjectSet("Assistant_background_v" + b, OBJPROP_BACK, 1);
-        ObjectSetText("Assistant_background_v" + b, "g", 180, "Webdings", C'35,35,35');
-        h += 200;
-    }
-    h = 1;
-    for (b = 0; b < 3; b++) {
-        ObjectCreate("Assistant_authorline" + b, OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-        ObjectSet("Assistant_authorline" + b, OBJPROP_CORNER, 1);
-        ObjectSet("Assistant_authorline" + b, OBJPROP_XDISTANCE, 270);
-        ObjectSet("Assistant_authorline" + b, OBJPROP_YDISTANCE, h);
-        ObjectSet("Assistant_authorline" + b, OBJPROP_ANGLE, 90);
-        ObjectSetText("Assistant_authorline" + b, "________________________", 18, "Arial", White);
-        h += 160;
-    }
-
-    for (int x = 0; x < 3; x++) {
-        Assistant_offsetX = 0;
-        /*
-              ObjectCreate("MT_Orientation_t" + x, OBJ_LABEL,   Assistant_Window,0,0,0,0);
-              ObjectSet("MT_Orientation_t" + x, OBJPROP_CORNER, Assistant_Corner);
-              ObjectSet("MT_Orientation_t" + x, OBJPROP_XDISTANCE,  x * Assistant_scaleX + Assistant_offsetX  + Assistant_originX);
-              ObjectSet("MT_Orientation_t" + x, OBJPROP_YDISTANCE, Assistant_originY);
-              ObjectSetText("MT_Orientation_t" + x, "Orientation", IndicatorFontSize, IndicatorFont, AssistantTextColor);  
-              Assistant_offsetX += 55;
-
-              ObjectCreate("MT_TOrientation_t" + x, OBJ_LABEL,   Assistant_Window,0,0,0,0);
-              ObjectSet("MT_TOrientation_t" + x, OBJPROP_CORNER, Assistant_Corner);
-              ObjectSet("MT_TOrientation_t" + x, OBJPROP_XDISTANCE,  x * Assistant_scaleX + Assistant_offsetX + Assistant_originX);
-              ObjectSet("MT_TOrientation_t" + x, OBJPROP_YDISTANCE,  Assistant_originY);
-              ObjectSetText("MT_TOrientation_t" + x, "Property", IndicatorFontSize, IndicatorFont, AssistantTextColor);  
-              Assistant_offsetX += 55;
-        */
-        ObjectCreate("MT_Analyse_t" + x, OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-        ObjectSet("MT_Analyse_t" + x, OBJPROP_CORNER, Assistant_Corner);
-        ObjectSet("MT_Analyse_t" + x, OBJPROP_XDISTANCE, x * Assistant_scaleX + Assistant_offsetX + Assistant_originX);
-        ObjectSet("MT_Analyse_t" + x, OBJPROP_YDISTANCE, Assistant_originY);
-        ObjectSetText("MT_Analyse_t" + x, "Analyse", IndicatorFontSize, IndicatorFont, AssistantTextColor);
-        Assistant_offsetX += 55;
-
-        ObjectCreate("MT_Action_t" + x, OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-        ObjectSet("MT_Action_t" + x, OBJPROP_CORNER, Assistant_Corner);
-        ObjectSet("MT_Action_t" + x, OBJPROP_XDISTANCE, x * Assistant_scaleX + Assistant_offsetX + Assistant_originX);
-        ObjectSet("MT_Action_t" + x, OBJPROP_YDISTANCE, Assistant_originY);
-        ObjectSetText("MT_Action_t" + x, "Action", IndicatorFontSize, IndicatorFont, AssistantTextColor);
-        Assistant_offsetX += 55;
-
-        ObjectCreate("MT_Comment_t" + x, OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-        ObjectSet("MT_Comment_t" + x, OBJPROP_CORNER, Assistant_Corner);
-        ObjectSet("MT_Comment_t" + x, OBJPROP_XDISTANCE, x * Assistant_scaleX + Assistant_offsetX + Assistant_originX);
-        ObjectSet("MT_Comment_t" + x, OBJPROP_YDISTANCE, Assistant_originY);
-        ObjectSetText("MT_Comment_t" + x, "Comment", IndicatorFontSize, IndicatorFont, AssistantTextColor);
-        Assistant_offsetX += 320;
-
-        if (x == 2) continue;
-
-        h = 1;
-        for (b = 0; b < 3; b++) {
-            ObjectCreate("Assistant_line" + b + x, OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-            ObjectSet("Assistant_line" + b + x, OBJPROP_CORNER, 2);
-            ObjectSet("Assistant_line" + b + x, OBJPROP_XDISTANCE, x * Assistant_scaleX + Assistant_offsetX + Assistant_originX);
-            ObjectSet("Assistant_line" + b + x, OBJPROP_YDISTANCE, h);
-            ObjectSet("Assistant_line" + b + x, OBJPROP_ANGLE, 90);
-            ObjectSetText("Assistant_line" + b + x, "________________________", 18, "Arial", White);
-            h += 160;
-        }
-    }
-}
 
 color AssignAnalyseColor(int Analyse) {
     if (Analyse == OP_WAIT)
@@ -14363,128 +11043,8 @@ color AssignAnalyseColor(int Analyse) {
     else return (White);
 }
 
-void Assistant_DrawGraphics() {
-    if (Assistant_Window == 0) return;
+void Patterns_InitGraphics(int x) {
 
-    Assistant_DrawOrientation();
-
-    AssistantTextColor = White;
-
-    int z, nbr;
-    for (int x = 0; x < 3; x++) {
-        if (x == 0) nbr = LTerm_Nbr;
-        if (x == 1) nbr = MTerm_Nbr;
-        if (x == 2) nbr = STerm_Nbr;
-
-        Assistant_offsetY = 10;
-        for (z = 0; z < nbr; z++) {
-            Assistant_offsetX = 0;
-            /*
-                     ObjectDelete ("MT_Orientation" + z + x);
-                     ObjectCreate("MT_Orientation" + z + x, OBJ_LABEL,   Assistant_Window,0,0,0,0);
-                     ObjectSet("MT_Orientation" + z + x, OBJPROP_CORNER, Assistant_Corner);
-                     ObjectSet("MT_Orientation" + z + x, OBJPROP_XDISTANCE,  x * Assistant_scaleX + Assistant_offsetX  + Assistant_originX);
-                     ObjectSet("MT_Orientation" + z + x, OBJPROP_YDISTANCE, Assistant_originY+ Assistant_offsetY);
-                     if (x == 0)
-                        ObjectSetText("MT_Orientation" + z + x, OrientationTypeName[LTerm_Orientation[z]], IndicatorFontSize, IndicatorFont, AssistantTextColor);  
-                     if (x == 1)
-                        ObjectSetText("MT_Orientation" + z + x, OrientationTypeName[MTerm_Orientation[z]], IndicatorFontSize, IndicatorFont, AssistantTextColor);  
-                     if (x == 2)
-                        ObjectSetText("MT_Orientation" + z + x, OrientationTypeName[STerm_Orientation[z]], IndicatorFontSize, IndicatorFont, AssistantTextColor);  
-                     
-                     Assistant_offsetX += 55;
-                    
-                     ObjectDelete ("MT_TOrientation" + z + x);
-                     ObjectCreate("MT_TOrientation" + z + x, OBJ_LABEL,   Assistant_Window,0,0,0,0);
-                     ObjectSet("MT_TOrientation" + z + x, OBJPROP_CORNER, Assistant_Corner);
-                     ObjectSet("MT_TOrientation" + z + x, OBJPROP_XDISTANCE,  x * Assistant_scaleX + Assistant_offsetX + Assistant_originX);
-                     ObjectSet("MT_TOrientation" + z + x, OBJPROP_YDISTANCE,  Assistant_originY+ Assistant_offsetY);
-                     if (x == 0)
-                        ObjectSetText("MT_TOrientation" + z + x, OrientationTypeName[LTerm_TOrientation[z]], IndicatorFontSize, IndicatorFont, AssistantTextColor);  
-                     if (x == 1)
-                        ObjectSetText("MT_TOrientation" + z + x, OrientationTypeName[MTerm_TOrientation[z]], IndicatorFontSize, IndicatorFont, AssistantTextColor);  
-                     if (x == 2)
-                        ObjectSetText("MT_TOrientation" + z + x, OrientationTypeName[STerm_TOrientation[z]], IndicatorFontSize, IndicatorFont, AssistantTextColor);  
-
-                     Assistant_offsetX += 55;
-            */
-
-            ObjectDelete("MT_Analyse" + z + x);
-            ObjectCreate("MT_Analyse" + z + x, OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-            ObjectSet("MT_Analyse" + z + x, OBJPROP_CORNER, Assistant_Corner);
-            ObjectSet("MT_Analyse" + z + x, OBJPROP_XDISTANCE, x * Assistant_scaleX + Assistant_offsetX + Assistant_originX);
-            ObjectSet("MT_Analyse" + z + x, OBJPROP_YDISTANCE, Assistant_originY + Assistant_offsetY);
-
-            if (x == 0)
-                ObjectSetText("MT_Analyse" + z + x, OperationName[LTerm_Analyse[z]], IndicatorFontSize, IndicatorFont, AssignAnalyseColor(LTerm_Analyse[z]));
-            if (x == 1)
-                ObjectSetText("MT_Analyse" + z + x, OperationName[MTerm_Analyse[z]], IndicatorFontSize, IndicatorFont, AssignAnalyseColor(MTerm_Analyse[z]));
-            if (x == 2)
-                ObjectSetText("MT_Analyse" + z + x, OperationName[STerm_Analyse[z]], IndicatorFontSize, IndicatorFont, AssignAnalyseColor(STerm_Analyse[z]));
-
-            Assistant_offsetX += 55;
-
-            ObjectDelete("MT_Action" + z + x);
-            ObjectCreate("MT_Action" + z + x, OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-            ObjectSet("MT_Action" + z + x, OBJPROP_CORNER, Assistant_Corner);
-            ObjectSet("MT_Action" + z + x, OBJPROP_XDISTANCE, x * Assistant_scaleX + Assistant_offsetX + Assistant_originX);
-            ObjectSet("MT_Action" + z + x, OBJPROP_YDISTANCE, Assistant_originY + Assistant_offsetY);
-            if (x == 0) {
-                if (OperationName[LTerm_Action[z]] == "BUY")
-                    ObjectSetText("MT_Action" + z + x, OperationName[LTerm_Action[z]], IndicatorFontSize, IndicatorFont, LimeGreen);
-                else
-                if (OperationName[LTerm_Action[z]] == "SELL")
-                    ObjectSetText("MT_Action" + z + x, OperationName[LTerm_Action[z]], IndicatorFontSize, IndicatorFont, Red);
-                else
-                    ObjectSetText("MT_Action" + z + x, OperationName[LTerm_Action[z]], IndicatorFontSize, IndicatorFont, AssistantTextColor);
-            }
-            if (x == 1) {
-                if (OperationName[MTerm_Action[z]] == "BUY")
-                    ObjectSetText("MT_Action" + z + x, OperationName[MTerm_Action[z]], IndicatorFontSize, IndicatorFont, LimeGreen);
-                else
-                if (OperationName[MTerm_Action[z]] == "SELL")
-                    ObjectSetText("MT_Action" + z + x, OperationName[MTerm_Action[z]], IndicatorFontSize, IndicatorFont, Red);
-                else
-                    ObjectSetText("MT_Action" + z + x, OperationName[MTerm_Action[z]], IndicatorFontSize, IndicatorFont, AssistantTextColor);
-            }
-            if (x == 2) {
-                if (OperationName[STerm_Action[z]] == "BUY")
-                    ObjectSetText("MT_Action" + z + x, OperationName[STerm_Action[z]], IndicatorFontSize, IndicatorFont, LimeGreen);
-                else
-                if (OperationName[STerm_Action[z]] == "SELL")
-                    ObjectSetText("MT_Action" + z + x, OperationName[STerm_Action[z]], IndicatorFontSize, IndicatorFont, Red);
-                else
-                    ObjectSetText("MT_Action" + z + x, OperationName[STerm_Action[z]], IndicatorFontSize, IndicatorFont, AssistantTextColor);
-            }
-            Assistant_offsetX += 55;
-
-            ObjectDelete("MT_Comment" + z + x);
-            ObjectCreate("MT_Comment" + z + x, OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-            ObjectSet("MT_Comment" + z + x, OBJPROP_CORNER, Assistant_Corner);
-            ObjectSet("MT_Comment" + z + x, OBJPROP_XDISTANCE, x * Assistant_scaleX + Assistant_offsetX + Assistant_originX);
-            ObjectSet("MT_Comment" + z + x, OBJPROP_YDISTANCE, Assistant_originY + Assistant_offsetY);
-            if (x == 0)
-                ObjectSetText("MT_Comment" + z + x, LTerm_Comments[z], IndicatorFontSize, IndicatorFont, AssistantTextColor);
-            if (x == 1)
-                ObjectSetText("MT_Comment" + z + x, MTerm_Comments[z], IndicatorFontSize, IndicatorFont, AssistantTextColor);
-            if (x == 2)
-                ObjectSetText("MT_Comment" + z + x, STerm_Comments[z], IndicatorFontSize, IndicatorFont, AssistantTextColor);
-
-            Assistant_offsetX += 55;
-            Assistant_offsetY += 10;
-        }
-        for (z = nbr; z < NBR_COMMENTS; z++) {
-            ObjectDelete("MT_Comment" + z + x);
-            ObjectDelete("MT_Orientation" + z + x);
-            ObjectDelete("MT_TOrientation" + z + x);
-            ObjectDelete("MT_Analyse" + z + x);
-            ObjectDelete("MT_Action" + z + x);
-        }
-    }
-}
-
-void Assistant_DeleteGraphics() {
-    ObjectsDeleteAll(Assistant_Window);
 }
 
 void Panel_InitGraphics() {
@@ -14492,184 +11052,8 @@ void Panel_InitGraphics() {
     int CurrentPeriod = Period2Int(_Period);
     if (Panel_Window == 0) return;
 
-    //   Panel_InitParameters (PanelOriginParameters);
     Panel_InitTargets(PanelOriginTargets, 0);
-    //  Panel_InitAngles (PanelOriginAngles);    
     Panel_InitNews(PanelOriginNews);
-    /// variables PANEL
-
-}
-
-void Panel_InitObjects(int origin) {
-
-    int offset = 0;
-
-    Panel_originX = origin;
-    Panel_originY = 30;
-    Panel_offsetX = 0;
-    Panel_offsetY = 10;
-
-    for (int j = 0; j < NBR_PERIODS; j++) {
-        ObjectCreate("panel_period" + j, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_period" + j, OBJPROP_CORNER, 0);
-        ObjectSet("panel_period" + j, OBJPROP_XDISTANCE, Panel_originX + 1 * Panel_offsetX);
-        ObjectSet("panel_period" + j, OBJPROP_YDISTANCE, Panel_originY + j * Panel_offsetY);
-        if (CurrentPeriod == j)
-            ObjectSetText("panel_period" + j, PeriodName[j], PanelFontSize, PanelFont, Red);
-        else
-            ObjectSetText("panel_period" + j, PeriodName[j], PanelFontSize, PanelFont, PanelTextColor);
-    }
-
-    Panel_originX = origin + 20;
-    Panel_originY = 30;
-    Panel_offsetX = 10;
-    Panel_offsetY = 10;
-
-    for (j = 0; j < NBR_PERIODS; j++) // position
-    {
-        for (int y = SAR; y <= ADX; y++) {
-            ObjectCreate("panel_" + ObjName[y] + j + y, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-            ObjectSet("panel_" + ObjName[y] + j + y, OBJPROP_CORNER, 0);
-            ObjectSet("panel_" + ObjName[y] + j + y, OBJPROP_BACK, true);
-            ObjectSet("panel_" + ObjName[y] + j + y, OBJPROP_XDISTANCE, Panel_originX + (y - SAR) * Panel_offsetX + offset);
-            ObjectSet("panel_" + ObjName[y] + j + y, OBJPROP_YDISTANCE, Panel_originY + j * Panel_offsetY);
-            ObjectSetText("panel_" + ObjName[y] + j + y, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", IndicatorBackColor);
-
-            ObjectCreate("panel_i" + ObjName[y] + j + y, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-            ObjectSet("panel_i" + ObjName[y] + j + y, OBJPROP_CORNER, 0);
-            ObjectSet("panel_i" + ObjName[y] + j + y, OBJPROP_XDISTANCE, Panel_originX + (y - SAR) * Panel_offsetX + offset + 2);
-            ObjectSet("panel_i" + ObjName[y] + j + y, OBJPROP_YDISTANCE, Panel_originY + j * Panel_offsetY + 3);
-            ObjectSetText("panel_i" + ObjName[y] + j + y, "", MiniOrientationFontSize, "Wingdings", IndicatorBackColor);
-        }
-    }
-}
-
-void Panel_InitParameters(int origin) {
-
-    int i = 0;
-    Panel_originX = origin;
-    Panel_originY = 20;
-    Panel_offsetX = 10;
-    Panel_offsetY = 10;
-
-    int h = 1;
-    string x = "Parameters";
-    for (int b = 0; b < 3; b++) {
-        ObjectCreate("Panel_line" + b + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("Panel_line" + b + x, OBJPROP_CORNER, 2);
-        ObjectSet("Panel_line" + b + x, OBJPROP_XDISTANCE, origin - 10);
-        ObjectSet("Panel_line" + b + x, OBJPROP_YDISTANCE, h);
-        ObjectSet("Panel_line" + b + x, OBJPROP_ANGLE, 90);
-        ObjectSetText("Panel_line" + b + x, "________________________", 18, "Arial", White);
-        h += 160;
-    }
-
-    ObjectCreate("panel_volumeupdown_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_volumeupdown_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_volumeupdown_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_volumeupdown_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_volumeupdown_t", "Volume Up/Dwn", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    ObjectCreate("panel_volumediff_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_volumediff_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_volumediff_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_volumediff_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_volumediff_t", "Volume Diff", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    ObjectCreate("panel_velocity_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_velocity_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_velocity_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_velocity_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_velocity_t", "Velocity M5", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-    ObjectCreate("panel_angle200_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_angle200_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_angle200_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_angle200_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_angle200_t", "M200 Angle M5", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-    ObjectCreate("panel_angleslope_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_angleslope_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_angleslope_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_angleslope_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_angleslope_t", "Slope Angle M5", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-    ObjectCreate("panel_divergence_m5/h1_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_divergence_m5/h1_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_divergence_m5/h1_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_divergence_m5/h1_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_divergence_m5/h1_t", "Div M1/M5", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-    ObjectCreate("panel_fractals_d1_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_fractals_d1_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_fractals_d1_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_fractals_d1_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_fractals_d1_t", "Fractal D1", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-    ObjectCreate("panel_fractals_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_fractals_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_fractals_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_fractals_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_fractals_t", "Fractals", PanelFontSize, PanelFont, PanelTextColor);
-    /*
-       ObjectCreate("panel_fractal_changed_t", OBJ_LABEL, Panel_Window,0,0,0,0);         
-       ObjectSet("panel_fractal_changed_t" ,    OBJPROP_CORNER,   0);
-       ObjectSet("panel_fractal_changed_t" ,   OBJPROP_XDISTANCE,Panel_originX + 250);
-       ObjectSet("panel_fractal_changed_t" ,   OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-       ObjectSetText("panel_fractal_changed_t", "Fractals changed" , PanelFontSize, PanelFont, PanelTextColor);
-    */
-    i++;
-    ObjectCreate("panel_rs_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_rs_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_rs_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_rs_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_rs_t", "RS", PanelFontSize, PanelFont, PanelTextColor);
-    /*
-       ObjectCreate("panel_rs_changed_t", OBJ_LABEL, Panel_Window,0,0,0,0);         
-       ObjectSet("panel_rs_changed_t" ,   OBJPROP_CORNER,   0);
-       ObjectSet("panel_rs_changed_t" ,   OBJPROP_XDISTANCE,Panel_originX + 250);
-       ObjectSet("panel_rs_changed_t" ,   OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-       ObjectSetText("panel_rs_changed_t", "RS changed" , PanelFontSize, PanelFont, PanelTextColor);
-    */
-    i++;
-    ObjectCreate("panel_ftrix_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_ftrix_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_ftrix_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_ftrix_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_ftrix_t", "Fast Trix", PanelFontSize, PanelFont, PanelTextColor);
-
-    i++;
-    ObjectCreate("panel_strix_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_strix_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_strix_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_strix_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_strix_t", "Slow Trix", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-    ObjectCreate("panel_slope_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_slope_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_slope_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_slope_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_slope_t", "Slope", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-    ObjectCreate("panel_aslope_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_aslope_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_aslope_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_aslope_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_aslope_t", "Above Slope", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-    ObjectCreate("panel_coral_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_coral_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_coral_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_coral_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_coral_t", "Coral", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-    ObjectCreate("panel_acoral_t", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("panel_acoral_t", OBJPROP_CORNER, 0);
-    ObjectSet("panel_acoral_t", OBJPROP_XDISTANCE, Panel_originX);
-    ObjectSet("panel_acoral_t", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    ObjectSetText("panel_acoral_t", "Above Coral", PanelFontSize, PanelFont, PanelTextColor);
 
 }
 
@@ -14749,184 +11133,6 @@ void Panel_InitNews(int OriginX) {
     ObjectSetText("CalendarPrevious_t", "Previous", PanelFontSize, PanelFont, PanelTextColor);
     ObjectSetInteger(0, "CalendarPrevious_t", OBJPROP_SELECTABLE, false);
 
-}
-void Panel_InitAngles(int origin) {
-    int originX = 0;
-
-    Panel_originX = origin;
-    Panel_originY = 8;
-    Panel_offsetX = 35;
-    Panel_offsetY = 25;
-    Panel_scaleX = 40;
-    Panel_scaleY = 10;
-
-    int CurrentPeriod = Period2Int(_Period);
-
-    int h = 1;
-    string s = "Angles";
-    for (int b = 0; b < 3; b++) {
-        ObjectCreate("Panel_line" + b + s, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("Panel_line" + b + s, OBJPROP_CORNER, 2);
-        ObjectSet("Panel_line" + b + s, OBJPROP_XDISTANCE, Panel_offsetX - 50 + Panel_originX - 10);
-        ObjectSet("Panel_line" + b + s, OBJPROP_YDISTANCE, h);
-        ObjectSet("Panel_line" + b + s, OBJPROP_ANGLE, 90);
-        ObjectSetText("Panel_line" + b + s, "________________________", 18, "Arial", White);
-        h += 160;
-    }
-
-    int y = 4;
-    ObjectCreate("divergencet", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("divergencet", OBJPROP_CORNER, 0);
-    ObjectSet("divergencet", OBJPROP_XDISTANCE, Panel_offsetX - 50 + Panel_originX);
-    ObjectSet("divergencet", OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    ObjectSetText("divergencet", "DIST(7,200)", IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-    y--;
-    ObjectCreate("ma_7_anglet", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("ma_7_anglet", OBJPROP_CORNER, 0);
-    ObjectSet("ma_7_anglet", OBJPROP_XDISTANCE, Panel_offsetX - 50 + Panel_originX);
-    ObjectSet("ma_7_anglet", OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    ObjectSetText("ma_7_anglet", "MA_7", IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-    y--;
-    ObjectCreate("slope_anglet", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("slope_anglet", OBJPROP_CORNER, 0);
-    ObjectSet("slope_anglet", OBJPROP_XDISTANCE, Panel_offsetX - 50 + Panel_originX);
-    ObjectSet("slope_anglet", OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    ObjectSetText("slope_anglet", "SLOPE", IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-    y--;
-    ObjectCreate("coral_anglet", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("coral_anglet", OBJPROP_CORNER, 0);
-    ObjectSet("coral_anglet", OBJPROP_XDISTANCE, Panel_offsetX - 50 + Panel_originX);
-    ObjectSet("coral_anglet", OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    ObjectSetText("coral_anglet", "CORAL", IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-    y--;
-    ObjectCreate("ma_200_anglet", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-    ObjectSet("ma_200_anglet", OBJPROP_CORNER, 0);
-    ObjectSet("ma_200_anglet", OBJPROP_XDISTANCE, Panel_offsetX - 50 + Panel_originX);
-    ObjectSet("ma_200_anglet", OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    ObjectSetText("ma_200_anglet", "MA_200", IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-    for (int x = 0; x < NBR_PERIODS; x++) {
-        ObjectCreate("period_anglet" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("period_anglet" + x, OBJPROP_CORNER, 0);
-        ObjectSet("period_anglet" + x, OBJPROP_XDISTANCE, x * Panel_scaleX + Panel_offsetX + 2 + Panel_originX);
-        ObjectSet("period_anglet" + x, OBJPROP_YDISTANCE, 7 + Panel_originY);
-        if (CurrentPeriod == x)
-            ObjectSetText("period_anglet" + x, PeriodName[x], IndicatorFontSize, IndicatorFont, Red);
-        else
-            ObjectSetText("period_anglet" + x, PeriodName[x], IndicatorFontSize, IndicatorFont, PanelTextColor);
-    }
-    Panel_originY = 70;
-    y = 0;
-
-    if (ObjectFind("Adxt") != Panel_Window) {
-        ObjectCreate("Adxt", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("Adxt", OBJPROP_CORNER, 0);
-        ObjectSet("Adxt", OBJPROP_XDISTANCE, Panel_offsetX - 50 + Panel_originX);
-        ObjectSet("Adxt", OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    ObjectSetText("Adxt", "ADX", IndicatorFontSize, IndicatorFont, PanelTextColor);
-    y++;
-
-    if (ObjectFind("Ccit") != Panel_Window) {
-        ObjectCreate("Ccit", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("Ccit", OBJPROP_CORNER, 0);
-        ObjectSet("Ccit", OBJPROP_XDISTANCE, Panel_offsetX - 50 + Panel_originX);
-        ObjectSet("Ccit", OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    ObjectSetText("Ccit", "CCI", IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-    y++;
-
-    if (ObjectFind("Volumet") != Panel_Window) {
-        ObjectCreate("Volumet", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("Volumet", OBJPROP_CORNER, 0);
-        ObjectSet("Volumet", OBJPROP_XDISTANCE, Panel_offsetX - 50 + Panel_originX);
-        ObjectSet("Volumet", OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    ObjectSetText("Volumet", "Volume", IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-    y++;
-    if (ObjectFind("Volumedt") != Panel_Window) {
-        ObjectCreate("Volumedt", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("Volumedt", OBJPROP_CORNER, 0);
-        ObjectSet("Volumedt", OBJPROP_XDISTANCE, Panel_offsetX - 50 + Panel_originX);
-        ObjectSet("Volumedt", OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    ObjectSetText("Volumedt", "Vol Delta", IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-    y++;
-    if (ObjectFind("Velocityt") != Panel_Window) {
-        ObjectCreate("Velocityt", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("Velocityt", OBJPROP_CORNER, 0);
-        ObjectSet("Velocityt", OBJPROP_XDISTANCE, Panel_offsetX - 50 + Panel_originX);
-        ObjectSet("Velocityt", OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    ObjectSetText("Velocityt", "Velocity", IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-    /*
-       if(ObjectFind("Volumeupt") != Panel_Window)
-       {
-          ObjectCreate("Volumeupt", OBJ_LABEL, Panel_Window,0,0,0,0); 
-          ObjectSet("Volumeupt", OBJPROP_CORNER,0);
-          ObjectSet("Volumeupt", OBJPROP_XDISTANCE,   Panel_offsetX - 50 + Panel_originX);
-          ObjectSet("Volumeupt", OBJPROP_YDISTANCE,   y * Panel_scaleY + Panel_offsetY + Panel_originY);
-       }
-       ObjectSetText("Volumeupt", "VOL UP" , IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-       y++;
-       if(ObjectFind("Volumeup_prevt") != Panel_Window)
-       {
-          ObjectCreate("Volumeup_prevt", OBJ_LABEL, Panel_Window,0,0,0,0); 
-          ObjectSet("Volumeup_prevt", OBJPROP_CORNER,0);
-          ObjectSet("Volumeup_prevt", OBJPROP_XDISTANCE,   Panel_offsetX - 50 + Panel_originX);
-          ObjectSet("Volumeup_prevt", OBJPROP_YDISTANCE,   y * Panel_scaleY + Panel_offsetY + Panel_originY);
-       }
-       ObjectSetText("Volumeup_prevt", "PREV" , IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-       y++;
-       if(ObjectFind("Volumedownt") != Panel_Window)
-       {
-          ObjectCreate("Volumedownt", OBJ_LABEL, Panel_Window,0,0,0,0); 
-          ObjectSet("Volumedownt", OBJPROP_CORNER,0);
-          ObjectSet("Volumedownt", OBJPROP_XDISTANCE,   Panel_offsetX - 50 + Panel_originX);
-          ObjectSet("Volumedownt", OBJPROP_YDISTANCE,   y * Panel_scaleY + Panel_offsetY + Panel_originY);
-       }
-       ObjectSetText("Volumedownt", "VOL DOWN" , IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-       y++;
-       if(ObjectFind("Volumedown_prevt") != Panel_Window)
-       {
-          ObjectCreate("Volumedown_prevt", OBJ_LABEL, Panel_Window,0,0,0,0); 
-          ObjectSet("Volumedown_prevt", OBJPROP_CORNER,0);
-          ObjectSet("Volumedown_prevt", OBJPROP_XDISTANCE,   Panel_offsetX - 50 + Panel_originX);
-          ObjectSet("Volumedown_prevt", OBJPROP_YDISTANCE,   y * Panel_scaleY + Panel_offsetY + Panel_originY);
-       }
-       ObjectSetText("Volumedown_prevt", "PREV" , IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-       y++;
-       if(ObjectFind("Volumedifft") != Panel_Window)
-       {
-          ObjectCreate("Volumedifft", OBJ_LABEL, Panel_Window,0,0,0,0); 
-          ObjectSet("Volumedifft", OBJPROP_CORNER,0);
-          ObjectSet("Volumedifft", OBJPROP_XDISTANCE,   Panel_offsetX - 50 + Panel_originX);
-          ObjectSet("Volumedifft", OBJPROP_YDISTANCE,   y * Panel_scaleY + Panel_offsetY + Panel_originY);
-       }
-       ObjectSetText("Volumedifft", "DIFF" , IndicatorFontSize, IndicatorFont, PanelTextColor);
-
-       y++;
-       if(ObjectFind("Velocityt") != Panel_Window)
-       {
-          ObjectCreate("Velocityt", OBJ_LABEL, Panel_Window,0,0,0,0); 
-          ObjectSet("Velocityt", OBJPROP_CORNER,0);
-          ObjectSet("Velocityt", OBJPROP_XDISTANCE,   Panel_offsetX - 50 + Panel_originX);
-          ObjectSet("Velocityt", OBJPROP_YDISTANCE,   y * Panel_scaleY + Panel_offsetY + Panel_originY);
-       }
-       ObjectSetText("Velocityt", "Velocity" , IndicatorFontSize, IndicatorFont, PanelTextColor);
-    */
 }
 
 void Panel_InitTargets(int origin, int corner = 1) {
@@ -15330,99 +11536,6 @@ void Panel_DrawTargets(int x, int origin, int corner = 1) {
     levelpos = Panel_originY + nearestlevel * Panel_offsetY;
     Panel_DrawDTargets(P_W1, nearestlevel, levelpos, origin, corner, -PanelWidthTargets);
     Panel_DrawDTargets(P_MN, nearestlevel, levelpos, origin, corner, -(2 * PanelWidthTargets));
-
-    /*   
-       double distance = getNearestPivotDistance(nearestlevel);
-       
-       bool  sl = false;
-       bool  lv = false;   
-       double fblevel      = SValue (FIBOLEVEL,         S_CURRENT, x);
-       double fbstoploss   = SValue (FIBOSTOPLOSSLEVEL, S_CURRENT, x);
-       
-      
-       for (int i = 0; i <= 10; i++)
-       {   
-          Panel_originX = origin;   
-          if (i < 5)        {co =  Turquoise; sname = "Res " + DoubleToString (5 - i, 0);}
-          else     
-          if (i > 5)        {co = Red;        sname = "Sup " + DoubleToString (i - 5, 0);}
-          else              {co = Yellow;     sname = "Pivot";}
-                   
-          ObjectDelete ("panel_pivot_t" + x + i);
-          ObjectCreate("panel_pivot_t" + x + i, OBJ_LABEL, Panel_Window,0,0,0,0);         
-          ObjectSet("panel_pivot_t" + x + i , OBJPROP_CORNER,   corner);
-          ObjectSet("panel_pivot_t" + x + i , OBJPROP_XDISTANCE, Panel_originX);
-          ObjectSet("panel_pivot_t" + x + i , OBJPROP_YDISTANCE, Panel_originY + level * Panel_offsetY);
-          ObjectSetText("panel_pivot_t" + x + i,  sname  , PanelFontSize, PanelFont, co);
-          
-          Panel_originX += 20;          
-          ObjectDelete ("panel_pivot" + x + i);
-          ObjectCreate("panel_pivot" + x + i, OBJ_LABEL, Panel_Window,0,0,0,0);         
-          ObjectSet("panel_pivot" + x + i,    OBJPROP_CORNER,   corner);
-          ObjectSet("panel_pivot" + x + i,    OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-          ObjectSet("panel_pivot" + x + i,    OBJPROP_YDISTANCE, Panel_originY + level * Panel_offsetY);
-         
-          if (nearestlevel == i)
-          {
-             if (distance > 0 && distance < PivotThreshold) 
-                c = ExtremeBullColor;  
-             else 
-             if (distance > 0)
-                c = BullColor; 
-             else 
-             if (distance < 0 && distance < (-1) * PivotThreshold)
-                c = ExtremeBearColor;  
-             else 
-             if (distance < 0)
-                c = BearColor; 
-             else 
-                c = NeutralColor;    
-             levelpos = Panel_originY + level * Panel_offsetY;
-             ObjectDelete ("panel_pivot_dist" + x );
-             ObjectCreate("panel_pivot_dist" + x , OBJ_LABEL, Panel_Window,0,0,0,0);         
-             ObjectSet("panel_pivot_dist" + x ,    OBJPROP_CORNER,   corner);
-             ObjectSet("panel_pivot_dist" + x ,    OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX + 45);
-             ObjectSet("panel_pivot_dist" + x ,    OBJPROP_YDISTANCE, Panel_originY + level * Panel_offsetY);
-             ObjectSetText("panel_pivot_dist" + x , DoubleToString (distance / SYS_POINT, MathMin(_Digits, 0)) , PanelFontSize, PanelFont, c);
-             ObjectSetText("panel_pivot" + x + i,  DoubleToString (Pivots[i], _Digits) , PanelFontSize, PanelBFont, co);
-          }
-          else
-             ObjectSetText("panel_pivot" + x + i,  DoubleToString (Pivots[i], _Digits) , PanelFontSize, PanelFont, co);
-          level++;
-        
-          if (fbstoploss > fblevel)
-          {
-             if ((fbstoploss  > Pivots[i+1] && fbstoploss  < Pivots[i]) && !sl)
-             {
-                Panel_DrawFiboStopLoss (x, fbstoploss, origin, Panel_originY + level * Panel_offsetY, corner);
-                level++;
-                sl = true;
-             }   
-             if ((fblevel  > Pivots[i+1] && fblevel  < Pivots[i]) && !lv)
-             {      
-                Panel_DrawFiboLevel (x, fblevel, origin, Panel_originY + level * Panel_offsetY, corner);
-                level++;
-                lv = true;
-             }
-          }
-          else
-          {
-             if ((fblevel  > Pivots[i+1] && fblevel  < Pivots[i]) && !lv)
-             {
-                Panel_DrawFiboLevel (x, fblevel, origin, Panel_originY + level * Panel_offsetY, corner);
-                level++;
-                lv = true;
-             }
-             if ((fbstoploss  > Pivots[i+1] && fbstoploss  < Pivots[i]) && !sl)
-             {
-                Panel_DrawFiboStopLoss (x, fbstoploss, origin, Panel_originY + level * Panel_offsetY, corner);
-                level++;
-                sl = true;
-             }   
-          }     
-       }
-    */
-    //   Panel_DrawFractals (nearestlevel, levelpos, origin, corner, 120);  // no need we don't use it 
 }
 
 void Panel_DrawFractals(int nearestpos, int ypos, int origin, int corner, int dist) {
@@ -15515,1445 +11628,21 @@ void Panel_DrawFractals(int nearestpos, int ypos, int origin, int corner, int di
     }
 }
 
-void System_InitGraphics() {
-    if (System_Window == 0) return;
-
-    int XPos = 20;
-
-    for (int i = 0; i < O_NbrSysObject; i++) {
-        string ObjName = SysObjName[i];
-        XPos = System_InitSystem(ObjName, XPos, i) + 20;
-
-    }
-}
-
-void System_InitBuySell(int buysellorigin) {
-
-    System_originX = buysellorigin;
-    System_offsetX = 5;
-    System_originY = 30;
-    System_offsetY = 10;
-
-    for (int j = 0; j < NBR_PERIODS; j++) {
-        ObjectCreate("system_buysell_period" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_buysell_period" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_buysell_period" + j, OBJPROP_XDISTANCE, System_originX + 1 * System_offsetX);
-        ObjectSet("system_buysell_period" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        if (CurrentPeriod == j)
-            ObjectSetText("system_buysell_period" + j, PeriodName[j], PanelFontSize, PanelFont, Red);
-        else
-            ObjectSetText("system_buysell_period" + j, PeriodName[j], PanelFontSize, PanelFont, PanelTextColor);
-    }
-
-}
-
-void System_InitAddBuySell(string system_name, int buysellorigin, int buyselloffset) {
-    string name;
-    System_originX = buysellorigin + 25;
-    System_offsetX = buyselloffset;
-    System_originY = 5;
-    System_offsetY = 10;
-
-    name = "system_" + system_name + "_buysell_t";
-
-    ObjectDelete(name);
-    ObjectCreate(name, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet(name, OBJPROP_CORNER, 0);
-    ObjectSet(name, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet(name, OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText(name, StringSubstr(system_name, 0, 1), PanelFontSize, PanelFont, PanelTextColor);
-
-    System_originY = 30;
-    System_offsetY = 10;
-
-    name = "system_" + system_name + "_buysell";
-    for (int j = 0; j < NBR_PERIODS; j++) // position
-    {
-        System_offsetX = buyselloffset;
-
-        ObjectDelete(name + j);
-        ObjectCreate(name + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet(name + j, OBJPROP_CORNER, 0);
-        ObjectSet(name + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet(name + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText(name + j, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", IndicatorBackColor);
-    }
-}
-
-void System_InitPeriods(string name, int origin) {
-    System_offsetX = 5;
-    System_originY = 30;
-    System_offsetY = 10;
-    System_originX = origin;
-    for (int j = 0; j < NBR_PERIODS; j++) {
-        ObjectCreate(name + "_period_" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet(name + "_period_" + j, OBJPROP_CORNER, 0);
-        ObjectSet(name + "_period_" + j, OBJPROP_XDISTANCE, System_originX + 1 * System_offsetX);
-        ObjectSet(name + "_period_" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        if (CurrentPeriod == j)
-            ObjectSetText(name + "_period_" + j, PeriodName[j], PanelFontSize, PanelFont, Red);
-        else
-            ObjectSetText(name + "_period_" + j, PeriodName[j], PanelFontSize, PanelFont, PanelTextColor);
-        ObjectSetInteger(0, name + "_period_" + j, OBJPROP_SELECTABLE, false);
-    }
-}
-
-int System_InitSystem(string system_name, int origin, int SysTabIndex) {
-
-    string name;
-
-    int i = 1;
-
-    System_InitPeriods(system_name, origin - 20);
-
-    System_originX = origin;
-    System_offsetX = 10;
-    System_originY = 5;
-    System_offsetY = 10;
-
-    name = "system_" + system_name + "_action_t";
-
-    ObjectDelete(name);
-    ObjectCreate(name, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet(name, OBJPROP_CORNER, 0);
-    ObjectSet(name, OBJPROP_XDISTANCE, System_originX - 15);
-    ObjectSet(name, OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText(name, system_name, PanelFontSize, PanelFont, PanelTextColor);
-    ObjectSetInteger(0, name, OBJPROP_SELECTABLE, false);
-
-    System_offsetX += 50;
-
-    name = "system_" + system_name + "_priceaction_t";
-    ObjectDelete(name);
-    ObjectCreate(name, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet(name, OBJPROP_CORNER, 0);
-    ObjectSet(name, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet(name, OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText(name, "Price", PanelFontSize, PanelFont, PanelTextColor);
-    ObjectSetInteger(0, name, OBJPROP_SELECTABLE, false);
-
-    System_offsetX += 50;
-
-    name = "system_" + system_name + "_timeaction_t";
-
-    ObjectDelete(name);
-    ObjectCreate(name, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet(name, OBJPROP_CORNER, 0);
-    ObjectSet(name, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet(name, OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText(name, "Time", PanelFontSize, PanelFont, PanelTextColor);
-    ObjectSetInteger(0, name, OBJPROP_SELECTABLE, false);
-
-    System_originY = 30;
-    System_offsetY = 10;
-    int offset = 0;
-
-    for (int j = 0; j < NBR_PERIODS; j++) // position
-    {
-        System_originX = origin;
-        System_offsetX = 10;
-
-        name = "system_" + system_name + "_action";
-
-        ObjectDelete(name + j);
-        ObjectCreate(name + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet(name + j, OBJPROP_CORNER, 0);
-        ObjectSet(name + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet(name + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText(name + j, "-------", PanelFontSize, PanelFont, White);
-        ObjectSetInteger(0, name + j, OBJPROP_SELECTABLE, false);
-
-        System_offsetX += 50;
-
-        name = "system_" + system_name + "_priceaction";
-        ObjectDelete(name + j);
-        ObjectCreate(name + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet(name + j, OBJPROP_CORNER, 0);
-        ObjectSet(name + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet(name + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText(name + j, "-------", PanelFontSize, PanelFont, White);
-        ObjectSetInteger(0, name + j, OBJPROP_SELECTABLE, false);
-
-        System_offsetX += 50;
-
-        name = "system_" + system_name + "_timeaction";
-        ObjectDelete(name + j);
-        ObjectCreate(name + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet(name + j, OBJPROP_CORNER, 0);
-        ObjectSet(name + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet(name + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText(name + j, "-------", PanelFontSize, PanelFont, White);
-        ObjectSetInteger(0, name + j, OBJPROP_SELECTABLE, false);
-
-        System_offsetX += 50;
-
-        System_originX = System_originX + System_offsetX + 20;
-        System_offsetX = 10;
-        int Y = 0;
-        int k = 0;
-        while (SysObjDependency[SysTabIndex][k] != "") {
-            int y = Object2Index(SysObjDependency[SysTabIndex][k]);
-            if (y == -1) {
-                k++;
-                continue;
-            }
-            ObjectCreate("system_" + system_name + ObjName[y] + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-            ObjectSet("system_" + system_name + ObjName[y] + j, OBJPROP_CORNER, 0);
-            ObjectSet("system_" + system_name + ObjName[y] + j, OBJPROP_BACK, true);
-            ObjectSet("system_" + system_name + ObjName[y] + j, OBJPROP_XDISTANCE, System_originX + Y * System_offsetX + offset);
-            ObjectSet("system_" + system_name + ObjName[y] + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-            ObjectSetText("system_" + system_name + ObjName[y] + j, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", IndicatorBackColor);
-            ObjectSetInteger(0, "system_" + system_name + ObjName[y] + j, OBJPROP_SELECTABLE, false);
-
-            ObjectCreate("system_i" + system_name + ObjName[y] + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-            ObjectSet("system_i" + system_name + ObjName[y] + j, OBJPROP_CORNER, 0);
-            ObjectSet("system_i" + system_name + ObjName[y] + j, OBJPROP_XDISTANCE, System_originX + Y * System_offsetX + offset + 2);
-            ObjectSet("system_i" + system_name + ObjName[y] + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY + 3);
-            ObjectSetText("system_i" + system_name + ObjName[y] + j, "", MiniOrientationFontSize, "Wingdings", IndicatorBackColor);
-            ObjectSetInteger(0, "system_i" + system_name + ObjName[y] + j, OBJPROP_SELECTABLE, false);
-
-            Y++;
-            k++;
-        }
-    }
-
-    int h = 1;
-    name = "system_" + system_name + "_seperator";
-    for (int b = 0; b < 3; b++) {
-        ObjectCreate(name + b, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet(name + b, OBJPROP_CORNER, 2);
-        ObjectSet(name + b, OBJPROP_XDISTANCE, System_originX + Y * System_offsetX + offset + 10);
-        ObjectSet(name + b, OBJPROP_YDISTANCE, h);
-        ObjectSet(name + b, OBJPROP_ANGLE, 90);
-        ObjectSetText(name + b, "________________________", 18, "Arial", White);
-        h += 160;
-    }
-    return (System_originX + Y * System_offsetX + offset + 10);
-}
-
-void System_DrawSystem(string system_name, int x, int SysTabIndex) {
-
-    int Object = Object2Id(system_name);
-    if (AndS(Object, S_BUY, x)) {
-        ObjectSetText("system_" + system_name + "_action" + x, "BUY", PanelFontSize, PanelFont, LimeGreen);
-        ObjectSetText("system_" + system_name + "_buysell" + x, CharToString(SymbolCode_BULL), OrientationFontSize, "Wingdings", SignalColor_BULL);
-        ObjectSetText("system_" + system_name + "_priceaction" + x, DoubleToString(SPrice(Object, S_BUY, x), _Digits), PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_timeaction" + x, StringSubstr(TimeToString(STime(Object, S_BUY, x)), 5), PanelFontSize, PanelFont, White);
-    } else
-    if (AndS(Object, S_SELL, x)) {
-        ObjectSetText("system_" + system_name + "_action" + x, "SELL", PanelFontSize, PanelFont, Red);
-        ObjectSetText("system_" + system_name + "_buysell" + x, CharToString(SymbolCode_BEAR), OrientationFontSize, "Wingdings", SignalColor_BEAR);
-        ObjectSetText("system_" + system_name + "_priceaction" + x, DoubleToString(SPrice(Object, S_SELL, x), _Digits), PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_timeaction" + x, StringSubstr(TimeToString(STime(Object, S_SELL, x)), 5), PanelFontSize, PanelFont, White);
-    } else
-    if (AndS(Object, S_EXIT_BUY, x)) {
-        ObjectSetText("system_" + system_name + "_action" + x, "EXIT BUY", PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_buysell" + x, CharToString(SymbolCode_NOSIGNAL), OrientationFontSize, "Wingdings", SignalColor_NOSIGNAL);
-        ObjectSetText("system_" + system_name + "_priceaction" + x, DoubleToString(SPrice(Object, S_EXIT_BUY, x), _Digits), PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_timeaction" + x, StringSubstr(TimeToString(STime(Object, S_EXIT_BUY, x)), 5), PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_exit" + x, "E B", PanelFontSize, PanelFont, Gold);
-        ObjectSetText("system_" + system_name + "_timeexit" + x, StringSubstr(TimeToString(STime(Object, S_EXIT_BUY, x)), 5), PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_priceexit" + x, DoubleToString(SPrice(Object, S_EXIT_BUY, x), _Digits), PanelFontSize, PanelFont, White);
-    } else
-    if (AndS(Object, S_EXIT_SELL, x)) {
-        ObjectSetText("system_" + system_name + "_action" + x, "EXIT SELL", PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_buysell" + x, CharToString(SymbolCode_NOSIGNAL), OrientationFontSize, "Wingdings", SignalColor_NOSIGNAL);
-        ObjectSetText("system_" + system_name + "_priceaction" + x, DoubleToString(SPrice(Object, S_EXIT_SELL, x), _Digits), PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_timeaction" + x, StringSubstr(TimeToString(STime(Object, S_EXIT_SELL, x)), 5), PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_exit" + x, "E S", PanelFontSize, PanelFont, Gold);
-        ObjectSetText("system_" + system_name + "_timeexit" + x, StringSubstr(TimeToString(STime(Object, S_EXIT_SELL, x)), 5), PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_priceexit" + x, DoubleToString(SPrice(Object, S_EXIT_SELL, x), _Digits), PanelFontSize, PanelFont, White);
-    } else {
-        ObjectSetText("system_" + system_name + "_action" + x, "-------", PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_priceaction" + x, "-------", PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_timeaction" + x, "-------", PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_buysell" + x, CharToString(SymbolCode_NOSIGNAL), OrientationFontSize, "Wingdings", SignalColor_NOSIGNAL);
-        ObjectSetText("system_" + system_name + "_exit" + x, "--", PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_timeexit" + x, "--", PanelFontSize, PanelFont, White);
-        ObjectSetText("system_" + system_name + "_priceexit" + x, "--", PanelFontSize, PanelFont, White);
-    }
-    int z = 0;
-    while (SysObjDependency[SysTabIndex][z] != "") {
-        int k = Object2Index(SysObjDependency[SysTabIndex][z]);
-        if (k == -1) {
-            z++;
-            continue;
-        }
-        int i = ObjId[k];
-
-        if (AndS(i, S_EXT_OVERBOUGHT, x) != 0) {
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_EXT_OVERBOUGHT), MiniObjectFontSize, "Wingdings", SignalColor[S_EXT_OVERBOUGHT]);
-        } else
-        if (AndS(i, S_EXT_OVERSOLD, x) != 0) {
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_EXT_OVERSOLD), MiniObjectFontSize, "Wingdings", SignalColor[S_EXT_OVERSOLD]);
-        } else
-        if (AndS(i, S_OVERBOUGHT, x) != 0) {
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_OVERBOUGHT), MiniObjectFontSize, "Wingdings", SignalColor[S_OVERBOUGHT]);
-        } else
-        if (AndS(i, S_OVERSOLD, x) != 0) {
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_OVERSOLD), MiniObjectFontSize, "Wingdings", SignalColor[S_OVERSOLD]);
-        } else
-        if (AndS(i, S_TOUCHED, x) != 0) {
-
-            if (AndS(i, S_BELOW, x) != 0)
-                ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_TOUCHED), MiniObjectFontSize, "Wingdings", SignalColor[S_TOUCHED]);
-            else
-                ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_TOUCHED), MiniObjectFontSize, "Wingdings", SignalColor[S_TOUCHED]);
-
-        } else
-        if (AndS(i, S_ABOVE, x) != 0) {
-
-            if (AndS(i, S_ALERT, x) != 0)
-                ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_ALERT), MiniObjectFontSize, "Wingdings", SignalColor[S_ABOVE]);
-            else
-                ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_ABOVE), MiniObjectFontSize, "Wingdings", SignalColor[S_ABOVE]);
-        } else
-        if (AndS(i, S_BELOW, x) != 0) {
-            if (AndS(i, S_ALERT, x) != 0)
-                ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_ALERT), MiniObjectFontSize, "Wingdings", SignalColor[S_BELOW]);
-            else
-                ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_BELOW), MiniObjectFontSize, "Wingdings", SignalColor[S_BELOW]);
-        } else
-        if (AndS(i, S_MIDDLE, x) != 0) {
-
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_MIDDLE), MiniObjectFontSize, "Wingdings", SignalColor[S_MIDDLE]);
-
-        } else
-        if (AndS(i, S_ALERT, x) != 0) {
-
-        } else
-        if (AndS(i, S_BEAR, x) != 0) {
-
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_BEAR), MiniObjectFontSize, "Wingdings", SignalColor[S_BEAR]);
-        } else
-        if (AndS(i, S_BULL, x) != 0) {
-
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_BULL), MiniObjectFontSize, "Wingdings", SignalColor[S_BULL]);
-
-        } else
-        if (AndS(i, S_VERYSTRONG, x) != 0) {
-
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_VERYSTRONG), MiniObjectFontSize, "Wingdings", SignalColor[S_VERYSTRONG]);
-
-        } else
-        if (AndS(i, S_STRONG, x) != 0) {
-
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_STRONG), MiniObjectFontSize, "Wingdings", SignalColor[S_STRONG]);
-
-        } else
-        if (AndS(i, S_NEUTRAL, x) != 0) {
-
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_NEUTRAL), MiniObjectFontSize, "Wingdings", SignalColor[S_NEUTRAL]);
-
-        } else
-        if (AndS(i, S_WEAK, x) != 0) {
-
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_WEAK), MiniObjectFontSize, "Wingdings", SignalColor[S_WEAK]);
-
-        } else
-        if (AndS(i, S_VERYWEAK, x) != 0) {
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_VERYWEAK), MiniObjectFontSize, "Wingdings", SignalColor[S_VERYWEAK]);
-
-        } else {
-            ObjectSetText("system_" + system_name + ObjName[k] + x, CharToString(SymbolCode_NOSIGNAL), MiniObjectFontSize, "Wingdings", SignalColor_NOSIGNAL);
-        }
-        /// ///////////////////////////////////////////////////////////////////////////////         
-        if (AndS(i, S_RCROSSED, x) != 0) {
-            ObjectSetText("system_i" + system_name + ObjName[k] + x, CharToString(SymbolCode_RCROSSED), MiniOrientationFontSize, "Wingdings", SignalColor[S_RCROSSED]);
-        } else
-        if (AndS(i, S_CROSS_UP, x) != 0) {
-
-            ObjectSetText("system_i" + system_name + ObjName[k] + x, CharToString(SymbolCode_CROSS_UP), MiniOrientationFontSize, "Wingdings", SignalColor[S_CROSS_UP]);
-        } else
-        if (AndS(i, S_CROSS_DOWN, x) != 0) {
-
-            ObjectSetText("system_i" + system_name + ObjName[k] + x, CharToString(SymbolCode_CROSS_DOWN), MiniOrientationFontSize, "Wingdings", SignalColor[S_CROSS_DOWN]);
-        } else
-        if (AndS(i, S_REVERSE_UP, x) != 0) {
-            ObjectSetText("system_i" + system_name + ObjName[k] + x, CharToString(SymbolCode_REVERSE_UP), MiniOrientationFontSize, "Wingdings", SignalColor[S_REVERSE_UP]);
-        } else
-        if (AndS(i, S_REVERSE_DOWN, x) != 0) {
-            ObjectSetText("system_i" + system_name + ObjName[k] + x, CharToString(SymbolCode_REVERSE_DOWN), MiniOrientationFontSize, "Wingdings", SignalColor[S_REVERSE_DOWN]);
-        } else
-        if (AndS(i, S_UP, x) != 0) {
-            ObjectSetText("system_i" + system_name + ObjName[k] + x, CharToString(SymbolCode_UP), MiniOrientationFontSize, "Wingdings", SignalColor[S_UP]);
-        } else
-        if (AndS(i, S_DOWN, x) != 0) {
-            ObjectSetText("system_i" + system_name + ObjName[k] + x, CharToString(SymbolCode_DOWN), MiniOrientationFontSize, "Wingdings", SignalColor[S_DOWN]);
-        } else
-        if (AndS(i, S_SIDEWAY, x) != 0) {
-            ObjectSetText("system_i" + system_name + ObjName[k] + x, CharToString(SymbolCode_SIDEWAY), MiniOrientationFontSize, "Wingdings", SignalColor[S_SIDEWAY]);
-        } else {
-            ObjectSet("system_i" + system_name + ObjName[k] + x, OBJPROP_XDISTANCE, 2000);
-            ObjectSet("system_i" + system_name + ObjName[k] + x, OBJPROP_YDISTANCE, 2000);
-        }
-        z++;
-    }
-}
-
-void System_DrawGraphics() {
-    if (System_Window == 0) return;
-    for (int i = 0; i < O_NbrSysObject; i++) {
-        string ObjName = SysObjName[i];
-        for (int j = 0; j < NBR_PERIODS; j++) {
-            System_DrawSystem(ObjName, j, i);
-        }
-    }
-}
-
-void System_InitProgress(int origin) {
-
-    System_originX = origin;
-    System_offsetX = 10;
-    System_originY = 5;
-    System_offsetY = 10;
-
-    ObjectDelete("system_progress_action_t");
-    ObjectCreate("system_progress_action_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_progress_action_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_progress_action_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_progress_action_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_progress_action_t", "E/S", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 50;
-    ObjectDelete("system_progress_action_price_t");
-    ObjectCreate("system_progress_action_price_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_progress_action_price_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_progress_action_price_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_progress_action_price_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_progress_action_price_t", "Price", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 40;
-    ObjectDelete("system_progress_action_time_t");
-    ObjectCreate("system_progress_action_time_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_progress_action_time_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_progress_action_time_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_progress_action_time_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_progress_action_time_t", "Time", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 60;
-
-    ObjectDelete("system_ext_exit_t");
-    ObjectCreate("system_ext_exit_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_ext_exit_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_ext_exit_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_ext_exit_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_ext_exit_t", "Ex", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 10;
-    ObjectDelete("system_minext_exit_t");
-    ObjectCreate("system_minext_exit_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_minext_exit_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_minext_exit_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_minext_exit_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_minext_exit_t", "Mx", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 12;
-    ObjectDelete("system_ftrix_exit_t");
-    ObjectCreate("system_ftrix_exit_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_ftrix_exit_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_ftrix_exit_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_ftrix_exit_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_ftrix_exit_t", "Fx", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 10;
-    ObjectDelete("system_strix_exit_t");
-    ObjectCreate("system_strix_exit_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_strix_exit_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_strix_exit_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_strix_exit_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_strix_exit_t", "Sx", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 10;
-    ObjectDelete("system_ashi_exit_t");
-    ObjectCreate("system_ashi_exit_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_ashi_exit_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_ashi_exit_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_ashi_exit_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_ashi_exit_t", "As", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 12;
-    ObjectDelete("system_fractal_exit_t");
-    ObjectCreate("system_fractal_exit_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_fractal_exit_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_fractal_exit_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_fractal_exit_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_fractal_exit_t", "Fr", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 20;
-    ObjectDelete("system_expert_exit_t");
-    ObjectCreate("system_expert_exit_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_expert_exit_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_expert_exit_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_expert_exit_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_expert_exit_t", "Exit", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 50;
-    ObjectDelete("system_expert_exit_price_t");
-    ObjectCreate("system_expert_exit_price_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_expert_exit_price_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_expert_exit_price_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_expert_exit_price_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_expert_exit_price_t", "Price", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 40;
-    ObjectDelete("system_expert_exit_time_t");
-    ObjectCreate("system_expert_exit_time_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_expert_exit_time_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_expert_exit_time_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_expert_exit_time_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_expert_exit_time_t", "Time", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 95;
-    ObjectDelete("system_progress_action1_t");
-    ObjectCreate("system_progress_action1_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_progress_action1_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_progress_action1_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_progress_action1_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_progress_action1_t", "E/S", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 50;
-    ObjectDelete("system_progress_action1_price_t");
-    ObjectCreate("system_progress_action1_price_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_progress_action1_price_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_progress_action1_price_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_progress_action1_price_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_progress_action1_price_t", "Price", PanelFontSize, PanelFont, PanelTextColor);
-
-    System_offsetX += 40;
-    ObjectDelete("system_progress_action1_time_t");
-    ObjectCreate("system_progress_action1_time_t", OBJ_LABEL, System_Window, 0, 0, 0, 0);
-    ObjectSet("system_progress_action1_time_t", OBJPROP_CORNER, 0);
-    ObjectSet("system_progress_action1_time_t", OBJPROP_XDISTANCE, System_originX + System_offsetX);
-    ObjectSet("system_progress_action1_time_t", OBJPROP_YDISTANCE, System_originY + System_offsetY);
-    ObjectSetText("system_progress_action1_time_t", "Time", PanelFontSize, PanelFont, PanelTextColor);
-
-    for (int j = 0; j < NBR_PERIODS; j++) // position
-    {
-        System_offsetX = 10;
-        System_originY = 30;
-        System_offsetY = 10;
-
-        ObjectDelete("system_progress_action" + j);
-        ObjectCreate("system_progress_action" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_progress_action" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_progress_action" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_progress_action" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_progress_action" + j, "-------", PanelFontSize, PanelFont, White);
-
-        System_offsetX += 50;
-        ObjectDelete("system_progress_action_price" + j);
-        ObjectCreate("system_progress_action_price" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_progress_action_price" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_progress_action_price" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_progress_action_price" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_progress_action_price" + j, "-------", PanelFontSize, PanelFont, White);
-
-        System_offsetX += 40;
-        ObjectDelete("system_progress_action_time" + j);
-        ObjectCreate("system_progress_action_time" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_progress_action_time" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_progress_action_time" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_progress_action_time" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_progress_action_time" + j, "-------", PanelFontSize, PanelFont, White);
-
-        System_offsetX += 60;
-
-        ObjectDelete("system_ext_exit" + j);
-        ObjectCreate("system_ext_exit" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_ext_exit" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_ext_exit" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_ext_exit" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_ext_exit" + j, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", IndicatorBackColor);
-
-        System_offsetX += 10;
-        ObjectDelete("system_minext_exit" + j);
-        ObjectCreate("system_minext_exit" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_minext_exit" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_minext_exit" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_minext_exit" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_minext_exit" + j, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", IndicatorBackColor);
-
-        System_offsetX += 12;
-        ObjectDelete("system_ftrix_exit" + j);
-        ObjectCreate("system_ftrix_exit" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_ftrix_exit" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_ftrix_exit" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_ftrix_exit" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_ftrix_exit" + j, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", IndicatorBackColor);
-
-        System_offsetX += 10;
-        ObjectDelete("system_strix_exit" + j);
-        ObjectCreate("system_strix_exit" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_strix_exit" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_strix_exit" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_strix_exit" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_strix_exit" + j, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", IndicatorBackColor);
-
-        System_offsetX += 12;
-        ObjectDelete("system_ashi_exit" + j);
-        ObjectCreate("system_ashi_exit" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_ashi_exit" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_ashi_exit" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_ashi_exit" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_ashi_exit" + j, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", IndicatorBackColor);
-
-        System_offsetX += 10;
-        ObjectDelete("system_fractal_exit" + j);
-        ObjectCreate("system_fractal_exit" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_fractal_exit" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_fractal_exit" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_fractal_exit" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_fractal_exit" + j, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", IndicatorBackColor);
-
-        System_offsetX += 20;
-        ObjectDelete("system_progress_exit" + j);
-        ObjectCreate("system_progress_exit" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_progress_exit" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_progress_exit" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_progress_exit" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_progress_exit" + j, "-------", PanelFontSize, PanelFont, White);
-
-        System_offsetX += 50;
-        ObjectDelete("system_progress_exit_price" + j);
-        ObjectCreate("system_progress_exit_price" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_progress_exit_price" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_progress_exit_price" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_progress_exit_price" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_progress_exit_price" + j, "-------", PanelFontSize, PanelFont, White);
-
-        System_offsetX += 40;
-        ObjectDelete("system_progress_exit_time" + j);
-        ObjectCreate("system_progress_exit_time" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_progress_exit_time" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_progress_exit_time" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_progress_exit_time" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_progress_exit_time" + j, "-------", PanelFontSize, PanelFont, White);
-
-        System_offsetX += 95;
-        ObjectDelete("system_progress_action1" + j);
-        ObjectCreate("system_progress_action1" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_progress_action1" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_progress_action1" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_progress_action1" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_progress_action1" + j, "-------", PanelFontSize, PanelFont, White);
-
-        System_offsetX += 50;
-        ObjectDelete("system_progress_action1_price" + j);
-        ObjectCreate("system_progress_action1_price" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_progress_action1_price" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_progress_action1_price" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_progress_action1_price" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_progress_action1_price" + j, "-------", PanelFontSize, PanelFont, White);
-
-        System_offsetX += 40;
-        ObjectDelete("system_progress_action1_time" + j);
-        ObjectCreate("system_progress_action1_time" + j, OBJ_LABEL, System_Window, 0, 0, 0, 0);
-        ObjectSet("system_progress_action1_time" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_progress_action1_time" + j, OBJPROP_XDISTANCE, System_originX + System_offsetX);
-        ObjectSet("system_progress_action1_time" + j, OBJPROP_YDISTANCE, System_originY + j * System_offsetY);
-        ObjectSetText("system_progress_action1_time" + j, "-------", PanelFontSize, PanelFont, White);
-    }
-}
-
-void Assistant_InitOrientation() {
-    int i = 1;
-    Assistant_offsetX = 10;
-    Assistant_originX = 10;
-    Assistant_originY = 10;
-    Assistant_offsetY = 15;
-
-    ObjectCreate("panel_dmarket_t", OBJ_LABEL, Assistant_Window, 0, 0, 0, 1);
-    ObjectSet("panel_dmarket_t", OBJPROP_CORNER, 3);
-    ObjectSet("panel_dmarket_t", OBJPROP_XDISTANCE, Assistant_originX + Assistant_offsetX);
-    ObjectSet("panel_dmarket_t", OBJPROP_YDISTANCE, Assistant_originY + i * Assistant_offsetY);
-    ObjectSetText("panel_dmarket_t", "D_Term", PanelFontSize, PanelFont, PanelTextColor);
-
-    i++;
-
-    ObjectCreate("panel_smarket_t", OBJ_LABEL, Assistant_Window, 0, 0, 0, 1);
-    ObjectSet("panel_smarket_t", OBJPROP_CORNER, 3);
-    ObjectSet("panel_smarket_t", OBJPROP_XDISTANCE, Assistant_originX + Assistant_offsetX);
-    ObjectSet("panel_smarket_t", OBJPROP_YDISTANCE, Assistant_originY + i * Assistant_offsetY);
-    ObjectSetText("panel_smarket_t", "S_Term", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    ObjectCreate("panel_mmarket_t", OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-    ObjectSet("panel_mmarket_t", OBJPROP_CORNER, 3);
-    ObjectSet("panel_mmarket_t", OBJPROP_XDISTANCE, Assistant_originX + Assistant_offsetX);
-    ObjectSet("panel_mmarket_t", OBJPROP_YDISTANCE, Assistant_originY + i * Assistant_offsetY);
-    ObjectSetText("panel_mmarket_t", "M_Term", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    ObjectCreate("panel_lmarket_t", OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-    ObjectSet("panel_lmarket_t", OBJPROP_CORNER, 3);
-    ObjectSet("panel_lmarket_t", OBJPROP_XDISTANCE, Assistant_originX + Assistant_offsetX);
-    ObjectSet("panel_lmarket_t", OBJPROP_YDISTANCE, Assistant_originY + i * Assistant_offsetY);
-    ObjectSetText("panel_lmarket_t", "L_Term", PanelFontSize, PanelFont, PanelTextColor);
-
-    i++;
-
-    i = 1;
-    Assistant_offsetX = 50;
-    Assistant_originX = 10;
-    Assistant_originY = 10;
-    Assistant_offsetY = 15;
-
-    ObjectCreate("panel_orientation_t", OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-    ObjectSet("panel_orientation_t", OBJPROP_CORNER, 3);
-    ObjectSet("panel_orientation_t", OBJPROP_XDISTANCE, Assistant_originX + i * Assistant_offsetX);
-    ObjectSet("panel_orientation_t", OBJPROP_YDISTANCE, Assistant_originY);
-    ObjectSetText("panel_orientation_t", "Orientation", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    ObjectCreate("panel_property_t", OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-    ObjectSet("panel_property_t", OBJPROP_CORNER, 3);
-    ObjectSet("panel_property_t", OBJPROP_XDISTANCE, Assistant_originX + i * Assistant_offsetX);
-    ObjectSet("panel_property_t", OBJPROP_YDISTANCE, Assistant_originY);
-    ObjectSetText("panel_property_t", "Property", PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-}
-
-void Assistant_DrawOrientation() {
-
-    int i = 2;
-    Assistant_offsetX = 50;
-    Assistant_originX = 10;
-    Assistant_originY = 10;
-    Assistant_offsetY = 15;
-
-    int orientation, torientation, action;
-    datetime timeaction;
-    double priceaction;
-
-    for (int j = 0; j < 3; j++) {
-        if (j == 2) {
-            orientation = LTermOrientation;
-            torientation = LTermTOrientation;
-            action = LTermAction;
-            priceaction = LTermPriceAction;
-            timeaction = LTermTimeAction;
-        }
-        if (j == 1) {
-            orientation = MTermOrientation;
-            torientation = MTermTOrientation;
-            action = MTermAction;
-            priceaction = MTermPriceAction;
-            timeaction = MTermTimeAction;
-        }
-        if (j == 0) {
-            orientation = STermOrientation;
-            torientation = STermTOrientation;
-            action = STermAction;
-            priceaction = STermPriceAction;
-            timeaction = STermTimeAction;
-        }
-
-        if (ObjectFind("orientation" + j) != Assistant_Window) {
-            ObjectDelete("orientation" + j);
-            ObjectCreate("orientation" + j, OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-            ObjectSet("orientation" + j, OBJPROP_CORNER, 3);
-            ObjectSet("orientation" + j, OBJPROP_XDISTANCE, Assistant_originX + Assistant_offsetX);
-            ObjectSet("orientation" + j, OBJPROP_YDISTANCE, Assistant_originY + i * Assistant_offsetY);
-        }
-        if (orientation == OP_BUY)
-            ObjectSetText("orientation" + j, "UP", PanelFontSize, PanelFont, LimeGreen);
-        else
-        if (orientation == OP_SELL)
-            ObjectSetText("orientation" + j, "DOWN", PanelFontSize, PanelFont, Red);
-        else
-            ObjectSetText("orientation" + j, "SIDEWAY", PanelFontSize, PanelFont, Gold);
-
-        if (ObjectFind("torientation" + j) != Assistant_Window) {
-            ObjectDelete("torientation" + j);
-            ObjectCreate("torientation" + j, OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-            ObjectSet("torientation" + j, OBJPROP_CORNER, 3);
-            ObjectSet("torientation" + j, OBJPROP_XDISTANCE, Assistant_originX + 2 * Assistant_offsetX);
-            ObjectSet("torientation" + j, OBJPROP_YDISTANCE, Assistant_originY + i * Assistant_offsetY);
-        }
-        if (torientation == OP_BUY)
-            ObjectSetText("torientation" + j, "UP", PanelFontSize, PanelFont, LimeGreen);
-        else
-        if (torientation == OP_SELL)
-            ObjectSetText("torientation" + j, "DOWN", PanelFontSize, PanelFont, Red);
-        else
-            ObjectSetText("torientation" + j, "SIDEWAY", PanelFontSize, PanelFont, Gold);
-        if (j == 1) {
-            ObjectCreate("panel_rulenbrbuysell", OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-            ObjectSet("panel_rulenbrbuysell", OBJPROP_CORNER, 3);
-            ObjectSet("panel_rulenbrbuysell", OBJPROP_XDISTANCE, Assistant_originX + 3 * Assistant_offsetX);
-            ObjectSet("panel_rulenbrbuysell", OBJPROP_YDISTANCE, Assistant_originY + i * Assistant_offsetY);
-            ObjectSetText("panel_rulenbrbuysell", "B => " + RuleNbrBuy + "   " + RuleNbrSell + " <= S ", PanelFontSize, PanelFont, PanelTextColor);
-        }
-        if (j == 0) {
-            ObjectCreate("panel_rulenbrexitbuysell", OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-            ObjectSet("panel_rulenbrexitbuysell", OBJPROP_CORNER, 3);
-            ObjectSet("panel_rulenbrexitbuysell", OBJPROP_XDISTANCE, Assistant_originX + 3 * Assistant_offsetX);
-            ObjectSet("panel_rulenbrexitbuysell", OBJPROP_YDISTANCE, Assistant_originY + i * Assistant_offsetY);
-            ObjectSetText("panel_rulenbrexitbuysell", "ES => " + RuleNbrExitSell + "   " + RuleNbrExitBuy + " <= EB", PanelFontSize, PanelFont, PanelTextColor);
-        }
-
-        i++;
-    }
-
-    i = 1;
-
-    ObjectCreate("panel_ruleresult", OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-    ObjectSet("panel_ruleresult", OBJPROP_CORNER, 3);
-    ObjectSet("panel_ruleresult", OBJPROP_XDISTANCE, Assistant_originX + 3 * Assistant_offsetX);
-    ObjectSet("panel_ruleresult", OBJPROP_YDISTANCE, Assistant_originY + i * Assistant_offsetY);
-    if (RuleNbrBuy + RuleNbrExitSell > RuleNbrSell + RuleNbrExitBuy)
-        ObjectSetText("panel_ruleresult", "B => " + DoubleToString(RuleNbrBuy + RuleNbrExitSell, 0) + " / " + DoubleToString(RuleNbrSell + RuleNbrExitBuy, 0) + " <= S", PanelFontSize, "Arial Black", LimeGreen);
-    else
-    if (RuleNbrBuy + RuleNbrExitSell < RuleNbrSell + RuleNbrExitBuy)
-        ObjectSetText("panel_ruleresult", "B => " + DoubleToString(RuleNbrBuy + RuleNbrExitSell, 0) + " / " + DoubleToString(RuleNbrSell + RuleNbrExitBuy, 0) + " <= S", PanelFontSize, "Arial Black", Red);
-    else
-        ObjectSetText("panel_ruleresult", "B => " + DoubleToString(RuleNbrBuy + RuleNbrExitSell, 0) + " / " + DoubleToString(RuleNbrSell + RuleNbrExitBuy, 0) + " <= S", PanelFontSize, "Arial Black", Gold);
-
-    if (ObjectFind("orientation") != Assistant_Window) {
-        ObjectDelete("orientation");
-        ObjectCreate("orientation", OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-        ObjectSet("orientation", OBJPROP_CORNER, 3);
-        ObjectSet("orientation", OBJPROP_XDISTANCE, Assistant_originX + Assistant_offsetX);
-        ObjectSet("orientation", OBJPROP_YDISTANCE, Assistant_originY + i * Assistant_offsetY);
-    }
-    if (Orientation == OP_BUY)
-        ObjectSetText("orientation", "UP", PanelFontSize, "Arial Black", LimeGreen);
-    else
-    if (Orientation == OP_SELL)
-        ObjectSetText("orientation", "DOWN", PanelFontSize, "Arial Black", Red);
-    else
-        ObjectSetText("orientation", "SIDEWAY", PanelFontSize, "Arial Black", Gold);
-
-    if (ObjectFind("sharp_orientation") != Assistant_Window) {
-        ObjectDelete("sharp_orientation");
-        ObjectCreate("sharp_orientation", OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-        ObjectSet("sharp_orientation", OBJPROP_CORNER, 3);
-        ObjectSet("sharp_orientation", OBJPROP_XDISTANCE, Assistant_originX + 2 * Assistant_offsetX);
-        ObjectSet("sharp_orientation", OBJPROP_YDISTANCE, Assistant_originY + i * Assistant_offsetY);
-    }
-    if (SharpOrientation == OP_BUY)
-        ObjectSetText("sharp_orientation", "UP", PanelFontSize, "Arial Black", LimeGreen);
-    else
-    if (SharpOrientation == OP_SELL)
-        ObjectSetText("sharp_orientation", "DOWN", PanelFontSize, "Arial Black", Red);
-    else
-    if (SharpOrientation == OP_SELL)
-        ObjectSetText("sharp_orientation", "WAIT", PanelFontSize, "Arial Black", Blue);
-    else
-        ObjectSetText("sharp_orientation", "SIDEWAY", PanelFontSize, "Arial Black", Gold);
-
-    if (SharpOrientationConfirmed && ObjectFind("sharp_orientation_confirmed") != Assistant_Window) {
-        ObjectDelete("sharp_orientation_confirmed");
-        ObjectCreate("sharp_orientation_confirmed", OBJ_LABEL, Assistant_Window, 0, 0, 0, 0);
-        ObjectSet("sharp_orientation_confirmed", OBJPROP_CORNER, 1);
-        ObjectSet("sharp_orientation_confirmed", OBJPROP_XDISTANCE, Assistant_originX + 3 * Assistant_offsetX);
-        ObjectSet("sharp_orientation_confirmed", OBJPROP_YDISTANCE, Assistant_originY + i * Assistant_offsetY);
-        ObjectSetText("sharp_orientation_confirmed", CharToString(SymbolCode_REVERSE_UP), 12, "Wingdings", Gold);
-    } else
-        ObjectDelete("sharp_orientation_confirmed");
-}
-
 void Panel_DrawGraphics() {
     int i = 0;
 
     PanelTextColor = White;
 
     if (Panel_Window == 0) return;
-    // Panel_DrawParameters (PanelOriginParameters); 
-    //  for (int x = 0; x < NBR_PERIODS; x++)
-    //     Panel_DrawAngles (x, PanelOriginAngles);   
-
+    
     Panel_DrawTargets(P_D1, PanelOriginTargets, 0);
-
-    /*
-           if(ObjectFind("news_alert" + i) != Panel_Window)
-           {
-             ObjectDelete ("news_alert" + i);
-             ObjectCreate("news_alert" + i, OBJ_LABEL, Panel_Window,0,0,0,0);         
-             ObjectSet("news_alert" + i,    OBJPROP_CORNER,   0);
-             ObjectSet("news_alert" + i,    OBJPROP_XDISTANCE, 640);
-             ObjectSet("news_alert" + i,    OBJPROP_YDISTANCE, (j * Panel_offsetY));
-             ObjectSetText("news_alert" + i,  "***  NEWS ALERT : " + TimeToString (DateNewsToday[i]) + "   " + DescNewsToday[i] + "  ***" +  ForecastNewsToday[i], PanelFontSize, "Arial Black", Red);
-             j++;
-           }
-           else
-              ObjectDelete ("news_alert" + i);
-
-       static double gold_Old_Price = -1;
-       static color gold_FontColor;
-       if (MarketInfo ( "GOLD", MODE_BID) > gold_Old_Price) FontColor = LawnGreen;
-       if (MarketInfo ( "GOLD", MODE_BID) < gold_Old_Price) FontColor = Red;
-       gold_Old_Price = MarketInfo ( "GOLD", MODE_BID);
-       
-       if (ObjectFind("gold") != Panel_Window)
-       {
-          ObjectCreate("gold", OBJ_LABEL, Panel_Window,0,0,0,0);         
-          ObjectSet("gold", OBJPROP_CORNER,   3);
-          ObjectSet("gold", OBJPROP_XDISTANCE, 120);
-          ObjectSet("gold", OBJPROP_YDISTANCE, 130);
-       }
-       ObjectSetText("gold", " Gold :" + DoubleToString(MarketInfo ( "GOLD", MODE_BID), MarketInfo("GOLD",MODE_DIGITS)), 10 , "Arial Black", FontColor);  
-
-       static double silver_Old_Price = -1;
-       static color silver_FontColor;
-       if (MarketInfo ( "SILVER", MODE_BID) > silver_Old_Price) FontColor = LawnGreen;
-       if (MarketInfo ( "SILVER", MODE_BID) < silver_Old_Price) FontColor = Red;
-       gold_Old_Price = MarketInfo ( "SILVER", MODE_BID);
-       
-       if (ObjectFind("silver") != Panel_Window)
-       {
-          ObjectCreate("silver", OBJ_LABEL, Panel_Window,0,0,0,0);         
-          ObjectSet("silver", OBJPROP_CORNER,   3);
-          ObjectSet("silver", OBJPROP_XDISTANCE, 120);
-          ObjectSet("silver", OBJPROP_YDISTANCE, 100);
-       }
-       ObjectSetText("silver", " Silver :" + DoubleToString(MarketInfo ( "SILVER", MODE_BID), MarketInfo("SILVER",MODE_DIGITS)), 10 , "Arial Black", FontColor);  
-
-
-       static double dow_Old_Price = -1;
-       static color dow_FontColor = White;
-       if (ObjectFind("dow") != Panel_Window)
-       {
-          ObjectCreate("dow", OBJ_LABEL, Panel_Window,0,0,0,0);         
-          ObjectSet("dow", OBJPROP_CORNER,   3);
-          ObjectSet("dow", OBJPROP_XDISTANCE, 120);
-          ObjectSet("dow", OBJPROP_YDISTANCE, 70);
-       }
-       ObjectSetText("dow", " DOW : " + "", 10 , "Arial Black", FontColor);  
-    */
-
-}
-void Panel_DrawParameters(int origin) {
-    int i = 0;
-    Panel_originX = origin;
-    Panel_originY = 20;
-    Panel_offsetX = 75;
-    Panel_offsetY = 10;
-
-    if (ObjectFind("panel_volumeupdown") != Panel_Window) {
-        ObjectDelete("panel_volumeupdown");
-        ObjectCreate("panel_volumeupdown", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_volumeupdown", OBJPROP_CORNER, 0);
-        ObjectSet("panel_volumeupdown", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_volumeupdown", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    ObjectSetText("panel_volumeupdown", DoubleToString(volume_100_up, 0) + "/" + DoubleToString(volume_100_down, 0) + " : " + DoubleToString(volume_100_up - volume_100_down, 0), PanelFontSize, PanelFont, PanelTextColor);
-
-    i++;
-    if (ObjectFind("panel_volumediff") != Panel_Window) {
-        ObjectDelete("panel_volumediff");
-        ObjectCreate("panel_volumediff", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_volumediff", OBJPROP_CORNER, 0);
-        ObjectSet("panel_volumediff", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_volumediff", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    ObjectSetText("panel_volumediff", DoubleToString((volume_100_up - volume_100_up_prev) - (volume_100_down - volume_100_down_prev), 0), PanelFontSize, PanelFont, PanelTextColor);
-
-    i++;
-    if (ObjectFind("panel_velocity_h4") != Panel_Window) {
-        ObjectDelete("panel_velocity_h4");
-        ObjectCreate("panel_velocity_h4", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_velocity_h4", OBJPROP_CORNER, 0);
-        ObjectSet("panel_velocity_h4", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_velocity_h4", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    if (velocity_m5 >= 15)
-        ObjectSetText("panel_velocity_h4", DoubleToString(velocity_m5, 0) + " / " + DoubleToString(velocity_m5 - velocity_m5_prev, 0), PanelFontSize, PanelBFont, LimeGreen);
-    else
-    if (velocity_m5 <= -15)
-        ObjectSetText("panel_velocity_h4", DoubleToString(velocity_m5, 0) + " / " + DoubleToString(velocity_m5 - velocity_m5_prev, 0), PanelFontSize, PanelBFont, Red);
-    else
-        ObjectSetText("panel_velocity_h4", DoubleToString(velocity_m5, 0) + " / " + DoubleToString(velocity_m5 - velocity_m5_prev, 0), PanelFontSize, PanelFont, PanelTextColor);
-
-    i++;
-
-    if (ObjectFind("panel_angle200") != Panel_Window) {
-        ObjectCreate("panel_angle200", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_angle200", OBJPROP_CORNER, 0);
-        ObjectSet("panel_angle200", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_angle200", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    if (AngleAbove(MA_200, 15, P_M5))
-        ObjectSetText("panel_angle200", DoubleToString(ma_200_angle_m5, 2) + " / " + DoubleToString(ma_200_angle_m5_prev, 2), PanelFontSize, PanelBFont, LimeGreen);
-    else
-    if (AngleBelow(MA_200, -15, P_M5))
-        ObjectSetText("panel_angle200", DoubleToString(ma_200_angle_m5, 2) + " / " + DoubleToString(ma_200_angle_m5_prev, 2), PanelFontSize, PanelBFont, Red);
-    else
-        ObjectSetText("panel_angle200", DoubleToString(ma_200_angle_m5, 2) + " / " + DoubleToString(ma_200_angle_m5_prev, 2), PanelFontSize, PanelFont, PanelTextColor);
-
-    i++;
-    if (ObjectFind("panel_angleslope") != Panel_Window) {
-        ObjectCreate("panel_angleslope", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_angleslope", OBJPROP_CORNER, 0);
-        ObjectSet("panel_angleslope", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_angleslope", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    ObjectSetText("panel_angleslope", DoubleToString(slope_angle_m5, 2) + " / " + DoubleToString(slope_angle_m5_prev, 2), PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    if (ObjectFind("panel_divergence_m5/h1_h4") != Panel_Window) {
-        ObjectCreate("panel_divergence_m5/h1_h4", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_divergence_m5/h1_h4", OBJPROP_CORNER, 0);
-        ObjectSet("panel_divergence_m5/h1_h4", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_divergence_m5/h1_h4", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    if ((ma_200_angle_m1 >= 10 || slope_angle_m5 >= 20) &&
-        (divergence_m5 >= D_BuySell && (volume_100_up - volume_100_down) >= 500))
-        ObjectSetText("panel_divergence_m5/h1_h4", DoubleToString(SValue(DIVERGENCE, S_CURRENT, P_M1), 4) + " / " + DoubleToString(SValue(DIVERGENCE, S_CURRENT, P_M5), 4), PanelFontSize, PanelBFont, LimeGreen);
-    else
-    if ((ma_200_angle_m1 <= -10 || slope_angle_m5 <= -20) &&
-        (divergence_m5 <= (-1) * D_BuySell && (volume_100_up - volume_100_down) <= -500))
-        ObjectSetText("panel_divergence_m5/h1_h4", DoubleToString(SValue(DIVERGENCE, S_CURRENT, P_M1), 4) + " / " + DoubleToString(SValue(DIVERGENCE, S_CURRENT, P_M5), 4), PanelFontSize, PanelBFont, Red);
-    else
-        ObjectSetText("panel_divergence_m5/h1_h4", DoubleToString(SValue(DIVERGENCE, S_CURRENT, P_M1), 4) + " / " + DoubleToString(SValue(DIVERGENCE, S_CURRENT, P_M5), 4), PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    if (ObjectFind("panel_fractals_d1_h4") != Panel_Window) {
-        ObjectCreate("panel_fractals_d1_h4", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_fractals_d1_h4", OBJPROP_CORNER, 0);
-        ObjectSet("panel_fractals_d1_h4", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_fractals_d1_h4", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    ObjectSetText("panel_fractals_d1_h4", GetTextPeriod(upfractal_above_d1) + " / " + GetTextPeriod(downfractal_below_d1), PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    if (ObjectFind("panel_fractals_h4") != Panel_Window) {
-        ObjectCreate("panel_fractals_h4", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_fractals_h4", OBJPROP_CORNER, 0);
-        ObjectSet("panel_fractals_h4", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_fractals_h4", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    if (upfractal_above >= h4_h1_m30_m15)
-        ObjectSetText("panel_fractals_h4", GetTextPeriod(upfractal_above) + " / " + GetTextPeriod(downfractal_below), PanelFontSize, PanelBFont, LimeGreen);
-    else
-    if (downfractal_below >= h4_h1_m30_m15)
-        ObjectSetText("panel_fractals_h4", GetTextPeriod(upfractal_above) + " / " + GetTextPeriod(downfractal_below), PanelFontSize, PanelBFont, Red);
-    else
-        ObjectSetText("panel_fractals_h4", GetTextPeriod(upfractal_above) + " / " + GetTextPeriod(downfractal_below), PanelFontSize, PanelFont, PanelTextColor);
-
-    /*
-       if(ObjectFind("panel_fractal_changed_h4") != 0)
-       {        
-          ObjectCreate("panel_fractal_changed_h4",  OBJ_LABEL, Panel_Window,0,0,0,0);         
-          ObjectSet("panel_fractal_changed_h4" ,    OBJPROP_CORNER,   0);
-          ObjectSet("panel_fractal_changed_h4" ,    OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX + 250);
-          ObjectSet("panel_fractal_changed_h4" ,    OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-       }
-       ObjectSetText("panel_fractal_changed_h4", upfractal_changed + " / "  + downfractal_changed , PanelFontSize, PanelFont, PanelTextColor);
-    */
-    i++;
-
-    if (ObjectFind("panel_rs_h4") != Panel_Window) {
-        ObjectCreate("panel_rs_h4", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_rs_h4", OBJPROP_CORNER, 0);
-        ObjectSet("panel_rs_h4", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_rs_h4", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    if (res_above >= h4_h1_m30_m15)
-        ObjectSetText("panel_rs_h4", GetTextPeriod(res_above) + " / " + GetTextPeriod(sup_below), PanelFontSize, PanelBFont, LimeGreen);
-    else
-    if (sup_below >= h4_h1_m30_m15)
-        ObjectSetText("panel_rs_h4", GetTextPeriod(res_above) + " / " + GetTextPeriod(sup_below), PanelFontSize, PanelBFont, Red);
-    else
-        ObjectSetText("panel_rs_h4", GetTextPeriod(res_above) + " / " + GetTextPeriod(sup_below), PanelFontSize, PanelFont, PanelTextColor);
-
-    /*
-       if(ObjectFind("panel_rs_changed_h4") != 0)
-       {           
-          ObjectCreate("panel_rs_changed_h4", OBJ_LABEL, Panel_Window,0,0,0,0);         
-          ObjectSet("panel_rs_changed_h4" ,   OBJPROP_CORNER,   0);
-          ObjectSet("panel_rs_changed_h4" ,   OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX + 250);
-          ObjectSet("panel_rs_changed_h4" ,   OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-       }
-       ObjectSetText("panel_rs_changed_h4",  res_changed      + " / "  + sup_changed , PanelFontSize, PanelFont, PanelTextColor);
-    */
-
-    i++;
-
-    if (ObjectFind("panel_ftrix_h4") != Panel_Window) {
-        ObjectCreate("panel_ftrix_h4", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_ftrix_h4", OBJPROP_CORNER, 0);
-        ObjectSet("panel_ftrix_h4", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_ftrix_h4", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-
-    if ((ftrix_up >= h4_h1_m30_m15 && ftrix_above >= h4_h1_m30) ||
-        (ftrix_up >= h4_h1 && strix_up >= h4_h1 && ftrix_above > h4_h1_m30 && strix_above > h4_h1_m30))
-        ObjectSetText("panel_ftrix_h4", GetTextPeriod(ftrix_up) + " / " + GetTextPeriod(ftrix_down), PanelFontSize, PanelBFont, LimeGreen);
-    else
-    if ((ftrix_down >= h4_h1_m30_m15 && ftrix_below >= h4_h1_m30) ||
-        (ftrix_down >= h4_h1 && strix_down >= h4_h1 && ftrix_below > h4_h1_m30 && strix_below > h4_h1_m30))
-        ObjectSetText("panel_ftrix_h4", GetTextPeriod(ftrix_up) + " / " + GetTextPeriod(ftrix_down), PanelFontSize, PanelBFont, Red);
-    else
-        ObjectSetText("panel_ftrix_h4", GetTextPeriod(ftrix_up) + " / " + GetTextPeriod(ftrix_down), PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    if (ObjectFind("panel_strix_h4") != Panel_Window) {
-        ObjectCreate("panel_strix_h4", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_strix_h4", OBJPROP_CORNER, 0);
-        ObjectSet("panel_strix_h4", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_strix_h4", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    if (ftrix_above > h4_h1_m30 && strix_above > h4_h1_m30)
-        ObjectSetText("panel_strix_h4", GetTextPeriod(strix_up) + " / " + GetTextPeriod(strix_down), PanelFontSize, PanelBFont, LimeGreen);
-    else
-    if (ftrix_below > h4_h1_m30 && strix_below > h4_h1_m30)
-        ObjectSetText("panel_strix_h4", GetTextPeriod(strix_up) + " / " + GetTextPeriod(strix_down), PanelFontSize, PanelBFont, Red);
-    else
-        ObjectSetText("panel_strix_h4", GetTextPeriod(strix_up) + " / " + GetTextPeriod(strix_down), PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    if (ObjectFind("panel_slope_h4") != Panel_Window) {
-        ObjectCreate("panel_slope_h4", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_slope_h4", OBJPROP_CORNER, 0);
-        ObjectSet("panel_slope_h4", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_slope_h4", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    if (slope_up >= h4_h1_m30_m15 && slope_above >= h4_h1_m30)
-        ObjectSetText("panel_slope_h4", GetTextPeriod(slope_up) + " / " + GetTextPeriod(slope_down), PanelFontSize, PanelBFont, LimeGreen);
-    else
-    if (slope_down >= h4_h1_m30_m15 && slope_below >= h4_h1_m30)
-        ObjectSetText("panel_slope_h4", GetTextPeriod(slope_up) + " / " + GetTextPeriod(slope_down), PanelFontSize, PanelBFont, Red);
-    else
-        ObjectSetText("panel_slope_h4", GetTextPeriod(slope_up) + " / " + GetTextPeriod(slope_down), PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    if (ObjectFind("panel_aslope_h4") != Panel_Window) {
-        ObjectCreate("panel_aslope_h4", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_aslope_h4", OBJPROP_CORNER, 0);
-        ObjectSet("panel_aslope_h4", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_aslope_h4", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    ObjectSetText("panel_aslope_h4", GetTextPeriod(slope_above) + " / " + GetTextPeriod(slope_below), PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    if (ObjectFind("panel_coral_h4") != Panel_Window) {
-        ObjectCreate("panel_coral_h4", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_coral_h4", OBJPROP_CORNER, 0);
-        ObjectSet("panel_coral_h4", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_coral_h4", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    if (coral_up >= h4_h1_m30_m15 && coral_above >= h4_h1_m30)
-        ObjectSetText("panel_coral_h4", GetTextPeriod(coral_up) + " / " + GetTextPeriod(coral_down), PanelFontSize, PanelBFont, LimeGreen);
-    else
-    if (coral_down >= h4_h1_m30_m15 && coral_below >= h4_h1_m30)
-        ObjectSetText("panel_coral_h4", GetTextPeriod(coral_up) + " / " + GetTextPeriod(coral_down), PanelFontSize, PanelBFont, Red);
-    else
-        ObjectSetText("panel_coral_h4", GetTextPeriod(coral_up) + " / " + GetTextPeriod(coral_down), PanelFontSize, PanelFont, PanelTextColor);
-    i++;
-
-    if (ObjectFind("panel_acoral_h4") != Panel_Window) {
-        ObjectCreate("panel_acoral_h4", OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_acoral_h4", OBJPROP_CORNER, 0);
-        ObjectSet("panel_acoral_h4", OBJPROP_XDISTANCE, Panel_originX + Panel_offsetX);
-        ObjectSet("panel_acoral_h4", OBJPROP_YDISTANCE, Panel_originY + i * Panel_offsetY);
-    }
-    ObjectSetText("panel_acoral_h4", GetTextPeriod(coral_above) + " / " + GetTextPeriod(coral_below), PanelFontSize, PanelFont, PanelTextColor);
+   
 }
 
 void Panel_DeleteGraphics() {
     ObjectsDeleteAll(Panel_Window);
 }
 
-void System_DeleteGraphics() {
-    ObjectsDeleteAll(System_Window);
-}
-
-color AssignAdxColor(int x) {
-    if (SValue(ADX, S_CURRENT, x) < ADX_TrendLevel)
-        return (LightSkyBlue);
-    else if (AndS(ADX, S_BUY, x))
-        return (Lime);
-    else
-        return (Red);
-}
-
-color AssignCciColor(int x) {
-    if (AndS(CCI, S_UP, x))
-        return (Lime);
-    else
-        return (Red);
-}
-
-color AssignVolumeColor(int x) {
-    if (SValue(VOLUME_UP, S_CURRENT, x) - SValue(VOLUME_DOWN, S_CURRENT, x) > 0)
-        return (Lime);
-    else
-        return (Red);
-}
-color AssignVolumeDiffColor(int x) {
-    if (SValue(VOLUME_UP, S_CURRENT, x) - SValue(VOLUME_UP, S_PREVIOUS, x) - SValue(VOLUME_DOWN, S_CURRENT, x) + SValue(VOLUME_DOWN, S_PREVIOUS, x) > 0)
-        return (Lime);
-    else
-        return (Red);
-}
-
-string AssignAdxArrow(int x) {
-    if (SValue(ADX, S_CURRENT, x) < ADX_TrendLevel) {
-        return ("h");
-    } else
-    if (AndS(ADX, S_UP, x))
-        return ("ì");
-    else
-        return ("î");
-} //End Function
-
-string AssignCciArrow(int x) {
-    if (AndS(CCI, S_CROSS_UP, x))
-        return ("ì");
-    else
-    if (AndS(CCI, S_CROSS_DOWN, x))
-        return ("î");
-    else return ("");
-} //End Function
-
-void Panel_DrawAngles(int x, int origin) {
-    int y = 4;
-    Panel_originX = origin;
-    Panel_originY = 8;
-    Panel_offsetX = 35;
-    Panel_offsetY = 25;
-    Panel_scaleX = 40;
-    Panel_scaleY = 10;
-
-    if (ObjectFind("divergence" + x) != Panel_Window) {
-        ObjectCreate("divergence" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("divergence" + x, OBJPROP_CORNER, 0);
-        ObjectSet("divergence" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX);
-        ObjectSet("divergence" + x, OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    if ((SValue(DIVERGENCE, S_CURRENT, x) >= D_BuySell) ||
-        (SValue(DIVERGENCE, S_CURRENT, x) <= (-1 * D_BuySell)))
-        ObjectSetText("divergence" + x, DoubleToString(SValue(DIVERGENCE, S_CURRENT, x) / SYS_POINT, 0), IndicatorFontSize, IndicatorFont, Gold);
-    else
-    if (AndS(DIVERGENCE, S_DOWN, x))
-        ObjectSetText("divergence" + x, DoubleToString(SValue(DIVERGENCE, S_CURRENT, x) / SYS_POINT, 0), IndicatorFontSize, IndicatorFont, Red);
-    else
-        ObjectSetText("divergence" + x, DoubleToString(SValue(DIVERGENCE, S_CURRENT, x) / SYS_POINT, 0), IndicatorFontSize, IndicatorFont, Green);
-
-    y--;
-
-    if (ObjectFind("ma_7_Angle" + x) != Panel_Window) {
-        ObjectCreate("ma_7_Angle" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("ma_7_Angle" + x, OBJPROP_CORNER, 0);
-        ObjectSet("ma_7_Angle" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX);
-        ObjectSet("ma_7_Angle" + x, OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-
-    if (AngleDivergence(MA_7, x))
-        ObjectSetText("ma_7_Angle" + x, DoubleToString(SValue(MA_7, S_ANGLE, x), 0), IndicatorFontSize, IndicatorFont, White);
-    else
-    if (AndS_G_AndPS(MA_7, S_ANGLE, x))
-        ObjectSetText("ma_7_Angle" + x, DoubleToString(SValue(MA_7, S_ANGLE, x), 0), IndicatorFontSize, IndicatorFont, LimeGreen);
-    else
-        ObjectSetText("ma_7_Angle" + x, DoubleToString(SValue(MA_7, S_ANGLE, x), 0), IndicatorFontSize, IndicatorFont, Red);
-    y--;
-
-    if (ObjectFind("slope_Angle" + x) != Panel_Window) {
-        ObjectCreate("slope_Angle" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("slope_Angle" + x, OBJPROP_CORNER, 0);
-        ObjectSet("slope_Angle" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX);
-        ObjectSet("slope_Angle" + x, OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    if (AngleDivergence(SLOPE, x))
-        ObjectSetText("slope_Angle" + x, DoubleToString(SValue(SLOPE, S_ANGLE, x), 0), IndicatorFontSize, IndicatorFont, White);
-    else
-    if (AndS_G_AndPS(SLOPE, S_ANGLE, x))
-        ObjectSetText("slope_Angle" + x, DoubleToString(SValue(SLOPE, S_ANGLE, x), 0), IndicatorFontSize, IndicatorFont, LimeGreen);
-    else
-        ObjectSetText("slope_Angle" + x, DoubleToString(SValue(SLOPE, S_ANGLE, x), 0), IndicatorFontSize, IndicatorFont, Red);
-
-    y--;
-    if (ObjectFind("coral_Angle" + x) != Panel_Window) {
-        ObjectCreate("coral_Angle" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("coral_Angle" + x, OBJPROP_CORNER, 0);
-        ObjectSet("coral_Angle" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX);
-        ObjectSet("coral_Angle" + x, OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    if (AngleDivergence(CORAL, x))
-        ObjectSetText("coral_Angle" + x, DoubleToString(SValue(CORAL, S_ANGLE, x), 0), IndicatorFontSize, IndicatorFont, White);
-    else
-    if (AndS_G_AndPS(CORAL, S_ANGLE, x))
-        ObjectSetText("coral_Angle" + x, DoubleToString(SValue(CORAL, S_ANGLE, x), 0), IndicatorFontSize, IndicatorFont, LimeGreen);
-    else
-        ObjectSetText("coral_Angle" + x, DoubleToString(SValue(CORAL, S_ANGLE, x), 0), IndicatorFontSize, IndicatorFont, Red);
-
-    y--;
-    if (ObjectFind("ma_200_Angle" + x) != Panel_Window) {
-        ObjectCreate("ma_200_Angle" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("ma_200_Angle" + x, OBJPROP_CORNER, 0);
-        ObjectSet("ma_200_Angle" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX);
-        ObjectSet("ma_200_Angle" + x, OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    if (AngleDivergence(MA_200, x))
-        ObjectSetText("ma_200_Angle" + x, DoubleToString(SValue(MA_200, S_ANGLE, x), 0), IndicatorFontSize, IndicatorFont, White);
-    else
-    if (AndS_G_AndPS(MA_200, S_ANGLE, x))
-        ObjectSetText("ma_200_Angle" + x, DoubleToString(SValue(MA_200, S_ANGLE, x), 0), IndicatorFontSize, IndicatorFont, LimeGreen);
-    else
-        ObjectSetText("ma_200_Angle" + x, DoubleToString(SValue(MA_200, S_ANGLE, x), 0), IndicatorFontSize, IndicatorFont, Red);
-
-    Panel_originY = 70;
-    y = 0;
-
-    if (ObjectFind("panel_Adx" + x) != Panel_Window) {
-        ObjectCreate("panel_Adx" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("panel_Adx" + x, OBJPROP_CORNER, 0);
-        ObjectSet("panel_Adx" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX);
-        ObjectSet("panel_Adx" + x, OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    ObjectSetText("panel_Adx" + x, DoubleToString(SValue(ADX, S_CURRENT, x), 2), IndicatorFontSize, IndicatorFont, AssignAdxColor(x));
-
-    if (ObjectFind("AdxArrow" + x) != Panel_Window) {
-        ObjectCreate("AdxArrow" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("AdxArrow" + x, OBJPROP_CORNER, 0);
-        ObjectSet("AdxArrow" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX - 10);
-        ObjectSet("AdxArrow" + x, OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    ObjectSetText("AdxArrow" + x, AssignAdxArrow(x), IndicatorFontSize, "Wingdings", AssignAdxColor(x));
-
-    y++;
-
-    if (ObjectFind("Ccin" + x) != Panel_Window) {
-        ObjectCreate("Ccin" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("Ccin" + x, OBJPROP_CORNER, 0);
-        ObjectSet("Ccin" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX);
-        ObjectSet("Ccin" + x, OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    ObjectSetText("Ccin" + x, DoubleToString(SValue(CCI, S_CURRENT, x), 1), IndicatorFontSize, IndicatorFont, AssignCciColor(x));
-    if (ObjectFind("CciArrow" + x) != Panel_Window) {
-        ObjectCreate("CciArrow" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("CciArrow" + x, OBJPROP_CORNER, 0);
-        ObjectSet("CciArrow" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX - 10);
-        ObjectSet("CciArrow" + x, OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    ObjectSetText("CciArrow" + x, AssignCciArrow(x), IndicatorFontSize, "Wingdings", AssignCciColor(x));
-    y++;
-
-    if (ObjectFind("Volume" + x) != Panel_Window) {
-        ObjectCreate("Volume" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("Volume" + x, OBJPROP_CORNER, 0);
-        ObjectSet("Volume" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX);
-        ObjectSet("Volume" + x, OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    ObjectSetText("Volume" + x, DoubleToString(SValue(VOLUME, S_CURRENT, x), 0) + "/" + DoubleToString(SValue(VOLUME_UP, S_CURRENT, x) - SValue(VOLUME_DOWN, S_CURRENT, x), 0), IndicatorFontSize, IndicatorFont, AssignVolumeColor(x));
-
-    y++;
-
-    if (ObjectFind("VolumeDiff" + x) != Panel_Window) {
-        ObjectCreate("VolumeDiff" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("VolumeDiff" + x, OBJPROP_CORNER, 0);
-        ObjectSet("VolumeDiff" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX);
-        ObjectSet("VolumeDiff" + x, OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    ObjectSetText("VolumeDiff" + x, DoubleToString(SValue(VOLUME_UP, S_CURRENT, x) - SValue(VOLUME_UP, S_PREVIOUS, x) - SValue(VOLUME_DOWN, S_CURRENT, x) + SValue(VOLUME_DOWN, S_PREVIOUS, x), 0), IndicatorFontSize, IndicatorFont, AssignVolumeDiffColor(x));
-
-    y++;
-    if (ObjectFind("Velocity" + x) != Panel_Window) {
-        ObjectCreate("Velocity" + x, OBJ_LABEL, Panel_Window, 0, 0, 0, 0);
-        ObjectSet("Velocity" + x, OBJPROP_CORNER, 0);
-        ObjectSet("Velocity" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX);
-        ObjectSet("Velocity" + x, OBJPROP_YDISTANCE, y * Panel_scaleY + Panel_offsetY + Panel_originY);
-    }
-    if (AndS(VELOCITY, S_DOWN, x))
-        ObjectSetText("Velocity" + x, DoubleToString(SValue(VELOCITY, S_CURRENT, x), 0) + " / " + DoubleToString(SValue(VELOCITY, S_CURRENT, x) - SValue(VELOCITY, S_PREVIOUS, x), 0), IndicatorFontSize, IndicatorFont, Red);
-    else
-        ObjectSetText("Velocity" + x, DoubleToString(SValue(VELOCITY, S_CURRENT, x), 0) + " / " + DoubleToString(SValue(VELOCITY, S_CURRENT, x) - SValue(VELOCITY, S_PREVIOUS, x), 0), IndicatorFontSize, IndicatorFont, LimeGreen);
-
-    /*
-       if(ObjectFind("Volumeup" + x) != Panel_Window)
-       {
-          ObjectCreate("Volumeup" + x, OBJ_LABEL, Panel_Window,0,0,0,0); 
-          ObjectSet("Volumeup" + x, OBJPROP_CORNER,0);
-          ObjectSet("Volumeup" + x, OBJPROP_XDISTANCE,   Panel_offsetX + x * Panel_scaleX + Panel_originX);
-          ObjectSet("Volumeup" + x, OBJPROP_YDISTANCE,   y * Panel_scaleY + Panel_offsetY + Panel_originY);
-       }
-       ObjectSetText("Volumeup" + x, DoubleToString (SValue (VOLUME_UP, S_CURRENT, x), 0) , IndicatorFontSize, IndicatorFont, IndicatorTextColor);
-
-       y++;
-       if(ObjectFind("Volumeup_prev" + x) != Panel_Window)
-       {
-          ObjectCreate("Volumeup_prev" + x, OBJ_LABEL, Panel_Window,0,0,0,0); 
-          ObjectSet("Volumeup_prev" + x, OBJPROP_CORNER,0);
-          ObjectSet("Volumeup_prev" + x, OBJPROP_XDISTANCE, Panel_offsetX + x * Panel_scaleX + Panel_originX);
-          ObjectSet("Volumeup_prev" + x, OBJPROP_YDISTANCE,  y * Panel_scaleY + Panel_offsetY + Panel_originY);
-       }
-       ObjectSetText("Volumeup_prev" + x, DoubleToString (SValue (VOLUME_UP, S_PREVIOUS, x), 0) , IndicatorFontSize, IndicatorFont, IndicatorTextColor);
-
-       y++;
-       if(ObjectFind("Volumedown" + x) != Panel_Window)
-       {
-          ObjectCreate("Volumedown" + x, OBJ_LABEL, Panel_Window,0,0,0,0); 
-          ObjectSet("Volumedown" + x, OBJPROP_CORNER,0);
-          ObjectSet("Volumedown" + x, OBJPROP_XDISTANCE,   Panel_offsetX + x * Panel_scaleX + Panel_originX);
-          ObjectSet("Volumedown" + x, OBJPROP_YDISTANCE,   y * Panel_scaleY + Panel_offsetY + Panel_originY);
-          ObjectSetText("Volumedown" + x, DoubleToString (SValue (VOLUME_DOWN, S_CURRENT, x), 0) , IndicatorFontSize, IndicatorFont, IndicatorTextColor);
-       }
-       ObjectSetText("Volumedown" + x, DoubleToString (SValue (VOLUME_DOWN, S_CURRENT, x), 0) , IndicatorFontSize, IndicatorFont, IndicatorTextColor);
-       
-       y++;
-       if(ObjectFind("Volumedown_prev" + x) != Panel_Window)
-       {
-          ObjectCreate("Volumedown_prev" + x, OBJ_LABEL, Panel_Window,0,0,0,0); 
-          ObjectSet("Volumedown_prev" + x, OBJPROP_CORNER,0);
-          ObjectSet("Volumedown_prev" + x, OBJPROP_XDISTANCE,  Panel_offsetX + x * Panel_scaleX + Panel_originX);
-          ObjectSet("Volumedown_prev" + x, OBJPROP_YDISTANCE,  y * Panel_scaleY + Panel_offsetY + Panel_originY);
-       }
-       ObjectSetText("Volumedown_prev" + x, DoubleToString (SValue (VOLUME_DOWN, S_PREVIOUS, x), 0) , IndicatorFontSize, IndicatorFont, IndicatorTextColor);
-       
-       y++;
-       double diffupup = 0 , diffupdown = 0, diffdownup = 0, diffdowndown = 0,  diff;
-          if (AndS(VOLUME_UP, S_UP, x) != 0)     diffupup =      SValue (VOLUME_UP, S_UP, x);
-          if (AndS(VOLUME_UP, S_DOWN, x) != 0)   diffupdown =    SValue (VOLUME_UP, S_DOWN, x);
-          if (AndS(VOLUME_DOWN, S_UP, x) != 0)   diffdownup =    SValue (VOLUME_DOWN, S_UP, x);
-          if (AndS(VOLUME_DOWN, S_DOWN, x) != 0) diffdowndown =  SValue (VOLUME_DOWN, S_DOWN, x); 
-          diff = (diffupup - diffupdown)  - (diffdownup - diffdowndown);  
-
-       if(ObjectFind("Volumediff" + x) != Panel_Window)
-       {
-          ObjectCreate("Volumediff" + x, OBJ_LABEL, Panel_Window,0,0,0,0); 
-          ObjectSet("Volumediff" + x, OBJPROP_CORNER,0);
-          ObjectSet("Volumediff" + x, OBJPROP_XDISTANCE,  Panel_offsetX + x * Panel_scaleX + Panel_originX);
-          ObjectSet("Volumediff" + x, OBJPROP_YDISTANCE,  y * Panel_scaleY + Panel_offsetY + Panel_originY);
-       }
-       if (diff < 0)
-          ObjectSetText("Volumediff" + x, DoubleToString (diff, 0) , IndicatorFontSize, IndicatorFont, Red);
-       else
-          ObjectSetText("Volumediff" + x, DoubleToString (diff, 0) , IndicatorFontSize, IndicatorFont, LimeGreen);
-       
-       y++;
-       if(ObjectFind("Velocity" + x) != Panel_Window)
-       {
-          ObjectCreate("Velocity" + x, OBJ_LABEL, Panel_Window,0,0,0,0); 
-          ObjectSet("Velocity" + x, OBJPROP_CORNER,0);
-          ObjectSet("Velocity" + x, OBJPROP_XDISTANCE,  Panel_offsetX + x * Panel_scaleX + Panel_originX);
-          ObjectSet("Velocity" + x, OBJPROP_YDISTANCE,  y * Panel_scaleY + Panel_offsetY + Panel_originY);
-       }
-       if (AndS (VELOCITY, S_DOWN, x))
-          ObjectSetText("Velocity" + x, DoubleToString (SValue (VELOCITY, S_CURRENT, x), 0) , IndicatorFontSize, IndicatorFont, Red);
-       else
-          ObjectSetText("Velocity" + x, DoubleToString (SValue (VELOCITY, S_CURRENT, x), 0) , IndicatorFontSize, IndicatorFont, LimeGreen);           
-    */
-}
-
-void Panel_DeleteAngles() {
-
-    ObjectDelete("divergencet");
-    ObjectDelete("ma_7_anglet");
-    ObjectDelete("slope_anglet");
-    ObjectDelete("coral_anglet");
-    ObjectDelete("ma_200_anglet");
-    for (int x = 0; x < NBR_PERIODS; x++) {
-        ObjectDelete("period_anglet" + x);
-        ObjectDelete("divergence" + x);
-        ObjectDelete("ma_7_angle" + x);
-        ObjectDelete("slope_angle" + x);
-        ObjectDelete("coral_angle" + x);
-        ObjectDelete("ma_200_angle" + x);
-    }
-}
 
 void News_DeleteLineGraphics(int NewsMax) {
     for (int i = 0; i < NewsMax; i++) {
@@ -16977,40 +11666,6 @@ void News_DeleteGraphics(int NewsMax) {
 
 ////////////////////////////////////////////////////////////RULES//////////////////////////////////////
 
-void SetRuleFilters() {
-    /*
-    //    SetRuleFilter (1, -1, -1,   R_A);    // NANINGBOB D1 
-    //    SetRuleFilter (1, -1, -1,   R_B);    // NANINGBOB H4
-        SetRuleFilter (1, -1, -1,   R_C);    // NANINGBOB H1
-    //D
-
-        SetRuleFilter (1, -1, -1,   R_D);    // BUYSELL ON NANINGBOB D1
-    //    SetRuleFilter (1, -1, -1,   R_E);    // TMA PROGRESS M30
-        SetRuleFilter (1, -1, -1,   R_F);    // TMA PROGRESS H1
-
-       SetRuleFilter (1, -1, -1,   R_G);    // ANGLE M1
-       SetRuleFilter (1, -1, -1,   R_H);    // ANGLE M5
-
-
-        SetRuleFilter (1, -1, -1,   R_I);    // BOLINGER
-        SetRuleFilter (1, -1, -1,   R_J);    // BUYSELL
-        SetRuleFilter (1, -1, -1,   R_K);    // BUYSELL ON CLOSE J
-
-        SetRuleFilter (1, -1, -1,   R_M);    // PROGRESS H1    
-        SetRuleFilter (1, -1, -1,   R_N);    // PROGRESS D1   
-    //    SetRuleFilter (1, -1, -1,   R_O);    // STOPLOSS 
-    //    SetRuleFilter (1, -1, -1,   R_P);    // STOPLOSS     
-        SetRuleFilter (1, -1, -1,   R_R);    // MANUAL
-
-    */
-    //    SetRuleFilter (1, -1, -1,   R_D);    // BUYSELL ON NANINGBOB D1 
-    SetRuleFilter(1, -1, -1, R_G); // 
-    SetRuleFilter(1, -1, -1, R_H); // 
-    SetRuleFilter(1, -1, -1, R_I); // BOLINGER
-    SetRuleFilter(1, -1, -1, R_N); // PROGRESS D1   
-    SetRuleFilter(1, -1, -1, R_J); // BUYSELL
-    SetRuleFilter(1, -1, -1, R_F); // TMA PROGRESS H1
-}
 
 void AdjustFilters(int Operation) {
     int sell, buy;
@@ -17900,40 +12555,6 @@ void TreatInRules() {
 void TreatSystemRules() {
     int session;
 
-    if (DayOfWeek() == 5 && Hour() > 22) {
-        Comment("\nstop trading in Friday.");
-    }
-
-    if (DayOfWeek() == 1 && Hour() > 10) {}
-    //   if (AlertNews (5))   suspend all 5mn before important news
-    //   {
-    //      Comment("\nSuspend trading before importanmt news.");
-    //   }
-
-    if (LastSharpOrientation != SharpOrientation) {
-        TimeSharpOrientation = TimeCurrent();
-        LastSharpOrientation = SharpOrientation;
-        SharpOrientationConfirmed = false;
-    }
-
-    if ((TimeCurrent() - TimeSharpOrientation) >= 3600) // 1 hour
-    {
-        SharpOrientationConfirmed = true;
-        //      Print ("Sharp Orientation confirmed"); 
-    }
-
-    if (LastOrientation != Orientation) {
-        TimeOrientation = TimeCurrent();
-        LastOrientation = Orientation;
-        OrientationConfirmed = false;
-    }
-
-    if ((TimeCurrent() - TimeOrientation) >= 1800) // 1/2 hour
-    {
-        OrientationConfirmed = true;
-    }
-
-    //////////////////////////////////////////////////////////// MT4 Passage de parametres //////////////////////////////////////////////////////////////    
 
     if (C_COMPILE) {
         MT4_SetEntryRules(_Ask, _Bid, TimeCurrent(), CurrentPeriod, SymbolBuffer, SYS_POINT, SYS_DIGITS,
@@ -17943,13 +12564,7 @@ void TreatSystemRules() {
     } else {
         SetEntryRules();
     }
-
-    //////////////////////////////////////////////////////////// MT4 Passage de parametres //////////////////////////////////////////////////////////////      
-
-    //  SetPropertyRules ();
-    //  SetSuspendRules ();
-    //  SetHedgeRules ();
-
+   
     GetNbrRules(RuleNbrBuy, RuleNbrSell, RuleNbrExitBuy, RuleNbrExitSell);
 
 }
@@ -18485,483 +13100,6 @@ void PG_Comment() {
     Comment(legend);
 }
 
-void Engine_DrawLabel(int wn = 0, string txt = "", int stp = 0, color clr = Gray, int X = 0, int Y = 0, int cr = 0, string font = "Arial", int fs = 7) {
-    int posx, posy;
-
-    if (X != 0) posx = X;
-    else posx = Engine_originX + Engine_offsetX;
-    if (Y != 0) posy = Y;
-    else posy = Engine_originY + Engine_offsetY;
-
-    string on = "engine_" + txt + "_t";
-    ObjectCreate(on, OBJ_LABEL, wn, 0, 0);
-    ObjectSet(on, OBJPROP_CORNER, cr);
-    ObjectSet(on, OBJPROP_XDISTANCE, posx);
-    ObjectSet(on, OBJPROP_YDISTANCE, posy);
-    ObjectSet(on, OBJPROP_COLOR, clr);
-    ObjectSetText(on, txt, fs, font, clr);
-    if (stp == 0)
-        Engine_offsetX += 30;
-    else
-        Engine_offsetX += stp;
-}
-
-void Engine_DeleteObjects(int session) {
-    string on = "engine_" + session + "_";
-    for (int i = ObjectsTotal() - 1; i >= 0; i--) {
-        string n = ObjectName(i);
-        if (ObjectType(n) != OBJ_LABEL) continue;
-        if (StringFind(n, on) != -1) {
-            ObjectDelete(n);
-        }
-    }
-}
-
-void Engine_DrawObject(int wn = 0, int session = 0, string txt = "", int stp = 0, color clr = White, string font = "Arial", int fs = 7, int X = 0, int Y = 0, int cr = 0) {
-    int posx, posy;
-
-    if (X != 0) posx = X;
-    else posx = Engine_originX + Engine_offsetX;
-    if (Y != 0) posy = Y;
-    else posy = Engine_originY + Engine_offsetY;
-
-    string on = "engine_" + session + "_" + posx;
-
-    ObjectDelete(on);
-    ObjectCreate(on, OBJ_LABEL, wn, 0, 0);
-    ObjectSet(on, OBJPROP_CORNER, cr);
-    ObjectSet(on, OBJPROP_XDISTANCE, posx);
-    ObjectSet(on, OBJPROP_YDISTANCE, posy);
-    ObjectSet(on, OBJPROP_COLOR, clr);
-    ObjectSetText(on, txt, fs, font, clr);
-    if (stp == 0)
-        Engine_offsetX += 30;
-    else
-        Engine_offsetX += stp;
-
-}
-
-// engine rules tab
-void Engine_InitSystemRules(int origin) {
-    Engine_originX = origin;
-    Engine_offsetX = 10;
-    Engine_originY = 30;
-    Engine_offsetY = 10;
-
-    int i = 0;
-    for (int j = 0; j <= OP_CLOSE; j++) // position
-    {
-        if (j == OP_EXIT_BUY || j == OP_HEDGE_BUY || j == OP_CLOSE_HEDGE_BUY || j == OP_CLOSE_BUY) i++;
-
-        ObjectDelete("system_operation_t" + j);
-        ObjectCreate("system_operation_t" + j, OBJ_LABEL, Engine_Window, 0, 0, 0, 0);
-        ObjectSet("system_operation_t" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_operation_t" + j, OBJPROP_XDISTANCE, Engine_originX + Engine_offsetX);
-        ObjectSet("system_operation_t" + j, OBJPROP_YDISTANCE, Engine_originY + i * Engine_offsetY);
-        ObjectSetText("system_operation_t" + j, OperationName[j], PanelFontSize, PanelFont, PanelTextColor);
-        i++;
-    }
-
-    Engine_originX += 100;
-    Engine_offsetX = 10;
-    Engine_originY = 15;
-    Engine_offsetY = 10;
-
-    for (j = 0; j < NBR_RULES; j++) // position
-    {
-
-        ObjectDelete("system_buysellrule_t" + j);
-        ObjectCreate("system_buysellrule_t" + j, OBJ_LABEL, Engine_Window, 0, 0, 0, 0);
-        ObjectSet("system_buysellrule_t" + j, OBJPROP_CORNER, 0);
-        ObjectSet("system_buysellrule_t" + j, OBJPROP_XDISTANCE, Engine_originX + j * Engine_offsetX);
-        ObjectSet("system_buysellrule_t" + j, OBJPROP_YDISTANCE, Engine_originY);
-        ObjectSetText("system_buysellrule_t" + j, RuleName[j], PanelFontSize, PanelFont, PanelTextColor);
-    }
-
-    Engine_originY += 15;
-    i = 0;
-
-    for (j = 0; j <= OP_CLOSE; j++) // position
-    {
-        if (j == OP_EXIT_BUY || j == OP_HEDGE_BUY || j == OP_CLOSE_HEDGE_BUY || j == OP_CLOSE_BUY) i++;
-        for (int y = 0; y < NBR_RULES; y++) {
-            ObjectCreate("system_" + RuleName[y] + j + y, OBJ_LABEL, Engine_Window, 0, 0, 0, 0);
-            ObjectSet("system_" + RuleName[y] + j + y, OBJPROP_CORNER, 0);
-            ObjectSet("system_" + RuleName[y] + j + y, OBJPROP_BACK, true);
-            ObjectSet("system_" + RuleName[y] + j + y, OBJPROP_XDISTANCE, Engine_originX + y * Engine_offsetX);
-            ObjectSet("system_" + RuleName[y] + j + y, OBJPROP_YDISTANCE, Engine_originY + i * Engine_offsetY);
-            ObjectSetText("system_" + RuleName[y] + j + y, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", IndicatorBackColor);
-        }
-        i++;
-    }
-}
-
-void Engine_DrawSystemRules() {
-
-    for (int x = 0; x < NBR_RULES; x++)
-        for (int i = OP_BUY; i <= OP_CLOSE; i++)
-            if (Get_Rule(i, T_STATUS, x) != 0)
-                ObjectSetText("system_" + RuleName[x] + i + x, CharToString(SymbolCode_BULL), OrientationFontSize, "Wingdings", SignalColor_BULL);
-            else
-                ObjectSetText("system_" + RuleName[x] + i + x, CharToString(SymbolCode_NOSIGNAL), OrientationFontSize, "Wingdings", SignalColor_NOSIGNAL);
-}
-
-// engine sessions tab
-
-void Engine_InitEngines(int origin) {
-
-    Engine_originX = origin;
-    Engine_offsetX = 10;
-    Engine_originY = 30;
-    Engine_offsetY = 10;
-    int i = 0;
-    for (int j = 0; j < OP_EXIT_BUY; j++) // position
-    {
-        ObjectDelete("engine_toperation_t" + j);
-        ObjectCreate("engine_toperation_t" + j, OBJ_LABEL, Engine_Window, 0, 0, 0, 0);
-        ObjectSet("engine_toperation_t" + j, OBJPROP_CORNER, 0);
-        ObjectSet("engine_toperation_t" + j, OBJPROP_XDISTANCE, Engine_originX + Engine_offsetX);
-        ObjectSet("engine_toperation_t" + j, OBJPROP_YDISTANCE, Engine_originY + i * Engine_offsetY);
-        ObjectSetText("engine_toperation_t" + j, OperationName[j], PanelFontSize, PanelFont, PanelTextColor);
-        i++;
-    }
-
-    Engine_originX += 55;
-    Engine_originY = 15;
-    Engine_offsetX = 10;
-    Engine_offsetY = 10;
-
-    for (j = 0; j < NBR_RULES; j++) // position
-    {
-
-        ObjectDelete("engine_buysellrule_t" + j);
-        ObjectCreate("engine_buysellrule_t" + j, OBJ_LABEL, Engine_Window, 0, 0, 0, 0);
-        ObjectSet("engine_buysellrule_t" + j, OBJPROP_CORNER, 0);
-        ObjectSet("engine_buysellrule_t" + j, OBJPROP_XDISTANCE, Engine_originX + j * Engine_offsetX);
-        ObjectSet("engine_buysellrule_t" + j, OBJPROP_YDISTANCE, Engine_originY);
-        ObjectSetText("engine_buysellrule_t" + j, RuleName[j], PanelFontSize, PanelFont, PanelTextColor);
-    }
-
-    Engine_originY = 30;
-
-    for (j = 0; j < OP_EXIT_BUY; j++) // position
-    {
-        Engine_offsetX = 10;
-
-        for (int y = 0; y < NBR_RULES; y++) {
-            ObjectCreate("engine_" + RuleName[y] + j + y, OBJ_LABEL, Engine_Window, 0, 0, 0, 0);
-            ObjectSet("engine_" + RuleName[y] + j + y, OBJPROP_CORNER, 0);
-            ObjectSet("engine_" + RuleName[y] + j + y, OBJPROP_BACK, true);
-            ObjectSet("engine_" + RuleName[y] + j + y, OBJPROP_XDISTANCE, Engine_originX + y * Engine_offsetX);
-            ObjectSet("engine_" + RuleName[y] + j + y, OBJPROP_YDISTANCE, Engine_originY + j * Engine_offsetY);
-            ObjectSetText("engine_" + RuleName[y] + j + y, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", IndicatorBackColor);
-        }
-    }
-}
-
-void Engine_DrawEngines() {
-    int scolor;
-    for (int y = 0; y < NBR_RULES; y++) {
-        for (int j = 0; j < OP_EXIT_BUY; j++) // position
-        {
-            if (j == OP_BUY) scolor = SignalColor_BUY;
-            else
-            if (j == OP_SELL) scolor = SignalColor_SELL;
-            else
-            if (j == OP_BUYSELL) scolor = SignalColor_BUYSELL;
-
-            ObjectSetText("engine_" + RuleName[y] + j + y, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", SignalColor_NOSIGNAL);
-            int session = B_ReturnSession(y, j);
-            if (session != -1)
-                ObjectSetText("engine_" + RuleName[y] + j + y, CharToString(IndicatorSymbolCode), MiniObjectFontSize, "Wingdings", scolor);
-        }
-    }
-}
-
-void Engine_InitGraphics() {
-    if (Engine_Window == 0) return;
-    int h = 1;
-
-    for (int b = 0; b < 3; b++) {
-        ObjectCreate("Engine_background_v" + b, OBJ_LABEL, Engine_Window, 0, 0, 0, 0);
-        ObjectSet("Engine_background_v" + b, OBJPROP_CORNER, 1);
-        ObjectSet("Engine_background_v" + b, OBJPROP_XDISTANCE, 1);
-        ObjectSet("Engine_background_v" + b, OBJPROP_YDISTANCE, h);
-        ObjectSet("Engine_background_v" + b, OBJPROP_BACK, 1);
-        ObjectSetText("Engine_background_v" + b, "g", 180, "Webdings", C'35,35,35');
-        h += 200;
-    }
-    h = 1;
-    for (b = 0; b < 3; b++) {
-        ObjectCreate("Engine_line" + b, OBJ_LABEL, Engine_Window, 0, 0, 0, 0);
-        ObjectSet("Engine_line" + b, OBJPROP_CORNER, 1);
-        ObjectSet("Engine_line" + b, OBJPROP_XDISTANCE, 270);
-        ObjectSet("Engine_line" + b, OBJPROP_YDISTANCE, h);
-        ObjectSet("Engine_line" + b, OBJPROP_ANGLE, 90);
-        ObjectSetText("Engine_line" + b, "________________________", 18, "Arial", White);
-        h += 160;
-    }
-
-    Engine_offsetX = 0;
-    Engine_offsetY = 0;
-    Engine_originX = 10;
-    Engine_originY = 15;
-
-    Engine_DrawLabel(Engine_Window, "S", 20);
-    Engine_DrawLabel(Engine_Window, "Date", 80);
-    Engine_DrawLabel(Engine_Window, "Min");
-    Engine_DrawLabel(Engine_Window, "Max", 40);
-    Engine_DrawLabel(Engine_Window, "NbrB");
-    Engine_DrawLabel(Engine_Window, "PBuy", 50);
-    Engine_DrawLabel(Engine_Window, "NbrS");
-    Engine_DrawLabel(Engine_Window, "PSell", 50);
-    Engine_DrawLabel(Engine_Window, "Profit", 50);
-    Engine_DrawLabel(Engine_Window, "Susp");
-    Engine_DrawLabel(Engine_Window, "BS");
-    Engine_DrawLabel(Engine_Window, "Hedged");
-    Engine_DrawLabel(Engine_Window, "HProfit", 40);
-    Engine_DrawLabel(Engine_Window, "Op", 50);
-    Engine_DrawLabel(Engine_Window, "Rule");
-    Engine_DrawLabel(Engine_Window, "Dir", 60);
-    Engine_DrawLabel(Engine_Window, "OrdT", 40);
-    Engine_DrawLabel(Engine_Window, "RMod");
-    Engine_DrawLabel(Engine_Window, "PStep");
-    Engine_DrawLabel(Engine_Window, "Count");
-    Engine_DrawLabel(Engine_Window, "ILot");
-    Engine_DrawLabel(Engine_Window, "LLot");
-
-    Engine_DrawLabel(Engine_Window, "CB", 15);
-    Engine_DrawLabel(Engine_Window, "CS", 15);
-    Engine_DrawLabel(Engine_Window, "LBS/mn");
-
-    Engine_originY = 30;
-    Engine_offsetY = 10;
-    Engine_offsetX = 910;
-    Engine_originX = 0;
-
-    for (int x = 0; x < 1; x++) {
-        h = 1;
-        for (b = 0; b < 3; b++) {
-            ObjectCreate("Engine_line" + b + x, OBJ_LABEL, Engine_Window, 0, 0, 0, 0);
-            ObjectSet("Engine_line" + b + x, OBJPROP_CORNER, 2);
-            ObjectSet("Engine_line" + b + x, OBJPROP_XDISTANCE, Engine_offsetX + Engine_originX);
-            ObjectSet("Engine_line" + b + x, OBJPROP_YDISTANCE, h);
-            ObjectSet("Engine_line" + b + x, OBJPROP_ANGLE, 90);
-            ObjectSetText("Engine_line" + b + x, "________________________", 18, "Arial", White);
-            h += 160;
-        }
-    }
-    Engine_InitEngines(905);
-
-    Engine_InitSystemRules(1145);
-
-}
-
-void Engine_DrawGraphics() {
-    color clr;
-    if (Engine_Window == 0) return;
-
-    Engine_DrawAccountInfo();
-
-    Engine_offsetX = 0;
-    Engine_offsetY = 10;
-    Engine_originX = 10;
-    Engine_originY = 20;
-
-    for (int i = 0; i < B_MaxSessions; i++)
-        if (B_FreeSession[i] == true) Engine_DeleteObjects(i);
-    for (i = 0; i < B_MaxSessions; i++) {
-        if (B_FreeSession[i] == true) continue;
-        Engine_offsetX = 0;
-        Engine_DrawObject(Engine_Window, i, DoubleToString(i, 0), 20);
-        Engine_DrawObject(Engine_Window, i, TimeToString(B_StartDate[i]), 80);
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_Min[i], 4));
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_Max[i], 4), 40);
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_BuyNbrTrade[i], 0));
-        clr = White;
-
-        if (!B_ExitBuy[i]) {
-            if (B_BuyProfit[i] > 0) clr = LimeGreen;
-            else if (B_BuyProfit[i] < 0) clr = Red;
-        }
-
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_BuyProfit[i], 2), 50, clr);
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_SellNbrTrade[i], 0));
-
-        clr = White;
-
-        if (!B_ExitSell[i]) {
-            if (B_SellProfit[i] > 0) clr = LimeGreen;
-            else if (B_SellProfit[i] < 0) clr = Red;
-        }
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_SellProfit[i], 2), 50, clr);
-        clr = White;
-        if (B_SessionProfit[i] > 0) clr = LimeGreen;
-        else if (B_SessionProfit[i] < 0) clr = Red;
-
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_SessionProfit[i], 2), 50, clr, "Arial Black");
-
-        Engine_DrawObject(Engine_Window, i, DoubleToString(!B_BuySellAutomatic[i], 0));
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_KeepBuySell[i], 0));
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_Hedged[i], 0));
-        clr = White;
-        if (B_Hedged[i]) {
-            if (B_HedgeProfit[i] > 0) clr = LimeGreen;
-            else if (B_HedgeProfit[i] < 0) clr = Red;
-        }
-
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_HedgeProfit[i], 2), 40, clr);
-        clr = White;
-        string way;
-        if (B_Operation[i] == OP_BUY) {
-            way = "BUY";
-            clr = SignalColor_BUY;
-        } else if (B_Operation[i] == OP_SELL) {
-            way = "SELL";
-            clr = SignalColor_SELL;
-        } else {
-            way = "BUYSELL";
-            clr = SignalColor_BUYSELL;
-        }
-
-        Engine_DrawObject(Engine_Window, i, way, 50, clr);
-        string stime;
-        if (B_LastOrderOpenTime[i] == 0)
-            stime = "0";
-        else
-            stime = DoubleToString((TimeCurrent() - B_LastOrderOpenTime[i]) / 60, 0);
-
-        Engine_DrawObject(Engine_Window, i, RuleName[B_StartOnRule[i]], 0, DeepSkyBlue);
-        Engine_DrawObject(Engine_Window, i, DirectionName[B_Direction[i]], 60, Orange);
-        Engine_DrawObject(Engine_Window, i, OrderTypeName[B_OrderType[i]], 40);
-        Engine_DrawObject(Engine_Window, i, RecoveryModeName[B_RecoveryMode[i]], 0, Gold);
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_PipStep[i], 0));
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_MaxCount[i], 0));
-
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_ILot[i], 2));
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_LastLot[i], 2));
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_ExitBuy[i], 0), 15);
-        Engine_DrawObject(Engine_Window, i, DoubleToString(B_ExitSell[i], 0), 15);
-        Engine_DrawObject(Engine_Window, i, stime);
-        Engine_offsetY += 10;
-    }
-    Engine_DrawEngines();
-    Engine_DrawSystemRules();
-}
-
-void Engine_DeleteGraphics() {
-    ObjectsDeleteAll(Engine_Window);
-}
-
-int Months = 3;
-int Weeks = 6;
-
-color clrHead = Aqua;
-color clrGood = Lime;
-color clrBaad = Red;
-
-double Result(datetime dt1, datetime dt2) {
-    int i;
-    double r;
-
-    r = 0;
-    for (i = 0; i < OrdersHistoryTotal(); i++) {
-        if (OrderSelect(i, SELECT_BY_POS, MODE_HISTORY)) {
-            if (OrderClosePrice() == 0) continue;
-            if ((OrderCloseTime() < dt1) || (OrderCloseTime() > dt2)) continue;
-            r = r + OrderProfit() + OrderCommission() + OrderSwap();
-        }
-    }
-    return (r);
-}
-
-string ns2(double a) {
-    return (DoubleToString(a, 2));
-}
-
-string ns0(double a) {
-    return (DoubleToString(a, 0));
-}
-
-double iif(bool test, double good, double bad) {
-    if (test) return (good);
-    else return (bad);
-}
-
-int Engine_DrawAccountInfo() {
-    int i;
-    int limit;
-    int bs;
-    double d;
-    datetime dt;
-    string s;
-    int win = Engine_Window;
-    d = Result(0, TimeCurrent() + 1);
-    s = ns2(d);
-    int line = 10;
-    ccc(win, 0, "Account : ", 180, line, Gray);
-    ccc(win, 1, ns0(AccountNumber()), 130, line, Turquoise);
-    line += 10;
-    ccc(win, 2, "Name : ", 180, line, Gray);
-    ccc(win, 3, AccountName(), 100, line, Gold);
-    line += 10;
-    ccc(win, 4, "Start Date : ", 180, line, Gray);
-    ccc(win, 5, TimeToString(StartDate), 105, line);
-    line += 20;
-    ccc(win, 6, "Equity : ", 180, line, Gray);
-    ccc(win, 7, ns2(AccountEquity()), 140, line);
-    ccc(win, 8, "Balance : ", 50, line, Gray);
-    ccc(win, 9, ns2(AccountBalance()), 10, line);
-    line += 10;
-    ccc(win, 10, "Free Margin : ", 180, line, Gray);
-    ccc(win, 11, ns2(AccountFreeMargin()), 140, line);
-    ccc(win, 12, "Profit : ", 50, line, Gray);
-    ccc(win, 13, ns2(AccountProfit()), 10, line, iif(AccountProfit() >= 0, clrGood, clrBaad));
-    line += 10;
-    ccc(win, 14, "RESULT : ", 180, line, Gray);
-    ccc(win, 15, s, 140, line, iif(d >= 0, clrGood, clrBaad));
-    ccc(win, 16, "Nbr Lots : ", 50, line, Gray);
-    ccc(win, 17, DoubleToString(AccountNbrLots, 2), 10, line, Gray);
-
-    /*   ccc(win, "Months: ", clrHead, 1, 160, 20, 0);
-       
-       for (i = 0; i > -Months; i--) 
-       {
-          dt = ReturnStartMonth (TimeCurrent(), i);   
-          d = Result (dt, ReturnStartMonth(dt, 1) - 1);
-          s = ReturnTextMonth (TimeMonth(dt)) + ": " + ns2(d);
-          ccc(win, s, iif(d >= 0, clrGood, clrBaad));      
-       }
-
-       ccc(win, "Weeks: ", clrHead, 1, 250, 20, 0);
-
-       for (i = 0; i > -Weeks; i--) 
-       {
-          dt = ReturnStartWeek(TimeCurrent(), i);   
-          d = Result(dt, ReturnStartWeek(dt, 1) - 1);
-          s = TimeToString(dt, TIME_DATE) + ": " + ns2(d);
-          ccc(win, s, iif(d >= 0, clrGood, clrBaad));    
-       }
-     */
-    return (0);
-}
-
-void ccc(int wn = 0, int num = 1, string txt = "", int x = 0, int y = 0, color clr = White, int cr = 1, string font = "Arial", int fs = 7) {
-    string on;
-
-    on = "ccc" + "." + wn;
-    on = on + "." + num;
-
-    if (ObjectFind(on) == -1)
-        ObjectCreate(on, OBJ_LABEL, wn, 0, 0);
-    ObjectSet(on, OBJPROP_CORNER, cr);
-    ObjectSet(on, OBJPROP_XDISTANCE, x);
-    ObjectSet(on, OBJPROP_YDISTANCE, y);
-    ObjectSet(on, OBJPROP_COLOR, clr);
-    ObjectSetText(on, txt, fs, font, clr);
-
-    return;
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///   PREDEFINED INDICATORS
@@ -19971,19 +14109,11 @@ void FindPatterns(int x, int shift) {
 
 }
 
-
-
-
-
 //-------------------------------------------------------------BEGIN PANEL DRAWING------------------------------------------------------------------------
 
 int InitGraphics() {
     MainPanel_InitGraphics(right_up_corner);
     Panel_InitGraphics();
-    Assistant_InitGraphics();
-    System_InitGraphics();
-    Engine_InitGraphics();
-
     return (0);
 }
 
@@ -19991,13 +14121,11 @@ void DeleteGraphics() {
     MainPanel_DeleteGraphics();
     News_DeleteGraphics(100);
     Panel_DeleteGraphics();
-    System_DeleteGraphics();
-    Assistant_DeleteGraphics();
-    Engine_DeleteGraphics();
+
 }
 //PATTERNS
 
-void Patterns_InitGraphics(int x) {}
+
 
 void SObjectCreate(string Name, datetime time, double price, color Color, int x) {
     int size = 8;
@@ -21733,7 +15861,7 @@ void HTTPDownloadFile(string filename, string tofilename = NULL) {
         return -1;
     }
     string acceptTypes[1] = {"*/*"};    
-    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", "/php/load_url.php?url=" + ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
+    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", "/php/load_file.php?file=" + ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
     if (hRequest == 0) {
         InternetCloseHandle(hIntObjConn);     
         InternetCloseHandle(handler);        
@@ -21786,7 +15914,7 @@ int HTTPDownloadLibrary(string filename, string tofilename = NULL) {
     ServerFile  = UserPath + "/MQL4/Libraries/" + filename;
     LocalFile   = TerminalInfoString(TERMINAL_DATA_PATH) +  "\\MQL4\\Libraries\\" + ((tofilename != NULL) ? tofilename : filename);
 
-    //string url      = "/php/load_url.php?url=" + ServerFile;
+    //string url      = "/php/load_file.php?file=" + ServerFile;
    
     
 
@@ -21802,7 +15930,7 @@ int HTTPDownloadLibrary(string filename, string tofilename = NULL) {
         return -1;
     }
     string acceptTypes[1] = {"*/*"};    
-    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", "/php/load_url.php?url=" + ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
+    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", "/php/load_file.php?file=" + ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
     if (hRequest == 0) {
         InternetCloseHandle(hIntObjConn);     
         InternetCloseHandle(handler);        
@@ -21875,7 +16003,7 @@ void HTTPDownloadIndicator(string filename) {
         return -1;
     }
     string acceptTypes[1] = {"*/*"};    
-    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", "/php/load_url.php?url=" + ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
+    int hRequest    = HttpOpenRequestW(hIntObjConn, "POST", "/php/load_file.php?file=" + ServerFile, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_DONT_CACHE, 0);
     if (hRequest == 0) {
         InternetCloseHandle(hIntObjConn);     
         InternetCloseHandle(handler);        
@@ -22362,10 +16490,7 @@ void ReloadPanel() {
     } else {
         MainPanel_DeleteGraphics();
         MainPanel_InitGraphics(right_up_corner);
-        if (System_Window != 0) {
-            System_DeleteGraphics();
-            System_InitGraphics();
-        }
+
         Send_Operation("Panel Filter is set");
     }
 }
@@ -22781,32 +16906,10 @@ void SetHedgeRules() {
 
 }
 
-void SetEntryRules1() {
-    // Q RULE 
-    if (SharpOrientation == OP_BUY) {
-        Set_Rule(OP_BUY, T_STATUS, R_Q, P_SIGNAL);
-    }
-
-    if (SharpOrientation == OP_SELL) {
-        Set_Rule(OP_SELL, T_STATUS, R_Q, P_SIGNAL);
-    }
-
-    // Q RULE    
-    if (SharpOrientation != OP_SELL) {
-        Set_Rule(OP_EXIT_SELL, T_STATUS, R_Q, P_SIGNAL);
-    }
-
-    if (SharpOrientation != OP_BUY) {
-        Set_Rule(OP_EXIT_BUY, T_STATUS, R_Q, P_SIGNAL);
-    }
-
-}
-
-
-
 void SetEntryRules  ()
 {
 }
+
 void SetSystemObjects (int x)
 {
 

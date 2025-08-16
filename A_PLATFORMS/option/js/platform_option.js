@@ -1056,11 +1056,11 @@ function OptionOrderPanel () {
     var content     = '';
     content +=     
 '   <div class="sb_buttongroup">' +
-'       <button id ="SymbolBuyType" class="sb_button" onmousedown="OptionSetOrderType(this, \'BUY\')" >BUY</button>' + 
+'       <button id ="buy" class="sb_button" onmousedown="OptionSetOrderType(this, \'BUY\')" >BUY</button>' + 
 '       <div id = "bid"></div> ' + 
 '       <div id = "bidask">/</div>' + 
 '       <div id = "ask"></div>' + 
-'       <button id ="SymbolSellType" class="sb_button" onmousedown="OptionSetOrderType(this,  \'SELL\')" >SELL</button>' + 
+'       <button id ="sell" class="sb_button" onmousedown="OptionSetOrderType(this,  \'SELL\')" >SELL</button>' + 
 '   </div>' +            
 '   <div class="sb_bodygroup">' + 
 '       <div class="sb_formgroup">' +
@@ -1079,11 +1079,11 @@ function OptionOrderPanel () {
 '       </div>' +
 '       <div class="sb_formgroup">' +
 '           <label>Size</label>' + 
-'           <input id = "ContractVolume" class="form-control" type="number" min="1" step="1", id ="svolume"; onchange="SetSLTP (this, \'VOL\')"; value="' + 'tradetypevalue' + '">' +
+'           <input id = "ContractVolume" class="form-control" type="number" min="1" step="1", id ="svolume"; onchange="SetSLTP (this, \'VOL\')"; value="' + 'tradesize_value' + '">' +
 '       </div>' + 
 '       <div class="sb_formgroup">' +
 '           <label>Price</label>' +             
-'           <input id = "ContractEntryValue" class="form-control" type="number", min="0" step="' + 'entrystep' + '",  id ="ssl";  value:' + 'entryvalue' + '>'+ 
+'           <input id = "ContractEntryValue" class="form-control" type="number", min="0" step="' + 'entrystep' + '",  id ="ssl";  value:' + 'tradeentry_value' + '>'+ 
 '       </div>' +
 '   </div>' +
 '   <div class="sb_buttongroup">' + 
@@ -1105,8 +1105,8 @@ function OptionSetOrderType(e, type) {
 
         $('#' + id + ' #tradesubmit').attr('disabled',  true);
         $('#' + id + ' #tradecancel').attr('disabled',  true);      
-        $('#' + id + ' #SymbolBuyType').attr("style", "color: var(--theme-button-color); background-color: var(--theme-button-bg-color);");        
-        $('#' + id + ' #SymbolSellType').attr("style", "color: var(--theme-button-color); background-color: var(--theme-button-bg-color);");        
+        $('#' + id + ' #buy').attr("style", "color: var(--theme-button-color); background-color: var(--theme-button-bg-color);");        
+        $('#' + id + ' #sell').attr("style", "color: var(--theme-button-color); background-color: var(--theme-button-bg-color);");        
         
         $('#' + id + ' #ContractVolume').val('');
         $('#' + id + ' #ContractEntryValue').val('');
@@ -1119,8 +1119,8 @@ function OptionSetOrderType(e, type) {
 
         $('#' + id + ' #tradesubmit').attr('disabled',  false);
         $('#' + id + ' #tradecancel').attr('disabled',  false);           
-        $('#' + id + ' #SymbolBuyType').attr("style",  'color: var(--theme-main-color); background-color:' + theme_buy);        
-        $('#' + id + ' #SymbolSellType').attr("style", 'color: var(--theme-button-color); background-color: var(--theme-button-bg-color);');        
+        $('#' + id + ' #buy').attr("style",  'color: var(--theme-main-color); background-color:' + theme_buy);        
+        $('#' + id + ' #sell').attr("style", 'color: var(--theme-button-color); background-color: var(--theme-button-bg-color);');        
 
 
         if (Symbol.RightType == TRADE_STOCK) {
@@ -1148,8 +1148,8 @@ function OptionSetOrderType(e, type) {
 
         $('#' + id + ' #tradesubmit').attr('disabled',  false);
         $('#' + id + ' #tradecancel').attr('disabled',  false);           
-        $('#' + id + ' #SymbolSellType').attr("style",  'color: var(--theme-main-color); background-color:' + theme_sell);        
-        $('#' + id + ' #SymbolBuyType').attr("style", 'color: var(--theme-button-color); background-color: var(--theme-button-bg-color);');    
+        $('#' + id + ' #sell').attr("style",  'color: var(--theme-main-color); background-color:' + theme_sell);        
+        $('#' + id + ' #buy').attr("style", 'color: var(--theme-button-color); background-color: var(--theme-button-bg-color);');    
 
 
         if (Symbol.RightType == TRADE_STOCK) {
@@ -2356,7 +2356,7 @@ function OptionTreatData (values) {
 
 function OptionUpdateOrders (symbol, type) {
     if(!solution.CurrentOptionTerminal) return;
-    Symbol.TradeOrder
+
     var terminal = solution.CurrentOptionTerminal;
     var PG = terminal.PG;
     var Orders = (type == MANUAL_ORDER) ? PG.Orders : PG.EOrders;

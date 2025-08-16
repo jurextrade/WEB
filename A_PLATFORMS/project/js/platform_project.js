@@ -1496,14 +1496,23 @@ function strategyinputresize() {
 //---------------------------------------------------- SELECT PROJECT ---------------------------------------------- 
 
 function GoToProject(elt) {
-    let ui  = solution.get('ui')     
-    ui.platform_select(PROJECT_PLATFORM_PNAME)   
-   
-    
-    var project = solution.project_GetProjectFromName($(elt).val());
-    if (project) {
-        OnCloseStrategy(project_selectproject, project);
-    }
+
+    solution_module_load ('project', () => {
+        let projectname = $('#tradedeskprojectname').val();   
+        let project = selector_select('project_selectproject', projectname);        
+
+        LoaderDisplay(true);     
+        let strategyname = $("#tradedeskstrategyselect option:selected").val();;
+        let timerId = setInterval((project, strategyname) => {
+            if (project.Loaded) {
+                LoaderDisplay(false);                
+                clearInterval(timerId);
+                selector_select('project_selectstrategy', strategyname);    
+               
+            }    
+        },  300, project,  strategyname); 	 
+
+    })         
 }
 
 function RefreshProjectName(project) {

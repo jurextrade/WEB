@@ -369,6 +369,7 @@ const emv_default_projectname         = "DemoProject";
 const project_default_projectname     = "DemoProject";
 const netprog_default_projectname     = "DemoProject";
 const tradedesk_default_terminalname  = "FP Markets MT4 Terminal";
+const option_default_projectname      = "DemoProject";
 
 const emv_default_router_name   = 'localhost';
 const emv_default_router_port     = 5080;

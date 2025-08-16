@@ -869,8 +869,11 @@ int init() {
     CurrentTime = TimeCurrent();
     GMTShift = GetShiftGMT();
     StartDate = ReturnStartDate();
+    
+     Print("Expert is running on chart period " + _Period);
+    
     CurrentPeriod = Period2Int(_Period);
-
+     Print("Expert is running on CurrentPeriod " + CurrentPeriod);
     InitMarketInfo();
 
     str2struct(TerminalBuffer, ArraySize(TerminalBuffer) << 18, TerminalPath());
@@ -964,7 +967,7 @@ int end_init() {
     return (0);
 }
 
-void OnTick() {
+void start() {
 
     if (AttemptToStart) {
     //    ExpertRemove ();
@@ -1178,71 +1181,8 @@ void ResetAll(int first = -1) {
     ResetSchedules();
 }
 
-void ResetSignals(int first = -1) {
-    int i;
-    for (int z = 0; z < O_NbrObject; z++) {
-        i = ObjId[z];
-        for (int j = 0; j < NBR_SIGNALS; j++) {
-            for (int k = 0; k < NBR_PERIODS; k++) {
-                if (first == 1) {
-                    SignalTabTime[i][j][k] = -1;
-                    SignalTabPrice[i][j][k] = -1;
-                    SignalTabValue[i][j][k] = -1;
-                    BeforeSignalTabValue[i][j][k] = -1;
-                    BeforeSignalTabTime[i][j][k] = -1;
-                    BeforeSignalTabPrice[i][j][k] = -1;
 
-                    SignalTab[i][j] = 0;
-                    BeforeSignalTab[i][j] = 0;
-                    BeforeSignalTickTab[i][j] = 0;
-                } else {
-                    if (AndS(i, j, k) != 0)
-                        BeforeSignalTickTab[i][j] |= (1 << k);
-                    else
-                        BeforeSignalTickTab[i][j] &= ~(1 << k);
 
-                    if (TimeOpenBar[k] != iTime(NULL, PeriodIndex[k], 0)) {
-                        if (AndS(i, j, k) != 0)
-                            BeforeSignalTab[i][j] |= (1 << k);
-                        else
-                            BeforeSignalTab[i][j] &= ~(1 << k);
-                        BeforeSignalTabValue[i][j][k] = SignalTabValue[i][j][k];
-                        BeforeSignalTabTime[i][j][k] = SignalTabTime[i][j][k];
-                        BeforeSignalTabPrice[i][j][k] = SignalTabPrice[i][j][k];
-                    }
-                }
-            }
-            SignalTab[i][j] = 0;
-        }
-        if (first == 1) RuleObjFilter[i] = 1;
-    }
-}
-
-void ResetRules(int first = -1) // only status is reset
-{
-    for (int i = 0; i < NBR_OPERATIONS; i++)
-        for (int j = 0; j < NBR_FIELDS; j++) {
-            BeforeRuleTab[i][j] = RuleTab[i][j];
-            RuleTab[i][j] = 0;
-            if (first == 1)
-                for (int k = 0; k < NBR_RULES; k++)
-                    if (j == T_BUYNBRTRADE || j == T_SELLNBRTRADE)
-                        RuleTabValue[i][j][k] = 0;
-                    else
-                        RuleTabValue[i][j][k] = 0;
-        }
-}
-
-void ResetSignalFilters() {
-    int i;
-
-    for (int z = 0; z < O_NbrObject; z++) {
-        i = ObjId[z];
-        for (int j = 0; j < NBR_SIGNALS; j++)
-            for (int x = 0; x < NBR_PERIODS; x++)
-                SignalFilterTab[i][j][x] = 0;
-    }
-}
 
 void ResetEngines(int first = -1) {
     for (int i = 0; i < NBR_ENGINES; i++) {
@@ -5540,6 +5480,7 @@ void Send_Symbol(string symbol, int x) {
     s = s + DoubleToString(iClose(symbol, PeriodIndex[x], 0), _Digits);
     s = s + "^";
     s = s + DoubleToString(iVolume(symbol, PeriodIndex[x], 0), 0);
+
     s = s + "*";
     PG_Send(NodeSocket, s);
 }

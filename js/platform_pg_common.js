@@ -260,6 +260,101 @@ function DisplayTerminal(terminal, Symbol) {
 }
 
 
+const ForexCurrencies = [
+    { id: 0,    Name : "ARS",   PName : "ARS",   SoundName : "",         Description: "Argentine Peso"},
+    { id: 1,    Name : "AUD",   PName : "AUD",   SoundName : "",         Description: "Australian Dollar"},
+    { id: 2,    Name : "BHD",   PName : "BHD",   SoundName : "",         Description: "Bahraini Dinar"},
+    { id: 3,    Name : "BBD",   PName : "BBD",   SoundName : "",         Description: "Barbadian Dollar"},
+    { id: 4,    Name : "BRL",   PName : "BRL",   SoundName : "",         Description: "Brazilian Real"},
+    { id: 5,    Name : "GBP",   PName : "GBP",   SoundName : "",         Description: "British Pound"},
+    { id: 6,    Name : "CAD",   PName : "CAD",   SoundName : "",         Description: "Canadian Dollar"},
+    { id: 7,    Name : "XAF",   PName : "XAF",   SoundName : "",         Description: "Central African CFA franc   "},
+    { id: 8,    Name : "CLP",   PName : "CLP",   SoundName : "",         Description: "Chilean Peso"},
+    { id: 9,    Name : "CNY",   PName : "CNY",   SoundName : "",         Description: "Chinese Yuan"},
+    { id: 10,   Name : "CYP",   PName : "CYP",   SoundName : "",         Description: "Cyprus Pound"},
+    { id: 11,   Name : "CZK",   PName : "CZK",   SoundName : "",         Description: "Czech Koruna"},
+    { id: 12,   Name : "DKK",   PName : "DKK",   SoundName : "",         Description: "Danish Krone"},
+    { id: 13,   Name : "XCD",   PName : "XCD",   SoundName : "",         Description: "East Caribbean Dollar"},
+    { id: 14,   Name : "EGP",   PName : "EGP",   SoundName : "",         Description: "Egyptian Pound"},
+    { id: 15,   Name : "EEK",   PName : "EEK",   SoundName : "",         Description: "Estonian Kroon"},
+    { id: 16,   Name : "EUR",   PName : "EUR",   SoundName : "",         Description: "Euro"},
+    { id: 17,   Name : "HKD",   PName : "HKD",   SoundName : "",         Description: "Hong Kong Dollar"},
+    { id: 18,   Name : "HUF",   PName : "HUF",   SoundName : "",         Description: "Hungarian Forint"},
+    { id: 19,   Name : "ISK",   PName : "ISK",   SoundName : "",         Description: "Icelandic Krona"},
+    { id: 20,   Name : "INR",   PName : "INR",   SoundName : "",         Description: "Indian Rupee"},
+    { id: 21,   Name : "IDR",   PName : "IDR",   SoundName : "",         Description: "Indonesian Rupiah"},
+    { id: 22,   Name : "ILS",   PName : "ILS",   SoundName : "",         Description: "Israeli Sheqel"},
+    { id: 23,   Name : "JMD",   PName : "JMD",   SoundName : "",         Description: "Jamaican Dollar"},
+    { id: 24,   Name : "JPY",   PName : "JPY",   SoundName : "",         Description: "Japanese Yen"},
+    { id: 25,   Name : "JOD",   PName : "JOD",   SoundName : "",         Description: "Jordanian Dinar"},
+    { id: 26,   Name : "KES",   PName : "KES",   SoundName : "",         Description: "Kenyan Shilling"},
+    { id: 27,   Name : "LVL",   PName : "LVL",   SoundName : "",         Description: "Latvian Lats"},
+    { id: 28,   Name : "LBP",   PName : "LBP",   SoundName : "",         Description: "Lebanese Pound"},
+    { id: 29,   Name : "LTL",   PName : "LTL",   SoundName : "",         Description: "Lithuanian Litas"},
+    { id: 30,   Name : "MYR",   PName : "MYR",   SoundName : "",         Description: "Malaysian Ringgit"},
+    { id: 31,   Name : "MXN",   PName : "MXN",   SoundName : "",         Description: "Mexican Peso"},
+    { id: 32,   Name : "MAD",   PName : "MAD",   SoundName : "",         Description: "Moroccan Dirham"},
+    { id: 33,   Name : "NAD",   PName : "NAD",   SoundName : "",         Description: "Namibian Dollar"},
+    { id: 34,   Name : "NPR",   PName : "NPR",   SoundName : "",         Description: "Nepalese Rupee"},
+    { id: 35,   Name : "NZD",   PName : "NZD",   SoundName : "",         Description: "New Zealand Dollar"},
+    { id: 36,   Name : "NOK",   PName : "NOK",   SoundName : "",         Description: "Norwegian Krone"},
+    { id: 37,   Name : "OMR",   PName : "OMR",   SoundName : "",         Description: "Omani Rial"},
+    { id: 38,   Name : "PKR",   PName : "PKR",   SoundName : "",         Description: "Pakistani Rupee"},
+    { id: 39,   Name : "PAB",   PName : "PAB",   SoundName : "",         Description: "Panamanian Balboa"},
+    { id: 40,   Name : "PHP",   PName : "PHP",   SoundName : "",         Description: "Philippine Peso"},
+    { id: 41,   Name : "PLN",   PName : "PLN",   SoundName : "",         Description: "Polish Zloty"},
+    { id: 42,   Name : "QAR",   PName : "QAR",   SoundName : "",         Description: "Qatari Riyal"},
+    { id: 43,   Name : "RON",   PName : "RON",   SoundName : "",         Description: "Romanian Leu"},
+    { id: 44,   Name : "RUB",   PName : "RUB",   SoundName : "",         Description: "Russian Rouble"},
+    { id: 45,   Name : "SAR",   PName : "SAR",   SoundName : "",         Description: "Saudi Riyal"},
+    { id: 46,   Name : "SGD",   PName : "SGD",   SoundName : "",         Description: "Singapore Dollar"},
+    { id: 47,   Name : "ZAR",   PName : "ZAR",   SoundName : "",         Description: "South African Rand"},
+    { id: 48,   Name : "KRW",   PName : "KRW",   SoundName : "",         Description: "South Korean Won"},
+    { id: 49,   Name : "LKR",   PName : "LKR",   SoundName : "",         Description: "Sri Lankan Rupee"},
+    { id: 50,   Name : "SEK",   PName : "SEK",   SoundName : "",         Description: "Swedish Krona"},
+    { id: 51,   Name : "CHF",   PName : "CHF",   SoundName : "",         Description: "Swiss Franc"},
+    { id: 52,   Name : "THB",   PName : "THB",   SoundName : "",         Description: "Thai Baht"},
+    { id: 53,   Name : "TRY",   PName : "TRY",   SoundName : "",         Description: "Turkish Lira"},
+    { id: 54,   Name : "AED",   PName : "AED",   SoundName : "",         Description: "United Arab Emirates Dirham"},
+    { id: 55,   Name : "USD",   PName : "USD",   SoundName : "",         Description: "US Dollar"},
+    { id: 56,   Name : "VEF",   PName : "VEF",   SoundName : "",         Description: "Venezuelan bolivar"},
+    { id: 57,   Name : "XOF",   PName : "XOF",   SoundName : "",         Description: "West African CFA franc"},
+    { id: 58 ,  Name:  "XAU",   PName : 'USD',   SoundName : 'gold',     Description: "Gold Spot"},
+    { id: 59 ,  Name:  "XAG",   PName : 'USD',   SoundName : 'silver',   Description: "Silver Spot"},
+    { id: 60 ,  Name:  "BTC",   PName : 'BTC',   SoundName : '',         Description: "Bit Coin"},
+    { id: 61,   Name : "CNH",   PName : "CNH",   SoundName : "",         Description: "Chinese Yuan"}
+];
+
+
+const MarketCurrencies = [
+    { id: 0,   Name : "US Dollar ",     PName : "DX-Y.NYB", SoundName : "",         Description: "US Dollar Index"},
+    { id: 1,   Name : "Gold ",          PName : "GC=F",     SoundName : "",         Description: "Gold Future e Dec 20"},
+    { id: 2,   Name : "Silver ",        PName : "SI=F",     SoundName : "",         Description: "Silver Future e Dec 20"},
+    { id: 3,   Name : "Oil|Crude",      PName : "CL=F",     SoundName : "",         Description: "Crude Oil Future Dec 20"},
+    { id: 3,   Name : "Bitcoin",        PName : "BTCUSD",   SoundName : "",         Description: "Bitcoin US Dollar"}
+    
+];
+
+const ForexString  = ReturnMatchStringFromArray (ForexCurrencies);
+const MarketString = ReturnMatchStringFromArray (MarketCurrencies);
+
+
+function GetCurrencyPair (symbolname) {
+    var fromname = symbolname.substring(0, 3);  // first 3 char
+    var toname = symbolname.substring(3);       // last 3 char
+    var Pair = [];
+    for (var i = 0; i < ForexCurrencies.length; i++) {
+        if (fromname == ForexCurrencies[i].Name) {
+            if (Pair.length == 1) Pair.unshift(ForexCurrencies[i])
+            else Pair.push(ForexCurrencies[i]);
+        }
+        if (toname == ForexCurrencies[i].Name) {
+            Pair.push(ForexCurrencies[i]);
+        }
+        if (Pair.length == 2) return Pair;
+    }
+    return Pair;
+}   
 //---------------------------------------------------- TREAT SYMBOL  --------------------------------------------------------   
 
 var yahooPeriodName = ['1m','5m', '15m','30m','1h'  ,'1h'  ,'1d','1wk','1mo'];
@@ -1267,87 +1362,6 @@ function NewIndicator() {
 }
 
 
-function SetSLTP(e, sltp) {
-
-    var symbolcanvas = solution.GetCanvasFromTerminal();
-    if (!symbolcanvas) return;    
-    var Symbol = symbolcanvas.CurrentSymbol;
-    
-    
-    if (sltp == 'E') {
-        if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) {
-            if (Symbol.TradeOrder == OP_BUY) {
-                if (+e.value < +Symbol.Ask) {
-                    Symbol.TradeOrder = OP_BUYLIMIT;
-                } else
-                if (+e.value > +Symbol.Ask) {
-                    Symbol.TradeOrder = OP_BUYSTOP;
-                } else Symbol.TradeOrder = OP_BUY;
-            }
-            Symbol.BuyEntry = e.value;
-        } else
-        if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) {
-            if (Symbol.TradeOrder == OP_SELL) {
-                if (+e.value < +Symbol.Bid) {
-                    Symbol.TradeOrder = OP_SELLSTOP;
-                } else
-                if (+e.value > +Symbol.Bid) {
-                    Symbol.TradeOrder = OP_SELLLIMIT;
-                } else Symbol.TradeOrder = OP_SELL;
-            }
-            Symbol.SellEntry = e.value;
-        }
-    }
-    if (sltp == 'VOL') {
-        if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) {
-            if (Symbol.TradeType == TRADE_VOLUME) {
-                Symbol.BuyVolume = e.value;
-            } else
-            if (Symbol.TradeType == TRADE_RISK) {
-                Symbol.TradeRisk = e.value;
-            }
-        } else
-        if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) {
-            if (Symbol.TradeType == TRADE_VOLUME) {
-                Symbol.SellVolume = e.value;
-            } else
-            if (Symbol.TradeType == TRADE_RISK) {
-                Symbol.TradeRisk = e.value;
-            }
-        }
-        return;
-    }
-    if (sltp == 'UP') {
-        if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) sltp = 'BTP';
-        else
-        if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) sltp = 'SSL';
-    } else
-    if (sltp == 'DOWN') {
-        if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) sltp = 'BSL';
-        else
-        if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) sltp = 'STP';
-    }
-    switch (sltp) {
-    case 'STP':
-        if (Symbol.DownTPSLType == ATR_SLTP) Symbol.ATRSellTP = e.value;
-        else Symbol.SellTP = e.value;
-        break;
-    case 'SSL':
-        if (Symbol.UpTPSLType == ATR_SLTP) Symbol.ATRSellSL = e.value;
-        else Symbol.SellSL = e.value;
-        break;
-    case 'BTP':
-        if (Symbol.UpTPSLType == ATR_SLTP) {
-            Symbol.ATRBuyTP = e.value;
-        } else Symbol.BuyTP = e.value;
-        break;
-    case 'BSL':
-        if (Symbol.DownTPSLType == ATR_SLTP) Symbol.ATRBuySL = e.value;
-        else Symbol.BuySL = e.value;
-        break;
-    }
-    DrawChart();
-}
 
 var GraphicMenu = [
     [

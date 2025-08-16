@@ -225,6 +225,30 @@ function solution_module_addremove (pname, add) {
     }
 }
 
+
+function solution_module_load (pname, callback) {
+    let platform =  sb.get(main, 'pname', pname);
+
+    if (platform.length == 0) {
+        LoaderDisplay(true);    
+        DisplayInfo("Loading Module " + pname + " Please wait", true, 'operationpanel');             
+        let timerd = setInterval((pname) => {
+            
+            clearInterval(timerd);
+            solution.add_module(pname); 
+            let ui  = solution.get('ui')        
+            ui.platform_select(pname)                
+            LoaderDisplay(false);      
+            callback();           
+        }, 300, pname) 
+    } else {
+        let ui  = solution.get('ui')        
+        ui.platform_select(pname)    
+        callback();         
+    }
+    return platform.length;
+}
+
 function onclick_moduleactive( elt, event) {
      
     let pname = elt.id.replace ('moduleactive_', '')

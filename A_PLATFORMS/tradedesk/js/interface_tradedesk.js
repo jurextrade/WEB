@@ -443,7 +443,7 @@ var tradedesk_terminalsbar = {
             { 
                 id:'',
                 type: 'group',                   
-                position: 'me-auto',
+                position: 'sb_end',
                 items : 
                     [ 
                         {id: 'terminalradio', item: 'Terminal',         type :'radio', class: '', attributes: {checked: '', name: "radio_terminaltype"}, events: {onclick: "onclick_tradedesktype(\'Terminal\')"}},
@@ -661,9 +661,6 @@ var boxtargetpanel  = {
 }
 
 //--------------------------
-
-
-
 
 var terminalinfopanel = {
     id: 'terminalinfopanel',
@@ -953,6 +950,16 @@ var tradedeskstrategypanel = {
     type: 'panel',
     class: 'sb_panel sb_main sb_column strategypanel',
     items: [
+        {id: 'tradedesk_strategy_bar',  type: 'bar', items: [
+                {id: 'tradedesk_strategy_name', type: 'html', class:'sb_boxheadertitle', item: ''},
+                {id: 'tradedesk_strategy_commands',  
+                    type: 'group', 
+                    position: 'sb_end', 
+                    items: [        
+                            {id: 'tradedesk_strategy_launch', type: 'button',  item: 'See in Strategy Creator', disabled: false, events: {onclick: "GoToProject(this)"}, title: 'Open the Project in Strategy Creator'},
+                    ]
+                }
+                ]},        
         sessiontabs,
     ],
 }
@@ -965,8 +972,9 @@ var enginelookpanel = {
         {id: 'tradedeskprojectnamepanel', type: 'group',  form: true, 
          items: [
             {id: '', type: 'label', item: 'Project'},
-            {id: 'tradedeskprojectname', type: 'text', disabled: true, events: {onclick: "GoToProject(this)"}, title: 'Open the Project in Strategy Creator'}
-         ] 
+            {id: 'tradedeskprojectname', type: 'text', disabled: true, title: 'Project Name in Strategy Creator'},
+
+        ] 
         },
         {id: 'tradedeskselectstrategypanel', type: 'group',  form: true, 
          items: [
@@ -1070,20 +1078,34 @@ var historyorderpanel = {
 var historypanel = {
     id: 'historypanel',
     type: 'panel',    
-    class: 'sb_panel sb_main sb_pane',
+    class: 'sb_panel sb_main' ,
     items: [
         historybar,
-        historytable,
+        {
+            id: 'historytablepanel',
+            type: 'panel',    
+            class: 'sb_pane', 
+            items: [       
+                historytable
+            ]
+        }
     ]
 }
 
 var statementpanel = {
     id: 'statementpanel',
     type: 'panel',
-    class: 'sb_panel sb_main sb_pane',
+    class: 'sb_panel sb_main',
     items: [
         statementbar,
-        statementtable,
+        {
+            id: 'historystqatementpanel',
+            type: 'panel',    
+            class: 'sb_pane', 
+            items: [       
+                statementtable,
+            ]
+        },        
     ]
 }
 
@@ -1110,14 +1132,104 @@ var tradedesk_history_sidepanel = {
     ]
 }
 
+var tradedesk_pricegroup = {
+    id: 'tradedesk_pricegroup',
+    type: 'panel',
+    class: 'sb_row',
+    style: 'padding: 6px 12px;',
+    items: [
+        {id: 'bid',  type: 'ihtml', title:'bid'},  
+        {id: 'bidask',  type: 'ihtml', html: '/'},  
+        {id: 'ask',  type: 'ihtml', title:'ask'},  
+    ]    
+}
 
+var tradedesk_ordergroup = {
+    id: 'tradedesk_ordergroup',
+    type: 'group',         
+    form: true,
+    toggle : true,
+    class: 'sb_buttongroup',
+    items :
+        [        
+            {id: 'buy',       item: 'BUY',       type: 'button',   class: 'sb_button', events: {onclick: "onclick_order(this, \'BUY\')"}}, 
+            tradedesk_pricegroup,    
+            {id: 'sell',     item: 'SELL',       type: 'button',   class: 'sb_button', events: {onclick:  "onclick_order(this,  \'SELL\')"}}, 
+        ]
+}
+
+var tradedesk_commandgroup = {
+    id: 'tradedesk_commandgroup',
+    type: 'group',         
+    form: true,
+    class: 'sb_buttongroup',
+    items :
+        [        
+            {id: 'tradecancel', item: 'Cancel', type: 'button',  disabled: true,  class: 'sb_button',  attributes:{type: 'submit'}, events: {onclick: "onclick_tradecancel(this)"}}, 
+            {id: 'tradesubmit', item: 'Submit', type: 'button',  disabled: true,  class: 'sb_button',  attributes:{type: 'submit'}, events: {onclick:"onclick_tradesubmit(this)"}}, 
+        ]
+}
+                           
+var tradedesk_formgroup = {
+    id: 'tradedesk_formgroup',
+    type: 'panel',
+    class: 'sb_bodygroup',
+    items: [
+        {id: '', type: 'group',  form: true, 
+         items: [
+            {id: 'price', type: 'label', class:'sb_boxheadertitle', item: 'Price'},
+            {id: 'tradeentry_type',  type: 'select', menu: TRADE_ENTRY_MENU, value:  TRADE_ENTRY_MENU[ENTRY_SPOT].text, events: {onchange: "onchange_tradeentry_type(this, event)" }},
+            {id: 'tradeentry_value', type: 'text', min: '0', step: 'Symbol.Point', value: 'entrevalue', disabled: true, events: {onchange: "onchange_tradeentry_value (this, event)" }},
+            {id: 'tradeentry_value_a', type: 'text', style:"visibility:hidden", disabled: true}
+        ] 
+        },
+        {id: '', type: 'group',  form: true, 
+         items: [
+            {id: 'Size', type: 'label', class:'sb_boxheadertitle', item: 'Size'},
+            {id: 'tradesize_type',  type: 'select', menu: TRADE_VOLUME_MENU, value:  TRADE_VOLUME_MENU[VOLUME_PIPS].text, events: {onchange: "onchange_tradesize_type(this, event)" }},
+            {id: 'tradesize_value', type: 'text', min: '0.01', step: '0.01', value: 'tradesize_value', events: {onchange: "onchange_tradesize_value(this, event)" }},
+            {id: 'tradesize_value_a', type: 'text', title: 'value in pips', style:"visibility:hidden", disabled: true,  value: '', events: {onchange: "onchange_tradesize_value_a(this, event)" }},
+
+         ] 
+        },
+        {id: '', type: 'group',  form: true, 
+         items: [
+            {id: 'tpsluplabel', type: 'label', class:'sb_boxheadertitle', item: 'Stop Loss'},
+            {id: 'stoploss_type', type: 'select',  menu: TRADE_SLTP_MENU, value:  TRADE_SLTP_MENU[SLTP_PIPS].text, events: {onchange: onchange="onchange_stoploss_type(this, event)"}},
+            {id: 'stoploss_value', type: 'text', min: '0', step: '0.5', value: 'stoploss_value', events: {onchange: "onchange_stoploss_value(this, event)" }},
+            {id: 'stoploss_value_a', type: 'text', title: 'value in pips', style:"visibility:hidden", disabled: true, value: '', events: {onchange: "onchange_stoploss_value_a(this, event)" }},
+
+        ] 
+        },
+        {id: '', type: 'group',  form: true, 
+         items: [
+            {id: 'tpsldownlabel', type: 'label', class:'sb_boxheadertitle', item: 'Take Profit'},
+            {id: 'takeprofit_type', type: 'select',  menu: TRADE_SLTP_MENU, value: TRADE_SLTP_MENU[SLTP_PIPS].text, events: {onchange: onchange="onchange_takeprofit_type(this, event)"}},
+            {id: 'takeprofit_value', type: 'text', min: '0', step: '0.5', value: 'takeprofit_value', events: {onchange: "onchange_takeprofit_value(this, event)" }},
+            {id: 'takeprofit_value_a', type: 'text', title: 'value in pips', style:"visibility:hidden", disabled: true, value: '', events: {onchange: "onchange_takeprofit_value_a(this, event)" }},
+
+        ] 
+        },                        
+    ] 
+}
+  
 var orderpanel = {
     id: 'orderpanel',
+    type: 'panel',
+    class: 'sb_main sb_column sb_formcontainer',
+    items: [
+        tradedesk_ordergroup,
+        tradedesk_formgroup,
+        tradedesk_commandgroup        
+    ],
+}
+
+var orderpanel1 = {
+    id: 'orderpanel1',
     type: 'html',
     class: 'sb_main sb_column sb_formcontainer',
     content: 'OrderPanel()',
 }
-
 
 //------------------------------------------------------------ ROOT----------------------------------------------------------
 
@@ -1210,7 +1322,7 @@ var tradedesk_sidebarmenu  = {
                 [
                     {id: 'sidebar_terminals',     type: 'link', icon:  icon_files,   title: 'Terminals',            events: {onclick: "sidebarmenu_select(this.id)"}},
                     {id: 'sidebar_signals',       type: 'link', icon:  icon_signal,  title: 'Signals',              events: {onclick: "sidebarmenu_select(this.id)"}},
-                    {id: 'sidebar_enginelook',    type: 'link', icon:  icon_project, title: 'Inspect Strategy',     events: {onclick: "sidebarmenu_select(this.id)"}},
+                    {id: 'sidebar_enginelook',    type: 'link', icon:  icon_strategy, title: 'Inspect Strategy',     events: {onclick: "sidebarmenu_select(this.id)"}},
                     {id: 'sidebar_history',       type: 'link', icon:  icon_history, title: 'History of Trades',    events: {onclick: "sidebarmenu_select(this.id)"}},
 //                    {id: 'sidebar_news',          type: 'link', icon:  icon_news,    title: 'Weekly News',          events: {onclick: "sidebarmenu_select(this.id)"}},
                     {id: 'sidebar_video',         type: 'link', icon:  icon_comment, title: 'Community..',          events: {onclick: "sidebarmenu_select(this.id)"}},

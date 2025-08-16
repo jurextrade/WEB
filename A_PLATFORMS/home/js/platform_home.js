@@ -50,35 +50,14 @@ function onclick_home_trading_rightsection_1_2(elt, event) {
 }
 
 
-function home_loadmodule (pname, callback) {
-    let platform =  sb.get(main, 'pname', pname);
 
-    if (platform.length == 0) {
-        LoaderDisplay(true);    
-        DisplayInfo("Loading Module " + pname + " Please wait", true, 'operationpanel');             
-        let timerd = setInterval((pname) => {
-            
-            clearInterval(timerd);
-            solution.add_module(pname); 
-            let ui  = solution.get('ui')        
-            ui.platform_select(pname)                
-            LoaderDisplay(false);      
-            callback();           
-        }, 300, pname) 
-    } else {
-        let ui  = solution.get('ui')        
-        ui.platform_select(pname)    
-        callback();         
-    }
-    return platform.length;
-}
 
 function onclick_home_trading_rightsection_1_0_0(elt, event) { 
     event.stopPropagation();
 
     let pname = HOME_PLATFORM_PROJECT;
-    home_loadmodule (pname, () => {
-        let projectname = 'DemoProject';    
+    solution_module_load (pname, () => {
+        let projectname = 'project_default_projectname';    
         selector_select('project_selectproject', projectname);
     })      
 }
@@ -98,8 +77,8 @@ function onclick_home_trading_rightsection_1_1_1(elt, event) {
     event.stopPropagation();   
 
     let pname = HOME_PLATFORM_TRADEDESK;
-    home_loadmodule (pname, () => {
-        let terminalname = "FP Markets MT4 Terminal";
+    solution_module_load (pname, () => {
+        let terminalname = tradedesk_default_terminalname;
         selector_select('tradedesk_selectterminal', terminalname);            
     })      
 }
@@ -109,8 +88,8 @@ function onclick_home_trading_rightsection_1_2_0(elt, event) {
     event.stopPropagation();    
 
     let pname = OPTION_PLATFORM_PNAME;
-    home_loadmodule (pname, () => {
-        let projectname = 'DemoProject';        
+    solution_module_load (pname, () => {
+        let projectname = option_default_projectname;        
         selector_select('option_selectproject', projectname);          
     })     
 }
@@ -123,8 +102,8 @@ function onclick_home_trading_rightsection_2_0_0 (elt, event) {
     event.stopPropagation();    
 
     let pname = HOME_PLATFORM_PROJECT;
-    home_loadmodule (pname, () => {
-        let project = selector_select('project_selectproject', 'DemoProject');
+    solution_module_load (pname, () => {
+        let project = selector_select('project_selectproject', project_default_projectname);
         let strategyname = 'FRACTAL_CROSS';
         
         LoaderDisplay(true);     
@@ -155,7 +134,7 @@ function onclick_home_trading_rightsection_3_1_0 (elt, event) {
     event.stopPropagation();    
 
     let pname = HOME_PLATFORM_PROJECT;
-    home_loadmodule (pname, () => {
+    solution_module_load (pname, () => {
        let indicatorname = 'BAR';
         onclick_projecttabs($('#tab-chart')[0], event);
         onclick_controlsbottompanel($('#fullscreen')[0], event);    
@@ -257,8 +236,8 @@ function onclick_home_emv_rightsection_1_0_0(elt, event) {
     event.stopPropagation();    
 
     let pname = HOME_PLATFORM_EMV;
-    home_loadmodule (pname, () => {
-        let projectname = 'DemoProject';   
+    solution_module_load (pname, () => {
+        let projectname = emv_default_projectname;   
         selector_select('emv_selectproject', projectname); 
     })         
 }
@@ -369,8 +348,8 @@ function onclick_home_emv_rightsection_2_0_0 (elt, event) {
     event.stopPropagation();    
 
     let pname = HOME_PLATFORM_EMV;
-    home_loadmodule (pname, () => {
-        let projectname = 'DemoProject';   
+    solution_module_load (pname, () => {
+        let projectname = emv_default_projectname;   
         selector_select('emv_selectproject', projectname);
 
         sidebarmenu_select('sidebar_emvtestermanager', 1)        
@@ -383,8 +362,8 @@ function onclick_home_emv_rightsection_2_1_0 (elt, event) {
     event.stopPropagation();    
 
     let pname = HOME_PLATFORM_EMV;
-    home_loadmodule (pname, () => {
-        let project = selector_select('emv_selectproject', 'DemoProject');
+    solution_module_load (pname, () => {
+        let project = selector_select('emv_selectproject', emv_default_projectname);
         let transactionfile = "visa.trs";
         
         LoaderDisplay(true);     
@@ -449,8 +428,8 @@ function onclick_home_netprog_rightsection_1_0_0(elt, event) {
     event.stopPropagation();    
 
     let pname = HOME_PLATFORM_NETPROG;
-    home_loadmodule (pname, () => {
-        let projectname = 'DemoProject';   
+    solution_module_load (pname, () => {
+        let projectname = netprog_default_projectname;   
         selector_select('netprog_selectproject', projectname);        
     })         
 
@@ -649,7 +628,7 @@ function onclick_checkout (event) {
 
     event.stopPropagation();    
         let pname = HOME_PLATFORM_TRADEDESK;
-        home_loadmodule (pname, () => {
+        solution_module_load (pname, () => {
     })
 }
 

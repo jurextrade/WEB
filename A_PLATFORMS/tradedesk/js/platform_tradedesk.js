@@ -560,7 +560,8 @@ $(document).on('change', '#tradedeskstrategyselect', function () {
     var enginename= $("#tradedeskstrategyselect option:selected").val();
     var engine = solution.CurrentTerminal.PG.GetEngineFromNameOperation(enginename, "BUYSELL");      
     SelectEngine(engine);        
-    $("#tradedeskstrategyselect option[value='--Select Strategy--']").remove();        
+    $("#tradedeskstrategyselect option[value='--Select Strategy--']").remove();     
+    $('#tradedesk_strategy_name').html(enginename) ; 
 });		
 
 $(document).on('change', '#tradedesksyssignalselect', function () {
@@ -1831,354 +1832,504 @@ function onclick_historyselect (elt) {
 
 //---------------------------------------------------- ORDER PANEL  -------------------------------------------------------- 
 
+
 function OrderPanel_Show(show) {
     sb.box_toggle ('boxorderpanel', show);     
 }
 
-
-function OrderPanel() {
-    var content     = '';
-    content +=     
-  
-//HEADER
-    '<div class="sb_buttongroup">' +
-        '<button  id ="SymbolBuyType" class="sb_button" onmousedown="SetOrderType(this, \'BUY\')" >BUY</button>' + 
-        '<div id = "bid">' + '' + '</div> ' + 
-        '<div id = "bidask">/</div>' + 
-        '<div id = "ask">' + '' + '</div>' + 
-        '<button id ="SymbolSellType" class="sb_button"  onmousedown="SetOrderType(this,  \'SELL\')" >SELL</button>' + 
-    '</div>' +            
-//BODY        
-        
-    '<div class="sb_bodygroup">' + 
-    '<div class="sb_formgroup">' +
-    '<label>Price</label>' +             
-        '<input id = "entryvalue" class="form-control" type="number", min="0" step="' + 'Symbol.Point' + '",  id ="ssl";  onchange="SetSLTP (this, \'E\')"; value:' + 'entryvalue' + '>'+ 
-    '</div>' +
-    '<div class="sb_formgroup">' +
-            '<label>Size</label>' + 
-            '<select id="tradesizetype" class="custom-select form-control" onchange="SetTradeType (this)" >' + 
-                '<option value="volume">Volume</option>' + 
-                '<option value="risk">Risk %</option>' + 
-            '</select>' + 
-            '<input id="tradetypevalue"  class="form-control" type="number" min="0.01" step="0.01", id ="svolume"; onchange="SetSLTP (this, \'VOL\')"; value="' + 'tradetypevalue'+ '">' +
-        '</div>' + 
-        '<div class="sb_formgroup">' +
-            '<label id="tpsluplabel">' + 'tpsluplabel' + '</label>' +             
-            '<select id="stoplosstype" class="custom-select form-control" onchange="SetTPSLType (this, \'UP\')">' + 
-                '<option value="pips">Pips</option>' + 
-                '<option value="atr">ATR</option>' + 
-            '</select>' + 
-            '<input id= "tpslupvalue" class="form-control"  type="number", min="0" step="0.5",  id ="ssl"; onchange="SetSLTP (this, \'UP\')"; value="' + 'tpslupvalue' + '">' + 
-        '</div>' +
-        '<div class="sb_formgroup">' +
-            '<label id="tpsldownlabel">' + 'tpsldownlabel' + '</label>' +             
-            '<select id="takeprofittype" class="custom-select form-control" onchange="SetTPSLType (this, \'DOWN\')">' + 
-                '<option value="pips">Pips</option>' + 
-                '<option value="atr">ATR</option>' + 
-            '</select>' + 
-            '<input id= "tpsldownvalue" class="form-control"  type="number", min="0" step="0.5", id ="stp"; onchange="SetSLTP (this, \'DOWN\')"; value="' + 'tpsldownvalue' + '">' +
-        '</div>' +
-    '</div>' +
-//BODY END
-// FOOTER
-    '<div class="sb_buttongroup">' + 
-        '<button id="tradecancel" class="sb_button"  name="tradecancel" type="submit" disabled onclick="onclick_tradecancel(this)" >Cancel</button>' +
-        '<button id="tradesubmit" class="sb_button"  name="tradesubmit" type="submit" disabled onclick="onclick_tradesubmit(this)">Submit</button>' + 
-    '</div>';
-    return content;
-}
-
-
-function SetOrderType(elt, type) {
-    var symbolcanvas = solution.GetCanvasFromTerminal();
-    if (!symbolcanvas) return;    
-    var Symbol = symbolcanvas.CurrentSymbol;
+function ontick_orderpanel (symbol) {
+    let symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;   
     
     let id= 'orderpanel';
 
-    if (type == 'CANCEL') {
-        Symbol.TradeOrder = -1;
+    $('#' + id + ' #ask').html(symbol.Ask);     
+    $('#' + id + ' #bid').html(symbol.Bid);     
 
-        $('#' + id + ' #tpslupvalue').val('');   
-        $('#' + id + ' #tpsldownvalue').val('');                 
-        $('#' + id + ' #entryvalue').val('');
-        $('#' + id + ' #tradetypevalue').val(Symbol.TradeType == TRADE_RISK ? '1' : '0');
+   
+    document.title = symbol.Name + " " + symbol.Bid + "-" + symbol.Ask;
+    
+    let buytradeorder  = symbol.Order.getorder (OP_BUY);
+    let selltradeorder = symbol.Order.getorder (OP_SELL);
 
+
+    buytradeorder.tradeentry_value[ENTRY_SPOT].value = symbol.Ask;      
+    selltradeorder.tradeentry_value[ENTRY_SPOT].value = symbol.Bid;    
+
+    let operation = symbol.Order.operation;
+    if (operation == null) {
+
+        $('#' + id + ' #tradeentry_value').val('');                         //fill prices for future and fixed 
+        buytradeorder.tradeentry_value[ENTRY_PRECISE].value = symbol.Ask;      
+        selltradeorder.tradeentry_value[ENTRY_PRECISE].value = symbol.Bid;    
+        return;
+    } 
+    
+    let tradeorder = symbol.Order.getorder (operation);
+    let entrytype = tradeorder.tradeentry_type;    
+    
+    if (entrytype == ENTRY_SPOT) {
+        buytradeorder.tradeentry_value[ENTRY_PRECISE].value = symbol.Ask;      
+        selltradeorder.tradeentry_value[ENTRY_PRECISE].value = symbol.Bid;    
+
+        $('#' + id + ' #tradeentry_value').val(tradeorder.tradeentry_value[entrytype].value);        
+
+    } else {
+    }
+
+    let value = symbol.CalculateLotValue(solution.CurrentTerminal.User.AccountEquity,  tradeorder.tradesize_value[VOLUME_RISK].value);  
+    $('#' + id + ' #tradesize_value_a').val(value);
+        
+    value = (symbol.ATR[symbolcanvas.CurrentPeriod] * +tradeorder.stoploss_value[tradeorder.stoploss_type].value / symbol.SysPoint).toFixed(0);
+    $('#' + id + ' #stoploss_value_a').val(value);   
+  
+    value = (symbol.ATR[symbolcanvas.CurrentPeriod] * +tradeorder.takeprofit_value[tradeorder.takeprofit_type].value / symbol.SysPoint).toFixed(0);
+    $('#' + id + ' #takeprofit_value_a').val(value);        
+}
+
+
+function update_orderpanel (symbol) {
+    let symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;   
+
+    let id= 'orderpanel';
+    
+    let operation = symbol.Order.operation;
+
+
+    if (operation == null) {
+        $('#' + id + ' #buy').removeClass ('checked');
+        $('#' + id + ' #sell').removeClass ('checked');
         $('#' + id + ' #tradesubmit').attr('disabled',  true);
         $('#' + id + ' #tradecancel').attr('disabled',  true);    
-        $('#' + id + ' #SymbolBuyType').attr("style", "color: var(--theme-button-color); background-color: var(--theme-button-bg-color);");        
-        $('#' + id + ' #SymbolSellType').attr("style", "color: var(--theme-button-color); background-color: var(--theme-button-bg-color);");        
-
-    } else
-    if (type == 'BUY' || type == 'BUYSTOP' || type == 'BUYLIMIT') {
-        if (type == 'BUY')      Symbol.TradeOrder = OP_BUY;
-        if (type == 'BUYSTOP')  Symbol.TradeOrder = OP_BUYSTOP;
-        if (type == 'BUYLIMIT') Symbol.TradeOrder = OP_BUYLIMIT;
-
-        $('#' + id + ' #tpslupvalue').val(Symbol.UpTPSLType == ATR_SLTP ? Symbol.ATRBuyTP : Symbol.BuyTP);    
-        $('#' + id + ' #tpsldownvalue').val(Symbol.DownTPSLType == ATR_SLTP ? Symbol.ATRBuySL : Symbol.BuySL);                 
-        $('#' + id + ' #entryvalue').val(Symbol.BuyEntry);
-        $('#' + id + ' #tradetypevalue').val(Symbol.TradeType == TRADE_RISK ? Symbol.TradeRisk : Symbol.BuyVolume);
-
-        $('#' + id + ' #tpsldownlabel').html('Stop Loss');
-        $('#' + id + ' #tpsluplabel').html('Take Profit');
-
-        $('#' + id + ' #tradesubmit').attr('disabled',  false);
-        $('#' + id + ' #tradecancel').attr('disabled',  false);           
-        $('#' + id + ' #SymbolBuyType').attr("style",  'color: var(--theme-main-color); background-color:' + theme_buy);        
-        $('#' + id + ' #SymbolSellType').attr("style", 'color: var(--theme-button-color); background-color: var(--theme-button-bg-color);');        
-
-        AdjustSLTPPips(id, Symbol);
-    } else
-    if (type == 'SELL' || type == 'SELLSTOP' || type == 'SELLLIMIT') {
-
-        if (type == 'SELL')         Symbol.TradeOrder = OP_SELL;
-        if (type == 'SELLSTOP')     Symbol.TradeOrder = OP_SELLSTOP;
-        if (type == 'SELLLIMIT')    Symbol.TradeOrder = OP_SELLLIMIT;
-
-        $('#' + id + ' #tpslupvalue').val(Symbol.UpTPSLType == ATR_SLTP ? Symbol.ATRSellSL : Symbol.SellSL);        
-        $('#' + id + ' #tpsldownvalue').val(Symbol.DownTPSLType == ATR_SLTP ? Symbol.ATRSellTP : Symbol.SellTP);      
-        $('#' + id + ' #entryvalue').val(Symbol.SellEntry);
-        $('#' + id + ' #tradetypevalue').val(Symbol.TradeType == TRADE_RISK ? Symbol.TradeRisk : Symbol.SellVolume);
         
-        $('#' + id + ' #tpsldownlabel').html('Take Profit');
-        $('#' + id + ' #tpsluplabel').html('Stop Loss');
 
-        $('#' + id + ' #tradesubmit').attr('disabled',  false);
-        $('#' + id + ' #tradecancel').attr('disabled',  false);           
-        $('#' + id + ' #SymbolSellType').attr("style",  'color: var(--theme-main-color); background-color:' + theme_sell);        
-        $('#' + id + ' #SymbolBuyType').attr("style", 'color: var(--theme-button-color); background-color: var(--theme-button-bg-color);');        
+        $('#' + id + ' #tradeentry_type').attr('disabled',  true);    
+        $('#' + id + ' #tradeentry_value').attr('disabled',  true);    
+        $('#' + id + ' #tradeentry_value').val('');
 
+        $('#' + id + ' #tradesize_type').attr('disabled',  true);
+        $('#' + id + ' #tradesize_value').attr('disabled',  true);
+        $('#' + id + ' #tradesize_value_a').css('visibility', 'hidden');
+        if ($('#' + id + ' #tradesize_value').val() == TRADE_VOLUME_MENU[VOLUME_PIPS].text) {
+            $('#' + id + ' #tradesize_value').val(symbol.MinLot);  
+        }
+        else {
+            $('#' + id + ' #tradesize_value').val('2.0');  
+        }
 
-        AdjustSLTPPips(id, Symbol);
+        $('#' + id + ' #stoploss_type').attr('disabled',  true);    
+        $('#' + id + ' #stoploss_value').attr('disabled',  true);    
+        $('#' + id + ' #stoploss_value').val('0');  
+        $('#' + id + ' #stoploss_value_a').css('visibility', 'hidden');  
+
+        $('#' + id + ' #takeprofit_value').attr('disabled',  true);    
+        $('#' + id + ' #takeprofit_type').attr('disabled',  true);    
+        $('#' + id + ' #takeprofit_value').val('0');  
+        $('#' + id + ' #takeprofit_value_a').css('visibility', 'hidden');              
+       
+        return;
+
+    } else {
+        $('#' + id + ' #tradesubmit').removeAttr('disabled');
+        $('#' + id + ' #tradecancel').removeAttr('disabled'); 
+
+        if (operation == OP_BUY) {
+            $('#' + id + ' #buy').addClass ('checked');
+            $('#' + id + ' #sell').removeClass ('checked')        
+        }
+        else {
+            $('#' + id + ' #sell').addClass ('checked');
+            $('#' + id + ' #buy').removeClass ('checked')        
+        }
+        $('#' + id + ' #tradeentry_type').removeAttr('disabled');    
+
+        $('#' + id + ' #tradesize_type').removeAttr('disabled');
+        $('#' + id + ' #tradesize_value').removeAttr('disabled');
+
+        $('#' + id + ' #stoploss_type').removeAttr('disabled');    
+        $('#' + id + ' #stoploss_value').removeAttr('disabled');    
+
+        $('#' + id + ' #takeprofit_type').removeAttr('disabled');    
+        $('#' + id + ' #takeprofit_value').removeAttr('disabled');    
+
     }
-    Chart_Draw(solution.CurrentTerminal)
+
+    let tradeorder = symbol.Order.getorder (operation);        
+    
+
+  //  tradeorder.tradeentry_type = TRADE_ENTRY_MENU.filter(str => str.text == $('#' + id + ' #tradeentry_type').val())[0].id;   
+    $('#' + id + ' #tradeentry_type option[value="' + TRADE_ENTRY_MENU.filter(menu => menu.id == tradeorder.tradeentry_type)[0].text + '"]').prop('selected', true); 
+    if (tradeorder.tradeentry_type == ENTRY_SPOT) {
+        $('#' + id + ' #tradeentry_value').attr('disabled',  true);    
+    } else {
+        $('#' + id + ' #tradeentry_value').removeAttr('disabled');
+    }
+    $('#' + id + ' #tradeentry_value').val(tradeorder.tradeentry_value[tradeorder.tradeentry_type].value);   
+    $('#' + id + ' #tradeentry_value').attr('min', tradeorder.tradeentry_value[tradeorder.tradeentry_type].fields.min);
+    $('#' + id + ' #tradeentry_value').attr('step',tradeorder.tradeentry_value[tradeorder.tradeentry_type].fields.step);
+    $('#' + id + ' #tradeentry_value').attr('max', tradeorder.tradeentry_value[tradeorder.tradeentry_type].fields.max);
+
+
+
+
+    $('#' + id + ' #tradesize_type option[value="' + TRADE_VOLUME_MENU.filter(menu => menu.id == tradeorder.tradesize_type)[0].text + '"]').prop('selected', true); 
+   
+    if (tradeorder.tradesize_type != VOLUME_RISK) {
+        $('#' + id + ' #tradesize_value_a').css('visibility', 'hidden');
+    } else {
+        $('#' + id + ' #tradesize_value_a').css('visibility', '');
+    }
+    $('#' + id + ' #tradesize_value').attr('min', tradeorder.tradesize_value[tradeorder.tradesize_type].fields.min);
+    $('#' + id + ' #tradesize_value').attr('step',tradeorder.tradesize_value[tradeorder.tradesize_type].fields.step);
+    $('#' + id + ' #tradesize_value').attr('max', tradeorder.tradesize_value[tradeorder.tradesize_type].fields.max);
+    $('#' + id + ' #tradesize_value').val(tradeorder.tradesize_value[tradeorder.tradesize_type].value);
+
+
+
+
+    $('#' + id + ' #stoploss_type option[value="' + TRADE_SLTP_MENU.filter(menu => menu.id == tradeorder.stoploss_type)[0].text + '"]').prop('selected', true); 
+    
+    if (tradeorder.stoploss_type != SLTP_ATR) {
+        $('#' + id + ' #stoploss_value_a').css('visibility', 'hidden');
+    } else {
+        $('#' + id + ' #stoploss_value_a').css('visibility', '');
+    }
+
+    $('#' + id + ' #stoploss_value').attr('min', tradeorder.stoploss_value[tradeorder.stoploss_type].fields.min);
+    $('#' + id + ' #stoploss_value').attr('step',tradeorder.stoploss_value[tradeorder.stoploss_type].fields.step);
+    $('#' + id + ' #stoploss_value').attr('max', tradeorder.stoploss_value[tradeorder.stoploss_type].fields.max);
+    $('#' + id + ' #stoploss_value').val(tradeorder.stoploss_value[tradeorder.stoploss_type].value);   
+  
+
+    $('#' + id + ' #takeprofit_type option[value="' + TRADE_SLTP_MENU.filter(menu => menu.id == tradeorder.takeprofit_type)[0].text + '"]').prop('selected', true); 
+
+    if (tradeorder.takeprofit_type != SLTP_ATR) {
+        $('#' + id + ' #takeprofit_value_a').css('visibility', 'hidden');
+    } else {
+        $('#' + id + ' #takeprofit_value_a').css('visibility', '');
+    }    
+    $('#' + id + ' #takeprofit_value').attr('min', tradeorder.takeprofit_value[tradeorder.takeprofit_type].fields.min);
+    $('#' + id + ' #takeprofit_value').attr('step',tradeorder.takeprofit_value[tradeorder.takeprofit_type].fields.step);
+    $('#' + id + ' #takeprofit_value').attr('max', tradeorder.takeprofit_value[tradeorder.takeprofit_type].fields.max);
+    $('#' + id + ' #takeprofit_value').val(tradeorder.takeprofit_value[tradeorder.takeprofit_type].value);   
+    
+    ontick_orderpanel(symbol)     
+}
+
+function SetOrderType(entryvalue, tradeorder) {
+    var symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;    
+    
+    let symbol = symbolcanvas.CurrentSymbol;
+
+
+    switch (tradeorder) {
+        case OP_BUYSTOP:
+        case OP_BUYLIMIT:
+            symbol.Order.operation = OP_BUY;
+            let tradeorderbuy  = symbol.Order.getorder(OP_BUY);   
+            tradeorderbuy.tradeentry_type = ENTRY_PRECISE;    
+            tradeorderbuy.tradeentry_value[tradeorderbuy.tradeentry_type].value = entryvalue;    
+        break;
+        case OP_SELLSTOP:
+        case OP_SELLLIMIT:
+            symbol.Order.operation = OP_SELL;
+            let tradeordersell = symbol.Order.getorder(OP_SELL);        
+            tradeordersell.tradeentry_type = ENTRY_PRECISE; 
+            tradeordersell.tradeentry_value[tradeordersell.tradeentry_type].value = entryvalue;                
+        break;
+    }
+    update_orderpanel(symbol)
+    OrderPanel_Show(true);    
 } 
 
-
-function GetRiskLotsSize(terminal, Symbol, type) {
-    var digits = numDecimals(Symbol.MinLot);
-    var amount = (+terminal.User.AccountEquity * +Symbol.TradeRisk) / 100;
-    var slamount = (type == OP_BUY ? +Symbol.BuySL * +Symbol.PipValue : +Symbol.SellSL * +Symbol.PipValue);
-    if (slamount == 0) return -1;
-    return (amount / slamount).toFixed(digits);
-}
-
-function AdjustSLTPPips(id, Symbol) {
-    if (Symbol.TradeType == TRADE_RISK) {
-        if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_SELLLIMIT) {
-            if (GetRiskLotsSize(solution.CurrentTerminal, Symbol, OP_SELL) == -1) {
-                if (Symbol.DownTPSLType == PIPS_SLTP) {
-                    $('#' + id + ' #tpslupvalue').val(10);                       
-                    Symbol.SellSL = 10;
-                }
-            }
-        }
-        if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == 'SELLSTOP' || Symbol.TradeOrder == OP_BUYLIMIT) {
-            if (GetRiskLotsSize(solution.CurrentTerminal, Symbol, OP_BUY) == -1) {
-                if (Symbol.DownTPSLType == PIPS_SLTP) {
-                    $('#' + id + ' #tpsldownvalue').val(10);    
-                    Symbol.BuySL = 10;
-                }
-            }
-        }
-    }
-    Chart_Draw(solution.CurrentTerminal)   
-}
-
-function SetTradeType(elt) {
-    var symbolcanvas = solution.GetCanvasFromTerminal();
-    if (!symbolcanvas) return;    
-    
-    var id= 'orderpanel';
-
-    var Symbol = symbolcanvas.CurrentSymbol;
-    if (elt.value == "Risk %") {
-        Symbol.TradeType = TRADE_RISK;
-        $('#' + id + ' #entryvalue').attr('min', "0.1");
-        $('#' + id + ' #entryvalue').attr('step', "0.1");
-        $('#' + id + ' #entryvalue').attr('max', "100");
-        $('#' + id + ' #entryvalue').val(Symbol.TradeRisk);
-        AdjustSLTPPips(id, Symbol);
-    } else
-    if (elt.value == "Volume") {
-        Symbol.TradeType = TRADE_VOLUME;
-        $('#' + id + ' #entryvalue').attr('min', Symbol.MinLot);
-        $('#' + id + ' #entryvalue').attr('step', "0.01");
-        $('#' + id + ' #entryvalue').attr('max', Symbol.MaxLot);
-
-        if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) {
-            $('#' + id + ' #entryvalue').val(Symbol.BuyVolume);
-        } else
-        if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) {
-            $('#' + id + ' #entryvalue').val(Symbol.SellVolume);            
-        } else { // -1
-            $('#' + id + ' #entryvalue').val(0);
-        }
-    }
-    Chart_Draw(solution.CurrentTerminal)   
-}
-
-function SetTPSLType(elt, sltp) {
-    var symbolcanvas = solution.GetCanvasFromTerminal();
-    if (!symbolcanvas) return;    
-    var id= 'orderpanel';    
-
-    var Symbol = symbolcanvas.CurrentSymbol;
-    if (sltp == 'UP') {
-        if (elt.value == "ATR") {
-            Symbol.UpTPSLType = ATR_SLTP; //pips 0 atr 1  = TRADE_RISK;      
-            $('#' + id + ' #tpslupvalue').attr('min', "1");
-            $('#' + id + ' #tpslupvalue').attr('step', "0.1");            
-            $('#' + id + ' #tpslupvalue').attr('max', "10");          
-        } else
-        if (elt.value == "Pips") {
-            Symbol.UpTPSLType = PIPS_SLTP; //pips 0 atr 1  = TRADE_RISK;            
-            $('#' + id + ' #tpslupvalue').attr('min', "0");
-            $('#' + id + ' #tpslupvalue').attr('step', "0.5");            
-            $('#' + id + ' #tpslupvalue').attr('max', "");          
-        }
-    } else
-    if (sltp == 'DOWN') {
-        if (elt.value == "ATR") {
-            Symbol.DownTPSLType = ATR_SLTP; //pips 0 atr 1  = TRADE_RISK;       
-            $('#' + id + ' #tpsldownvalue').attr('min', "1");
-            $('#' + id + ' #tpsldownvalue').attr('step', "0.1");            
-            $('#' + id + ' #tpsldownvalue').attr('max', "10");                       
-        } else
-        if (elt.value == "Pips") {
-            Symbol.DownTPSLType = PIPS_SLTP; //pips 0 atr 1  = TRADE_RISK;   
-            $('#' + id + ' #tpsldownvalue').attr('min', "0");
-            $('#' + id + ' #tpsldownvalue').attr('step', "0.5");            
-            $('#' + id + ' #tpsldownvalue').attr('max', "");                         
-        }
-    }
-    if (sltp == 'UP') {
-        if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) sltp = 'BTP';
-        else
-        if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) sltp = 'SSL';
-    } else
-    if (sltp == 'DOWN') {
-        if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) sltp = 'BSL';
-        else
-        if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) sltp = 'STP';
-    }
-    switch (sltp) {
-    case 'STP':
-        if (Symbol.DownTPSLType == ATR_SLTP)
-            $('#' + id + ' #tpsldownvalue').val( Symbol.ATRSellTP);
-        else 
-            $('#' + id + ' #tpsldownvalue').val( Symbol.SellTP);
-        break;
-    case 'SSL':
-        if (Symbol.UpTPSLType == ATR_SLTP) 
-            $('#' + id + ' #tpslupvalue').val(ymbol.ATRSellS);
-        else 
-            $('#' + id + ' #tpslupvalue').val(Symbol.SellSL);
-        break;
-    case 'BTP':
-        if (Symbol.UpTPSLType == ATR_SLTP) 
-            $('#' + id + ' #tpslupvalue').val(Symbol.ATRBuyTP);
-        else 
-            $('#' + id + ' #tpslupvalue').val(Symbol.BuyTP);
-        break;
-    case 'BSL':
-        if (Symbol.DownTPSLType == ATR_SLTP) 
-            $('#' + id + ' #tpsldownvalue').val(Symbol.ATRBuySL);        
-        else 
-            $('#' + id + ' #tpsldownvalue').val(Symbol.BuySL);   
-        break;
-    }
-    Chart_Draw(solution.CurrentTerminal)     
-}
-
-function UpdateOrderPanel (id, Symbol) {
-    var color;
-    
-    if (Symbol && Symbol.Connected == true) color = 'orange';
-    else color = 'gray';
-
-    var tpslupvalue = 0;
-    var tpsldownvalue = 0;
-    var entryvalue = 0;
-    var submitorder     = true;
-    var tradetypevalue  = '';
-  
-    if (Symbol.TradeOrder == -1) {
-        submitorder     = false;
-    } else
-    
-    
-    if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) {
-        if (Symbol.TradeType == TRADE_VOLUME) {
-            tradetypevalue = Symbol.BuyVolume;
-        } else
-        if (Symbol.TradeType == TRADE_RISK) {
-            tradetypevalue = Symbol.TradeRisk;
-        }
-
-        tpslupvalue     = (Symbol.UpTPSLType == ATR_SLTP ? Symbol.ATRBuyTP : Symbol.BuyTP);
-        tpsldownvalue   = (Symbol.DownTPSLType == ATR_SLTP ? Symbol.ATRBuySL : Symbol.BuySL);
-        entryvalue      = Symbol.BuyEntry;
-
-    } else
-    if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) {
-        if (Symbol.TradeType == TRADE_VOLUME) {
-            tradetypevalue = Symbol.SellVolume;
-        } else
-        if (Symbol.TradeType == TRADE_RISK) {
-            tradetypevalue = Symbol.TradeRisk;
-        }
-        tpslupvalue     = (Symbol.UpTPSLType == ATR_SLTP ? Symbol.ATRSellSL : Symbol.SellSL);
-        tpsldownvalue   = (Symbol.DownTPSLType == ATR_SLTP ? Symbol.ATRSellTP : Symbol.SellTP);
-        entryvalue      = Symbol.SellEntry;
-    }
-
-    $('#' + id + ' #bid').html(Symbol.Bid);
-    $('#' + id + ' #ask').html(Symbol.Ask);
-    $('#' + id + ' #entryvalue').attr('step',  Symbol.Point);
-    $('#' + id + ' #entryvalue').val(entryvalue);
-    $('#' + id + ' #tpsldownvalue').val(tpslupvalue);
-    $('#' + id + ' #tpslupvalue').val(tpsldownvalue);
-    $('#' + id + ' #tradetypevalue').val(tradetypevalue);
-    
-    $('#' + id + ' #tradesubmit').attr('disabled',  submitorder);
-    $('#' + id + ' #tradecancel').attr('disabled',  submitorder);
-    
-    if (Symbol.TradeType == TRADE_VOLUME){
-        $('#tradesizetype option[value="volume"]').prop('selected', true);
-    }
-    else {
-        $('#tradesizetype option[value="risk"]').prop('selected', true);
-    }
-
-    if (Symbol.UpTPSLType != ATR_SLTP) {
-        $('#stoplosstype option[value="pips"]').prop('selected', true);
-    
-    } else {  
-        $('#stoplosstype option[value="atr"]').prop('selected', true);
-    }
-    if (Symbol.DownTPSLType != ATR_SLTP) {
-        $('#takeprofittype option[value="pips"]').prop('selected', true)
-    } else {
-        $('#takeprofittype option[value="atr"]').prop('selected', true)
-    }
-}
-
 function onclick_tradesubmit (elt) {
-    OnOrder();
-    SetOrderType(this, 'CANCEL');
+    let symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;    
+
+    let symbol = symbolcanvas.CurrentSymbol;
+
+    let id= 'orderpanel';
+    let operation =  symbol.Order.operation;
+
+    if (operation == null) {
+        console.log ('no operation selected')
+        return;
+    }
+
+    let tradeorder = symbol.Order.getorder (operation);
+    
+    let entrytype  = tradeorder.tradeentry_type;    
+    let price      = tradeorder.get_tradeentry_value();
+    let size       = tradeorder.get_tradesize_value();
+    let stoploss   = tradeorder.get_stoploss_value();
+    let takeprofit = tradeorder.get_takeprofit_value();
+    
+    entrytype == ENTRY_SPOT ?  symbol.TradeOrder = operation 
+                            :  operation == OP_BUY  ?  (price > +symbol.Ask ?  symbol.TradeOrder = OP_BUYSTOP :    price < +symbol.Ask ?  symbol.TradeOrder = OP_BUYLIMIT : symbol.TradeOrder = OP_BUY) 
+                                                    :  (price > +symbol.Bid ?  symbol.TradeOrder = OP_SELLLIMIT :  price < +symbol.Bid ?  symbol.TradeOrder = OP_SELLSTOP : symbol.TradeOrder = OP_SELL);
+
+    operation == OP_BUY  ? symbol.BuyEntry = price      : symbol.SellEntry = price;
+    operation == OP_BUY  ? symbol.BuyVolume  = size     : symbol.SellVolume = size;
+    operation == OP_BUY  ? symbol.BuySL  = stoploss     : symbol.SellSL = stoploss;
+    operation == OP_BUY  ? symbol.BuyTP  = takeprofit   : symbol.SellTP = takeprofit;
+
+    if (OnOrder(solution.CurrentTerminal, symbol) == null) {
+        return;
+    }
+    $('#' + id + ' #buy').removeClass ('checked');
+    $('#' + id + ' #sell').removeClass ('checked');
+    $('#' + id + ' #tradesubmit').attr('disabled',  true);
+    $('#' + id + ' #tradecancel').attr('disabled',  true);    
+        
     bottompanel_select (tradedeskplatform,'tab_orders')    
-
- //  sb.tab_select (tradedesk_bottomtabs, 'tab_orders');    
-    sb.box_toggle('boxorderpanel', 0);    
 }
 
-function onclick_tradecancel (elt) {
-    SetOrderType(elt, 'CANCEL');
-    sb.box_toggle('boxorderpanel', 0);     
+function onclick_tradecancel(elt, event) {
+    let symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;    
+
+    let symbol = symbolcanvas.CurrentSymbol;
+
+    symbol.Order.operation = null;
+  //  symbol.Order.reset (OP_BUY);
+  //  symbol.Order.reset (OP_SELL);
+
+    update_orderpanel (symbol);
+
+   
+    Chart_Draw(solution.CurrentTerminal)    
+ } 
+
+
+function onclick_order (elt, type) {
+    var symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;    
+    
+    let operation = elt.id == 'buy' ? OP_BUY : OP_SELL;
+
+    let symbol = symbolcanvas.CurrentSymbol;
+    symbol.Order.operation = operation;
+    let id= 'orderpanel';
+
+    update_orderpanel (symbol);
+
+    
+    Chart_Draw(solution.CurrentTerminal)    
 }
+
+
+function onchange_tradeentry_type(elt, event) {
+   let symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;    
+    
+    let symbol = symbolcanvas.CurrentSymbol;
+    let operation = symbol.Order.operation;
+    if (operation == null) {
+        return;
+    } 
+    let tradeorder = symbol.Order.getorder (operation);
+    let entrytype = TRADE_ENTRY_MENU.filter(str => str.text == elt.value)[0].id;  
+    
+    tradeorder.tradeentry_type = entrytype;
+
+    let id= 'orderpanel';
+    if (entrytype == ENTRY_SPOT) {
+        $('#' + id + ' #tradeentry_value').attr('disabled',  true);    
+    } else {
+        $('#' + id + ' #tradeentry_value').removeAttr('disabled');
+    }
+    $('#' + id + ' #tradeentry_value').val(tradeorder.tradeentry_value[tradeorder.tradeentry_type].value);
+
+    Chart_Draw(solution.CurrentTerminal)        
+}
+
+function onchange_tradeentry_value(elt, event) {
+
+    let symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;    
+    
+    let symbol = symbolcanvas.CurrentSymbol;
+    let operation = symbol.Order.operation;
+    if (operation == null) {
+        return;
+    }
+
+    let tradeorder = symbol.Order.getorder (operation);
+    tradeorder.tradeentry_value[tradeorder.tradeentry_type].value = elt.value;  
+    
+    Chart_Draw(solution.CurrentTerminal)   
+}
+
+function onchange_tradesize_type(elt, eventt) {
+    let symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;    
+    
+    let symbol = symbolcanvas.CurrentSymbol;
+    let operation = symbol.Order.operation;
+    if (operation == null) {
+        return;
+    }
+    let tradeorder = symbol.Order.getorder (operation);
+    let tradesizetype = TRADE_VOLUME_MENU.filter(str => str.text == elt.value)[0].id;
+
+    tradeorder.tradesize_type = tradesizetype;
+
+    let id= 'orderpanel';
+    $('#' + id + ' #tradesize_value').val(tradeorder.tradesize_value[tradeorder.tradesize_type].value);
+
+    if (tradesizetype != VOLUME_RISK) {
+        $('#' + id + ' #tradesize_value_a').css('visibility', 'hidden');
+
+    } else {
+        $('#' + id + ' #tradesize_value_a').css('visibility', '');
+        let value = symbol.CalculateLotValue(solution.CurrentTerminal.User.AccountEquity, tradeorder.tradesize_value[tradeorder.tradesize_type].value);  
+        tradeorder.tradesize_value[tradeorder.tradesize_type].value_a = value;                     
+        $('#' + id + ' #tradesize_value_a').val(value);
+    }
+
+
+    Chart_Draw(solution.CurrentTerminal)   
+}
+
+function onchange_tradesize_value (elt, event) {   //'VOL'
+
+    let symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;    
+    
+    let symbol = symbolcanvas.CurrentSymbol;
+    let operation = symbol.Order.operation;
+    if (operation == null) {
+        return;
+    }
+
+    let tradeorder = symbol.Order.getorder (operation);
+    tradeorder.tradesize_value[tradeorder.tradesize_type].value = elt.value;    
+    
+    let id= 'orderpanel';
+    
+    if (tradeorder.tradesize_type == VOLUME_RISK) {
+        let value = symbol.CalculateLotValue(solution.CurrentTerminal.User.AccountEquity, tradeorder.tradesize_value[tradeorder.tradesize_type].value); 
+        tradeorder.tradesize_value[tradeorder.tradesize_type].value_a = value;          
+        $('#' + id + ' #tradesize_value_a').val(value);
+    }
+}
+
+function onchange_stoploss_type (elt, event) {   //'VOL'
+    let symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;    
+    
+    let symbol = symbolcanvas.CurrentSymbol;
+    let operation = symbol.Order.operation;
+    if (operation == null) {
+        return;
+    }
+    let tradeorder = symbol.Order.getorder (operation);
+    let stoplosstype = TRADE_SLTP_MENU.filter(str => str.text == elt.value)[0].id;   
+
+    tradeorder.stoploss_type = stoplosstype;   
+
+    let id= 'orderpanel';
+    $('#' + id + ' #stoploss_value').val(tradeorder.stoploss_value[tradeorder.stoploss_type].value);   
+
+
+    if (stoplosstype != SLTP_ATR) {
+        $('#' + id + ' #stoploss_value_a').css('visibility', 'hidden');
+    } else {
+        $('#' + id + ' #stoploss_value_a').css('visibility', '');
+        let value = (symbol.ATR[symbolcanvas.CurrentPeriod] * +tradeorder.stoploss_value[tradeorder.stoploss_type].value / symbol.SysPoint).toFixed(0);
+        tradeorder.stoploss_value[tradeorder.stoploss_type].value_a = value;        
+        $('#' + id + ' #stoploss_value_a').val(value);
+    }
+
+
+    Chart_Draw(solution.CurrentTerminal)       
+}
+
+function onchange_stoploss_value (elt, event) {   //'VOL'
+
+    let symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;    
+    
+    let symbol = symbolcanvas.CurrentSymbol;
+    let operation = symbol.Order.operation;
+    if (operation == null) {
+        return;
+    }
+
+    let tradeorder = symbol.Order.getorder (operation);
+    tradeorder.stoploss_value[tradeorder.stoploss_type].value = elt.value;       
+    
+    let id= 'orderpanel';
+
+    if (tradeorder.stoploss_type == SLTP_ATR) {
+        let value = (symbol.ATR[symbolcanvas.CurrentPeriod] * +tradeorder.stoploss_value[tradeorder.stoploss_type].value / symbol.SysPoint).toFixed(0);
+        tradeorder.stoploss_value[tradeorder.stoploss_type].value_a = value;
+        $('#' + id + ' #stoploss_value_a').val(value);    
+    }
+    
+    Chart_Draw(solution.CurrentTerminal)   
+}
+
+function onchange_takeprofit_type (elt, event) {   //'VOL'
+    let symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;    
+
+    let symbol = symbolcanvas.CurrentSymbol;
+    let operation = symbol.Order.operation;
+    if (operation == null) {
+        return;
+    }
+
+    let tradeorder = symbol.Order.getorder (operation);
+    let takeprofittype = TRADE_SLTP_MENU.filter(str => str.text == elt.value)[0].id;   
+
+    tradeorder.takeprofit_type = takeprofittype;  
+
+    let id= 'orderpanel';
+   
+    $('#' + id + ' #takeprofit_value').val(tradeorder.takeprofit_value[tradeorder.takeprofit_type].value);   
+
+    if (takeprofittype != SLTP_ATR) {
+        $('#' + id + ' #takeprofit_value_a').css('visibility', 'hidden');
+
+    } else {
+        $('#' + id + ' #takeprofit_value_a').css('visibility', '');
+        let value = (symbol.ATR[symbolcanvas.CurrentPeriod] * +tradeorder.takeprofit_value[tradeorder.takeprofit_type].value / symbol.SysPoint).toFixed(0);
+        tradeorder.takeprofit_value[tradeorder.takeprofit_type].value_a =  value;           
+        $('#' + id + ' #takeprofit_value_a').val(value);        
+    }
+
+    Chart_Draw(solution.CurrentTerminal)   
+}
+
+function onchange_takeprofit_value (elt, event) {   //'VOL'
+    let symbolcanvas = solution.GetCanvasFromTerminal();
+    if (!symbolcanvas) return;    
+    
+    let symbol = symbolcanvas.CurrentSymbol;
+    let operation = symbol.Order.operation;
+    if (operation == null) {
+        return;
+    }
+
+    let tradeorder = symbol.Order.getorder (operation);
+    tradeorder.takeprofit_value[tradeorder.takeprofit_type].value = elt.value;     
+
+    let id= 'orderpanel';
+
+    if (tradeorder.takeprofit_type == SLTP_ATR) {
+        let value = (symbol.ATR[symbolcanvas.CurrentPeriod] * +tradeorder.takeprofit_value[tradeorder.takeprofit_type].value / symbol.SysPoint).toFixed(0);
+        tradeorder.takeprofit_value[tradeorder.takeprofit_type].value_a =  value;       
+        $('#' + id + ' #takeprofit_value_a').val(value);    
+    }
+    
+    Chart_Draw(solution.CurrentTerminal)   
+}
+
+
+
 
 //------------------------------------------------------------ TERMINAL INFO PANEL ----------------------------------------------------------
 
@@ -2243,7 +2394,7 @@ function AccountPanel_Update (terminal) {
     setField('balance', user.AccountBalance, true);
     setField('totalprofit', user.AccountTotalProfit, true);
     setField('currency', user.Currency, true);
-    setfield('accountelapsed', elapsed, "brown");
+    setfield('accountelapsed', elapsed, false);
 }
 
 //------------------------------------------------------------ AUTOMATION PANEL ----------------------------------------------------------
@@ -3418,7 +3569,8 @@ function SelectSymbol(Symbol) {
 
         setField('symbolname', Symbol.Name, false, false);
 
-        UpdateOrderPanel ('orderpanel', Symbol);
+        //UpdateOrderPanel ('orderpanel', Symbol);
+
 
         sb.tab_select (tradedesksignalstab, Symbol.Name);
         sb.tab_select (tradedesk_maintabs,   Symbol.Name);
@@ -3433,7 +3585,7 @@ function SelectSymbol(Symbol) {
         sb.table_rowselect (percentchangetable, index)
         sb.table_rowselect (StrategiesTable,  index)
 
-
+        update_orderpanel (Symbol);
 
 
         InitMarketInfo(Symbol);
@@ -3569,6 +3721,7 @@ var onTrendLineStart = function (elt, event) {
         return;
     }
 }
+
 var onFibStart = function (elt, event) {
     var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;  
@@ -3581,6 +3734,7 @@ var onFibStart = function (elt, event) {
         return;
     }
 }
+
 var onTrendLineComplete = function (elt, event) {
     var symbolcanvas = solution.GetCanvasFromTerminal();
     if (!symbolcanvas) return;    
@@ -3600,131 +3754,13 @@ var onTrendLineComplete = function (elt, event) {
         symbolcanvas.Trends = [...elt.state.trends];
     }
 }
+
 var onFibComplete = function (elt, event) {
     var symbolcanvas = solution.GetCanvasFromTerminal();
     if (event && event.button == 2) {
         return;
     }
     symbolcanvas.Retracements = [...elt.state.retracements];
-}
-
-function SymbolPanel(Symbol) {
-    var color;
-    
-    if (Symbol && Symbol.Connected == true) color = 'orange';
-    else color = 'gray';
-    
-    
-    var width = '110px';
-    var buyradiochecked = 'false';
-    var sellradiochecked = 'false';
-    var tpslupvalue = 0;
-    var tpsldownvalue = 0;
-    var entryvalue = 0;
-    var submitorder = 'disabled';
-    
-  
-    
-    
-    var tpsluplabel = 'Take Profit';
-    var tpsldownlabel = 'Stop Loss';
-    var tradetypevalue = '';
-    if (Symbol.TradeOrder == -1) {
-        buyradiochecked = 'false';
-        sellradiochecked = 'false';
-        buybuttoncolor = theme_bg_color;
-    } else
-    if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) {
-        if (Symbol.TradeType == TRADE_VOLUME) {
-            tradetypevalue = Symbol.BuyVolume;
-        } else
-        if (Symbol.TradeType == TRADE_RISK) {
-            tradetypevalue = Symbol.TradeRisk;
-        }
-        tpslupvalue = (Symbol.UpTPSLType == ATR_SLTP ? Symbol.ATRBuyTP : Symbol.BuyTP);
-        tpsldownvalue = (Symbol.DownTPSLType == ATR_SLTP ? Symbol.ATRBuySL : Symbol.BuySL);
-        entryvalue = Symbol.BuyEntry;
-        submitorder = '';
-        sellradiochecked = 'false';
-        buyradiochecked = 'true';
-        tpsluplabel = 'Take Profit';
-        tpsldownlabel = 'Stop Loss';
-   
-    } else
-    if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) {
-        if (Symbol.TradeType == TRADE_VOLUME) {
-            tradetypevalue = Symbol.SellVolume;
-        } else
-        if (Symbol.TradeType == TRADE_RISK) {
-            tradetypevalue = Symbol.TradeRisk;
-        }
-        tpslupvalue = (Symbol.UpTPSLType == ATR_SLTP ? Symbol.ATRSellSL : Symbol.SellSL);
-        tpsldownvalue = (Symbol.DownTPSLType == ATR_SLTP ? Symbol.ATRSellTP : Symbol.SellTP);
-        entryvalue = Symbol.SellEntry;
-        submitorder = '';
-        sellradiochecked = 'true';
-        buyradiochecked = 'false';
-        tpsluplabel = 'Take Profit';
-        tpsldownlabel = 'Stop Loss';
-
-    }
-    var content = 
-    '<div  class="SymbolContainer">' + 
-    
-//HEADER
-        '<div class="sb_buttongroup">' +
-            '<button class="sb_button" id ="SymbolBuyType" onclick="SetOrderType(this, \'BUY\')" >BUY</button>' + 
-            '<div id = "bid">' + Symbol.Bid + '</div> ' + 
-            '<div id = "bidask">/</div>' + 
-            '<div id = "ask">' + Symbol.Ask + '</div>' + 
-            '<button class="sb_button" id ="SymbolSellType" onclick="SetOrderType(this,  \'SELL\')" >SELL</button>' + 
-        '</div>' +            
-//BODY        
-        
-        '<div class="sb_bodygroup">' + 
-            '<div class="sb_formgroup">' +
-                '<label>Trade Size</label>' + 
-                '<select  class="custom-select form-control" id="tradesizetype"  onchange="SetTradeType (this)" >' + 
-                    '<option' + (Symbol.TradeType == TRADE_VOLUME ? ' selected' : '') + '>Volume</option>' + 
-                    '<option' + (Symbol.TradeType == TRADE_RISK ? ' selected' : '') + '>Risk %</option>' + 
-                '</select>' + 
-                '<input class="form-control" id = "SymbolVolume" type="number" min="0.01" step="0.01", id ="svolume"; onchange="SetSLTP (this, \'VOL\')"; value="' + tradetypevalue + '">' +
-            '</div>' + 
-            '<div class="sb_formgroup">' +
-                '<label id = "SymbolTPSLUp">' + tpsluplabel + '</label>' +             
-                '<select  class="custom-select form-control" id="stoplosstype"  onchange="SetTPSLType (this, \'UP\')">' + 
-                    '<option' + (Symbol.UpTPSLType != ATR_SLTP ? ' selected' : '') + '>Pips</option>' + 
-                    '<option' + (Symbol.UpTPSLType == ATR_SLTP ? ' selected' : '') + '>ATR</option>' + 
-                '</select>' + 
-                '<input class="form-control"  id= "SymbolTPSLUpValue" type="number", min="0" step="0.5",  id ="ssl"; onchange="SetSLTP (this, \'UP\')"; value="' + tpslupvalue + '">' + 
-            '</div>' +
-            '<div class="sb_formgroup">' +
-                '<label id="SymbolEntryLabel">Trade Entry</label>' +             
-                '<select class="custom-select form-control" id="SymbolEntry">' +
-                    '<option>Price</option>' + 
-//                            '<option>Pips</option>' + 
-                '</select>' + 
-                '<input class="form-control"  id = "SymbolEntryValue" type="number", min="0" step="' + Symbol.Point + '",  id ="ssl";  onchange="SetSLTP (this, \'E\')"; value:' + entryvalue + '>'+ 
-            '</div>' +
-            '<div class="sb_formgroup">' +
-                '<label id="SymbolTPSLDown">' + tpsldownlabel + '</label>' +             
-                '<select class="custom-select form-control" id="takeprofittype"   onchange="SetTPSLType (this, \'DOWN\')">' + 
-                    '<option' + (Symbol.DownTPSLType != ATR_SLTP ? ' selected' : '') + '>Pips</option>' + 
-                    '<option' + (Symbol.DownTPSLType == ATR_SLTP ? ' selected' : '') + '>ATR</option>' + 
-                '</select>' + 
-                '<input class="form-control"  id= "SymbolTPSLDownValue" type="number", min="0" step="0.5", id ="stp"; onchange="SetSLTP (this, \'DOWN\')"; value="' + tpsldownvalue + '">' +
-            '</div>' +
-        '</div>' +
-//BODY END
-// FOOTER
-        '<div class="sb_buttongroup">' + 
-            '<button class="sb_button"  id="tradesubmit" name="tradesubmit" type="submit"' + submitorder + ' onclick="OnOrder();SetOrderType(this, \'CANCEL\')">Submit</button>' + 
-            '<button class="sb_button"  id="tradecancel" name="tradecancel" type="submit"' + submitorder + ' onclick="SetOrderType(this, \'CANCEL\')" >Cancel</button>' +
-        '</div>';
-//FOOTER END
-    '</div>';
-//BODY END
-    return content;
 }
 
 
@@ -3933,7 +3969,7 @@ function SelectEngine(engine) {
     CurrentTSchedule = schedule;
     
     var symbolcanvas = solution.GetCanvasFromTerminal();
-    
+
     for (var i = 0; i < engine.Indicators.length; i++) {
         var object = solution.CurrentTerminal.PG.GetObjectFromId (engine.Indicators[i]);                        
         symbolcanvas.AddIndicator(object.Id)
@@ -3953,7 +3989,7 @@ function SelectEngine(engine) {
 
     $("#tradedeskstrategyselect option[value='--Select Strategy--']").remove();   
     $('#tradedeskstrategyselect option[value="' + engine.Name + '"]').prop('selected', true); 
-
+    $('#tradedesk_strategy_name').html(engine.Name); 
 }
 
 function SelectSession(session) {

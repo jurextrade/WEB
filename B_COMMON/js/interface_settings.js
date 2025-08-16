@@ -77,8 +77,9 @@ var serverpanel_httpgroup = (id =>  {return {
 
 var serverpanel_buttonsgroup = (id =>  {return {
     id:'serverpanel_buttonsgroup_' + id,
-    type: 'panel',
-    class:'sb_formcontainer serverpanel_buttonsgroup',
+    type: 'group',
+    form: true,    
+    class: 'sb_buttongroup',
     items : 
         [
             

@@ -101,18 +101,18 @@
 	
 08-12-2025,23:50,JPY,PPI y/y,Low,2.5%,2.5%,2.9%
 08-13-2025,01:30,AUD,Wage Price Index q/q,High,0.8%,0.8%,0.9%
-08-13-2025,06:00,EUR,German Final CPI m/m,Low,0.3%,0.3%,0.3%
-08-13-2025,06:00,EUR,German WPI m/m,Low,0.2%,0.2%,0.2%
-08-13-2025,06:00,JPY,Prelim Machine Tool Orders y/y,Low,
+08-13-2025,05:56,JPY,Prelim Machine Tool Orders y/y,Low,
 		<previous>-0.5%</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/321-jn-prelim-machine-tool-orders-yy]]--></url>
 	,
 		<previous>-0.5%</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/321-jn-prelim-machine-tool-orders-yy]]--></url>
 	,-0.5%
+08-13-2025,06:00,EUR,German Final CPI m/m,Low,0.3%,0.3%,0.3%
+08-13-2025,06:00,EUR,German WPI m/m,Low,0.2%,0.2%,0.2%
+08-13-2025,09:02,CNY,M2 Money Supply y/y,Low,8.3%,8.3%,8.3%
 08-13-2025,09:03,CNY,New Loans,Medium,305B,305B,2240B
-08-13-2025,09:03,CNY,M2 Money Supply y/y,Low,8.3%,8.3%,8.3%
-08-13-2025,09:42,EUR,German 10-y Bond Auction,Low,
+08-13-2025,09:33,EUR,German 10-y Bond Auction,Low,
 		<previous>2.62|1.5</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/522-ge-10-y-bond-auction]]--></url>
 	,
@@ -128,13 +128,16 @@
 	</previous>,
 		<url>https://www.forexfactory.com/calendar/728-us-fomc-member-barkin-speaks</url>
 	
-08-13-2025,14:30,USD,Crude Oil Inventories,Low,
-		<previous>-3.0M</previous>
-		<url><!--[CDATA[https://www.forexfactory.com/calendar/10-us-crude-oil-inventories]]--></url>
-	,
-		<previous>-3.0M</previous>
-		<url><!--[CDATA[https://www.forexfactory.com/calendar/10-us-crude-oil-inventories]]--></url>
-	,-3.0M
+08-13-2025,14:30,USD,Crude Oil Inventories,Low,-0.9M,-0.9M,-3.0M
+08-13-2025,15:15,USD,President Trump Speaks,Medium,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/645-us-president-trump-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/645-us-president-trump-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/645-us-president-trump-speaks</url>
+	
 08-13-2025,17:00,USD,FOMC Member Goolsbee Speaks,Low,
 		<previous>
 		<url>https://www.forexfactory.com/calendar/889-us-fomc-member-goolsbee-speaks</url>
@@ -167,12 +170,12 @@
 08-14-2025,01:30,AUD,Unemployment Rate,High,4.2%,4.2%,4.3%
 08-14-2025,06:00,GBP,GDP m/m,High,0.2%,0.2%,-0.1%
 08-14-2025,06:00,GBP,Prelim GDP q/q,Medium,0.1%,0.1%,0.7%
-08-14-2025,06:00,GBP,Construction Output m/m,Low,0.4%,0.4%,-0.6%
+08-14-2025,06:00,GBP,Construction Output m/m,Low,0.3%,0.3%,-0.6%
 08-14-2025,06:00,GBP,Goods Trade Balance,Low,-21.7B,-21.7B,-21.7B
 08-14-2025,06:00,GBP,Index of Services 3m/3m,Low,0.2%,0.2%,0.4%
-08-14-2025,06:00,GBP,Industrial Production m/m,Low,0.4%,0.4%,-0.9%
+08-14-2025,06:00,GBP,Industrial Production m/m,Low,0.3%,0.3%,-0.9%
 08-14-2025,06:00,GBP,Manufacturing Production m/m,Low,0.4%,0.4%,-1.0%
-08-14-2025,06:00,GBP,Prelim Business Investment q/q,Low,-0.9%,-0.9%,5.9%
+08-14-2025,06:00,GBP,Prelim Business Investment q/q,Low,0.1%,0.1%,5.9%
 08-14-2025,06:30,CHF,PPI m/m,Low,0.0%,0.0%,-0.1%
 08-14-2025,06:45,EUR,French Final CPI m/m,Low,0.2%,0.2%,0.2%
 08-14-2025,09:00,EUR,Flash Employment Change q/q,Low,0.2%,0.2%,0.3%
@@ -197,13 +200,15 @@
 		<previous>-0.3%</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/299-uk-cb-leading-index-mm]]--></url>
 	,-0.3%
-08-14-2025,14:00,USD,Mortgage Delinquencies,Low,
-		<previous>4.04%</previous>
-		<url><!--[CDATA[https://www.forexfactory.com/calendar/489-us-mortgage-delinquencies]]--></url>
-	,
-		<previous>4.04%</previous>
-		<url><!--[CDATA[https://www.forexfactory.com/calendar/489-us-mortgage-delinquencies]]--></url>
-	,4.04%
+08-14-2025,14:10,USD,FOMC Member Musalem Speaks,Low,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/911-us-fomc-member-musalem-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/911-us-fomc-member-musalem-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/911-us-fomc-member-musalem-speaks</url>
+	
 08-14-2025,14:30,AUD,CB Leading Index m/m,Low,
 		<previous>0.3%</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/247-au-cb-leading-index-mm]]--></url>
@@ -211,13 +216,23 @@
 		<previous>0.3%</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/247-au-cb-leading-index-mm]]--></url>
 	,0.3%
-08-14-2025,14:30,USD,Natural Gas Storage,Low,
-		<previous>7B</previous>
-		<url><!--[CDATA[https://www.forexfactory.com/calendar/26-us-natural-gas-storage]]--></url>
+08-14-2025,14:30,USD,Natural Gas Storage,Low,53B,53B,7B
+08-14-2025,15:50,USD,Mortgage Delinquencies,Low,
+		<previous>4.04%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/489-us-mortgage-delinquencies]]--></url>
 	,
-		<previous>7B</previous>
-		<url><!--[CDATA[https://www.forexfactory.com/calendar/26-us-natural-gas-storage]]--></url>
-	,7B
+		<previous>4.04%</previous>
+		<url><!--[CDATA[https://www.forexfactory.com/calendar/489-us-mortgage-delinquencies]]--></url>
+	,4.04%
+08-14-2025,17:00,USD,President Trump Speaks,Medium,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/645-us-president-trump-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/645-us-president-trump-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/645-us-president-trump-speaks</url>
+	
 08-14-2025,18:00,USD,FOMC Member Barkin Speaks,Low,
 		<previous>
 		<url>https://www.forexfactory.com/calendar/728-us-fomc-member-barkin-speaks</url>
@@ -301,7 +316,7 @@
 08-15-2025,12:30,CAD,Manufacturing Sales m/m,Low,0.4%,0.4%,-0.9%
 08-15-2025,12:30,CAD,Wholesale Sales m/m,Low,0.7%,0.7%,0.1%
 08-15-2025,12:30,USD,Core Retail Sales m/m,High,0.3%,0.3%,0.5%
-08-15-2025,12:30,USD,Retail Sales m/m,High,0.5%,0.5%,0.6%
+08-15-2025,12:30,USD,Retail Sales m/m,High,0.6%,0.6%,0.6%
 08-15-2025,12:30,USD,Empire State Manufacturing Index,Medium,-1.2,-1.2,5.5
 08-15-2025,12:30,USD,Import Prices m/m,Low,0.1%,0.1%,0.1%
 08-15-2025,13:15,USD,Capacity Utilization Rate,Low,77.6%,77.6%,77.6%
@@ -322,3 +337,12 @@
 		<previous>259.4B</previous>
 		<url><!--[CDATA[https://www.forexfactory.com/calendar/372-us-tic-long-term-purchases]]--></url>
 	,259.4B
+08-15-2025,22:55,USD,President Trump Speaks,High,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/645-us-president-trump-speaks</url>
+	</previous>,
+		<previous>
+		<url>https://www.forexfactory.com/calendar/645-us-president-trump-speaks</url>
+	</previous>,
+		<url>https://www.forexfactory.com/calendar/645-us-president-trump-speaks</url>
+	

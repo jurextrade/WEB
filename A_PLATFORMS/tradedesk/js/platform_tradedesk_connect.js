@@ -290,28 +290,30 @@ var SystemSignalTimeTab         = [];
 var ProgressSignalValueTab      = [];
 
 function TreatInit(solution, terminal, values) {
-    var name = values[1],
-        pname = values[2],
-        minlot = values[3],
-        maxlot = values[4],
-        lotstep = values[5],
-        spread = values[6],
-        stoplevel = values[7],
-        point = values[8],
-        digits = values[9],
-        lotsize = values[10],
-        tester = values[11],
-        period = +values[12],
-        accountnumber = values[13],
-        accountcurrency = values[14],
-        accountstartdate = values[15],
-        terminalbuild = values[16],
-        terminaltimeshift = values[17],
-        accountname = values[18],
-        terminalcompany = values[19],
-        terminalname = values[20],
-        terminalpath = values[21],
-        terminaldatapath = values[22];
+    let i = 0;
+    var name = values[++i],         //1
+        pname = values[++i],
+        minlot = values[++i],
+        maxlot = values[++i],
+        lotstep = values[++i],
+        spread = values[++i],
+        stoplevel = values[++i],
+        point = values[++i],
+        digits = values[++i],
+        lotsize = values[++i],
+
+        tester = values[++i],
+        period = +values[++i],
+        accountnumber = values[++i],
+        accountcurrency = values[++i],
+        accountstartdate = values[++i],
+        terminalbuild = values[++i],
+        terminaltimeshift = values[++i],
+        accountname = values[++i],
+        terminalcompany = values[++i],
+        terminalname = values[++i],
+        terminalpath = values[++i],
+        terminaldatapath = values[++i];
     
     var terminaltype = tester == 1 ? 'Tester' : 'Terminal';
     var offset = parseInt(terminaltimeshift);
@@ -328,6 +330,9 @@ function TreatInit(solution, terminal, values) {
     if (!symbol) {
         symbol = new pgsymbol(name);
         symbol.Set(name, pname, minlot, maxlot, lotstep, spread, stoplevel, point, digits, lotsize, tester, period);
+ 
+
+
         terminal.PG.AddSymbol(symbol);
         symbol.Connected = true;
     }
@@ -343,7 +348,7 @@ function TradedeskCurrency_Update (terminal, Symbol) {
     sb.table_setcellchildcontent (tradedeskcurrenciestable, rowid, 'Ask', Symbol.Ask);
     sb.table_setcellchildcontent (tradedeskcurrenciestable, rowid, 'Bid', Symbol.Bid);
     sb.table_setcellchildcontent (tradedeskcurrenciestable, rowid, 'Spread', Symbol.Spread);
-    sb.table_setcellchildcontent (tradedeskcurrenciestable, rowid, 'Pip Value', Symbol.PipValue);
+    sb.table_setcellchildcontent (tradedeskcurrenciestable, rowid, 'Pip Value', (Symbol.PipValue > 0 ? Symbol.PipValue : '---'));
 
     if (Symbol.Spread > 1) {
         sb.table_setcellchildbackground (tradedeskcurrenciestable, rowid, 'Spread', 'var(--theme-warning)');
@@ -394,49 +399,36 @@ function TradedeskTreatSymbol(terminal, values, selected) {
 
 
     Symbol.Spread = ((Symbol.Ask - Symbol.Bid) / Symbol.SysPoint).toFixed(1);
-    if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_SELL) {
-        Symbol.BuyEntry = Symbol.Ask;
-        Symbol.SellEntry = Symbol.Bid;
-    }
+
+
+// calculate ATR     
     var fromperiod = +values[2];
+ 
     for (var i = fromperiod; i < PeriodName.length; i++) {
         if (!Symbol.WaitHistory[i]) {
       
             Chart_UpdateData(terminal, Symbol, i, +values[9], +values[5], +values[6], +values[7], +values[8],  +values[10]);
             
             Symbol.ATR[i] = ATR_Indicator(Symbol.chartData[i], 14).toFixed(Symbol.Digits);
-            if (Symbol.UpTPSLType == ATR_SLTP) {
-                if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) Symbol.BuyTP = (Symbol.ATR[symbolcanvas.CurrentPeriod] * +Symbol.ATRBuyTP / Symbol.SysPoint).toFixed(0);
-                else
-                if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) Symbol.SellSL = (Symbol.ATR[symbolcanvas.CurrentPeriod] * +Symbol.ATRSellSL / Symbol.SysPoint).toFixed(0);
-            }
-            if (Symbol.DownTPSLType == ATR_SLTP) {
-                if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) Symbol.BuySL = (Symbol.ATR[symbolcanvas.CurrentPeriod] * +Symbol.ATRBuySL / Symbol.SysPoint).toFixed(0);
-                else
-                if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) Symbol.SellTP = (Symbol.ATR[symbolcanvas.CurrentPeriod] * +Symbol.ATRSellTP / Symbol.SysPoint).toFixed(0);
-            }
-            if (Symbol.TradeType == TRADE_RISK) {
-                Symbol.BuyVolume = GetRiskLotsSize(terminal, Symbol, OP_BUY);
-                Symbol.SellVolume = GetRiskLotsSize(terminal, Symbol, OP_SELL);
-            }
+
         }
     }
+
+ // calculate tick value
+    Symbol.CalcultatePipValue(terminal.User.AccountCurrency);   
+    
     terminal.User.AccountActualDate = +values[5] * 1000;
 
     if (terminal == solution.CurrentTerminal) {
         var recidindex = terminal.PG.GetSymbolIndexFromName(Symbol.Name) + 1;
         if (Symbol == symbolcanvas.CurrentSymbol) {
-            
-            if (Symbol.TradeOrder == OP_BUY)  setField('entryvalue', Symbol.BuyEntry, false, false);
-            else
-            if (Symbol.TradeOrder == OP_SELL) setField('entryvalue', Symbol.SellEntry, false, false);
 
-            setField('ask', Symbol.Ask, false, true);
-            setField('bid', Symbol.Bid, false, true);
-            document.title = Symbol.Name + " " + Symbol.Bid + "-" + Symbol.Ask;
+            ontick_orderpanel(Symbol);
 
             Chart_Draw(terminal)   
-            PriceGroup_Update (symbolcanvas, Symbol);        
+            PriceGroup_Update (symbolcanvas, Symbol);  
+          //  UpdateOrderPanel('orderpanel', Symbol);                  
+           // update_orderpanel ();
         }
 
         TradedeskCurrency_Update(terminal, Symbol);
@@ -634,11 +626,13 @@ function TreatSession(solution, terminal, values) {
         terminal.User.AccountTotalProfit = values[10];
         terminal.User.AccountNbrLots = values[11];
         terminal.User.AccountCurrency = values[12];
+       
         if (Symbol.BuyVolume == 0 || Symbol.SellVolume == 0) {
             var digits = numDecimals(Symbol.MinLot);
             if (Symbol.BuyVolume == 0) Symbol.BuyVolume = (+terminal.User.AccountEquity / 10000).toFixed(digits);
             if (Symbol.SellVolume == 0) Symbol.SellVolume = (+terminal.User.AccountEquity / 10000).toFixed(digits);
         }
+
         for (var i = 0; i < terminal.PG.Sessions.length; i++) {
             if (terminal.PG.Sessions[i].Symbol == Symbol.Name) {
                 terminal.PG.Sessions[i].Active = 0;
@@ -1830,51 +1824,73 @@ function OnExitAll(terminal, optype, profit, symbol) {
     }
 }
 
-function OnOrder () {
+function OnOrder (terminal, symbol) {
     
-    var terminal = solution.CurrentTerminal;
-    var PG = terminal.PG;
     let cuser = solution.get('user')
     
     if (!cuser.is_registered()) {
         TreatInfo(register_needed_label, 'operationpanel', 'red');      
         return;
     }
-    var symbolcanvas = solution.GetCanvasFromTerminal();
-    if (!symbolcanvas) return;    
-    var Symbol = symbolcanvas.CurrentSymbol;    
     
-    var sorder = "";
-    var sOperation = "";
-    var sEntry = "0";
-    if (Symbol.TradeOrder == OP_BUY || Symbol.TradeOrder == OP_BUYSTOP || Symbol.TradeOrder == OP_BUYLIMIT) {
-        if (Symbol.TradeOrder == OP_BUY) sOperation = "BUY";
-        if (Symbol.TradeOrder == OP_BUYSTOP) {
-            sOperation = "BUYSTOP";
-            sEntry = Symbol.BuyEntry
-        };
-        if (Symbol.TradeOrder == OP_BUYLIMIT) {
-            sOperation = "BUYLIMIT";
-            sEntry = Symbol.BuyEntry
-        };
-        sorder = "*ORDER -1 = [" + sEntry + " " + sOperation + " " + Symbol.BuyVolume + " " + Symbol.BuySL + " " + Symbol.BuyTP + " ]";
-    } else
-    if (Symbol.TradeOrder == OP_SELL || Symbol.TradeOrder == OP_SELLSTOP || Symbol.TradeOrder == OP_SELLLIMIT) {
-        if (Symbol.TradeOrder == OP_SELL) sOperation = "SELL";
-        if (Symbol.TradeOrder == OP_SELLSTOP) {
-            sOperation = "SELLSTOP";
-            sEntry = Symbol.SellEntry
-        };
-        if (Symbol.TradeOrder == OP_SELLLIMIT) {
-            sOperation = "SELLLIMIT";
-            sEntry = Symbol.SellEntry
-        };
-        sorder = "*ORDER -1 = [" + sEntry + " " + sOperation + " " + Symbol.SellVolume + " " + Symbol.SellSL + " " + Symbol.SellTP + " ]";
-    } else {
-        TreatInfo("Unknow order type " + Symbol.TradeOrder, 'operationpanel', 'red');
-        return null;
+    let sOrder      = '';
+    let sVolume     = '';
+    let sOperation  = '';
+    let sEntry      = '';
+    let sSL         = '';
+    let sTP         = '';
+
+    switch (symbol.TradeOrder) {
+        case OP_BUY: 
+            sOperation  = 'BUY';
+            sEntry      = '0';
+            sVolume     = symbol.BuyVolume;            
+            sSL         = Symbol.BuySL;
+            sTP         = Symbol.BuyTP;
+        break;
+        case OP_BUYSTOP: 
+            sOperation  = 'BUYSTOP';
+            sEntry      = symbol.BuyEntry;
+            sVolume     = symbol.BuyVolume;
+            sSL         = symbol.BuySL;
+            sTP         = symbol.BuyTP;
+        break;
+        case OP_BUYLIMIT: 
+            sOperation  = 'OP_BUYLIMIT';
+            sEntry      = symbol.BuyEntry;
+            sVolume     = symbol.BuyVolume;
+            sSL         = symbol.BuySL;
+            sTP         = symbol.BuyTP;
+        break;
+        case OP_SELL: 
+            sOperation  = 'SELL';
+            sEntry      = '0';
+            sVolume     = symbol.SellVolume;
+            sSL         = symbol.SellSL;
+            sTP         = symbol.SellTP;            
+        break;
+        case OP_SELLSTOP: 
+            sOperation  = 'SELLSTOP';
+            sEntry      = symbol.SellEntry;
+            sVolume     = symbol.SellVolume;
+            sSL         = symbol.SellSL;
+            sTP         = symbol.SellTP;              
+        break;
+        case OP_SELLLIMIT: 
+            sOperation  = 'SELLLIMIT';
+            sEntry      = symbol.SellEntry;
+            sVolume     = symbol.SellVolume;
+            sSL         = symbol.SellSL;
+            sTP         = symbol.SellTP;               
+        break;
+        default:
+            TreatInfo("Unknow order type " + symbol.TradeOrder, 'operationpanel', 'red');
+            return null;
+        break;
     }
-    terminal.Com.Send(solution.UserId + '*' + Symbol.Name + sorder);
+    
+    sOrder = '*ORDER -1 = [' + sEntry + ' ' + sOperation + ' ' + sVolume + ' ' + sSL + ' ' + sTP + ' ]';
+    terminal.Com.Send(solution.UserId + '*' + symbol.Name + sOrder);
     return 1;
 }
 
