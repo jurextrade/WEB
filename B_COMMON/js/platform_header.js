@@ -2,7 +2,7 @@ function ondblclick_header () {
  //   return
     if (!solution) return;
     let ui  = solution.get('ui')    
-    ui.platform_expand ();
+    //ui.platform_expand ();
 }
 
 function onclick_headerbrand (elt, event) {

@@ -215,7 +215,7 @@ function onclick_emv_projectrename () {
 function emv_RenameProject (project, newname) {
     if (!project) return;
 
-    if (solution.UserId == "0") {
+    if (solution.get('user').id == "0") {
         TreatInfo(register_needed_label, 'operationpanel', 'red');
         return;
     }
@@ -324,7 +324,7 @@ function onclick_emv_b_projectcreate (elt) {
 
 function emv_project_newproject (name) {
 
-    if (solution.UserId == "0") {
+    if (solution.get('user').id == "0") {
         TreatInfo('As you are not registered the project will not be saved', 'operationpanel');
     }
 

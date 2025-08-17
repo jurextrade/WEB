@@ -57,7 +57,7 @@ function onclick_home_trading_rightsection_1_0_0(elt, event) {
 
     let pname = HOME_PLATFORM_PROJECT;
     solution_module_load (pname, () => {
-        let projectname = 'project_default_projectname';    
+        let projectname = project_default_projectname;    
         selector_select('project_selectproject', projectname);
     })      
 }
@@ -750,11 +750,11 @@ function home_tradedesk_init_assistance() {
         transitionEffect: "slideLeft",
         enableAllSteps : true,
         enableKeyNavigation :true,
-        startIndex : solution.UserId == "0" ? STEP_LOGIN : STEP_DOWNLOAD,
+        startIndex : solution.get('user').id == "0" ? STEP_LOGIN : STEP_DOWNLOAD,
 
         onInit : function (event, currentIndex) {
 
-            if (solution.UserId == "0") {  
+            if (solution.get('user').id == "0") {  
                 AssistantGoToStep ('mt4assistantform', STEP_LOGIN);
             }
             else {
@@ -766,7 +766,7 @@ function home_tradedesk_init_assistance() {
         onStepChanging: function (event, currentIndex, newIndex) {
             switch (newIndex) {
                 case STEP_LOGIN :
-                 /*   if (solution.UserId != "0") {                 
+                 /*   if (solution.get('user').id != "0") {                 
                         return null;   
                     }                 
                  */      
@@ -1079,11 +1079,11 @@ function home_emv_init_assistance() {
         transitionEffect: "slideLeft",
         enableAllSteps : true,
         enableKeyNavigation :true,
-        startIndex : solution.UserId == "0" ? STEP_LOGIN : STEP_DOWNLOAD,
+        startIndex : solution.get('user').id == "0" ? STEP_LOGIN : STEP_DOWNLOAD,
 
         onInit : function (event, currentIndex) {
 
-            if (solution.UserId == "0") {  
+            if (solution.get('user').id == "0") {  
                 AssistantGoToStep ('emvassistantform', STEP_LOGIN);
             }
             else {
@@ -1095,7 +1095,7 @@ function home_emv_init_assistance() {
         onStepChanging: function (event, currentIndex, newIndex) {
             switch (newIndex) {
                 case STEP_LOGIN :
-                 /*   if (solution.UserId != "0") {                 
+                 /*   if (solution.get('user').id != "0") {                 
                         return null;   
                     }                 
                  */      

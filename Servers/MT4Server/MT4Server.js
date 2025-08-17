@@ -25,7 +25,6 @@ var SHTTPPort           = 2443;
 
 
 var MT4Port             = 2007;
-var IBPort			    = 2008;
 
 const C_MAKE_COMMAND        = "mingw32-make";
 const C_COMPILE_COMMAND     = "g++";
@@ -41,9 +40,8 @@ function Print (sdisplay) {
     console.log(today.format('YYYY-MM-DD hh:mm:ss') + " " + sdisplay);
 }
 
-function Connection(userid, terminalname, terminaltype, symbol, port) {
+function Connection(userid, terminalname, terminaltype, symbol, port) {  //MT4 CONNECTION
 	this.UserID         = userid;
-    this.Client         = null;
     this.Socket         = null;
     this.Symbol         = symbol;
     this.Port           = port;
@@ -54,7 +52,7 @@ function Connection(userid, terminalname, terminaltype, symbol, port) {
 }
 
 
-function nodeclient(userid, socket) {
+function nodeclient(userid, socket) {									// HTTP CONNECTION
     this.HTTPsocket     = socket;
     this.Port           = 0;
     this.UserID         = userid;
@@ -63,14 +61,14 @@ function nodeclient(userid, socket) {
 	this.CanSend        = false;	
 }
 
-function nodeserver (mt4port, ibport, httpport, shttpport) {
+function nodeserver (mt4port,  httpport, shttpport) {
 
     this.Connections = [];
     this.Clients     = [];
     
-	this.GetConnectionFromClient = function (client) {
+	this.GetConnectionFromSocket = function (socket) {
         for (i = 0; i < this.Connections.length; i++) {
-            if (this.Connections[i].Client == client)
+            if (this.Connections[i].Socket == socket)
                 return this.Connections[i];
         }
         return null;
@@ -114,7 +112,6 @@ function nodeserver (mt4port, ibport, httpport, shttpport) {
 			socket.emit('message', message);
 	}
 
-    ListenIB(ibport);
     ListenMT4(mt4port);
     ListenHTTP(shttpport);	
 	ListenHTTP(httpport);	
@@ -130,7 +127,7 @@ function nodeserver (mt4port, ibport, httpport, shttpport) {
 	  });
 };
 
-NS = new nodeserver(MT4Port, IBPort, HTTPPort, SHTTPPort);
+NS = new nodeserver(MT4Port, HTTPPort, SHTTPPort);
 
 function ListenHTTP (port) {
 	var server;
@@ -203,7 +200,7 @@ function ListenHTTP (port) {
 				}
 				if (!foundconnection) {
 					NS.SendToHTTPClient(socket, ":______**LOGIN^" + "KO*");  
-					Print('====>  HTTP LOGIN : [' + userid + ']' + ' Terminal Name :' + terminalname + ' Terminal Type :' + terminaltype + ' NOT RUNNING');
+			//		Print('====>  HTTP LOGIN : [' + userid + ']' + ' Terminal Name :' + terminalname + ' Terminal Type :' + terminaltype + ' NOT RUNNING');
 				}
 			}	
 			else
@@ -279,7 +276,7 @@ function ListenHTTP (port) {
 				if (connection.Connected == false) return;				
 
 				Print('send reload project to terminal');
-				connection.Client.write('*RELOADPROJECT ' + terminaltype + '*');
+				connection.Socket.write('*RELOADPROJECT ' + terminaltype + '*');
 			}						
 			else {			
 				let userid          = values[0];
@@ -292,7 +289,7 @@ function ListenHTTP (port) {
 				if (connection == null) return;
 				if (connection.Connected == false) return;
 				
-				connection.Client.write('*' + command + '*');
+				connection.Socket.write('*' + command + '*');
 			}
 		});
 
@@ -328,7 +325,7 @@ function ListenHTTP (port) {
 function ListenMT4 (port) {
     var server = net.createServer(function (socket) {
 		socket.on('data', function (data) {
-			var connection = NS.GetConnectionFromClient(socket);
+			var connection = NS.GetConnectionFromSocket(socket);
 			var message = String.fromCharCode.apply(null, data);
 		
 			if (connection && connection.InitRequest != null) {
@@ -346,7 +343,7 @@ function ListenMT4 (port) {
 
 				if (values[0] == "LOGIN") {
 					
-					let symbol 		    = values[1];       
+					let symbolname 		    = values[1];       
 					let loginserver	    = values[2];					             
 					let username 	    = values[3];
 					let password 	    = values[4];
@@ -358,38 +355,39 @@ function ListenMT4 (port) {
 
 					Print("Recu Message Login " + loginserver + ' , ' + username + ' , ' + password  + ' accountname : ' + accountname   + ' terminalname : ' + terminalname   + ' datapath : ' + datapath   + ' terminaltype : ' + terminaltype);
 	
-                    result = VerifyUser (socket, port, symbol, loginserver, username, password, accountnumber, accountname, terminalname, terminaltype, datapath);
+                    result = VerifyUser (socket, port, symbolname, loginserver, username, password, accountnumber, accountname, terminalname, terminaltype, datapath);
 					return;
 				}
 				if (!connection) 
 					return;
 				
 				if (values[0] == "INIT") {
-					var symbol = values[1];
-					connection.InitRequest = ":" + symbol +  "**" + lines[j] + "*";
-					Print("Send To client New Init "); 	
+					let symbolname = values[1];
+					let terminalname = values[20];
+					connection.InitRequest = ":" + symbolname +  "**" + lines[j] + "*";
+					Print("Store New Init for http client with terminal name : " + terminalname + " and symbol : " + symbolname); 	
 				}
 			}
 			NS.SendToClient(connection, message);					
 		});
 
 		socket.on('close', function (data) {
-			var connection = NS.GetConnectionFromClient(socket);
+			var connection = NS.GetConnectionFromSocket(socket);
 			if (!connection) return;
 			NS.SendToClient(connection, "*CONNECT^" + connection.Symbol +"^0*", 1);			
 			connection.Connected = false;
-			connection.Client = null;
+			connection.Socket = null;
 			connection.InitRequest = null;			
 			Print("Connexion coupee " + connection.Symbol);
 		});
 
 
 		socket.on('error', function (data) {
-			var connection = NS.GetConnectionFromClient(socket);
+			var connection = NS.GetConnectionFromSocket(socket);
 			if (!connection) return;
 			NS.SendToClient(connection, "*CONNECT^" + connection.Symbol +"^0*", 1);
 			connection.Connected = false;
-			connection.Client = null;
+			connection.Socket = null;
 			connection.InitRequest = null;
 			Print("Connexion coupee " + connection.Symbol);
 		});
@@ -406,87 +404,7 @@ function ListenMT4 (port) {
     server.listen(port);
 }
 
-function ListenIB (port) {
-    var server = net.createServer(function (socket) {
-		
-		
-		socket.on('data', function (data) {
-			var connection = NS.GetConnectionFromClient(socket);
-			var message = String.fromCharCode.apply(null, data);
-			if (connection && connection.InitRequest != null) {
-				NS.SendToClient(connection, message);
-				return;
-			}
-			
-			var lines = message.split('*');
-			for (var j = 0; j < lines.length; j++) {
 
-				if (lines[j] == '.') continue;
-				if (lines[j].length  < 1 ) continue;
-
-				var values = lines[j].split('^');
-
-				if (values[0] == "LOGIN") {
-					
-					var symbol 		= values[1];       
-					var loginserver 	= values[2];					             
-					var username 	= values[3];
-					var password 	= values[4];
-					var accountnumber = values[5];		
-					var accountname = values[6];					
-					var terminalname= values[7];
-					var datapath 	= values[8];					
-					var terminaltype = +values[9] == 0 ? 'IB' : 'IBTester';
-					Print("Recu Message Login " + username + ' , ' + loginserver + ' , '+ password  + ' accountname : ' + accountname   + ' terminalname : ' + terminalname   + ' datapath : ' + datapath   + ' terminaltype : ' + terminaltype);
-					result = VerifyUser (socket, port, symbol, loginserver, username, password, accountnumber, accountname, terminalname, terminaltype, datapath);
-					return;
-				}
-
-
-				if (!connection) 
-					return;
-				
-				if (values[0] == "INIT") {
-					var symbol = values[1];
-					connection.InitRequest = ":" + symbol +  "**" + lines[j] + "*";
-					Print("Send To client New Init "); 	
-				}
-			}
-			NS.SendToClient(connection, message);				
-		});
-
-		socket.on('close', function (data) {
-			var connection = NS.GetConnectionFromClient(socket);
-			if (!connection) return;
-			NS.SendToClient(connection, "*CONNECT^" + connection.Symbol +"^0*", 1);
-			connection.Connected = false;
-			connection.Client = null;
-			connection.InitRequest = null;			
-			Print("Connexion coupee " + connection.Symbol);
-		});
-
-
-		socket.on('error', function (data) {
-			var connection = NS.GetConnectionFromClient(socket);
-			if (!connection) return;
-			NS.SendToClient(connection, "*CONNECT^" + connection.Symbol +"^0*", 1);			
-			connection.Connected = false;
-			connection.Client = null;
-			connection.InitRequest = null;
-			Print("Connexion coupee " + connection.Symbol);
-		});
-	});
-	server.on('connection', function (socket) {
-        Print("IB Platform connection opened " + socket.remoteAddress + ':' + socket.remotePort + "     <============= IB");
-		for (var i = NS.Connections.length - 1; i >= 0; i--) {
-			if (NS.Connections[i].Connected == false) {
-				NS.Connections.splice(i, 1);
-			}
-		}
-    });		
-    Print("IB listening on port " + port);
-    server.listen(port);
-}
 
 function VerifyUser (socket, port, symbol, loginserver, username, password, accountnumber, accountname, terminalname, terminaltype, datapath) {
 	
@@ -532,7 +450,7 @@ function VerifyUser (socket, port, symbol, loginserver, username, password, acco
 					NS.Connections.push(connection);
 				}
 				connection.Connected = true;
-                connection.Client = socket;
+                connection.Socket = socket;
 				
 				NS.SendToClient(connection, "*CONNECT^" + connection.Symbol +"^1*", 1);					
 			}

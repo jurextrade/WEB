@@ -2024,7 +2024,7 @@ sb_roundbutton.active{
 }
 
 .sb_tab {
-   /* border-bottom: 0px solid var(--theme-platform-color);*/
+/*    border-bottom: 1px solid var(--theme-button-border-color);*/
     border:none;
     padding-bottom: 1px;    
     display:flex;
@@ -2034,6 +2034,7 @@ sb_roundbutton.active{
     height: 35px;
     white-space: nowrap;   
     overflow-x: auto;     
+    background: var(--theme-bg-color);    
 }
 
 .sb_content {

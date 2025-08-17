@@ -11,9 +11,9 @@ function pg_solution () {
 
     solution.UserName       = user.name;
     solution.UserMail       = user.mail;
-    solution.UserId         = user.id;
-    solution.UserUrl        = solution.UserId != 0 ? 'Hello ' + solution.UserName : '';
-    solution.UserAdmin      = solution.UserId != 1 ? false : true;
+    solution.get('user').id         = user.id;
+    solution.UserUrl        = solution.get('user').id != 0 ? 'Hello ' + solution.UserName : '';
+    solution.UserAdmin      = solution.get('user').id != 1 ? false : true;
 
     solution.PG             = null;
     solution.PL             = null;
@@ -674,17 +674,17 @@ function pgproject (pname, name, path) {
     }
 
     this.Remove = function () {
-        if (solution.UserId == "0") return;        
+        if (solution.get('user').id == "0") return;        
         return SubmitProjectRequest('Projects',this.Folder, this.Name, '', 'php/remove_project.php', SYNCHRONE);
     }
 
     this.Rename = function (newname) {
-        if (solution.UserId == "0") return;        
+        if (solution.get('user').id == "0") return;        
         return SubmitProjectRequest('Projects',this.Folder, newname, '', 'php/rename_project.php', SYNCHRONE);
     }
     
     this.Save = function () {
-        if (solution.UserId == "0") return;
+        if (solution.get('user').id == "0") return;
 
         let  user           = solution.get('user')        
         
@@ -1044,7 +1044,7 @@ function pgterminal (pname, type, main) {
     
     this.Save = function () {
   
-        if (solution.UserId == "0") {
+        if (solution.get('user').id == "0") {
             return;
         }
  
@@ -1942,7 +1942,7 @@ function pg (pname) {
         xhttp.send();
     }    
     this.SaveProfile = function (terminal) {
-        if (solution.UserId == "0") {
+        if (solution.get('user').id == "0") {
             return;
         }
         if (!terminal) return;
@@ -2030,7 +2030,7 @@ function pg (pname) {
         xhttp.PG = this;
         xhttp.url = url;
     
-        var params = 'user_id=' + (solution.UserId == "0" ? "1" : solution.UserId ) + '&project_folder=' + projectfolder;    
+        var params = 'user_id=' + (solution.get('user').id == "0" ? "1" : solution.get('user').id ) + '&project_folder=' + projectfolder;    
     
         xhttp.onreadystatechange = function () {
             var PG = this.PG;

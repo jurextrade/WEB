@@ -269,7 +269,7 @@ function OnDistributeStrategy (project, strategyfile, langtype, terminalpath) {
     }
 
     var sorder = "*DISTRIBUTE*" + project.Folder + "*" + strategyfile + "*" + langtype + "*" + terminalpath;
-    project_DeployCom.Send(solution.UserId + sorder);
+    project_DeployCom.Send(solution.get('user').id + sorder);
 }
 
 //---------------------------------------------------- COMPILE PROJECT ---------------------------------------------- 
@@ -329,7 +329,7 @@ function OnCompileProject(project, filename, content, langtype, terminaltype) {
         return;
     }
     var sorder = "*COMPILE*" + project.Folder + "*" + filename + "*" + langtype + "*" + terminaltype + "*" + content;
-    project_DeployCom.Send(solution.UserId + sorder);
+    project_DeployCom.Send(solution.get('user').id + sorder);
 }
 
 
@@ -430,7 +430,7 @@ function OnCompileStrategy (project, strategyname, content, langtype) {
     }
 
     var sorder = "*COMPILE*" + project.Folder + "*" + strategyname + "*" + langtype + "*" + "Terminal" + "*" + content;
-    project_DeployCom.Send(solution.UserId + sorder);
+    project_DeployCom.Send(solution.get('user').id + sorder);
 }
 
 var loopBeginLoopComplete = function(strategy) {

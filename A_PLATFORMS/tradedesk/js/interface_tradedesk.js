@@ -408,8 +408,8 @@ var tradedesksettingsbargroup = {
 
 //--------------------------
 
-var tree_terminals = {
-    id: 'tree_terminals',       
+var tradedesk_tree_terminals = {
+    id: 'tradedesk_tree_terminals',       
     type: 'tree',       
     item: 'Terminals',
     icon: icon_terminal,
@@ -420,7 +420,7 @@ var tradesksidebar = {
     id: 'tradesksidebar',
     type: 'panel',
     class: 'sb_panel',
-    items:[tree_terminals]
+    items:[tradedesk_tree_terminals]
 }
 
 var tradedesk_terminalsbar = {
@@ -727,6 +727,12 @@ var currenciespanel = {
     ],
 }
 
+var terminals_panel =  {
+    id: 'tradedesk_terminals_sidepanel',
+    type: 'html',
+    class: 'sb_sidepanel sb_panel sb_column',
+    content: 'tradedesk_PlatformsPanel()',
+}
 //--------------------------
 
 var tradedesk_terminals_headerbar = {
@@ -770,7 +776,8 @@ var tradedesk_terminals_sidepanel = {
         boxpercentchangepanel,
         boxtargetpanel,
         boxaterminalinfopanel,
-    ]    
+        //terminals_panel
+    ]
 }
 //--------------------------
 

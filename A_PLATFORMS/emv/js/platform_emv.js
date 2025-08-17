@@ -242,7 +242,7 @@ function emv_closeproject (project) {
 
 //--- data ui platform update .............
         let ui  = solution.get('ui')               
-        solution.CurrentProject = null;   
+        solution.emv_CurrentProject = null;   
         ui.platform_updatedata('emv', solution.emv_CurrentProject)                   
     }   
     return project;     

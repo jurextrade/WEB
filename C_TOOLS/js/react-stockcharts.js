@@ -13582,7 +13582,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 
-
 var CrossHairCursor = function (_PureComponent) {
 	_inherits(CrossHairCursor, _PureComponent);
 
@@ -13600,6 +13599,20 @@ var CrossHairCursor = function (_PureComponent) {
 		key: "drawOnCanvas",
 		value: function drawOnCanvas(ctx, moreProps) {
 			var lines = helper(this.props, moreProps);
+
+			if (typeof this.props.freeze === 'function' && this.props.freeze()) {
+
+				if (CrossHairCursor.freezeaction == 0) {
+					console.log ('freeze copy')
+					CrossHairCursor.freezelines = lines.slice() ;
+				    CrossHairCursor.freezeaction = 1;
+				}	
+				lines = CrossHairCursor.freezelines;
+			}
+
+
+//	    CrossHairCursor.defaultProps.freezeevent = {x: event.pageX, y: event.pageY};
+
 
 			if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils__["isDefined"])(lines)) {
 				var _context = this.context,

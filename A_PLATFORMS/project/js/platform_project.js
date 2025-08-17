@@ -466,7 +466,7 @@ function onchange_project_projectselect (elt, event) {
 
 function project_saveproject(project) {
     if (!project) return;
-    if (solution.UserId == "0") {
+    if (solution.get('user').id == "0") {
         DisplayInfo("Project can not be saved, You are not registered", true, 'operationpanel', "coral");
         return;
     }
@@ -1646,7 +1646,7 @@ function OnReloadProject(terminal, terminalname, terminaltype) {
     }
     for (var i = 0; i < PG.Symbols.length; i++) {
         var sorder = "*RELOADPROJECT*" + PG.Symbols[i].Name + '*' + terminalname + '*' + terminaltype;
-        terminal.Com.Send(solution.UserId + sorder);
+        terminal.Com.Send(solution.get('user').id + sorder);
     }
 }
 
@@ -1928,7 +1928,7 @@ function SelectSaveStrategy() {
 
 function OnSaveStrategy(event) {
 
-    if (solution.UserId == "0") {
+    if (solution.get('user').id == "0") {
         DisplayInfo("Strategy can not be saved, You are not registered", true, 'operationpanel', "coral");
         return;
     }

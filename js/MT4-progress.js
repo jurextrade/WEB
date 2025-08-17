@@ -26,7 +26,7 @@ function OnBeforeUnLoad(event) {
     
     solution.SaveProfile();
 
-    if (solution.UserId != "0")  {
+    if (solution.get('user').id != "0")  {
         event.preventDefault();
         return (event.returnValue = "Are you sure you want to leave?");    
     }
@@ -123,7 +123,7 @@ function InitApp (solution) {
 
     home_selectterminal (solution.GetMainTerminal (), 1);    
 
-    if (solution.UserId == "0" && !market_closed()) {
+    if (solution.get('user').id == "0" && !market_closed()) {
         var terminal = solution.GetTerminalsFromName ('Alpari MT4', 'terminal');
         tradedesk_selectterminal(terminal[0]); 
     }
@@ -170,7 +170,7 @@ function CancelSchedules() {
 
 function SessionEnableButtons() {
     var shouldDisable = true;
-    if (solution.UserId == "0") return;
+    if (solution.get('user').id == "0") return;
     if (!document.getElementById('SaveSession')) return;
     if (!CurrentSession) {
         document.getElementById('SaveSession').disabled = shouldDisable;
@@ -290,7 +290,7 @@ function OnReloadSchedule(terminal) {
         return;
     }
     var sorder = "*RELOADSCHEDULEFILE ";
-    for (var i = 0; i < PG.Symbols.length; i++) terminal.Com.Send(solution.UserId + '*' + PG.Symbols[i].Name + sorder);
+    for (var i = 0; i < PG.Symbols.length; i++) terminal.Com.Send(solution.get('user').id + '*' + PG.Symbols[i].Name + sorder);
 }
 
 
@@ -306,7 +306,7 @@ function OnPauseStrategy () {
     if (!symbolcanvas) return;    
     
     var Symbol = symbolcanvas.CurrentSymbol;         
-    solution.CurrentTerminal.Com.Send(solution.UserId + '*' + Symbol.Name + "*PAUSE ");
+    solution.CurrentTerminal.Com.Send(solution.get('user').id + '*' + Symbol.Name + "*PAUSE ");
 }
 
 /*--------------------------------------------------------------- SESSION -------------------------------------------------------*/

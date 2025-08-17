@@ -203,7 +203,7 @@ function SubmitRequest(content, filename, synchrone) {
 
     var sendmode = !synchrone ? true : synchrone;    
     var url = site.address + '/' + filename;
-    var params = 'content=' + encodeURIComponent(content) + '&user_id=' + solution.UserId;
+    var params = 'content=' + encodeURIComponent(content) + '&user_id=' + solution.get('user').id;
   
     var http = new XMLHttpRequest();
     http.open('POST', url, sendmode);
@@ -219,7 +219,7 @@ function SubmitProfileRequest(terminalfolder, terminaltype, content, filename, a
 
     var sendmode = !asynchrone ? false : asynchrone;
     var url = site.address + '/' + filename;
-    var params = 'content=' + encodeURIComponent(content) + '&user_id=' + solution.UserId + '&terminalfolder=' + terminalfolder + '&terminaltype=' + terminaltype;
+    var params = 'content=' + encodeURIComponent(content) + '&user_id=' + solution.get('user').id + '&terminalfolder=' + terminalfolder + '&terminaltype=' + terminaltype;
    
     var http = new XMLHttpRequest();
     http.open('POST', url, sendmode);
@@ -236,7 +236,7 @@ function SubmitDistributeRequest(projectfolder, filename, terminalfolder, termin
     let  site           = solution.get('site');    
 
     var url = site.address + '/' + filename;
-    var params = 'content=' + encodeURIComponent(projectfolder) + '&userid=' + solution.UserId + '&terminalfolder=' + terminalfolder + '&terminaltype=' + terminaltype;
+    var params = 'content=' + encodeURIComponent(projectfolder) + '&userid=' + solution.get('user').id + '&terminalfolder=' + terminalfolder + '&terminaltype=' + terminaltype;
   
     var http = new XMLHttpRequest();
     http.open('POST', url, false); //false = SYNC
@@ -276,7 +276,7 @@ function SubmitTerminalRequest(terminalfolder, terminaltype, content, filename, 
 
     var sendmode = !asynchrone ? false : asynchrone;    
     var url = site.address + '/' + filename;
-    var params = 'content=' + encodeURIComponent(content) + '&user_id=' + solution.UserId + '&terminalfolder=' + terminalfolder + '&terminaltype=' + terminaltype;
+    var params = 'content=' + encodeURIComponent(content) + '&user_id=' + solution.get('user').id + '&terminalfolder=' + terminalfolder + '&terminaltype=' + terminaltype;
     
     var http = new XMLHttpRequest(); 
     http.open('POST', url, sendmode); //false = SYNC
@@ -293,7 +293,7 @@ function SubmitFileRequest(content, filename, projectnamme, filetype, fileoperat
     let  site    = solution.get('site');    
 
     var url = site.address + '/' + filename;
-    var params = 'content=' + encodeURIComponent(content) + '&user_id=' + solution.UserId + '&project_name=' + projectnamme + '&file_type=' + filetype + '&file_operation=' + fileoperation + '&rule=' + rule;
+    var params = 'content=' + encodeURIComponent(content) + '&user_id=' + solution.get('user').id + '&project_name=' + projectnamme + '&file_type=' + filetype + '&file_operation=' + fileoperation + '&rule=' + rule;
  
     var http = new XMLHttpRequest();
     http.open('POST', url, true);
@@ -538,38 +538,40 @@ function selector_select (selector, name, type) {
             var strategy = solution.CurrentProject.PG.GetStrategyFromName(strategyname);
             if (strategy == CurrentStrategy) return strategy;
             return project_selectstrategy(strategy);
-
+        break;
         case 'project_selectproject' :
             var projectname =name;
             var project = solution.project_GetProjectFromName(projectname);
             if (project == solution.CurrentProject) return project;
             return project_selectproject(project);
-
+        break;
         case 'netprog_selectproject' :
             var projectname =name;
             var project = solution.netprog_GetProjectFromName(projectname);
             if (project == solution.netprog_CurrentProject) return project;
             return netprog_selectproject(project);
-    
+        break;    
         case 'emv_selectproject' :
             var projectname =name;
             var project = solution.emv_GetProjectFromName(projectname);
             if (project == solution.emv_CurrentProject) return project;
             return emv_selectproject(project);
-
+        break;
         case 'tradedesk_selectterminal' :
-            var terminaltype = 'Terminal';
-            var terminal = solution.GetTerminalFromNameType (name, terminaltype);
+            let terminaltype    = TradedeskTypePanel_Type();
+            var terminal        = solution.GetTerminalFromNameType (name, terminaltype);     
+            if (terminal == solution.CurrentTerminal) return terminal;
             return tradedesk_selectterminal(terminal);
-
+        break;
         case 'option_selectterminal' :
-            var terminals = solution.GetTerminalsFromName (name);
+            let terminals = solution.GetTerminalsFromName (name);
             var terminal;
             for (var i = 0; i < terminals.length; i++) {
                 if (terminals[i].DataPath == '//Main') continue;
                 terminal = terminals[i];   // terminal has priority
             }
             return option_selectterminal(terminal);
+        break;            
     }
 }
 

@@ -146,7 +146,7 @@ function option_solution (pname) {
         $("#option_tree_terminals").addClass('show');    
     }
     
-    if (solution.UserId != "0") {
+    if (solution.get('user').id != "0") {
         solution.AddYahooTerminal ("XXXXXX", "XXXXXX", "Yahoo Finance" , "Yahoo", "//Yahoo"); //options
     }
     solution.option_LoadTerminals(user.id, site.address  + "/php/read_terminals.php", SYNCHRONE, solution.UpdateOptionTerminals, solution);    
@@ -203,7 +203,7 @@ function option_selectterminal(terminal, force) {
     }
     
     if (solution.CurrentOptionTerminal) {
-      //  solution.CurrentOptionTerminal.Com.Send( solution.UserId + '*START*' +  solution.CurrentOptionTerminal.Type + '*' +  solution.CurrentOptionTerminal.Name + '*0');
+      //  solution.CurrentOptionTerminal.Com.Send( solution.get('user').id + '*START*' +  solution.CurrentOptionTerminal.Type + '*' +  solution.CurrentOptionTerminal.Name + '*0');
         solution.CurrentOptionTerminal.PG.SaveProfile(solution.CurrentOptionTerminal);
     }
   
@@ -226,7 +226,7 @@ function option_selectterminal(terminal, force) {
       //  UpdateOrders(terminal);
 
         DisplayInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-optionterminal)');  
-       // terminal.Com.Send(solution.UserId + '*START*' + terminal.Type + '*' + terminal.Name + '*1');                  
+       // terminal.Com.Send(solution.get('user').id + '*START*' + terminal.Type + '*' + terminal.Name + '*1');                  
         option_drawterminal (terminal, true);  
         Interval_getoptionquotes     = setInterval(OnGetContracts,    60000, terminal);   // every 6 seconds      
     }
@@ -240,7 +240,7 @@ function option_closeterminal (terminal) {
          
     sb.tree_selectitem ('option_tree_terminals', terminal.Name, true);
 
-    if (solution.UserId != "0") {
+    if (solution.get('user').id != "0") {
         terminal.Save ();
     }
 
@@ -264,7 +264,7 @@ function option_loadedterminal (terminal) {
         LoaderDisplay(false);      
 
         DisplayInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');
-//        terminal.Com.Send(solution.UserId + '*START*' + terminal.Type + '*' + terminal.Name + '*1');    
+//        terminal.Com.Send(solution.get('user').id + '*START*' + terminal.Type + '*' + terminal.Name + '*1');    
         option_drawterminal (terminal, true);  
         Interval_getoptionquotes     = setInterval(OnGetContracts,    60000, terminal);   // every 6 seconds        
     }
@@ -650,7 +650,7 @@ function OnGetTreatComputation (terminal, symbol, date) {
 
     if (terminal.Type  == 'IB') {
          //    var sorder = "*GET_TICKOPTIONCOMPUTATION^" + symbolcanvas.CurrentSymbol.Name + "^" + contractreqid + "^" + optioncontract.summary.expiry + "^" + optioncontract.summary.strike + "^" + optioncontract.summary.right + "*";
-         //    solution.CurrentOptionTerminal.Com.Send(solution.UserId + '*' + symbolcanvas.CurrentSymbol.Name + sorder);       }
+         //    solution.CurrentOptionTerminal.Com.Send(solution.get('user').id + '*' + symbolcanvas.CurrentSymbol.Name + sorder);       }
     }
      else
      if (terminal.Type  == 'Yahoo') {
@@ -997,7 +997,7 @@ function OnOptionOrder() {
     
     var terminal = solution.CurrentOptionTerminal;
     var PG = terminal.PG;
-    if (solution.UserId == "0") {
+    if (solution.get('user').id == "0") {
 //        TreatInfotionpanel', 'red');
 //        return;
     }
@@ -1026,7 +1026,7 @@ function OnOptionOrder() {
 
     OptionTreatData (values);
     
-    if (solution.UserId != "0") {
+    if (solution.get('user').id != "0") {
         terminal.Save();
     }    
     
@@ -2510,7 +2510,7 @@ function SubmitSaveHistory(terminalfolder, content, symbolname, periodname, file
 
     var sendmode = !synchrone ? false : synchrone;
     var url = site.address + '/' + filename;
-    var params = 'content=' + content + '&user_id=' + solution.UserId + '&terminalfolder=' + terminalfolder + '&symbolname=' + symbolname + '&periodname=' + periodname;
+    var params = 'content=' + content + '&user_id=' + solution.get('user').id + '&terminalfolder=' + terminalfolder + '&symbolname=' + symbolname + '&periodname=' + periodname;
 
     var http = new XMLHttpRequest();
     http.open('POST', url, sendmode);

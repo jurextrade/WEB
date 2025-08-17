@@ -4,40 +4,8 @@
 const DEPLOYSERVER           = "DEPLOYSERVER";
 var project_DeployCom          = null;
 
-function DeployConnect(adress, port, reconnection) {
 
-    if (project_DeployCom && project_DeployCom.Socket.connected == true) 
-        return;
-//    console.log ('deply connect')
-    project_DeployCom = new connect (adress, port, 
-        {
-            onconnectfunction:  function (com) {
-
-                HighlightTerminal (DEPLOYSERVER, null, 1,  theme_on)
-
-
-            },
-            onmessagefunction: function (com, data) {
-              //  let project = solution.GetProjectFromCom(com)
-                TreatReception (solution.CurrentProject, data);
-            },    
-            ondisconnectfunction:     function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
-            onclosefunction:          function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
-            onerrorfunction:          function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },   
-            onupdatefunction:         function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
-            onconnect_errorfunction:  function (com, data) {HighlightTerminal(DEPLOYSERVER, null, 0); },
-            onconnect_failedfunction: function (com, data) {this.reconnection = false; HighlightTerminal(DEPLOYSERVER, null, 0); },   
-            reconnection:             reconnection ? reconnection : false  
-
-        }
-    )
-
-    return project_DeployCom.Socket;
-}
-
-//---------------------------------------------------- IP ADDRESS-----------------------------------------------   
-
-function HighlightTerminal (origin, project, connect, color) {
+function project_highlightserver (origin, project, connect, color) {
     let elt = '';
 
     switch (origin) {
@@ -48,6 +16,40 @@ function HighlightTerminal (origin, project, connect, color) {
         break;      
     }  
 }    
+
+
+function DeployConnect(adress, port, reconnection) {
+
+    if (project_DeployCom && project_DeployCom.Socket.connected == true) 
+        return;
+//    console.log ('deply connect')
+    project_DeployCom = new connect (adress, port, 
+        {
+            onconnectfunction:  function (com) {
+
+                project_highlightserver (DEPLOYSERVER, null, 1,  theme_on)
+
+
+            },
+            onmessagefunction: function (com, data) {
+              //  let project = solution.GetProjectFromCom(com)
+                TreatReception (solution.CurrentProject, data);
+            },    
+            ondisconnectfunction:     function (com, data) {project_highlightserver(DEPLOYSERVER, null, 0); },
+            onclosefunction:          function (com, data) {project_highlightserver(DEPLOYSERVER, null, 0); },
+            onerrorfunction:          function (com, data) {project_highlightserver(DEPLOYSERVER, null, 0); },   
+            onupdatefunction:         function (com, data) {project_highlightserver(DEPLOYSERVER, null, 0); },
+            onconnect_errorfunction:  function (com, data) {project_highlightserver(DEPLOYSERVER, null, 0); },
+            onconnect_failedfunction: function (com, data) {this.reconnection = false; project_highlightserver(DEPLOYSERVER, null, 0); },   
+            reconnection:             reconnection ? reconnection : false  
+
+        }
+    )
+
+    return project_DeployCom.Socket;
+}
+
+//---------------------------------------------------- IP ADDRESS-----------------------------------------------   
 
 
 function TreatReception (project, recmessage) {        

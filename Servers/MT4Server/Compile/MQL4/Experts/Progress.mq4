@@ -47,7 +47,6 @@ int    RPort                    = 2008;                 // Listening Port for Re
 int    SPort                    = 2009;                 // Listening Port for Simulated Platform on MT4 Software
 bool   LaunchOnStart            = false;       
 
-datetime  AttemptToStart    = 0;
 
 
 //+------------------------------------------------------------------+ CONNECTION
@@ -816,23 +815,35 @@ const int INVALID_USER         = -1;
 const int CONNECTION_FAILED    = -5;
 const int CONNECTION_SUCCEED   = 1;
 
+bool INIT_DONE          = false;
+bool AttemptToStart     = false;
 
 
 void OnTimer () {
-    int result = ConnectNodeServer();
+    if (NodeSocket == -1 && AttemptToStart == true)
+    {
+        PG_Print(TYPE_ERROR, "Connection closed with MT4 Server Reconnecting with timer", NO_SEND);
+    
+       int result = ConnectNodeServer();
+   
+       if (result ==  CONNECTION_FAILED) {
+           PG_Print(TYPE_ERROR, "Server is not running or incorrect server parameters MT4 Server ", NO_SEND);
+           PG_Print(TYPE_INFO, "__________________________________________________ERROR IDENTIFICATION SERVER WILL CONNECT EVERY SECOND ________________________________________________________________________");
+           return;         
+       }       
 
-    if (result ==  CONNECTION_FAILED) {
-        PG_Print(TYPE_ERROR, "Server is not running or incorrect server parameters MT4 Server ", NO_SEND);
-        PG_Print(TYPE_INFO, "__________________________________________________ERROR IDENTIFICATION SERVER WILL CONNECT EVERY SECOND ________________________________________________________________________");
-        return;         
-    }       
-
-    EventKillTimer(); 
-    end_init();
+       EventKillTimer(); 
+    
+       AttemptToStart = false;
+    
+       if (!INIT_DONE) {              // it is not a reconnection
+          end_init();
+       }
+    }
 }
 
 
-int init() {
+int OnInit() {
 
     PG_Print(TYPE_INFO, "________________________________________________________________________  PROGRESS START INITIALISATION  ________________________________________________________________________");
 
@@ -848,9 +859,13 @@ int init() {
         }
     }
  */   
-
-    AttemptToStart = 1;
-
+    bool eventresult = EventSetTimer(1); 
+    
+    if (!eventresult) {
+      Print("Failed to set timer, error: ",GetLastError());
+    }
+    
+    
     ShouldExit = 0;
     FirstPass = -1;
     SecondPass = 0;
@@ -892,6 +907,15 @@ int init() {
     }
     
     int result = ConnectNodeServer();
+
+    if (result ==  CONNECTION_FAILED) {
+       
+        AttemptToStart = true;   
+        PG_Print(TYPE_ERROR, "Server is not running or incorrect server parameters MT4 Server ", NO_SEND);
+        PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR IDENTIFICATION SERVER  ________________________________________________________________________");
+        return 0;
+    }    
+       
     if (result ==  INVALID_USER) {
         ShouldExit = 1;
         ExpertRemove ();
@@ -899,14 +923,6 @@ int init() {
         PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR IDENTIFICATION FAILED  ________________________________________________________________________");
         return (INIT_FAILED);
     }   
-
-    if (result ==  CONNECTION_FAILED) {
-        EventSetTimer(1);      
-        PG_Print(TYPE_ERROR, "Server is not running or incorrect server parameters MT4 Server ", NO_SEND);
-        PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR IDENTIFICATION SERVER  ________________________________________________________________________");
-        return 0;
-    }    
-   
 
     return  end_init();
 }
@@ -963,18 +979,17 @@ int end_init() {
     Send_Operation("PROGRESS START PROCESSING OK ON CURRENCY " + _Symbol);
     
     FirstPass = 1;
-    AttemptToStart = 0;
+  
+    
+    INIT_DONE = true;
+    
     return (0);
 }
 
 void start() {
-
-    if (AttemptToStart) {
-    //    ExpertRemove ();
-        return;
-    }
-
-     int i = 0;
+   Print("start ");
+     
+    int i = 0;
     GMTShift = GetShiftGMT();
 
     _Bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
@@ -1090,7 +1105,7 @@ void start() {
 
 //+------------------------------------------------------------------+ END 
 
-int deinit() {
+int OnDeinit() {
 
     printf("PROGRESS END PROCESSING BYE BYE  **********************************************************************");
     PG_Print(TYPE_INFO, "________________________________________________________________________ PROGRESS END PROCESSING  ________________________________________________________________________");

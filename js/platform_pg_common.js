@@ -663,7 +663,7 @@ function OnGetHistory (terminal, symbol, period, from, to, async) {
     
     if (terminal.Type  == 'IB') {
         var PG = terminal.PG;
-        var UserId = solution.UserId;
+        var UserId = solution.get('user').id;
         if (UserId == 0) UserId = 1;
     
         var sorder = "*GET_HISTORY^" + symbol.Name  + "^[" + period + " " + from + " " + to + "]*";
@@ -685,7 +685,7 @@ function OnGetHistory (terminal, symbol, period, from, to, async) {
     }
     else {
         var PG = terminal.PG;
-        var UserId = solution.UserId;
+        var UserId = solution.get('user').id;
         if (UserId == 0) UserId = 1;
         var sorder = "*GET_HISTORY " + symbol.Name + " = [" + period + " " + from + " " + to + "] ";
         terminal.Com.Send(UserId + '*' + symbol.Name + sorder);

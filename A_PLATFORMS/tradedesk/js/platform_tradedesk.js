@@ -46,14 +46,13 @@ function tradedesk_select (name) {
     DrawChart();
 
     if (!solution.CurrentTerminal) {
-      
+   
+        if (solution.get('user').id == "0") {
+            AnimationDisplay ('tradedesk', tradedesk_default_terminalname, 'tradedesk_toppanel');         
 
-        if (solution.UserId == "0") {
-            AnimationDisplay ('tradedesk', 'Demo MT4 Terminal is selected', 'tradedesk_toppanel');         
-
-            var terminal = solution.GetRunningTerminalFromName (tradedesk_default_terminalname);
+         //   var terminal = solution.GetRunningTerminalFromName (tradedesk_default_terminalname);
         //    console.log ('terminal selection')
-            tradedesk_selectterminal(terminal); 
+         //   tradedesk_selectterminal(terminal); 
             return;
         }
         DisplayInfo("Select a Platform", true, 'operationpanel', 'var (--bg-terminal)');            
@@ -144,14 +143,14 @@ function tradedesk_solution (pname) {
     
 
     solution.UpdateMT4Terminals = function (solution) {   //called from outside so i need to put object in par
-        Menu_MT4Terminals = [];
+        let menu = [];
 
         for (var j = 0; j < solution.Terminals.length; j++) {
 
             var terminal = solution.Terminals[j];
             if (terminal.Type == 'Terminal' || terminal.Type == 'Tester') {
 
-                Menu_MT4Terminals.push({id:'terminal_' + terminal.Name, type: 'link', item: terminal.Name, icon: icon_terminal,
+                menu.push({id:'terminal_' + terminal.Name, type: 'link', item: terminal.Name, icon: icon_terminal,
                     attributes:{selector: 'tradedesk_selectterminal'},
                     events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}               
                 })
@@ -162,9 +161,9 @@ function tradedesk_solution (pname) {
         }
         PlatformsPanel_Update();  
     
-        sb.tree_additems ('tree_terminals', Menu_MT4Terminals);
+        sb.tree_additems ('tradedesk_tree_terminals', menu);
     
-        $("#tree_terminals").addClass('show');   
+        $("#tradedesk_tree_terminals").addClass('show');   
     }    
     
     solution.GetTerminalFromCom = function (com) {  //running priority
@@ -278,8 +277,9 @@ function tradedesk_selectterminal(terminal, force) {
         return terminal;
     }
 
+    
     if (solution.CurrentTerminal) {
-        solution.CurrentTerminal.Com.Send(solution.UserId + '*START*' +  solution.CurrentTerminal.Type + '*' +  solution.CurrentTerminal.Name + '*0');
+        tradedesk_ask_tostop(solution.CurrentTerminal);
         solution.CurrentTerminal.Save ();            
     }
 
@@ -303,19 +303,22 @@ function tradedesk_selectterminal(terminal, force) {
         solution.UpdateSchedules (terminal);
         UpdatePanel (terminal);
         Tradedesk_UpdateAlerts(terminal);
-
+        
         DisplayInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');        
-        terminal.Com.Send(solution.UserId + '*START*' + terminal.Type + '*' + terminal.Name + '*1');    
+        
+        tradedesk_ask_tostart  (terminal);
+
+         
         tradedesk_drawterminal (terminal, true);    // relatef to interface and terminal        
     }
 }
 
-function tradedesk_closeterminal (terminal) {
+function tradedesk_closeterminal(terminal) {
     if (!terminal) {
         return null;
     }
 
-    terminal.Com.Send(solution.UserId + '*START*' + terminal.Type + '*' + terminal.Name + '*0');
+    tradedesk_ask_tostop (terminal);
 
 
     if (terminal == solution.CurrentTerminal) {
@@ -380,7 +383,8 @@ function tradedesk_loadedterminal (terminal) {
         LoaderDisplay(false);      
 
         DisplayInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');
-        terminal.Com.Send(solution.UserId + '*START*' + terminal.Type + '*' + terminal.Name + '*1');    
+
+        tradedesk_ask_tostart  (terminal);
         tradedesk_drawterminal (terminal, true);    // relatef to interface and terminal        
     }
 }
@@ -412,7 +416,7 @@ function tradedesk_drawterminal (terminal, open) {
 
         $("#terminalstrategyselect option[value='--Select Strategy--']").remove();   
 
-        sb.tree_selectitem ('tree_terminals', terminal.Name);   
+        sb.tree_selectitem ('tradedesk_tree_terminals', terminal.Name);   
 
 
         $('#boxautomationpanel .box-btn-slide').click();    
@@ -432,7 +436,7 @@ function tradedesk_drawterminal (terminal, open) {
         $("#tradedesk_terminalselect option").eq(0).before($('<option>', {value: '--Select Terminal--', text: '--Select Terminal--'}));
         $("#tradedesk_terminalselect option[value='--Select Terminal--']").prop('selected', true);       
 
-        sb.tree_selectitem ('tree_terminals', '');
+        sb.tree_selectitem ('tradedesk_tree_terminals', '');
 
 
         sb.box_toggle('boxtradedeskpanel', true);        
@@ -455,6 +459,7 @@ function tradedesk_displayterminal(terminal, Symbol) {
     if (!sb.tab_finditem (tradedesk_maintabs, Symbol.Name)) {
         AddSymbol(terminal, Symbol);
     }
+    tradedesk_currency_updatesymbolrow (terminal, Symbol.Name, 1) 
     
     var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return;    
@@ -1186,8 +1191,7 @@ function TradedeskTypePanel_Type () {
     if ($("#testerradio").prop("checked"))
         return  'Tester';
     if ($("#terminalradio").prop("checked"))
-
-    return 'Terminal';
+        return 'Terminal';
 }
 
 
@@ -1652,7 +1656,7 @@ function ReloadAlerts(terminalname, terminaltype) {
     }
     var sorder = "*RELOADALERTFILE ";
     for (var i = 0; i < PG.Symbols.length; i++) {
-        terminal.Com.Send(solution.UserId + '*' + PG.Symbols[i].Name + sorder);
+        terminal.Com.Send(solution.get('user').id + '*' + PG.Symbols[i].Name + sorder);
     }
 }
 /// PROJECTS
@@ -1800,7 +1804,7 @@ function HistoryPanel_Update (terminal) {
 function OnGetProfit(terminal, startdate, enddate) {
 
     var PG = terminal.PG;
-    var UserId = solution.UserId;
+    var UserId = solution.get('user').id;
     if (UserId == 0) UserId = 1;
     for (var i = 0; i < PG.Symbols.length; i++) {
         var sorder = "*GET_PROFIT " + "-1 = [" + startdate + " " + enddate + "] ";
@@ -2082,7 +2086,8 @@ function onclick_tradesubmit (elt) {
     $('#' + id + ' #sell').removeClass ('checked');
     $('#' + id + ' #tradesubmit').attr('disabled',  true);
     $('#' + id + ' #tradecancel').attr('disabled',  true);    
-        
+    
+    symbol.Order.operation = null;    
     bottompanel_select (tradedeskplatform,'tab_orders')    
 }
 
@@ -2787,7 +2792,7 @@ function ReloadPanel(terminalname, terminaltype) {
     var terminal = solution.GetTerminalFromNameType(terminalname, terminaltype);
     var PG = terminal.PG;
     var sorder = "*RELOADPANELFILE ";
-    for (var i = 0; i < PG.Symbols.length; i++) terminal.Com.Send(solution.UserId + '*' + PG.Symbols[i].Name + sorder);
+    for (var i = 0; i < PG.Symbols.length; i++) terminal.Com.Send(solution.get('user').id + '*' + PG.Symbols[i].Name + sorder);
 }
 
 
@@ -3906,7 +3911,7 @@ function PlatformsPanel_Update () {
     '         </tr>';
         }
     }
-   $('#serverpanel_tradedesk tbody').html (tcontent);
+   $('#platformstable tbody').html (tcontent);
 }
 
 

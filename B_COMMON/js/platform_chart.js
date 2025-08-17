@@ -311,6 +311,9 @@ function RemoveChartSelection(symbolcanvas, selection) {
     alldeleted = false;
 }
 
+
+
+
 function oncontextmenu_chartcanvas(event, itempos, yValue, mouseXY, fullData, state) {
     
     event.preventDefault();
@@ -318,17 +321,15 @@ function oncontextmenu_chartcanvas(event, itempos, yValue, mouseXY, fullData, st
     
     var symbolcanvas = solution.GetCanvasFromTerminal();
     var symbol       = symbolcanvas.CurrentSymbol;
-    
- 
+
+
+
     if (symbolcanvas.Selection != 'cursor') {
         DrawChart();
     } else {
         var menu = [];
-        menu.push({id: MENU_CHART_REMOVEINDICATORS_ID,  text: 'Remove Indicators',    icon: icon_indicator}); 
-        menu.push({id: MENU_CHART_REMOVEDRAWING_ID,     text: 'Remove Drawing Tools', icon: 'fa fa-star'}); 
         
         if (solution.get('ui').currentplatform_pname == TRADEDESK_PLATFORM_PNAME) {
-            menu.push({id: 0,  text: ''});            
 
             if (yValue) {
                 if (yValue > symbol.Ask) {
@@ -348,13 +349,22 @@ function oncontextmenu_chartcanvas(event, itempos, yValue, mouseXY, fullData, st
             menu.push({id: MENU_CHART_INSERTCALL_ID,  text: 'Insert Closest Call',  icon: '',     style:'color:' + theme_sell});
             menu.push({id: MENU_CHART_INSERTPUT_ID,   text: 'Insert Closest Put',   icon: '',     style:'color:' + theme_sell});
         }
+        menu.push({id: 0,  text: ''});            
+
+        menu.push({id: MENU_CHART_REMOVEINDICATORS_ID,  text: 'Remove Indicators',    icon: icon_indicator}); 
+        menu.push({id: MENU_CHART_REMOVEDRAWING_ID,     text: 'Remove Drawing Tools', icon: 'fa fa-star'}); 
+
+        CrossHairCursor.freezeaction = 0;
+  
 
 
         sb.overlay({
+            id:'chart_menu',            
             rootelt: $('#' + rootid_fromcanvas(symbolcanvas.ID)),            
             event: event,                 
-            pageX: event.pageX,
-            pageY: event.pageY,
+            pageX: event.pageX - 180,
+            pageY: event.pageY + 10,
+
             onselect : function (elt, par) {
                 var text = $(elt).find('.sb_label').html();
                 switch (parseInt(elt.id)) {
@@ -395,10 +405,12 @@ function oncontextmenu_chartcanvas(event, itempos, yValue, mouseXY, fullData, st
 }
 
 function onclick_chartcanvas(event, itempos, yValue, mouseXY, fullData, state) {
+
     event.stopPropagation();
     }
 
 function onmousedown_chartcanvas(event, itempos, yValue, mouseXY, fullData, state) {
+
     event.stopPropagation();
 
     var PG = solution.GetPGFromTerminal ();
@@ -1833,7 +1845,7 @@ var react_optionmain  = function (objects, xGrid, yGrid, width, height, margin, 
         	parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return price},	itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  'transparent', fill: function fill(d) {return theme_buy;} }));
             parameters.push (React.createElement(StraightLine , {yValue: price, type: "horizontal",  strokeWidth : 1,      stroke: theme_buy,     label: ""}));    
         }    
-	    parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value},	itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  "green", fill: function fill(d) {return theme_sell;} }));
+	    parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value},	itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  "red", fill: function fill(d) {return theme_sell;} }));
         parameters.push (React.createElement(StraightLine , {yValue: +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value, type: "horizontal",  strokeWidth : 1,      stroke: theme_sell,      label: ""}));   
     }
 
@@ -1970,7 +1982,7 @@ var react_optionmain  = function (objects, xGrid, yGrid, width, height, margin, 
 	parameters.push (React.createElement(EdgeIndicator,     {itemType: "last", orient: "right", edgeAt: "right",  padding: {left : 0, right : xmargin},   fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), yAccessor: function yAccessor(d) {return d.close;},	lineStroke:  axiscolor, fill: function fill(d) {return d.close > d.open ? theme_bull : theme_bear;} }));
 
 // Cursor
-    parameters.push (React.createElement(CrossHairCursor, {strokeDasharray: "Solid",  snapX: snapx, stroke: 'gray'}));
+    parameters.push (React.createElement(CrossHairCursor, {strokeDasharray: "Solid",  snapX: snapx, stroke: 'gray' ,freeze:   function () { return $('#chart_menu').length == 1;}}));
     parameters.unshift (MyChart, properties);
     
     return React.createElement.apply (null, parameters);
@@ -2168,7 +2180,7 @@ var react_chartmain  = function (objects, xGrid, yGrid, width, height, margin, x
         	parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return price},	itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  'transparent', fill: function fill(d) {return theme_buy;} }));
             parameters.push (React.createElement(StraightLine , {yValue: price, type: "horizontal",  strokeWidth : 1,      stroke: theme_buy,     label: ""}));    
         }    
-	    parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value},	itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  "green", fill: function fill(d) {return theme_sell;} }));
+	    parameters.push (React.createElement(EdgeIndicator, {yAccessor: function yAccessor(d) {return +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value},	itemType: "last", orient: "left", edgeAt: "left",    fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), lineStroke:  theme_sell, fill: function fill(d) {return theme_sell;} }));
         parameters.push (React.createElement(StraightLine , {yValue: +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value, type: "horizontal",  strokeWidth : 1,      stroke: theme_sell,      label: ""}));   
     }
 
@@ -2181,7 +2193,7 @@ var react_chartmain  = function (objects, xGrid, yGrid, width, height, margin, x
         }
     }            
 // Cursor
-    parameters.push (React.createElement(CrossHairCursor, {strokeDasharray: "Solid",  snapX: snapx, stroke: 'gray'}));
+    parameters.push (React.createElement(CrossHairCursor, {strokeDasharray: "Solid",  snapX: snapx, stroke: 'gray', freeze:   function () { return $('#chart_menu').length == 1;}}));
 
 
 	var properties = {xMargin: xmargin, yMargin: ymargin,  id: 10, height: height, yExtents: yExtents};
@@ -3555,3 +3567,5 @@ function  MarkersPanel_Update (marker, complete, color) {
         $('#progress_' + chartid + ' #progress-bar' + marker.Id).css ("width", complete + '%');  
     }
 }
+
+

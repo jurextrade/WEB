@@ -620,7 +620,7 @@
 /*--------------------------------------------------------- TREE PANELS ------------------------------------------------------*/
 
 
-#tree_terminals > li:first-child > span:first-child{
+#tradedesk_tree_terminals > li:first-child > span:first-child{
     display:none;
 }
 /*--------------------------------------------------------- MEDIA PANEL ------------------------------------------------------*/

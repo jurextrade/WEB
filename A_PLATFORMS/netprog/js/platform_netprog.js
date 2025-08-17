@@ -62,7 +62,7 @@ class npproject {
     }
 
     Remove = function () {
-        if (solution.UserId == "0") {
+        if (solution.get('user').id == "0") {
             return;        
         }
 
@@ -70,14 +70,14 @@ class npproject {
     }
 
     Rename = function (newname) {
-        if (solution.UserId == "0") {
+        if (solution.get('user').id == "0") {
             return;            
         }
         return SubmitProjectRequest('NetProg',this.Folder, newname, '', 'php/rename_project.php', SYNCHRONE);
     }
     
     Save = function () {
-        if (solution.UserId == "0") {
+        if (solution.get('user').id == "0") {
             DisplayInfo ("Saving not for possible.. Should register", true, 'operationpanel', 'var(--bg-optionterminal)')           
             return;
         }
