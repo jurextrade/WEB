@@ -33,7 +33,7 @@ function DeployConnect(adress, port, reconnection) {
             },
             onmessagefunction: function (com, data) {
               //  let project = solution.GetProjectFromCom(com)
-                TreatReception (solution.CurrentProject, data);
+                TreatReception (com, data);
             },    
             ondisconnectfunction:     function (com, data) {project_highlightserver(DEPLOYSERVER, null, 0); },
             onclosefunction:          function (com, data) {project_highlightserver(DEPLOYSERVER, null, 0); },
@@ -45,44 +45,44 @@ function DeployConnect(adress, port, reconnection) {
 
         }
     )
-
+    project_DeployCom.Name = DEPLOYSERVER;
     return project_DeployCom.Socket;
 }
 
 //---------------------------------------------------- IP ADDRESS-----------------------------------------------   
 
 
-function TreatReception (project, recmessage) {        
+function TreatReception (com, recmessage) {        
+    
+
     if (!recmessage) return;
     
     if (recmessage.substring(0, 1) != ":") {
-        console.log ("Receiveing strange on " + project.Name);
+        console.log ("Receiveing strange on " + com.Name);
     }
  
     var index = recmessage.indexOf("*");
     var message = recmessage.substring(index + 1);
     var symbolname = recmessage.substring(1, index);
      
-    project.LastRunningTime = Date.now();
    
     var output;
     var length = message.length;
  
-    if (project.Buffer !== undefined) {
+    if (com.Buffer !== undefined) {
         if (message[length - 1] != "*") {
-            reader.Buffer  = project.Buffer + message;
+            com.Buffer  = com.Buffer + message;
             return;
         } else {
-            output = project.Buffer + message;
+            output = com.Buffer + message;
         }
     } else {
-        project.Buffer = message;
+        com.Buffer = message;
         output = message;
     }
 
-    if (project.Buffer) {
-        project.Buffer = "";
-    }
+    com.Buffer = "";
+    
 
     var lines = output.split('*');
     length = lines.length;
@@ -90,21 +90,16 @@ function TreatReception (project, recmessage) {
         if (lines[j].length < 1) continue;
         var Line = lines[j];
         var values = Line.split('^');
-        TreatCommand(project, Line, values);
+        TreatCommand(Line, values);
     }
 }
 
 function TreatCommand(project, Line, values) {
     
-    if (values[0] == "LOGIN") {
-        TreatLogin(project, values);
-    } else
-    if (values[0] == "CONNECT") {
-        TreatConnect(project, values);
-    } else
-    if (values[0] == "INIT") {
-        TreatInit(project, values);
-    } else
+    if (!solution.CurrentProject) {
+        return;
+    }
+
     if (values[0] == "COMPILE") {
         TreatCompile(project, values, Line);
     } else
@@ -120,15 +115,19 @@ function TreatCommand(project, Line, values) {
 
 
 function TreatCompile(project, values, Line) {
-    values[5] = values[5].replace(/\u0000/g, '');    
- 
-    var terminaltype =  values[2];
-    var compiletype =  values[3];
+    let filename        = values[1];
+    let projectname     = values[2];
+    let compiletype     = values[3];
+    let responsestate   = values[4];    
+    let response        = values[5].replace(/\u0000/g, '');    
+
+
     StartCompilation = false;
-    if (values[4] == "OK") {
+    
+    if (responsestate == "OK") {
         
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
-        TraceErrorEditor("> FINISH COMPILATION OK FOR " + (compiletype == 'MQL4' ? "STRATEGY " : " PROJECT " + project.Name) + " : " + values[1], 1);
+        TraceErrorEditor("> FINISH COMPILATION OK FOR " + (compiletype == 'MQL4' ? "STRATEGY " : " PROJECT " + projectname) + " : " + filename, 1);
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
         
         DisplayInfo("Finish Compilation OK", true, 'project_operation');   
@@ -137,23 +136,23 @@ function TreatCompile(project, values, Line) {
     } else {
         
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
-        TraceErrorEditor("> FINISH COMPILATION WITH ERROR FOR " + (compiletype == 'MQL4' ? "STRATEGY " : " PROJECT " + project.Name) +  " : " + values[5], 1);
+        TraceErrorEditor("> FINISH COMPILATION WITH ERROR FOR " + (compiletype == 'MQL4' ? "STRATEGY " : " PROJECT " + projectname) +  " : " + response, 1);
         TraceErrorEditor("-----------------------------------------------------------", 1);
         DisplayInfo("Compilation Fails", true, 'project_operation', "coral");  
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
-        TraceErrorEditor("----------------- END PROCESS " + values[1] + " ON " + terminaltype + " INTERRUPTED -----------------", 1);
+        TraceErrorEditor("----------------- END PROCESS " + filename + " OF " + projectname + " INTERRUPTED -----------------", 1);
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
     }
 }
 
 
 function TreatUpload(project, values, Line) {
-    var compiletype =  values[3];   
-  
+    let compiletype     = values[3];   
+    let responsestate   = values[4];   
 
     FinishUploading = true;
 
-    if (values[4] == "OK") {
+    if (responsestate == "OK") {
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
         TraceErrorEditor(">" + (compiletype == 'MQL4' ? "STRATEGY " : "PROJECT ") + "SUCCESSFULLY UPLOADED " + values[1], 1);
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
@@ -177,11 +176,12 @@ function TreatUpload(project, values, Line) {
 }
 
 function TreatDistribute(project, values, Line) {
-    let filename = values[1];
-    let tofilename = values[2];
+    let filename        = values[1];
+    let tofilename      = values[2];
+    let responsestate   = values[3];     
 
 
-    if (values[3] == "OK") {
+    if (responsestate == "OK") {
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
         TraceErrorEditor(">STRATEGY FILE SUCCESSFULLY DOWNLOADED ON TERMINAL in folder " + tofilename, 1);
         TraceErrorEditor("----------------------------------------------------------------------------", 1);

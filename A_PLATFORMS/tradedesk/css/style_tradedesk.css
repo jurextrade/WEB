@@ -465,9 +465,7 @@
     text-align: center;
 }
 
-#orderstable  td:nth-child(4) {
-    color:var(--theme-main-color);
-}
+
 /*------------------------------------------------------------ ALERTS PANEL --------------------------------------------------------*/
 
 #boxalertspanel .sb_boxbody  {

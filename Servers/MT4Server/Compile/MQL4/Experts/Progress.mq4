@@ -38,7 +38,6 @@ int           FTPPort           = 21;                   //22
 
 bool   TestModeGraphic          = true;
 bool   TestModeToSend           = true;
-bool   SiteConnection           = true;
 
 
 int    NodePort                 = 2007;                 // Listening Port for Node Server Only me
@@ -816,11 +815,13 @@ const int CONNECTION_FAILED    = -5;
 const int CONNECTION_SUCCEED   = 1;
 
 bool INIT_DONE          = false;
-bool AttemptToStart     = false;
+bool NO_TIMER           = false;
+datetime AttemptToReconnect     = 0;
 
 
-void OnTimer () {
-    if (NodeSocket == -1 && AttemptToStart == true)
+
+void TimerFunction () {
+    if (NodeSocket == -1 && (NO_TIMER == false || (TimeCurrent() - AttemptToReconnect) > 60))
     {
         PG_Print(TYPE_ERROR, "Connection closed with MT4 Server Reconnecting with timer", NO_SEND);
     
@@ -831,15 +832,18 @@ void OnTimer () {
            PG_Print(TYPE_INFO, "__________________________________________________ERROR IDENTIFICATION SERVER WILL CONNECT EVERY SECOND ________________________________________________________________________");
            return;         
        }       
-
-       EventKillTimer(); 
-    
-       AttemptToStart = false;
+       if (!NO_TIMER) {
+         EventKillTimer(); 
+         }
     
        if (!INIT_DONE) {              // it is not a reconnection
           end_init();
        }
     }
+}
+
+void OnTimer () {
+    TimerFunction ();
 }
 
 
@@ -863,6 +867,7 @@ int OnInit() {
     
     if (!eventresult) {
       Print("Failed to set timer, error: ",GetLastError());
+      NO_TIMER = true;
     }
     
     
@@ -875,6 +880,7 @@ int OnInit() {
     SymbolRunning = FileOpen("Lock" + _Symbol, FILE_WRITE | FILE_BIN);
     if (SymbolRunning == -1) {
         Print("Expert is running already on symbol " + SYS_SYMBOL);
+        ExpertRemove ();        
         return (INIT_FAILED);
     }
 
@@ -910,7 +916,7 @@ int OnInit() {
 
     if (result ==  CONNECTION_FAILED) {
        
-        AttemptToStart = true;   
+        AttemptToReconnect = true;   
         PG_Print(TYPE_ERROR, "Server is not running or incorrect server parameters MT4 Server ", NO_SEND);
         PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR IDENTIFICATION SERVER  ________________________________________________________________________");
         return 0;
@@ -923,6 +929,8 @@ int OnInit() {
         PG_Print(TYPE_INFO, "________________________________________________________________________ ERROR IDENTIFICATION FAILED  ________________________________________________________________________");
         return (INIT_FAILED);
     }   
+
+
 
     return  end_init();
 }
@@ -987,7 +995,12 @@ int end_init() {
 }
 
 void start() {
-   Print("start ");
+
+
+    if (NO_TIMER && AttemptToReconnect == 0) {    // this is for tester we don't have a timer
+        TimerFunction();
+        return 0;
+    }
      
     int i = 0;
     GMTShift = GetShiftGMT();
@@ -1024,9 +1037,16 @@ void start() {
         if (CSocket != -1)
             PG_Recv(CSocket);
 
-        if (SiteConnection && NodeSocket != -1)
+        if (NodeSocket != -1)
             PG_Recv(NodeSocket);
-            
+        
+        if (NodeSocket == -1) {
+            if (NO_TIMER ) {
+               AttemptToReconnect = 0;               
+            } else {
+              EventSetTimer(1);
+            }
+        }
     }
 
     IfShouldClose();
@@ -1150,11 +1170,12 @@ void PG_SendBuffer(int & socket, char buffer[], int buffersize) {
 }
 
 int ConnectNodeServer() {
-    if (SiteConnection && NodeSocket == -1) {
+    if (NodeSocket == -1) {
 
         NodeSocket = TCP_connect(NodeServer, NodePort);
         if (NodeSocket < 0) {
             PG_Print(TYPE_ERROR, "NO SYNCHRONISATION WITH NODE CENTER ON PORT : " + NodePort, NO_SEND);
+            AttemptToReconnect = 0;
             return CONNECTION_FAILED;
         } else {
             PG_Print(TYPE_ERROR, "SUCCEEDED SYNCHRONISATION WITH NODE CENTER ON PORT : " + NodePort, NO_SEND);
@@ -1182,6 +1203,7 @@ int ConnectNodeServer() {
             Send_Init(NodeSocket, NodePort);
         }
     }
+    AttemptToReconnect = TimeCurrent();        
     return CONNECTION_SUCCEED;
 }
 
@@ -1552,16 +1574,15 @@ int Reload_EntryRules_DLL(string filename) {
             return -1;
         }
     }
-    if (SiteConnection) {        
 
-        returnvalue = DownloadLibrary(filename, tofilename);
-    
-        if (returnvalue < 0) {
-            Print("GET DLL ERROR " +  filename);
-            return 1;
-        } else
-            Print("GET DLL OK " + filename);
-    }
+     returnvalue = DownloadLibrary(filename, tofilename);
+ 
+     if (returnvalue < 0) {
+         Print("GET DLL ERROR " +  filename);
+         return 1;
+     } else
+         Print("GET DLL OK " + filename);
+
     return Load_EntryRules_DLL(LocalFile);
 
 }
@@ -12925,9 +12946,9 @@ void Info_DrawGraphics(int window, int corner) {
    // if (CSocket != -1) sconnection = "CONNECTED ";
    // else sconnection = "NOT CONNECTED ";
 
-    if (SiteConnection)
-        if (NodeSocket == -1) sconnection += "NOT CONNECTED ";
-        else sconnection += "CONNECTED ";
+    
+      if (NodeSocket == -1) sconnection += "NOT CONNECTED ";
+      else sconnection += "CONNECTED ";
 
     if (ObjectFind("connection") != window) {
         ObjectDelete("connection");

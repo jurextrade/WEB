@@ -12,7 +12,9 @@ function tradedesk_init() {
     tradedesk_editors_init('tradedesk');
     tradedesk_gse_init(); 
 
-
+    MT4Connect(solution.MT4Server_Address, solution.MT4Server_Port, solution.MT4Server_Reconnection);  
+   
+   
     sidebarpanel_show(tradedeskplatform, "sidebarpanel_terminals");    
     setInterval(tradedesk_timer, 300);     
 }
@@ -23,7 +25,7 @@ function tradedesk_end () {
     for (var i = 0; i < solution.Terminals.length; i++) {
         let terminal = solution.Terminals[i];    
         if (terminal.Type == 'Terminal' || terminal.Type == 'Tester') {
-            terminal.Com.Socket.close();     
+            tradedesk_MT4Com.Socket.close();     
         }   
     }
 }
@@ -155,7 +157,7 @@ function tradedesk_solution (pname) {
                     events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}               
                 })
                 sb.select_additem ('tradedesk_terminalselect', terminal.Name);            
-                MT4Connect(terminal, solution.MT4Server_Address, solution.MT4Server_Port, solution.MT4Server_Reconnection);                    
+           //     MT4Connect(terminal, solution.MT4Server_Address, solution.MT4Server_Port, solution.MT4Server_Reconnection);                    
 
             }
         }
@@ -279,7 +281,7 @@ function tradedesk_selectterminal(terminal, force) {
 
     
     if (solution.CurrentTerminal) {
-        tradedesk_ask_tostop(solution.CurrentTerminal);
+        tradedesk_ask_tostop(tradedesk_MT4Com, solution.CurrentTerminal);
         solution.CurrentTerminal.Save ();            
     }
 
@@ -306,7 +308,7 @@ function tradedesk_selectterminal(terminal, force) {
         
         DisplayInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');        
         
-        tradedesk_ask_tostart  (terminal);
+        tradedesk_ask_tostart  (tradedesk_MT4Com, terminal);
 
          
         tradedesk_drawterminal (terminal, true);    // relatef to interface and terminal        
@@ -318,7 +320,7 @@ function tradedesk_closeterminal(terminal) {
         return null;
     }
 
-    tradedesk_ask_tostop (terminal);
+    tradedesk_ask_tostop (tradedesk_MT4Com, terminal);
 
 
     if (terminal == solution.CurrentTerminal) {
@@ -384,7 +386,7 @@ function tradedesk_loadedterminal (terminal) {
 
         DisplayInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');
 
-        tradedesk_ask_tostart  (terminal);
+        tradedesk_ask_tostart  (tradedesk_MT4Com, terminal);
         tradedesk_drawterminal (terminal, true);    // relatef to interface and terminal        
     }
 }
@@ -649,6 +651,7 @@ function oncontextmenu_sessionsrow (elt, event) {
     event.preventDefault();    
     event.stopPropagation();
 
+    $(elt).addClass('selected');
 
     if (!solution.CurrentTerminal) return;
     var PG = solution.CurrentTerminal.PG;
@@ -671,7 +674,11 @@ function oncontextmenu_sessionsrow (elt, event) {
         event: event,                  
         pageX: event.pageX,
         pageY: event.pageY,
+        offsetY: 10,
         par: session,
+        onremove: function (event) {
+            $('#sessionstable .selected').removeClass ('selected');
+        },
         onselect: function (elt, par) {
             OnSessionCommand (solution.CurrentTerminal, par, parseInt(elt.id));
         },
@@ -710,6 +717,7 @@ function oncontextmenu_ordersrow (elt, event) {
     event.preventDefault();    
     event.stopPropagation();
 
+    $(elt).addClass('selected');
 
     if (!solution.CurrentTerminal) return;
     var PG = solution.CurrentTerminal.PG;
@@ -725,11 +733,16 @@ function oncontextmenu_ordersrow (elt, event) {
    sb.overlay({
         rootelt: $('#' + event.currentTarget.id).closest('.sb_root'),   
         event: event,                  
-        pageX: event.pageX,
+        pageX: event.pageX ,
         pageY: event.pageY,
+        offsetY: 10,
         onselect: function (elt, par) {
           //  OnCommand (par, parseInt(elt.id));
         },
+        onremove: function (event) {
+            $('#orderstable .selected').removeClass ('selected');
+        },
+
         html: sb.menu (MenuItems)
     });       
 
@@ -1376,7 +1389,7 @@ function FillSessionMenu (Session, menuitems) {
     if (bnbrTrade != "0" && Session.ExitBuy == "0") menuitems.push(SessionMenu[ID_HEDGESESSIONBUY]);
     if (hedgetype == OP_SELL || hedgetype == OP_BUYSELL) menuitems.push(SessionMenu[ID_UNHEDGESESSIONBUY]);
     if (snbrTrade != "0" && Session.ExitSell == "0") menuitems.push(SessionMenu[ID_HEDGESESSIONSELL]);
-    if (hedgetype == OP_BUY || hedgetype == OP_BUYSELL) SessimenuitemsonMenu.push(SessionMenu[ID_UNHEDGESESSIONSELL]);
+    if (hedgetype == OP_BUY || hedgetype == OP_BUYSELL) menuitems.push(SessionMenu[ID_UNHEDGESESSIONSELL]);
 }
 
 
@@ -1656,7 +1669,7 @@ function ReloadAlerts(terminalname, terminaltype) {
     }
     var sorder = "*RELOADALERTFILE ";
     for (var i = 0; i < PG.Symbols.length; i++) {
-        terminal.Com.Send(solution.get('user').id + '*' + PG.Symbols[i].Name + sorder);
+        tradedesk_MT4Com.Send(solution.get('user').id + '*' + PG.Symbols[i].Name + sorder);
     }
 }
 /// PROJECTS
@@ -1801,16 +1814,6 @@ function HistoryPanel_Update (terminal) {
     $('#historyselect').attr('disabled',  false);    
 }
 
-function OnGetProfit(terminal, startdate, enddate) {
-
-    var PG = terminal.PG;
-    var UserId = solution.get('user').id;
-    if (UserId == 0) UserId = 1;
-    for (var i = 0; i < PG.Symbols.length; i++) {
-        var sorder = "*GET_PROFIT " + "-1 = [" + startdate + " " + enddate + "] ";
-        terminal.Com.Send(UserId + '*' + PG.Symbols[i].Name + sorder);
-    }
-}
 
 function onclick_historyselect (elt) {
 
@@ -2792,7 +2795,7 @@ function ReloadPanel(terminalname, terminaltype) {
     var terminal = solution.GetTerminalFromNameType(terminalname, terminaltype);
     var PG = terminal.PG;
     var sorder = "*RELOADPANELFILE ";
-    for (var i = 0; i < PG.Symbols.length; i++) terminal.Com.Send(solution.get('user').id + '*' + PG.Symbols[i].Name + sorder);
+    for (var i = 0; i < PG.Symbols.length; i++) tradedesk_MT4Com.Send(solution.get('user').id + '*' + PG.Symbols[i].Name + sorder);
 }
 
 
@@ -3868,28 +3871,6 @@ function OnClickResetServers (elt) {
     }
 }
 
-function OnClickApplyServers (elt) {
-   
-    for (var i = 0; i < solution.Terminals.length; i++) {
-        let terminal = solution.Terminals[i];    
-
-        if (terminal.Type == 'Terminal') {
-            servername =  $('#terminalserver' + i).val();
-            if (servername != terminal.Server) {
-                terminal.Server = servername;
-                terminal.Com.Socket.close();     
-                MT4Connect(terminal, solution.MT4Server_Address, solution.MT4Server_Port, solution.MT4Server_Reconnection);
-            }   
-            terminal = solution.GetTerminalFromNameType(terminal.Name, 'Tester');
-            servername = $('#strategytesterserver' + i).val();
-            if (servername != terminal.Server) {
-                terminal.Server = servername;
-                terminal.Com.Socket.close();   
-                MT4Connect(terminal, solution.MT4Server_Address, solution.MT4Server_Port, solution.MT4Server_Reconnection);
-            }
-        }   
-    }
-}
 
 function PlatformsPanel_Update () {
     let tcontent = '';
@@ -4063,3 +4044,22 @@ function SelectSession(session) {
     
 }
 
+function GoToProject(elt) {
+
+    solution_module_load ('project', () => {
+        let projectname = $('#tradedeskprojectname').val();   
+        let project = selector_select('project_selectproject', projectname);        
+
+        LoaderDisplay(true);     
+        let strategyname = $("#tradedeskstrategyselect option:selected").val();;
+        let timerId = setInterval((project, strategyname) => {
+            if (project.Loaded) {
+                LoaderDisplay(false);                
+                clearInterval(timerId);
+                selector_select('project_selectstrategy', strategyname);    
+               
+            }    
+        },  300, project,  strategyname); 	 
+
+    })         
+}

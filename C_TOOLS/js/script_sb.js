@@ -27,6 +27,9 @@ $(document).ready(function(){
         $.each(overlays, function (index, overlay) {
             var overlay_options = $(overlay).data('options');  
             if (overlay_options && !overlay_options.keepopen)
+                if (overlay_options.onremove) {
+                      overlay_options.onremove(event);
+                }                
                 $(overlay).remove();      
         });
     });
@@ -35,8 +38,12 @@ $(document).ready(function(){
         var overlays = $('.sb_overlay');
         $.each(overlays, function (index, overlay) {
             var overlay_options = $(overlay).data('options');  
-            if (overlay_options && !overlay_options.keepopen)
+            if (overlay_options && !overlay_options.keepopen) {
+                if (overlay_options.onremove) {
+                      overlay_options.onremove(event);
+                }
                 $(overlay).remove();      
+            }
         });
     });  
     $(document).on("contextmenu", function(){
@@ -44,6 +51,9 @@ $(document).ready(function(){
         $.each(overlays, function (index, overlay) {
             var overlay_options = $(overlay).data('options');  
             if (overlay_options && !overlay_options.keepopen)
+                if (overlay_options.onremove) {
+                      overlay_options.onremove(event);
+                }                
                 $(overlay).remove();      
         });
     });
@@ -1595,9 +1605,8 @@ class SB {
                 }
             );
     
-
-        div1.css ('top', options.pageY);
-        div1.css ('left', options.pageX);
+        div1.css ('top', options.pageY  + (options.offsetY ? options.offsetY : 0));
+        div1.css ('left', options.pageX + (options.offsetX ? options.offsetX : 0));
 
         var height =  options.pageY + div2.innerHeight();
         var width  =  options.pageX + div2.innerWidth();
@@ -1606,10 +1615,10 @@ class SB {
         var wwidth = window.innerWidth;
 
         if (height > wheight) {
-            div1.css ('top', options.pageY - div2.innerHeight());
+            div1.css ('top', options.pageY - div2.innerHeight() + (options.offsetY ? -options.offsetY : 0));
         }
         if (width > wwidth) {
-            div1.css ('left', options.pageX - div2.innerWidth());
+            div1.css ('left', options.pageX - div2.innerWidth() + (options.offsetX ? -options.offsetX : 0));
         }
 
 

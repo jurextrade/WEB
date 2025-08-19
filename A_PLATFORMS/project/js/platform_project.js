@@ -1492,28 +1492,14 @@ function strategyinputresize() {
     if (CommentEditor) CommentEditor.resize()
 }
 
+function onclick_clean_comment_button (elt, event) {
+    ExpertEditor.setValue('')
+}
+
 
 //---------------------------------------------------- SELECT PROJECT ---------------------------------------------- 
 
-function GoToProject(elt) {
 
-    solution_module_load ('project', () => {
-        let projectname = $('#tradedeskprojectname').val();   
-        let project = selector_select('project_selectproject', projectname);        
-
-        LoaderDisplay(true);     
-        let strategyname = $("#tradedeskstrategyselect option:selected").val();;
-        let timerId = setInterval((project, strategyname) => {
-            if (project.Loaded) {
-                LoaderDisplay(false);                
-                clearInterval(timerId);
-                selector_select('project_selectstrategy', strategyname);    
-               
-            }    
-        },  300, project,  strategyname); 	 
-
-    })         
-}
 
 function RefreshProjectName(project) {
     if (!project) {
@@ -1622,7 +1608,7 @@ function UpdateProjectConditions (project) {
     
     sb.tree_additems ('project_tree_conditions', GConditionMenu);   
     $("#project_tree_conditions").addClass('show');    
-/*
+/*        tradedesk_MT4Com.
     Sortable.create(project_tree_conditions, { 
         onEnd: function (evt) {
     		var itemEl = evt.item; 
@@ -1646,7 +1632,7 @@ function OnReloadProject(terminal, terminalname, terminaltype) {
     }
     for (var i = 0; i < PG.Symbols.length; i++) {
         var sorder = "*RELOADPROJECT*" + PG.Symbols[i].Name + '*' + terminalname + '*' + terminaltype;
-        terminal.Com.Send(solution.get('user').id + sorder);
+        tradedesk_MT4Com.Send(solution.get('user').id + sorder);
     }
 }
 

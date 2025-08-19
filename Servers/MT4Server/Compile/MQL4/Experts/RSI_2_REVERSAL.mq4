@@ -470,6 +470,71 @@ void ResetAll(int first = -1) {
     ResetSchedules();
 }
 
+void ResetSignals(int first = -1) {
+    int i;
+    for (int z = 0; z < O_NbrObject; z++) {
+        i = ObjId[z];
+        for (int j = 0; j < NBR_SIGNALS; j++) {
+            for (int k = 0; k < NBR_PERIODS; k++) {
+                if (first == 1) {
+                    SignalTabTime[i][j][k] = -1;
+                    SignalTabPrice[i][j][k] = -1;
+                    SignalTabValue[i][j][k] = -1;
+                    BeforeSignalTabValue[i][j][k] = -1;
+                    BeforeSignalTabTime[i][j][k] = -1;
+                    BeforeSignalTabPrice[i][j][k] = -1;
+
+                    SignalTab[i][j] = 0;
+                    BeforeSignalTab[i][j] = 0;
+                    BeforeSignalTickTab[i][j] = 0;
+                } else {
+                    if (AndS(i, j, k) != 0)
+                        BeforeSignalTickTab[i][j] |= (1 << k);
+                    else
+                        BeforeSignalTickTab[i][j] &= ~(1 << k);
+
+                    if (TimeOpenBar[k] != iTime(NULL, PeriodIndex[k], 0)) {
+                        if (AndS(i, j, k) != 0)
+                            BeforeSignalTab[i][j] |= (1 << k);
+                        else
+                            BeforeSignalTab[i][j] &= ~(1 << k);
+                        BeforeSignalTabValue[i][j][k] = SignalTabValue[i][j][k];
+                        BeforeSignalTabTime[i][j][k] = SignalTabTime[i][j][k];
+                        BeforeSignalTabPrice[i][j][k] = SignalTabPrice[i][j][k];
+                    }
+                }
+            }
+            SignalTab[i][j] = 0;
+        }
+        if (first == 1) RuleObjFilter[i] = 1;
+    }
+}
+
+void ResetRules(int first = -1) // only status is reset
+{
+    for (int i = 0; i < NBR_OPERATIONS; i++)
+        for (int j = 0; j < NBR_FIELDS; j++) {
+            BeforeRuleTab[i][j] = RuleTab[i][j];
+            RuleTab[i][j] = 0;
+            if (first == 1)
+                for (int k = 0; k < NBR_RULES; k++)
+                    if (j == T_BUYNBRTRADE || j == T_SELLNBRTRADE)
+                        RuleTabValue[i][j][k] = 0;
+                    else
+                        RuleTabValue[i][j][k] = 0;
+        }
+}
+
+void ResetSignalFilters() {
+    int i;
+
+    for (int z = 0; z < O_NbrObject; z++) {
+        i = ObjId[z];
+        for (int j = 0; j < NBR_SIGNALS; j++)
+            for (int x = 0; x < NBR_PERIODS; x++)
+                SignalFilterTab[i][j][x] = 0;
+    }
+}
 
 void ResetEngines(int first = -1) {
     for (int i = 0; i < NBR_ENGINES; i++) {
@@ -8740,28 +8805,48 @@ void PG_Comment() {
 }
 
 
+#define RSI_2 59
+#define MA_200 50
+#define SMA_5 57
 
 
+double  ordertype  =  0.0;
 /* ============================================================
-STRATEGY : MA_RSI_SCALPING
-RULE : U
+STRATEGY : RSI_2_REVERSAL
+RULE : K
 =============================================================*/
 
-void R_RULE_U ()
+void R_RULE_K ()
 {
 
 //------------------------------BUYSELL ENGINE ------------------------------
 
-}
+
+if ((AndS(RSI_2, S_OVERBOUGHT, CurrentPeriod) && AndS(MA_200, S_BELOW, CurrentPeriod)))
+
+{ Set_Rule(OP_BUYSELL, T_START, R_K, P_SIGNAL);ordertype = OP_SELL;}
+
+if ((AndS(RSI_2, S_OVERSOLD, CurrentPeriod) && AndS(MA_200, S_ABOVE, CurrentPeriod)))
+
+{ Set_Rule(OP_BUYSELL, T_START, R_K, P_SIGNAL);ordertype = OP_BUY;}
+
+if ((AndS(SMA_5, S_CROSS_UP, CurrentPeriod) && AndS(MA_200, S_ABOVE, CurrentPeriod) && (ordertype == OP_BUY)))
+
+{ Set_Rule(OP_BUY, T_STATUS, R_K, P_SIGNAL);}
+
+if ((AndS(SMA_5, S_CROSS_DOWN, CurrentPeriod) && AndS(MA_200, S_BELOW, CurrentPeriod) && (ordertype == OP_SELL)))
+
+{ Set_Rule(OP_SELL, T_STATUS, R_K, P_SIGNAL);}
+Set_Rule(OP_EXIT, T_STATUS, R_K, P_SIGNAL);}
 
 void SetEntryRules  ()
 {
-  R_RULE_U ();
+  R_RULE_K ();
 }
 
 
 string EngineString   = "B_NAME,B_OPERATION,B_STARTRULE,B_BUYRULE,B_SELLRULE,B_EXITBUYRULE,B_EXITSELLRULE,B_EXITRULE,B_ILOT,B_MAXLOT,B_MAXCOUNT,B_DIRECTION, B_DIRECTIONTYPE, B_RECOVERYMODE,B_RECOVERYVALUE,B_PIPSTEP,B_TIMESTEP,B_ORDERTYPE,B_KEEPBUYSELL,B_ONEORDERPERBAR,B_EXITMODE,B_MAXTIME,B_HEDGEMAGNITUDE,B_MINPROFIT,B_BUYMINPROFIT,B_SELLMINPROFIT,B_TP,B_TS,B_SL,B_BUYTP,B_BUYTS,B_BUYSL,B_SELLTP,B_SELLTS,B_SELLSL,B_BUYLOTTP,B_BUYLOTTS,B_BUYLOTSL,B_SELLLOTTP,B_SELLLOTTS,B_SELLLOTSL," + 
-"MA_RSI_SCALPING,BUYSELL,U,U,U,U,U,U,0.1,1,1,ANY,LEVEL,C,1,10,10,MONO,FALSE,FALSE,EXITANY,0,1,100,100,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
+"RSI_2_REVERSAL,BUYSELL,K,K,K,K,K,K,0.1,0,2,BACKWARD,LEVEL,C,20,30,60,MONO,FALSE,FALSE,EXITANY,0,1,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
 
 string ObjectString   = "ID,NAME,TYPE,CROSS,PERIOD,METHOD,APPLY,SHIFT,MODE,DISPLAY_TYPE, DISPLAY, LEVELTYPE, VALUE1, VALUE2, VALUE3, VALUE4,LEVEL1, LEVEl2, LEVEL3, LEVEL4, LEVEL5, LEVEL6, LEVEL7, LEVEL8, LEVEL9, LEVEL1, LEVEl2, LEVEL3, LEVEL4, LEVEL5, LEVEL6, LEVEL7, LEVEL8, LEVEL9, LEVEL1, LEVEl2, LEVEL3, LEVEL4, LEVEL5, LEVEL6, LEVEL7, LEVEL8, LEVEL9, LEVEL1, LEVEl2, LEVEL3, LEVEL4, LEVEL5, LEVEL6, LEVEL7, LEVEL8, LEVEL9, LEVEL1, LEVEl2, LEVEL3, LEVEL4, LEVEL5, LEVEL6, LEVEL7, LEVEL8, LEVEL9," + 
 "0,UPFRACTAL,PREDEFINED,,0,0,0,0,0,0,0,0,0,0,0,0,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--," + 
@@ -8789,6 +8874,9 @@ string ObjectString   = "ID,NAME,TYPE,CROSS,PERIOD,METHOD,APPLY,SHIFT,MODE,DISPL
 "22,VOLUME,PREDEFINED,,0,0,0,0,0,0,1,1,0,0,0,0,120,--,--,--,--,--,--,--,--,80,--,--,--,--,--,--,--,--,50,--,--,--,--,--,--,--,--,20,--,--,--,--,--,--,--,--,10,--,--,--,--,--,--,--,--," + 
 "23,VOLUME_UP,PREDEFINED,,0,0,0,0,0,0,1,1,0,0,0,0,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--," + 
 "24,VOLUME_DOWN,PREDEFINED,,0,0,0,0,0,0,1,1,0,0,0,0,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--," + 
-"25,PROGRESS,PREDEFINED,,0,0,0,0,0,0,0,0,0,0,0,0,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--";
+"25,PROGRESS,PREDEFINED,,0,0,0,0,0,0,0,0,0,0,0,0,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--," + 
+"50,MA_200,MA,,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0," + 
+"57,SMA_5,MA,,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0," + 
+"59,RSI_2,RSI,,2,0,0,0,0,0,1,0,0,0,0,0,--,--,--,--,--,--,--,--,--,95,95,95,95,95,95,95,95,95,50,50,50,50,50,50,50,50,50,5,5,5,5,5,5,5,5,5,--,--,--,--,--,--,--,--,--";
 
 string ScheduleString = "RULE,OPERATION,SYMBOL,STARTMONTH,OCCURENCEDAYINWEEK,STARTDAY,STARTTIME,ENDMONTH,ENDOCCURENCEDAYINWEEK,ENDDAY,ENDTIME,FREQDAY,SAMEBAR,TIMEBETWEENSESSION, TIMEZONE";

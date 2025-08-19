@@ -1002,8 +1002,7 @@ function pgterminal (pname, type, main) {
     this.PercentWeeklyTargetStopLoss = 0;
 
     
-    this.InitDone = 
-    this.LastRunningTime = 0;
+    this.InitDone = false;
     this.Running = false;
 
     this.Load = function () {

@@ -556,11 +556,10 @@ var projectselectstrategypanel = {
 }
 
 
-var project_tester_buttongroup = ((toggled) =>  {return {
+var project_tester_buttongroup = ((toggled, end) =>  {return {
     id: 'project_tester_buttongroup',
     type: 'group',
-    class:'',
-    position:'sb_end',        
+    position: end ? 'sb_end' : '',
     items: [
 
        {id: 'fullscreen',    type:'control',  class : 'box-btn-fullscreen',     events: {onclick: "onclick_projectfspanel (this, event, project_tester_comments_pamel)"}, title: ''}, 
@@ -573,13 +572,13 @@ var project_tester_buttongroup = ((toggled) =>  {return {
 var project_tester_expertbuttonbar = {
     id: 'project_tester_expertbuttonbar',
     type: 'group',         
-    class: '',
-    
-    events: {onclick: 'onclick_emv_tester_reader(this, event)'},    
-    items : [
-        {id: 'label_card',  item: 'Expert Comment', type: 'link',   title: 'Expert Comment'},
-    ]
-}
+    position: 'sb_end',
+    class: 'sb_transform',    
+    items:
+        [ 
+            {id: 'clean_comment_button',    icon: icon_trash,   type:'button',  title: 'clear content',  events: {onclick:'onclick_clean_comment_button(this, event)'}},            
+        ]    
+    }
 
 var project_tester_expertbar  = ((toggled) =>  {return {
     id: 'project_tester_expertbar', 
@@ -587,6 +586,7 @@ var project_tester_expertbar  = ((toggled) =>  {return {
     style: 'border-top: 1px solid var(--theme-button-border-color)',
     items:
      [
+        {id: 'label_card',  item: 'Expert Comment', type: 'label',   title: 'Expert Comment'},
         project_tester_expertbuttonbar,
         project_tester_buttongroup(toggled)                 
       ]
@@ -616,9 +616,9 @@ var project_tester_strategytbuttonbar = {
     id: 'project_tester_strategytbuttonbar',
     type: 'group',         
     class: '',
-    events: {onclick: 'onclick_emv_tester_reader(this, event)'},    
+  
     items : [
-        {id: 'label_card',  item: 'Strategy Comment', type: 'link',   title: 'Strategy Comment'},
+        {id: 'label_card',  item: 'Strategy Comment', type: 'label',   title: 'Strategy Comment'},
     ]
 }
 
@@ -631,7 +631,7 @@ var project_tester_strategybar  = ((toggled) =>  {return {
     items:
      [
         project_tester_strategytbuttonbar,
-        project_tester_buttongroup(toggled)                 
+        project_tester_buttongroup(toggled, true)                 
       ]
 }})
 

@@ -347,7 +347,7 @@
             "news",
             "speech"
           ],
-          "active": true,
+          "active": false,
           "library": {
             "stylesheet": [
               "/C_TOOLS/css/quill.snow.css",

@@ -354,6 +354,7 @@ function oncontextmenu_chartcanvas(event, itempos, yValue, mouseXY, fullData, st
         menu.push({id: MENU_CHART_REMOVEINDICATORS_ID,  text: 'Remove Indicators',    icon: icon_indicator}); 
         menu.push({id: MENU_CHART_REMOVEDRAWING_ID,     text: 'Remove Drawing Tools', icon: 'fa fa-star'}); 
 
+        CrossHairCursor.freeze = true;        
         CrossHairCursor.freezeaction = 0;
   
 
@@ -364,7 +365,11 @@ function oncontextmenu_chartcanvas(event, itempos, yValue, mouseXY, fullData, st
             event: event,                 
             pageX: event.pageX - 180,
             pageY: event.pageY + 10,
+            onremove : function (event) {
+                CrossHairCursor.freeze = false;     
+                DrawChart(); 
 
+            },
             onselect : function (elt, par) {
                 var text = $(elt).find('.sb_label').html();
                 switch (parseInt(elt.id)) {
@@ -1104,7 +1109,7 @@ function Chart_Draw (terminal) {
         Chart_XExtents(terminal, symbol, period, startdate, enddate); 
     }
 
-    if (symbolcanvas.Shift && (length - (symbol.plotData.length - 1) >= 0)) {
+    if (symbolcanvas.Shift && symbol.plotData  && (length - (symbol.plotData.length - 1) >= 0)) {
         startdate   = data[length - (symbol.plotData.length - 1)].date;
         enddate     =  data[length].date;
         Chart_XExtents(terminal, symbol, period, startdate, enddate); 
@@ -1982,7 +1987,7 @@ var react_optionmain  = function (objects, xGrid, yGrid, width, height, margin, 
 	parameters.push (React.createElement(EdgeIndicator,     {itemType: "last", orient: "right", edgeAt: "right",  padding: {left : 0, right : xmargin},   fontSize: 10, fontFamily:"sans-serif", displayFormat: d3.format(",." + Symbol.Digits +"f"), yAccessor: function yAccessor(d) {return d.close;},	lineStroke:  axiscolor, fill: function fill(d) {return d.close > d.open ? theme_bull : theme_bear;} }));
 
 // Cursor
-    parameters.push (React.createElement(CrossHairCursor, {strokeDasharray: "Solid",  snapX: snapx, stroke: 'gray' ,freeze:   function () { return $('#chart_menu').length == 1;}}));
+    parameters.push (React.createElement(CrossHairCursor, {strokeDasharray: "Solid",  snapX: snapx, stroke: 'gray'}));
     parameters.unshift (MyChart, properties);
     
     return React.createElement.apply (null, parameters);
@@ -2193,7 +2198,7 @@ var react_chartmain  = function (objects, xGrid, yGrid, width, height, margin, x
         }
     }            
 // Cursor
-    parameters.push (React.createElement(CrossHairCursor, {strokeDasharray: "Solid",  snapX: snapx, stroke: 'gray', freeze:   function () { return $('#chart_menu').length == 1;}}));
+    parameters.push (React.createElement(CrossHairCursor, {strokeDasharray: "Solid",  snapX: snapx, stroke: 'gray'}));
 
 
 	var properties = {xMargin: xmargin, yMargin: ymargin,  id: 10, height: height, yExtents: yExtents};

@@ -13600,7 +13600,7 @@ var CrossHairCursor = function (_PureComponent) {
 		value: function drawOnCanvas(ctx, moreProps) {
 			var lines = helper(this.props, moreProps);
 
-			if (typeof this.props.freeze === 'function' && this.props.freeze()) {
+			if (CrossHairCursor.freeze) {
 
 				if (CrossHairCursor.freezeaction == 0) {
 					console.log ('freeze copy')

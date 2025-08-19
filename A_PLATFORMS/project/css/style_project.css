@@ -589,6 +589,7 @@
     margin: 2px;
     margin-bottom: 5px;
     color:      var(--theme-IsActionTColor) !important;    
+    background-color: var(--theme-bar-bg-color);
 }
 
 .strategy_assistant_actionsbuttons:focus {

@@ -164,14 +164,8 @@ function onclick_ApplyServer (id, elt, event) {
             solution.MT4Server_Port      = newport;
             solution.MT4Server_Protocol  = protocol;
             solution.MT4Server_Reconnection   = reconnection;   
-            for (var j = 0; j < solution.Terminals.length; j++) {
-
-                var terminal = solution.Terminals[j];
-                if (terminal.Type == 'Terminal' || terminal.Type == 'Tester') {
-                    terminal.Com.Close ();
-                    MT4Connect(terminal, protocol + '//' + newadress, newport, reconnection);
-                }            
-            }            
+            tradedesk_MT4Com.Close ();
+            MT4Connect(protocol + '//' + newadress, newport, reconnection)     
         break;        
     }
 

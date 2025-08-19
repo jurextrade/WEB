@@ -2082,7 +2082,7 @@ function IBTreatReception (solution, terminal, recmessage) {
     var symbolname = recmessage.substring(1, index);
     
     
-    terminal.LastRunningTime = Date.now();
+
     var output;
     var length = message.length;
     if (eval('terminal.' + symbolname + '!== undefined')) {

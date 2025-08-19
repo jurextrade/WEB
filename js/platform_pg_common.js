@@ -687,8 +687,12 @@ function OnGetHistory (terminal, symbol, period, from, to, async) {
         var PG = terminal.PG;
         var UserId = solution.get('user').id;
         if (UserId == 0) UserId = 1;
-        var sorder = "*GET_HISTORY " + symbol.Name + " = [" + period + " " + from + " " + to + "] ";
-        terminal.Com.Send(UserId + '*' + symbol.Name + sorder);
+        
+        tradedesk_ask_history(tradedesk_MT4Com, symbol, period, from, to)   
+        
+        
+   //     var sorder = "*GET_HISTORY " + symbol.Name + " = [" + period + " " + from + " " + to + "] ";
+   //     terminal.Com.Send(UserId + '*' + symbol.Name + sorder);
     }
 }    
 

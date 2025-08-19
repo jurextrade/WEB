@@ -608,7 +608,7 @@
 #right {
     height: 100%;
     position:relative;
-
+    z-index:999;
 }
 
 #left {
@@ -644,7 +644,7 @@
     border-bottom: 1px solid var(--theme-color);  
     display:flex; 
     flex-wrap: nowrap;
-    z-index:11;
+    z-index:1000;
 }
 
 .sb_profilemenu {
@@ -1952,6 +1952,11 @@ sb_roundbutton.active{
     color: var(--theme-select-color);    
 }
 
+.sb_table tr.selected {
+    background-color: #3c5774 !important;
+    color: #ffffff !important;
+}
+
 .sb_table td div {
     padding: 2px 0.25rem;
     align-items: center;    
@@ -2349,7 +2354,6 @@ sb_roundbutton.active{
     color: var(--theme-color);
     border-radius:0; 
     border:0;
-    z-index: 11;         
 }
 
 .dropdown-menu > li > a:focus {
