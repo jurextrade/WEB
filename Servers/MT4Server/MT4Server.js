@@ -49,6 +49,7 @@ function Connection(userid, terminalname, terminaltype, symbol, port) {  //MT4 C
     this.InitRequest    = null;
 	this.TerminalType   = terminaltype;
 	this.TerminalName   = terminalname;
+	this.CanSend        = false;	
 }
 
 
@@ -58,7 +59,6 @@ function nodeclient(userid, socket) {									// HTTP CONNECTION
     this.UserID         = userid;
 	this.TerminalType   = '';	
 	this.TerminalName   = '';
-	this.CanSend        = false;	
 }
 
 function nodeserver (mt4port,  httpport, shttpport) {
@@ -102,7 +102,7 @@ function nodeserver (mt4port,  httpport, shttpport) {
 			    NS.Clients[i].TerminalName == connection.TerminalName && 
 				NS.Clients[i].TerminalType == connection.TerminalType && 
 				(NS.Clients[i].UserID == connection.UserID  || connection.UserID == 1 && NS.Clients[i].UserID == 0)) {
-				if (toall == 1 || NS.Clients[i].CanSend)
+				if (toall == 1 || connection.CanSend)
 					NS.Clients[i].HTTPsocket.emit('message', ":" + connection.Symbol + "*" + message);	
 			}
 		}
@@ -167,7 +167,10 @@ function ListenHTTP (port) {
 		socket.on('message', function (message) {
 
 			var client = NS.GetClientFromSocket (socket);
-			if (!client) return;
+			if (!client) {
+				console.log ('No client found for message :' + message);
+				return;
+			}
 
 			var values = message.split('*');
 // LOGIN 			
@@ -189,7 +192,7 @@ function ListenHTTP (port) {
 							 
 						if (NS.Connections[i].Connected) {
 
-							client.CanSend = false;  // need to ask me to send again
+							NS.Connections[i].CanSend = false;  // need to ask me to send again
 							Print('====>  HTTP LOGIN : [' + userid + ']' + ' Terminal Name :' + terminalname + ' Terminal Type :' + terminaltype + ' Symbol : ' + NS.Connections[i].Symbol + ' RUNNING');
 							NS.SendToHTTPClient(socket, ":" + NS.Connections[i].Symbol + "**LOGIN^" + userid + "^" + terminalname +  "^" + terminaltype + "^" + + NS.Connections[i].Symbol + "^"  +"OK*");  
 							foundconnection = true;
@@ -221,10 +224,12 @@ function ListenHTTP (port) {
 					     (NS.Connections[i].UserID == userid || (userid == 0 && NS.Connections[i].UserID == 1))) {
 						if (NS.Connections[i].Connected) {
 						   
-				            Print('====>  HTTP START : [' + userid + ']' +  ' Terminal Name : ' + terminalname + ' Terminal Type : ' + terminaltype + ' Symbol : ' + NS.Connections[i].Symbol+ 'Start : ' + values[1]);			
-							client.CanSend = (start == 0 ? false : true);
-							if (client.CanSend == true)
+				            Print('====>  HTTP START : [' + userid + ']' +  ' Terminal Name : ' + terminalname + ' Terminal Type : ' + terminaltype + ' Symbol : ' + NS.Connections[i].Symbol+ ' Start : ' + start);			
+							NS.Connections[i].CanSend = (start == 0 ? false : true);
+							if (NS.Connections[i].CanSend == true)
 								NS.SendToHTTPClient(socket, NS.Connections[i].InitRequest);	
+							else
+								console.log ('can not send to terminal anymore before a new start')
 							foundconnection = true;	
 						}
 					}
@@ -375,9 +380,10 @@ function ListenMT4 (port) {
 
 					connection.InitRequest = ":" + symbolname +  "*" + message;
 					Print("Store New Init for http client with terminal name : " + terminalname + " and symbol : " + symbolname); 	
+					return;
 				}
 			}
-			NS.SendToClient(connection, message);					
+			//NS.SendToClient(connection, message);					
 		});
 
 		socket.on('close', function (data) {
@@ -460,6 +466,7 @@ function VerifyUser (socket, port, symbol, loginserver, username, password, acco
 				}
 				connection.Connected = true;
                 connection.Socket = socket;
+				connection.CanSend = false;
 				NS.SendToClient(connection, "*CONNECT^" + connection.UserID + "^" + connection.TerminalName + "^" + connection.TerminalType + "^" + connection.Symbol + "^" + "OK*", 1);			
 			}
 

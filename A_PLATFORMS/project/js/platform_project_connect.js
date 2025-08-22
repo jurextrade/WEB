@@ -94,9 +94,9 @@ function TreatReception (com, recmessage) {
     }
 }
 
-function TreatCommand(project, Line, values) {
-    
-    if (!solution.CurrentProject) {
+function TreatCommand(Line, values) {
+    let project = solution.CurrentProject;
+    if (!project) {
         return;
     }
 
@@ -130,7 +130,7 @@ function TreatCompile(project, values, Line) {
         TraceErrorEditor("> FINISH COMPILATION OK FOR " + (compiletype == 'MQL4' ? "STRATEGY " : " PROJECT " + projectname) + " : " + filename, 1);
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
         
-        DisplayInfo("Finish Compilation OK", true, 'project_operation');   
+        TreatInfo("Finish Compilation OK");   
        
         
     } else {
@@ -138,7 +138,7 @@ function TreatCompile(project, values, Line) {
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
         TraceErrorEditor("> FINISH COMPILATION WITH ERROR FOR " + (compiletype == 'MQL4' ? "STRATEGY " : " PROJECT " + projectname) +  " : " + response, 1);
         TraceErrorEditor("-----------------------------------------------------------", 1);
-        DisplayInfo("Compilation Fails", true, 'project_operation', "coral");  
+        TreatInfo("Compilation Fails");  
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
         TraceErrorEditor("----------------- END PROCESS " + filename + " OF " + projectname + " INTERRUPTED -----------------", 1);
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
@@ -157,7 +157,7 @@ function TreatUpload(project, values, Line) {
         TraceErrorEditor(">" + (compiletype == 'MQL4' ? "STRATEGY " : "PROJECT ") + "SUCCESSFULLY UPLOADED " + values[1], 1);
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
 
-        DisplayInfo("Finish Uploading OK", true, 'project_operation');  
+        TreatInfo("Finish Uploading OK");  
         
         if (compiletype == 'MQL4') {
             var strategyfilename = values[1].split ('/')[3];
@@ -170,7 +170,7 @@ function TreatUpload(project, values, Line) {
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
         TraceErrorEditor(">PROJECT FILE CAN NOT BE UPLOADED : " , 1);
         TraceErrorEditor("-----------------------------------------------------------", 1);
-        DisplayInfo("Uploading Fails", true, 'project_operation', "coral"); 
+        TreatInfo("Uploading Fails"); 
 
     }
 }
@@ -186,7 +186,7 @@ function TreatDistribute(project, values, Line) {
         TraceErrorEditor(">STRATEGY FILE SUCCESSFULLY DOWNLOADED ON TERMINAL in folder " + tofilename, 1);
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
 
-        DisplayInfo("Finish Downloading OK", true, 'project_operation');  
+        TreatInfo("Finish Downloading OK");  
         
  
     } else {
@@ -194,7 +194,7 @@ function TreatDistribute(project, values, Line) {
         TraceErrorEditor("----------------------------------------------------------------------------", 1);
         TraceErrorEditor(">" + "STRATEGY FILE CAN NOT BE DOWNLOADED ON TERMINAL: "  + values[4] , 1);
         TraceErrorEditor("-----------------------------------------------------------", 1);
-        DisplayInfo("Downloading Fails", true, 'project_operation', "coral"); 
+        TreatInfo("Downloading Fails"); 
 
     }
 }

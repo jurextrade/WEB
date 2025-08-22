@@ -53,7 +53,7 @@
 
 /*--------------------------------------------------------- TSIGNALS PANEL ------------------------------------------------------*/
 
-#tradedesksignalstab .nav-item {
+#tradedesk_signalstabs .nav-item {
     flex:none;
 }
 
@@ -184,7 +184,7 @@
     font-size:large;
 }
 
-#tradedeskordertab .nav-item {
+#tradedesk_ordertabs .nav-item {
     flex:none;
 }
 
@@ -288,11 +288,39 @@
     visibility: hidden;
 }
 
-/*--------------------------------------------------------- SESSION DESCRIPTION PANEL ----------------------------------------------------*/
+/*--------------------------------------------------------- SESSION  PANEL ----------------------------------------------------*/
 
 #tradedesk_Description {
     background: transparent;
 }
+
+#role_tab_sessionproperties {
+    padding: 10px;
+    border: 1px solid var(--theme-button-border-color);
+    padding-right: 149px;
+}
+
+#sessionscheduletable thead tr  {
+    text-align: center;
+} 
+
+#sessionscheduletable thead tr > *:nth-child(1) {
+    visibility: hidden;
+}
+
+#sessionschedulepropertytable {
+    margin-top : 20px;
+}
+
+#sessionschedulepropertytable thead {
+    display:none
+}
+
+#sessionpropertiestable td,
+#sessionschedulepropertytable td {
+    width:300px;
+}
+
 
 /*------------------------------------------------------------NEWS PANEL------------------------------------------------------*/
 
@@ -618,9 +646,11 @@
 /*--------------------------------------------------------- TREE PANELS ------------------------------------------------------*/
 
 
-#tradedesk_tree_terminals > li:first-child > span:first-child{
-    display:none;
+#tradedesk_tree_terminals_ref i {
+    color:red;
 }
+
+
 /*--------------------------------------------------------- MEDIA PANEL ------------------------------------------------------*/
 
 #mediavideopanel {

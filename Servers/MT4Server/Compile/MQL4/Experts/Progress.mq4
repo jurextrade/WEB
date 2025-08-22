@@ -37,7 +37,7 @@ int           FTPPort           = 21;                   //22
 
 
 bool   TestModeGraphic          = true;
-bool   TestModeToSend           = true;
+
 
 
 int    NodePort                 = 2007;                 // Listening Port for Node Server Only me
@@ -100,7 +100,7 @@ bool          DistantTrace       = false;
 
 
 //======================================
-datetime      TimeOpenBar[NBR_PERIODS];
+
 
 
 //======================================
@@ -204,13 +204,6 @@ double        TIME_NYClose      = 22;
 								             								
 int           SignalVisible[NBR_SIGNALS];
          								
-string        PeriodName[]       = {"M1","M5","M15","M30","H1","H4","D1","W1","MN"};
-int           PeriodIndex[]           = {PERIOD_M1,PERIOD_M5,PERIOD_M15,PERIOD_M30,PERIOD_H1,PERIOD_H4,PERIOD_D1,PERIOD_W1,PERIOD_MN1};
-
-string        DirectionName[]      = {"BACKWARD", "FORWARD", "ANY"};
-string        DirectionTypeName[]  = {"MINMAX", "LEVEL"};
-string        ExitModeName[]       = {"EXITBUYFIRST", "EXITSELLFIRST", "EXITANY"};
-string        OrderTypeName[]      = {"MONO", "HEDGE"};
 
 //================================================= SYSTEMS ==========================================
 
@@ -287,7 +280,7 @@ color         SignalColor_EXT_OVERSOLD    = Red;
 color         SignalColor_MAX             = LawnGreen;            
 color         SignalColor_MIN             = Red; 
 
-string        RecoveryModeName[] = {"F", "D", "H", "S", "I", "M", "N", "J", "C", "O", "P", "Q", "A", "L", "K"};
+
 
 //=============================================ALERTS==========================================
 
@@ -375,18 +368,6 @@ int           AlertLast[NBR_ALERTS];
 int			  Panel_Graphic[NBR_POBJECTS];
 
 
-//=============================================RULES==========================================
-
-string  	  OpName[]   = {"BUY", "SELL", "BUYLIMIT", "SELLLIMIT", "BUYSTOP","SELLSTOP"};
-string        RuleName[]      = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O","P", "Q", "R", "S", "T", "U", "V", "W","X", "Y", "Z"};
-string  	  OperationName[]   = {"BUY", "SELL", "BUYSELL",  "EXIT_BUY", "EXIT_SELL", "EXIT", "HEDGE_BUY", "HEDGE_SELL", "CLOSE_HEDGE_BUY", "CLOSE_HEDGE_SELL","CLOSE_HEDGE", "CLOSE_BUY", "CLOSE_SELL", "CLOSE", "WAIT", "HOLD", "SUSPEND"};
-string        FieldName[]      = {"OPERATION","START","STATUS","RULE","KEEPBUYSELL","SUSPEND","MINPROFIT","EXITMODE","PIPSTEP","TIMESTEP","ORDERTYPE","DIRECTION","RECOVERYMODE"
-,"RECOVERYVALUE","ILOT","BUYLOT","SELLLOT","MAXLOT","MAXLOSS","MAXTIME","MAXCOUNT", "HEDGEMAGNITUDE", "ONEORDERPERBAR","BUYLOTSL","BUYLOTTP","BUYLOTTS"
-,"SELLLOTSL","SELLLOTTP","SELLLOTTS","SL","TP","TS","BUYSL","BUYTP","BUYTS","SELLSL","SELLTP","SELLTS","HMAX","HMIN","MAX","MIN","EXITBUY","EXITSELL","CLOSEBUY","CLOSESELL","PROFITBUY"
-,"PROFITSELL","PROFIT","LASTLOT","LASTBUYLOT","LASTSELLLOT","STARTTRADE","NEUTRALPOINT","BUYAVERAGEPOINT","SELLAVERAGEPOINT","HEDGELLINE","HEDGENBRLOTS","BUYHEDGENBRLOTS","SELLHEDGENBRLOTS","HEDGETYPE"
-,"HEDGED","HASBEENHEDGED","HEDGEPROFIT","HEDGEBUYPROFIT","HEDGESELLPROFIT","BUYNBRTRADE","SELLNBRTRADE","BUYNBRLOTS","SELLNBRLOTS"
-,"LASTORDEROPENTIME","LASTORDERCLOSETIME","LASTORDEROPENPRICE", "LASTORDERCLOSEPRICE", "LASTORDERCLOSEPROFIT","T_LASTORDERCLOSETYPE"
-,"FIRSTODEROPENTIME", "FIRSTODERCLOSETIME", "FIRSTORDEROPENPRICE", "FIRSTORDERCLOSEPRICE", "LEVELPOINT", "LASTORDERTYPE"};
 
 //=============================================SESSIONS==========================================
 
@@ -701,7 +682,6 @@ int           MiniObjectFontSize = 12;
 
 int           OrientationFontSize = 12;
 int           ObjectFontSize     = 20,
-              corner             = 2,
               right_up_corner    = 1,
               corner2            = 3;
 
@@ -825,20 +805,29 @@ void TimerFunction () {
     {
         PG_Print(TYPE_ERROR, "Connection closed with MT4 Server Reconnecting with timer", NO_SEND);
     
-       int result = ConnectNodeServer();
+        int result = ConnectNodeServer();
    
-       if (result ==  CONNECTION_FAILED) {
+        if (result ==  CONNECTION_FAILED) {
            PG_Print(TYPE_ERROR, "Server is not running or incorrect server parameters MT4 Server ", NO_SEND);
            PG_Print(TYPE_INFO, "__________________________________________________ERROR IDENTIFICATION SERVER WILL CONNECT EVERY SECOND ________________________________________________________________________");
            return;         
-       }       
-       if (!NO_TIMER) {
-         EventKillTimer(); 
-         }
+        }       
+
     
-       if (!INIT_DONE) {              // it is not a reconnection
-          end_init();
-       }
+        if (!INIT_DONE) {              // it is not a reconnection
+            end_init();
+        }
+    }
+    if (!NO_TIMER) {
+
+        if (NodeSocket != -1)
+            PG_Recv(NodeSocket);
+        
+        if (NodeSocket == -1) {
+            if (NO_TIMER ) {
+                AttemptToReconnect = 0;               
+            } 
+        }    
     }
 }
 
@@ -863,7 +852,7 @@ int OnInit() {
         }
     }
  */   
-    bool eventresult = EventSetTimer(1); 
+    bool eventresult = EventSetMillisecondTimer(1000); 
     
     if (!eventresult) {
       Print("Failed to set timer, error: ",GetLastError());
@@ -999,7 +988,7 @@ void start() {
 
     if (NO_TIMER && AttemptToReconnect == 0) {    // this is for tester we don't have a timer
         TimerFunction();
-        return 0;
+        return;
     }
      
     int i = 0;
@@ -1010,7 +999,7 @@ void start() {
 
     if (SymbolRunning == -1) {
         Print("Expert is running already on symbol " + SYS_SYMBOL);
-        return (-1);
+        return ;
     }
 
     if (TestMode)
@@ -1027,12 +1016,12 @@ void start() {
 
     Old_Price = _Bid;
 
-    ResetSignals();
+    ResetSignals(O_NbrObject);
     ResetRules(1);
 
     AlertNews();
 
-    if (!TestMode || TestModeToSend) {
+    if (TestMode) {
 
         if (CSocket != -1)
             PG_Recv(CSocket);
@@ -1043,9 +1032,7 @@ void start() {
         if (NodeSocket == -1) {
             if (NO_TIMER ) {
                AttemptToReconnect = 0;               
-            } else {
-              EventSetTimer(1);
-            }
+            } 
         }
     }
 
@@ -1120,12 +1107,12 @@ void start() {
         SecondPass = 1;
 
     FirstPass = 0;
-    return (0);
+    return;
 }
 
 //+------------------------------------------------------------------+ END 
 
-int OnDeinit() {
+void OnDeinit(const int reason) {
 
     printf("PROGRESS END PROCESSING BYE BYE  **********************************************************************");
     PG_Print(TYPE_INFO, "________________________________________________________________________ PROGRESS END PROCESSING  ________________________________________________________________________");
@@ -1144,9 +1131,14 @@ int OnDeinit() {
 
     Panel_Window = 0;
 
-    if (SymbolRunning != -1)
+    if (SymbolRunning != -1) {
         FileClose(SymbolRunning);
-
+    }
+    
+    if (!NO_TIMER) {
+        EventKillTimer();
+    }
+    
     return (0);
 }
 
@@ -1211,9 +1203,9 @@ int ConnectNodeServer() {
 //=============================================RESET ALL ========================================
 
 void ResetAll(int first = -1) {
-    ResetSignals(first);
+    ResetSignals(O_NbrObject, first);
     ResetRules(first);
-    ResetSignalFilters();
+    ResetSignalFilters(O_NbrObject);
     ResetEngines(first);
     ResetSchedules();
 }
@@ -1261,46 +1253,7 @@ double Pips (double value) {
 double PipValue (double pips) {
 	return (pips * SYS_POINT);
 }
-	
-int GetMonth (datetime TimeCurrent) {
-	return TimeMonth (TimeCurrent);
-}
 
-int GetWeek (datetime TimeCurrent) {
-
-    int day = TimeDay (TimeCurrent);
-
-    int oday = 1;
-
-    while (day - 7 > 0) {
-        oday++;
-        day -= 7;
-    }
-    return (oday);
-}
-
-int GetDay (datetime TimeCurrent) {
- 
-	return TimeDay (TimeCurrent);
-}
-
-int GetHours (datetime TimeCurrent) {
-   
-	return TimeHour (TimeCurrent);
-}
-
-int GetMinutes (datetime TimeCurrent) {
-   
-	return TimeMinute (TimeCurrent);;
-}
-
-datetime ReturnTime (string sTime) {
-    return 0;
-}
-
-datetime ReturnDate (string sDate) {
-    return 0;
-}
 bool StringToBoolean(string Value) {
     if (Value == "true" || Value == "TRUE") return (true);
     else return (false);
@@ -1660,206 +1613,6 @@ bool is_error(){
     return false;
 }
 
-
-//=============================================LOGICAL  ========================================
-
-int And(int a, int b = -1, int c = -1, int d = -1, int e = -1, int f = -1, int g = -1) {
-    int result = 0;
-    result |= (1 << a);
-    if (b != -1) result |= (1 << b);
-    if (c != -1) result |= (1 << c);
-    if (d != -1) result |= (1 << d);
-    if (e != -1) result |= (1 << e);
-    if (f != -1) result |= (1 << f);
-    if (g != -1) result |= (1 << g);
-    return (result);
-}
-
-int Period2Int(int TmPeriod) {
-    for (int i = 0; i < ArraySize(PeriodIndex); i++)
-        if (PeriodIndex[i] == TmPeriod) return (i);
-    return (0);
-}
-
-int SysObject2Index(string sobject) {
-    for (int i = 0; i < O_NbrSysObject; i++)
-        if (SysObjName[i] == StringTrimRight(sobject)) return (i);
-    return (-1);
-}
-
-int IdObject2Index(int ObjectId) {
-    for (int i = 0; i < O_NbrObject; i++)
-        if (ObjId[i] == ObjectId) return (i);
-    return (-1);
-}
-
-int Object2Id(string sobject) {
-    for (int i = 0; i < O_NbrObject; i++)
-        if (ObjName[i] == StringTrimRight(sobject)) return (ObjId[i]);
-    return (-1);
-}
-
-int Object2Index(string sobject) {
-    for (int i = 0; i < O_NbrObject; i++)
-        if (ObjName[i] == StringTrimRight(sobject)) return (i);
-    return (-1);
-}
-
-int ObjType2Int(string sobjtype) {
-    for (int i = 0; i < ArraySize(ObjTypeName); i++)
-        if (StringFind(ObjTypeName[i], StringTrimRight(sobjtype)) != -1) return (i);
-    return (-1);
-}
-
-string ObjectId2Name(int objid) {
-    for (int i = 0; i < O_NbrObject; i++)
-        if (ObjId[i] == objid) return (ObjName[i]);
-    return ("");
-}
-
-int Signal2Int(string ssignal) {
-    for (int i = 0; i < ArraySize(SignalName); i++)
-        if (StringFind(SignalName[i], StringTrimRight(ssignal)) != -1) return (i);
-    return (-1);
-}
-
-int Mode2Int(string smode) {
-    for (int i = 0; i < ArraySize(RecoveryModeName); i++)
-        if (RecoveryModeName[i] == StringTrimRight(smode)) return (i);
-    return (-1);
-}
-
-int Rule2Int(string srule) {
-    for (int i = 0; i < ArraySize(RuleName); i++)
-        if (RuleName[i] == StringTrimRight(srule)) return (i);
-    return (-1);
-}
-
-int Direction2Int(string sdirection) {
-    for (int i = 0; i < ArraySize(DirectionName); i++)
-        if (DirectionName[i] == StringTrimRight(sdirection)) return (i);
-    return (-1);
-}
-int DirectionType2Int(string sdirection) {
-    for (int i = 0; i < ArraySize(DirectionTypeName); i++)
-        if (DirectionTypeName[i] == StringTrimRight(sdirection)) return (i);
-    return (-1);
-}
-
-int ExitMode2Int(string sexit) {
-    for (int i = 0; i < ArraySize(ExitModeName); i++)
-        if (ExitModeName[i] == StringTrimRight(sexit)) return (i);
-    return (-1);
-}
-
-int Operation2Int(string soperation) {
-    for (int i = 0; i < ArraySize(OperationName); i++)
-        if (OperationName[i] == StringTrimRight(soperation)) return (i);
-    return (-1);
-}
-
-int Op2Int(string soperation) {
-    for (int i = 0; i < ArraySize(OpName); i++)
-        if (OpName[i] == StringTrimRight(soperation)) return (i);
-    return (-1);
-}
-
-int OrderType2Int(string stype) {
-    for (int i = 0; i < ArraySize(OrderTypeName); i++)
-        if (OrderTypeName[i] == StringTrimRight(stype)) return (i);
-    return (-1);
-}
-
-
-
-//////////////////////////////////////////////////////////////// INDICATORS /////////////////////////////////////////////////////////////////
-
-
-void MarketResistance(int start_period, int period1, int exit_period) {
-    bool Bull = false;
-    bool Bear = false;
-
-    RS_Buy = 0;
-    RS_Sell = 0;
-
-    if ((AndS(RESISTANCE, S_ABOVE, start_period) != 0 &&
-            AndS(RESISTANCE, S_ABOVE, period1) != 0 &&
-            AndS(RESISTANCE, S_ABOVE, exit_period) != 0) ||
-        (AndS(RESISTANCE, S_ABOVE, start_period) != 0 &&
-            AndS(RESISTANCE, S_ABOVE, exit_period) != 0)) {
-        Bull = true;
-    }
-    if ((AndS(SUPPORT, S_BELOW, start_period) != 0 &&
-            AndS(SUPPORT, S_BELOW, period1) != 0 &&
-            AndS(SUPPORT, S_BELOW, exit_period) != 0) ||
-        (AndS(SUPPORT, S_BELOW, start_period) != 0 &&
-            AndS(SUPPORT, S_BELOW, exit_period) != 0))
-
-    {
-        Bear = true;
-    }
-
-    if (Bull == true && Bear == true) {
-        return;
-    }
-
-    if (Bull == true)
-        RS_Buy = 1;
-    else
-        RS_Buy = 0;
-
-    if (Bear == true)
-        RS_Sell = 1;
-    else
-        RS_Sell = 0;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////SOUND
-
-int TreatSoundFlag(int sound) {
-    if ((sound & (1 << NEWSSOUND)) != 0)
-        NewsSound = 1;
-    else
-        NewsSound = 0;
-
-    if ((sound & (1 << ALERTSOUND)) != 0)
-        AlertsSound = 1;
-    else
-        AlertsSound = 0;
-
-    if ((sound & (1 << OPERATIONSOUND)) != 0)
-        OperationSound = 1;
-    else
-        OperationSound = 0;
-
-    if ((sound & (1 << SYSTEMSOUND)) != 0)
-        SystemSound = 1;
-    else
-        SystemSound = 0;
-
-    return (sound);
-}
-
-int GetSoundValue() {
-    int sound = 0;
-
-    if (NewsSound == true)
-        sound |= (1 << NEWSSOUND);
-
-    if (AlertsSound == true)
-        sound |= (1 << ALERTSOUND);
-
-    if (OperationSound == true)
-        sound |= (1 << OPERATIONSOUND);
-
-    if (SystemSound == true)
-        sound |= (1 << SYSTEMSOUND);
-
-    return (sound);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////END SOUND
-
 void IfShouldClose() {
     int i;
     int engine;
@@ -2002,8 +1755,6 @@ int GetIndexFromSymbolName(string name) {
 
 }
 
-
-
 bool NewDay() {
     if (TimeHour(TimeCurrent()) == 0 &&
         TimeMinute(TimeCurrent()) < 10)
@@ -2086,7 +1837,7 @@ void MarketMovement(int x, int shift = 0) {
 
         if (ObjCross[i] == "") continue;
 
-        int CObjId = Object2Id(ObjCross[i]);
+        int CObjId = Object2Id(O_NbrObject, ObjCross[i]);
         if (CObjId == -1) continue;
         if (shift == 0) {
             if (SValue(ObjId[i], S_PREVIOUS, x) < SValue(CObjId, S_PREVIOUS, x) &&
@@ -2110,203 +1861,6 @@ void MarketMovement(int x, int shift = 0) {
 
     }
 
-}
-
-void ResetGraphics() {
-
-    if (GraphicMainPanel == true)
-        MainPanel_InitGraphics(right_up_corner);
-    else
-        MainPanel_DeleteGraphics();
-
-    if (GlobalComment == false)
-        Comment("");
-
-    if (MarketOpening)
-        MarketOpening_InitGraphics();
-    else
-        MarketOpening_DeleteGraphics();
-
-    for (int k = 0; k < NBR_PERIODS; k++) {
-        Pivots_DeleteGraphics(k);
-        Fibo_DeleteGraphics(k);
-        Fractals_DeleteGraphics(k, 1);
-        Fractals_DeleteGraphics(k, 0);
-        SR_DeleteGraphics(k, 1);
-        SR_DeleteGraphics(k, 0);
-        FractalsTarget_DeleteGraphics(k, 1);
-        FractalsTarget_DeleteGraphics(k, 0);
-        Patterns_DeleteGraphics(k);
-
-        if (Panel_Graphic[P_PIVOT] & (1 << k))
-            Pivots_InitGraphics(k);
-        if (Panel_Graphic[P_FIBO] & (1 << k))
-            Fibo_InitGraphics(k);
-        if (Panel_Graphic[P_UPFRACTAL] & (1 << k))
-            Fractals_InitGraphics(k, 1);
-        if (Panel_Graphic[P_DOWNFRACTAL] & (1 << k))
-            Fractals_InitGraphics(k, 0);
-        if (Panel_Graphic[P_SUPPORT] & (1 << k))
-            SR_InitGraphics(k, 0);
-        if (Panel_Graphic[P_RESISTANCE] & (1 << k))
-            SR_InitGraphics(k, 1);
-        if (Panel_Graphic[P_UPFRACTAL_TARGET] & (1 << k))
-            FractalsTarget_InitGraphics(k, 1);
-        if (Panel_Graphic[P_DOWNFRACTAL_TARGET] & (1 << k))
-            FractalsTarget_InitGraphics(k, 0);
-        if (Panel_Graphic[P_PATTERN] & (1 << k))
-            Patterns_InitGraphics(k);
-    }
-}
-
-void DrawGraphics() {
-    if (MarketOpening)
-        MarketOpening_DrawGraphics();
-    for (int k = 0; k < NBR_PERIODS; k++) {
-        if (Panel_Graphic[P_PIVOT] & (1 << k))
-            Pivots_DrawGraphics(k);
-        if (Panel_Graphic[P_FIBO] & (1 << k))
-            Fibo_DrawGraphics(k);
-        if (Panel_Graphic[P_UPFRACTAL] & (1 << k))
-            Fractals_DrawGraphics(k, 1);
-        if (Panel_Graphic[P_DOWNFRACTAL] & (1 << k))
-            Fractals_DrawGraphics(k, 0);
-        if (Panel_Graphic[P_SUPPORT] & (1 << k))
-            SR_DrawGraphics(k, 0);
-        if (Panel_Graphic[P_RESISTANCE] & (1 << k))
-            SR_DrawGraphics(k, 1);
-        if (Panel_Graphic[P_UPFRACTAL_TARGET] & (1 << k))
-            FractalsTarget_DrawGraphics(k, 1);
-        if (Panel_Graphic[P_DOWNFRACTAL_TARGET] & (1 << k))
-            FractalsTarget_DrawGraphics(k, 0);
-        if (Panel_Graphic[P_PATTERN] & (1 << k))
-            Patterns_DrawGraphics(k);
-    }
-}
-
-//****************************************************************************************************************************************
-
-
-
-
-void B_InitGraphics(int session) {
-    ObjectCreate("box" + session, OBJ_RECTANGLE, 0, B_StartDate[session], B_Max[session], Time[0], B_Min[session]);
-    ObjectSet("box" + session, OBJPROP_SCALE, 1.0);
-    ObjectSet("box" + session, OBJPROP_BACK, true);
-    ObjectSet("box" + session, OBJPROP_COLOR, C'35,35,35');
-
-    ObjectCreate("borderbox" + session, OBJ_RECTANGLE, 0, B_StartDate[session], B_Max[session], Time[0], B_Min[session]);
-    ObjectSet("borderbox" + session, OBJPROP_SCALE, 1.0);
-    ObjectSet("borderbox" + session, OBJPROP_COLOR, Turquoise);
-    ObjectSet("borderbox" + session, OBJPROP_BACK, false);
-
-    ObjectCreate("smartline" + session, OBJ_TREND, 0, B_StartDate[session], 0);
-    ObjectSet("smartline" + session, OBJPROP_COLOR, Pink);
-    ObjectSet("smartline" + session, OBJPROP_WIDTH, 1);
-    ObjectSet("smartline" + session, OBJPROP_RAY, false);
-
-    ObjectCreate("sellaverageline" + session, OBJ_TREND, 0, B_StartDate[session], 0, Time[0], 0);
-    ObjectSet("sellaverageline" + session, OBJPROP_COLOR, Tomato);
-    ObjectSet("sellaverageline" + session, OBJPROP_WIDTH, 1);
-    ObjectSet("sellaverageline" + session, OBJPROP_RAY, false);
-    ObjectCreate("sellaveragelinetext" + session, OBJ_TEXT, 0, 0, 0, 0, 0);
-
-    ObjectCreate("buyaverageline" + session, OBJ_TREND, 0, B_StartDate[session], 0, Time[0], 0);
-    ObjectSet("buyaverageline" + session, OBJPROP_COLOR, DeepSkyBlue);
-    ObjectSet("buyaverageline" + session, OBJPROP_WIDTH, 1);
-    ObjectSet("buyaverageline" + session, OBJPROP_RAY, false);
-
-    ObjectCreate("buyaveragelinetext" + session, OBJ_TEXT, 0, 0, 0, 0, 0);
-    ObjectSet("buyaveragelinetext" + session, OBJPROP_BACK, false);
-
-    ObjectCreate("hedgeline" + session, OBJ_TREND, 0, B_StartDate[session], 0);
-    ObjectSet("hedgeline" + session, OBJPROP_COLOR, Red);
-    ObjectSet("hedgeline" + session, OBJPROP_WIDTH, 2);
-    ObjectSet("hedgeline" + session, OBJPROP_RAY, false);
-
-    ObjectCreate("hedgelinetext" + session, OBJ_TEXT, 0, 0, 0, 0, 0);
-}
-
-int B_DrawGraphics(int session) {
-    if (!GraphicMode) return 0;
-
-    if (B_Operation[session] == OP_BUY)
-        ObjectSet("borderbox" + session, OBJPROP_COLOR, Turquoise);
-    else
-    if (B_Operation[session] == OP_SELL)
-        ObjectSet("borderbox" + session, OBJPROP_COLOR, Pink);
-    else
-    if (B_OrderType[session] == OT_HEDGE)
-        ObjectSet("borderbox" + session, OBJPROP_COLOR, Gold);
-    else
-        ObjectSet("borderbox" + session, OBJPROP_COLOR, Lime);
-
-    if (B_Hedged[session] == true) {
-        ObjectSet("hedgeline" + session, OBJPROP_PRICE1, B_HedgeLine[session]);
-        ObjectSet("hedgeline" + session, OBJPROP_TIME1, B_StartDate[session]);
-        ObjectSet("hedgeline" + session, OBJPROP_PRICE2, B_HedgeLine[session]);
-        ObjectSet("hedgeline" + session, OBJPROP_TIME2, Time[0]);
-
-        ObjectSet("hedgelinetext" + session, OBJPROP_PRICE1, B_HedgeLine[session]);
-        ObjectSet("hedgelinetext" + session, OBJPROP_TIME1, Time[25]);
-        ObjectSetText("hedgelinetext" + session, "(" + DoubleToString(B_HedgeLine[session], _Digits) + ")", 7, "Arial", Red);
-    } else {
-        ObjectSet("hedgeline" + session, OBJPROP_PRICE2, 0);
-        ObjectSet("hedgeline" + session, OBJPROP_PRICE1, 0);
-        ObjectSet("hedgeline" + session, OBJPROP_TIME2, 0);
-        ObjectSet("hedgelinetext" + session, OBJPROP_PRICE1, 0);
-        ObjectSet("hedgelinetext" + session, OBJPROP_TIME1, 0);
-    }
-
-    ObjectSet("box" + session, OBJPROP_TIME2, Time[0]);
-    ObjectSet("box" + session, OBJPROP_TIME1, B_StartDate[session]);
-    ObjectSet("box" + session, OBJPROP_PRICE2, B_Min[session]);
-    ObjectSet("box" + session, OBJPROP_PRICE1, B_Max[session]);
-    ObjectSet("borderbox" + session, OBJPROP_TIME2, Time[0]);
-    ObjectSet("borderbox" + session, OBJPROP_TIME1, B_StartDate[session]);
-    ObjectSet("borderbox" + session, OBJPROP_PRICE2, B_Min[session]);
-    ObjectSet("borderbox" + session, OBJPROP_PRICE1, B_Max[session]);
-
-    if (B_KeepBuySell[session] == true)
-        ObjectSet("box" + session, OBJPROP_WIDTH, 4);
-    else
-        ObjectSet("box" + session, OBJPROP_WIDTH, 1);
-
-    if (!B_BuySellAutomatic[session]) {
-        //        ObjectSet("box" + session, OBJPROP_COLOR, Red);
-    }
-    double lots;
-    double distance = 0;
-
-    if (B_SellProfit[session] < 0) {
-        distance = -10 * SYS_POINT;
-        lots = ((B_SellAveragePoint[session] - _Bid - distance) * B_SellNbrLots[session]) / distance;
-    }
-
-    ObjectSet("sellaverageline" + session, OBJPROP_PRICE2, B_SellAveragePoint[session]);
-    ObjectSet("sellaverageline" + session, OBJPROP_PRICE1, B_SellAveragePoint[session]);
-    ObjectSet("sellaverageline" + session, OBJPROP_TIME2, Time[0]);
-    ObjectSet("sellaverageline" + session, OBJPROP_TIME1, B_StartDate[session]);
-
-    ObjectSet("sellaveragelinetext" + session, OBJPROP_PRICE1, B_SellAveragePoint[session]);
-    ObjectSet("sellaveragelinetext" + session, OBJPROP_TIME1, B_StartDate[session] + (Time[0] - B_StartDate[session]) / 2);
-    ObjectSetText("sellaveragelinetext" + session, RuleName[B_StartOnRule[session]] + " - " + OperationName[B_Operation[session]] + " (" + DoubleToString(B_SellAveragePoint[session], _Digits) + " -- " + DoubleToString(lots, 2) + ")", 7, "Arial", LightGray);
-
-    if (B_BuyProfit[session] < 0) {
-        distance = 10 * SYS_POINT;
-        lots = ((B_BuyAveragePoint[session] - _Ask - distance) * B_BuyNbrLots[session]) / distance;
-
-    }
-
-    ObjectSet("buyaverageline" + session, OBJPROP_PRICE2, B_BuyAveragePoint[session]);
-    ObjectSet("buyaverageline" + session, OBJPROP_PRICE1, B_BuyAveragePoint[session]);
-    ObjectSet("buyaverageline" + session, OBJPROP_TIME2, Time[0]);
-    ObjectSet("buyaverageline" + session, OBJPROP_TIME1, B_StartDate[session]);
-
-    ObjectSet("buyaveragelinetext" + session, OBJPROP_PRICE1, B_BuyAveragePoint[session]);
-    ObjectSet("buyaveragelinetext" + session, OBJPROP_TIME1, B_StartDate[session] + (Time[0] - B_StartDate[session]) / 2);
-    ObjectSetText("buyaveragelinetext" + session, RuleName[B_StartOnRule[session]] + " - " + OperationName[B_Operation[session]] + " (" + DoubleToString(B_BuyAveragePoint[session], _Digits) + " -- " + DoubleToString(lots, 2) + ")", 7, "Arial", LightGray);
-    return 1;
 }
 
 int B_LoadSession(int magicNumber, int session) {
@@ -2618,7 +2172,7 @@ string B_ReadSInfo(string info, int Pos, int length) {
     return (StringSubstr(info, Pos, length));
 }
 
-int B_ProcessTrade(int session, double price, int mode, double Lots, double B_BuyLotSL, double B_BuyLotTP, double B_SellLotSL, double B_SellLotTP, int otype = -1) {
+int B_ProcessTrade(int session, double price, int mode, double Lots, double b_buylotsell, double b_buylottp, double b_selllotsl, double b_selllottp, int otype = -1) {
     int h_mode;
     string comment = "";
     int error;
@@ -2633,15 +2187,15 @@ int B_ProcessTrade(int session, double price, int mode, double Lots, double B_Bu
     if (mode == OP_BUY ||
         mode == OP_BUYLIMIT ||
         mode == OP_BUYSTOP) {
-        PipStopLoss = B_BuyLotSL;
-        PipTakeProfit = B_BuyLotTP;
-        h_PipStopLoss = B_SellLotSL;
-        h_PipTakeProfit = B_SellLotTP;
+        PipStopLoss     = b_buylotsell;
+        PipTakeProfit   = b_buylottp;
+        h_PipStopLoss   = b_selllotsl;
+        h_PipTakeProfit = b_selllottp;
     } else {
-        PipStopLoss = B_SellLotSL;
-        PipTakeProfit = B_SellLotTP;
-        h_PipStopLoss = B_BuyLotSL;
-        h_PipTakeProfit = B_BuyLotTP;
+        PipStopLoss     = b_selllotsl;
+        PipTakeProfit   = b_selllottp;
+        h_PipStopLoss   = b_buylotsell;
+        h_PipTakeProfit = b_buylottp;
     }
 
     error = OrderTrade(price, mode, Lots, comment, B_MagicNumber[session], PipStopLoss, PipTakeProfit);
@@ -3467,7 +3021,7 @@ int B_start(int session) {
     //---------------------------------------- 
 
     if (B_CloseBuy[session] == true && B_BuyNbrTrade[session] > 0) {
-        PG_Print(TYPE_INFO, "************************************************************************   CLOSE BUY SESSION  : " + session + " Rule " + RuleName[B_StartOnRule[session]] + " profit : " + B_BuyProfit[session] + "  ************************************************************************");
+         PG_Print(TYPE_INFO, "***********************************************************************   CLOSE BUY SESSION  : " + session + " Rule " + RuleName[B_StartOnRule[session]] + " profit : " + B_BuyProfit[session] + "  ************************************************************************");
         CloseOrders(B_MagicNumber[session], OP_BUY);
         return (0);
     }
@@ -4645,6 +4199,7 @@ void TreatProfit(string s) {
     string sfromdate = "";
     string stodate = "";
     string srule;
+    string ssymbol;  // -1 all symbols , 0 expert symbol
 
     while (StringGetCharacter(s, i) != StringGetCharacter("*", 0)) {
         while (StringGetCharacter(s, i) != 32) {
@@ -4655,6 +4210,12 @@ void TreatProfit(string s) {
         i++;
         i++;
         i++; // skip " = ["
+
+        while (StringGetCharacter(s, i) != 32) {
+            ssymbol = ssymbol + CharToString(StringGetCharacter(s, i));
+            i++;
+        }
+        i++;
 
         while (StringGetCharacter(s, i) != 32) {
             sfromdate = sfromdate + CharToString(StringGetCharacter(s, i));
@@ -4670,6 +4231,9 @@ void TreatProfit(string s) {
         i++; // skip "] "
 
     }
+    int symbol = StrToInteger(ssymbol);
+   
+
     int rule = StrToInteger(srule);
     int count = NBR_RULES + 2;
     int from = 0;
@@ -4680,9 +4244,9 @@ void TreatProfit(string s) {
     }
 
     for (int j = from; j < count; j++) {
-        Send_Profits(j, OP_BUY, StrToTime(sfromdate), StrToTime(stodate) + 86400);
-        Send_Profits(j, OP_SELL, StrToTime(sfromdate), StrToTime(stodate) + 86400);
-        Send_Profits(j, OP_BUYSELL, StrToTime(sfromdate), StrToTime(stodate) + 86400);
+        Send_Profits(j, symbol, OP_BUY, StrToTime(sfromdate), StrToTime(stodate) + 86400);
+        Send_Profits(j, symbol, OP_SELL, StrToTime(sfromdate), StrToTime(stodate) + 86400);
+        Send_Profits(j, symbol, OP_BUYSELL, StrToTime(sfromdate), StrToTime(stodate) + 86400);
 
     }
     s = "*PROFIT ";
@@ -4875,7 +4439,7 @@ void TreatFilter(string s) {
         i++; // skip "] "
 
     }
-    int ObjectId = Object2Id(object);
+    int ObjectId = Object2Id(O_NbrObject, object);
     if (ObjectId == -1) return;
 
     int SignalId = Signal2Int(signal);
@@ -5433,7 +4997,7 @@ void Send_Signal(int Object, int signaltype, int type = 0) {
     s = s + "^";
     s = s + SYS_SYMBOL;
     s = s + "^";
-    s = s + ObjectId2Name(Object);
+    s = s + ObjectId2Name(O_NbrObject, Object);
     s = s + "^";
     s = s + SignalName[signaltype];
     s = s + "^";
@@ -5457,7 +5021,7 @@ void Send_Signal_Value(int Object, int signaltype, int digits = -1) {
     s = s + "^";
     s = s + SYS_SYMBOL;
     s = s + "^";
-    s = s + ObjectId2Name(Object);
+    s = s + ObjectId2Name(O_NbrObject, Object);
     s = s + "^";
     s = s + SignalName[signaltype];
 
@@ -5481,7 +5045,7 @@ void Send_Signal_Time(int Object, int signaltype) {
     s = s + "^";
     s = s + SYS_SYMBOL;
     s = s + "^";
-    s = s + ObjectId2Name(Object);
+    s = s + ObjectId2Name(O_NbrObject, Object);
     s = s + "^";
     s = s + SignalName[signaltype];
     for (int k = 0; k < NBR_PERIODS; k++) {
@@ -5576,7 +5140,7 @@ void Send_History(string symbol, int x, int from, int to) {
         time = iTime(symbol, PeriodIndex[x], i);
         if (time == 0) {
            error = GetLastError();
-         //  Print ("error after gethistory " + x + " bar " + i + " " + error);        
+        //   Print ("error after gethistory " + x + " bar " + i + " " + error);        
            continue;
         }
         s = s + "^";
@@ -5604,7 +5168,7 @@ void Send_History(string symbol, int x, int from, int to) {
     content = content + from ;
     content = content + "^";
     content = content + k ;
-    
+    Print("Send_History from : " + from  + " nbr of bars : " + k);
     PG_Send(NodeSocket, content + s);
 }
 
@@ -6010,11 +5574,11 @@ void Send_Data(int session = -1, int mode = -1, int engine = -1) {
     return;
 }
 
-void Send_Profit(int rule, int operation, datetime RuleStartDate, datetime RuleEndDate, double RuleProfit, double RuleBuyProfit, double RuleSellProfit, double RuleBuyNbrLots, double RuleSellNbrLots, int RuleBuyNbrTrade, int RuleSellNbrTrade) {
+void Send_Profit(string symbolname, int rule, int operation, datetime RuleStartDate, datetime RuleEndDate, double RuleProfit, double RuleBuyProfit, double RuleSellProfit, double RuleBuyNbrLots, double RuleSellNbrLots, int RuleBuyNbrTrade, int RuleSellNbrTrade) {
     if (NoConnection()) return;
     string s = "*PROFIT";
     s = s + "^";
-    s = s + _Symbol;
+    s = s + symbolname;
     s = s + "^";
     s = s + rule;
     s = s + "^";
@@ -6365,7 +5929,7 @@ void Send_Download(string file) {
 }
 
 
-void Send_Profits(int rule, int operation, datetime fromdate, datetime todate) {
+void Send_Profits(int rule, int symbol, int operation, datetime fromdate, datetime todate) {
 
     if (NoConnection()) return;
     if (fromdate > todate) todate = CurrentTime;
@@ -6386,10 +5950,11 @@ void Send_Profits(int rule, int operation, datetime fromdate, datetime todate) {
     int RuleSellNbrTrade = 0;
     string sComment = "";
     int slpos, tppos, spos;
+    string symbolname;
 
     for (int cnt = 0; cnt < xtotal; cnt++) {
         OrderSelect(cnt, SELECT_BY_POS, MODE_HISTORY);
-        if (OrderType() <= OP_SELL && OrderSymbol() == _Symbol) {
+        if (OrderType() <= OP_SELL && (symbol == -1 ? true : OrderSymbol() == _Symbol)) {
             sComment = OrderComment();
             slpos = StringFind(sComment, "[sl]");
             tppos = StringFind(sComment, "[tp]");
@@ -6406,7 +5971,7 @@ void Send_Profits(int rule, int operation, datetime fromdate, datetime todate) {
 
                 if (PStartDate != StartDate) {
                     if (PStartDate != -1) {
-                        Send_Profit(rule, operation, PStartDate, LastOrderCloseTime, RuleProfit, RuleBuyProfit, RuleSellProfit, RuleBuyNbrLots, RuleSellNbrLots, RuleBuyNbrTrade, RuleSellNbrTrade);
+                        Send_Profit(symbolname, rule, operation, PStartDate, LastOrderCloseTime, RuleProfit, RuleBuyProfit, RuleSellProfit, RuleBuyNbrLots, RuleSellNbrLots, RuleBuyNbrTrade, RuleSellNbrTrade);
                         LastOrderCloseTime = 0;
                         RuleProfit = 0;
                         RuleBuyProfit = 0;
@@ -6419,6 +5984,7 @@ void Send_Profits(int rule, int operation, datetime fromdate, datetime todate) {
                     }
                     PStartDate = StartDate;
                 }
+                symbolname = OrderSymbol();
 
                 if (OrderCloseTime() > LastOrderCloseTime)
                     LastOrderCloseTime = OrderCloseTime();
@@ -6429,6 +5995,7 @@ void Send_Profits(int rule, int operation, datetime fromdate, datetime todate) {
                     RuleBuyNbrTrade++;
                     RuleBuyNbrLots += OrderLots();
                     RuleBuyProfit += OrderProfit();
+                    
                 } else
                 if (OrderType() == OP_SELL) {
                     RuleSellNbrTrade++;
@@ -6440,7 +6007,7 @@ void Send_Profits(int rule, int operation, datetime fromdate, datetime todate) {
         }
     }
     if (LastOrderCloseTime != 0)
-        Send_Profit(rule, operation, PStartDate, LastOrderCloseTime, RuleProfit, RuleBuyProfit, RuleSellProfit, RuleBuyNbrLots, RuleSellNbrLots, RuleBuyNbrTrade, RuleSellNbrTrade);
+        Send_Profit(symbolname, rule, operation, PStartDate, LastOrderCloseTime, RuleProfit, RuleBuyProfit, RuleSellProfit, RuleBuyNbrLots, RuleSellNbrLots, RuleBuyNbrTrade, RuleSellNbrTrade);
 
 }
 
@@ -7107,6 +6674,8 @@ bool ModifyOrder(int OrderId, double StopLoss = -1, double TakeProfit = -1) {
 int ReturnTradeNumber(int MagicNumber = -1, int Operation = -1) {
     int cnt, total, xcnt;
 
+
+    
     total = OrdersTotal();
 
     if (total == 0)
@@ -7121,6 +6690,7 @@ int ReturnTradeNumber(int MagicNumber = -1, int Operation = -1) {
             else if (OrderType() == Operation) xcnt++;
         }
     } // for
+
     return (xcnt);
 }
 
@@ -7138,6 +6708,7 @@ int CloseOrders(int MagicNumber = -1, int Operation = -1, double NbrLots = -1, d
             if (MagicNumber != -1 && OrderMagicNumber() != MagicNumber) continue;
 
             if (OrderSymbol() != _Symbol) continue;
+            ordertype = OrderType();
 
             if (Pending == -1 && ordertype > OP_SELL) continue;
 
@@ -7294,12 +6865,12 @@ void ReloadAlerts() {
         Send_Operation("Alerts can not be reloaded");
     else {
         A_NbrAlert = result;
-        Send_Operation("Alerts Filter is set");
+        Send_Operation("Alerts Filter is set for symbol : " + _Symbol);
     }
 }
 
 void ReloadFilters() {
-    ResetSignalFilters();
+    ResetSignalFilters(O_NbrObject);
     int result = LoadFilters();
     if (result == -1)
         Send_Operation("Filters can not be reloaded");
@@ -7378,7 +6949,7 @@ int LoadUsedObjects() {
     i = 0;
     while (!FileIsEnding(file)) {
         string sobject = FileReadString(file);
-        int ind = Object2Index(sobject);
+        int ind = Object2Index(O_NbrObject, sobject);
         ObjUsed[ind] = true;
     }
 
@@ -8071,11 +7642,11 @@ void TreatAlerts() {
                             } 
                         else
                             if (Prev) {
-                                if (AlertResult = AndPS(Object, Signal, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8]))
+                                if ((AlertResult = AndPS(Object, Signal, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8])))
                                     flag = true;
                             } 
                             else {
-                                if (AlertResult = AndS(Object, Signal, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8]))
+                                if ((AlertResult = AndS(Object, Signal, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8])))
                                     flag = true;
                             } 
                     else
@@ -8087,7 +7658,7 @@ void TreatAlerts() {
                             }
                         }
                     else {
-                        if (AlertResult = AndBS(Object, Signal, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8]))
+                        if ((AlertResult = AndBS(Object, Signal, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8])))
                             flag = true;
                     } 
                     else
@@ -8099,7 +7670,7 @@ void TreatAlerts() {
                             }
                         }
                     else {
-                        if (AlertResult = AndTS(Object, Signal, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8]))
+                        if ((AlertResult = AndTS(Object, Signal, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8])))
                             flag = true;
                     }
                 break;
@@ -8119,10 +7690,10 @@ void TreatAlerts() {
                         }
                     } else
                     if (Prev) {
-                        if (AlertResult = AndPV_LEq(Object, Signal, Value, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8]))
+                        if ((AlertResult = AndPV_LEq(Object, Signal, Value, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8])))
                             flag = true;
                     } else {
-                        if (AlertResult = AndV_LEq(Object, Signal, Value, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8]))
+                        if ((AlertResult = AndV_LEq(Object, Signal, Value, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8])))
                             flag = true;
                     } else
                     if (Type == TYPE_BAR)
@@ -8133,7 +7704,7 @@ void TreatAlerts() {
                             }
                         }
                     else {
-                        if (AlertResult = AndBV_LEq(Object, Signal, Value, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8]))
+                        if ((AlertResult = AndBV_LEq(Object, Signal, Value, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8])))
                             flag = true;
                     } else
                     if (Type == TYPE_TICK)
@@ -8144,7 +7715,7 @@ void TreatAlerts() {
                             }
                         }
                     else {
-                        if (AlertResult = AndTV_LEq(Object, Signal, Value, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8]))
+                        if ((AlertResult = AndTV_LEq(Object, Signal, Value, periods[0], periods[1], periods[2], periods[3], periods[4], periods[5], periods[6], periods[7], periods[8])))
                             flag = true;
                     }
     
@@ -8635,7 +8206,7 @@ void TreatAlerts() {
             else
                 pos = LastLow[cbar][cperiod] + (AlertGraphicDistance[i] * SYS_POINT);
 
-            string ObjName = ObjectId2Name(Object);
+            string ObjName = ObjectId2Name(O_NbrObject, Object);
             ObjectCreate("Alert_" + ObjName + "_ " + SignalName[Signal] + periode + Op, OBJ_TEXT, 0, 0, 0, 0);
             ObjectSet("Alert_" + ObjName + "_ " + SignalName[Signal] + periode + Op, OBJPROP_PRICE1, pos + (AlertGraphicDistance[i] * SYS_POINT));
             ObjectSet("Alert_" + ObjName + "_ " + SignalName[Signal] + periode + Op, OBJPROP_TIME1, Time[cbar]);
@@ -9497,12 +9068,6 @@ void ichimoku(int x, int Object) {
         Set_Signal_Value(ObjectId, S_DISTANCE, x, LastClose[0][x] - (upper - lower) / 2);
     }
 }
-
-
-
-
-
-
 
 int FindUpDownTrixFrom(int x, int i, double ExtremeValue) {
     int shift;
@@ -11640,14 +11205,14 @@ void Panel_DeleteGraphics() {
 }
 
 
-void News_DeleteLineGraphics(int NewsMax) {
-    for (int i = 0; i < NewsMax; i++) {
+void News_DeleteLineGraphics(int newsmax) {
+    for (int i = 0; i < newsmax; i++) {
         ObjectDelete("NewsLine" + i);
     }
 }
 
-void News_DeleteGraphics(int NewsMax) {
-    for (int i = 0; i < NewsMax; i++) {
+void News_DeleteGraphics(int newsmax) {
+    for (int i = 0; i < newsmax; i++) {
         ObjectDelete("NewsLine" + i);
         ObjectDelete("CalendarDate" + i);
         ObjectDelete("CalendarDesc" + i);
@@ -14105,1252 +13670,10 @@ void FindPatterns(int x, int shift) {
 
 }
 
-//-------------------------------------------------------------BEGIN PANEL DRAWING------------------------------------------------------------------------
 
-int InitGraphics() {
-    MainPanel_InitGraphics(right_up_corner);
-    Panel_InitGraphics();
-    return (0);
-}
 
-void DeleteGraphics() {
-    MainPanel_DeleteGraphics();
-    News_DeleteGraphics(100);
-    Panel_DeleteGraphics();
 
-}
-//PATTERNS
 
-
-
-void SObjectCreate(string Name, datetime time, double price, color Color, int x) {
-    int size = 8;
-    if (x >= P_D1) size = 10;
-
-    ObjectCreate(Name, OBJ_TEXT, 0, time, price);
-    ObjectSet(Name, OBJPROP_PRICE1, price);
-    ObjectSet(Name, OBJPROP_TIME1, time);
-    ObjectSetText(Name, Name, size, "Times New Roman", Color);
-    ObjectSetInteger(0, Name, OBJPROP_SELECTABLE, false);
-
-}
-
-string GetName(string aName, int period) {
-    return (PeriodName[period] + " " + aName);
-}
-
-void Draw_Patterns(int x, int & CumOffset) {
-    int Pointer_Offset = 0; // The offset value for the arrow to be located off the candle high or low point.
-    int High_Offset = 0; // The offset value added to the high arrow pointer for correct plotting of the pattern label.
-    //  int  CumOffset = 0;              // The counter value to be added to as more candle types are met.
-    int IncOffset = 0; // The offset value that is added to a cummaltive offset value for each pass through the routine so any 
-
-    switch (PeriodIndex[x]) {
-    case 1:
-        Pointer_Offset = 20;
-        High_Offset = 15;
-        IncOffset = 16;
-        break;
-    case 5:
-        Pointer_Offset = 40;
-        High_Offset = 15;
-        IncOffset = 16;
-        break;
-    case 15:
-        Pointer_Offset = 60;
-        High_Offset = 15;
-        IncOffset = 16;
-        break;
-    case 30:
-        Pointer_Offset = 80;
-        High_Offset = 15;
-        IncOffset = 16;
-        break;
-    case 60:
-        Pointer_Offset = 100;
-        High_Offset = 20;
-        IncOffset = 16;
-        break;
-    case 240:
-        Pointer_Offset = 120;
-        High_Offset = 40;
-        IncOffset = 16;
-        break;
-    case 1440:
-        Pointer_Offset = 140;
-        High_Offset = 80;
-        IncOffset = 16;
-        break;
-    case 10080:
-        Pointer_Offset = 160;
-        High_Offset = 35;
-        IncOffset = 16;
-        break;
-    case 43200:
-        Pointer_Offset = 180;
-        High_Offset = 45;
-        IncOffset = 16;
-        break;
-    }
-
-    int shift1 = 1;
-    //    CumOffset = 0;
-    Pointer_Offset = 20;
-
-    if (AndPS(BAR, S_DOJI, x) && Display_Doji == true) {
-        SObjectCreate(GetName("Doji", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Doji", x));
-
-    // Bearish Patterns  
-
-    if (AndPS(BAR, S_BEAR_QUAD, x) && Display_Bear_Quad == true) {
-        SObjectCreate(GetName("Bear Quad", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Bear Quad", x));
-
-    if (AndPS(BAR, S_BEAR_SHOOTING_STAR, x) && Display_ShootStar_2 == true) {
-        SObjectCreate(GetName("Shooting Star", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Shooting Star", x));
-
-    if (AndPS(BAR, S_BEAR_SHOOTING_STAR1, x) && Display_ShootStar_3 == true) {
-        SObjectCreate(GetName("Shooting Star 1", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Shooting Star 1", x));
-
-    if (AndPS(BAR, S_BEAR_SHOOTING_STAR2, x) && Display_ShootStar_4 == true) {
-        SObjectCreate(GetName("Shooting Star 2", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Shooting Star 2", x));
-
-    if (AndPS(BAR, S_BEAR_EVENING_STAR, x) && Display_Stars == true) {
-        SObjectCreate(GetName("Evening Star", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Evening Star", x));
-
-    if (AndPS(BAR, S_BEAR_EVENING_DOJI_STAR, x) && Display_Doji == true) {
-        SObjectCreate(GetName("Evening Doji Star", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Evening Doji Star", x));
-
-    if (AndPS(BAR, S_BEAR_DARK_CLOUD_COVER, x) && Display_Dark_Cloud_Cover == true) {
-        SObjectCreate(GetName("Dark Cloud Cover", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Dark Cloud Cover", x));
-
-    if (AndPS(BAR, S_BEAR_ENGULFING, x) && Display_Bearish_Engulfing == true) {
-        SObjectCreate(GetName("Bear Engulfing", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Bear Engulfing", x));
-
-    if (AndPS(BAR, S_BEAR_HARAMI, x) && Display_Harami == true) {
-        SObjectCreate(GetName("Bear Harami", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Bear Harami", x));
-
-    if (AndPS(BAR, S_BEAR_HANGING_MAN2, x) && Display_Hanging_Man_Hammer == true) {
-        SObjectCreate(GetName("Hangin Man", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Hangin Man", x));
-
-    if (AndPS(BAR, S_BEAR_THREE_INSIDE_DOWN, x) && Display_Three_Inside_Down == true) {
-        SObjectCreate(GetName("3 Inside Down", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("3 Inside Down", x));
-
-    if (AndPS(BAR, S_BEAR_THREE_OUTSIDE_DOWN, x) && Display_Three_Outside_Down == true) {
-        SObjectCreate(GetName("3 Outside Down", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("3 Outside Down", x));
-
-    if (AndPS(BAR, S_BEAR_THREE_BLACK_CROWS, x) && Display_Three_Black_Crows == true) {
-        SObjectCreate(GetName("3 Black Crows", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
-        CumOffset = CumOffset + IncOffset;
-        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("3 Black Crows", x));
-
-    // End of Bearish Patterns
-
-    // Bullish Patterns
-    if (AndPS(BAR, S_BULL_QUAD, x) && Display_Bull_Quad == true) {
-        SObjectCreate(GetName("Bull Quad", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Bull Quad", x));
-
-    if (AndPS(BAR, S_BULL_HAMMER, x) && Display_Hammer_2 == true) {
-        SObjectCreate(GetName("Hammer", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Hammer", x));
-
-    if (AndPS(BAR, S_BULL_HAMMER1, x) && Display_Hammer_3 == true) {
-        SObjectCreate(GetName("Hammer 1", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Hammer 1", x));
-
-    if (AndPS(BAR, S_BULL_HAMMER2, x) && Display_Hammer_4 == true) {
-        SObjectCreate(GetName("Hammer 2", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Hammer 2", x));
-
-    if (AndPS(BAR, S_BULL_MORNING_STAR, x) && Display_Stars == true) {
-        SObjectCreate(GetName("Morning Star", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Morning Star", x));
-
-    if (AndPS(BAR, S_BULL_MORNING_DOJI_STAR, x) && Display_Doji == true) {
-        SObjectCreate(GetName("Morning Doji", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Morning Doji", x));
-
-    if (AndPS(BAR, S_BULL_PIERCING_LINE, x) && Display_Piercing_Line == true) {
-        SObjectCreate(GetName("Piercing Line", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Piercing Line", x));
-
-    if (AndPS(BAR, S_BULL_ENGULFING, x) && Display_Bullish_Engulfing) {
-        SObjectCreate(GetName("Bull Engulfing", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Bull Engulfing", x));
-
-    if (AndPS(BAR, S_BULL_INVERTED_HAMMER, x) && Display_I_Hammer_S_Star) {
-        SObjectCreate(GetName("Inverted Hammer", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Inverted Hammer", x));
-
-    if (AndPS(BAR, S_BULL_THREE_OUTSIDE_UP, x) && Display_Three_Outside_Up == true) {
-        SObjectCreate(GetName("3 Outside Up", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("3 Outside Up", x));
-
-    if (AndPS(BAR, S_BULL_HARAMI, x) && Display_Harami == true) {
-        SObjectCreate(GetName("Bull Harami", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("Bull Harami", x));
-
-    if (AndPS(BAR, S_BULL_THREE_INSIDE_UP, x) && Display_Three_Inside_Up == true) {
-        SObjectCreate(GetName("3 Inside Up", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("3 Inside Up", x));
-
-    if (AndPS(BAR, S_BULL_THREE_WHITE_SOLDIERS, x) && Display_Three_White_Soldiers == true) {
-        SObjectCreate(GetName("3 White Soldiers", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
-        CumOffset = CumOffset + IncOffset;
-        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
-    } else
-        ObjectDelete(GetName("3 White Soldiers", x));
-
-    return (0);
-}
-
-void Patterns_DrawGraphics(int x) {
-    int CurrentPeriod = Period2Int(_Period);
-    if (!GraphicMode) return;
-
-    //   if (CurrentPeriod > x) return;
-    int CumOffset = 0;
-    Draw_Patterns(x, CumOffset);
-}
-
-void Patterns_DeleteGraphics(int x) {
-    int CumOffset = 0;
-    ObjectDelete(GetName("Doji", x));
-
-    ObjectDelete(GetName("Shooting Star 1", x));
-    ObjectDelete(GetName("Shooting Star 2", x));
-    ObjectDelete(GetName("Shooting Star", x));
-    ObjectDelete(GetName("Evening Star", x));
-    ObjectDelete(GetName("Evening Doji Star", x));
-    ObjectDelete(GetName("Dark Cloud Cover", x));
-    ObjectDelete(GetName("Bear Engulfing", x));
-    ObjectDelete(GetName("Bear Harami", x));
-    ObjectDelete(GetName("Hangin Man", x));
-    ObjectDelete(GetName("3 Inside Down", x));
-    ObjectDelete(GetName("3 Outside Down", x));
-    ObjectDelete(GetName("3 Black Crows", x));
-
-    ObjectDelete(GetName("Hammer", x));
-    ObjectDelete(GetName("Hammer 1", x));
-    ObjectDelete(GetName("Hammer 2", x));
-    ObjectDelete(GetName("Morning Star", x));
-    ObjectDelete(GetName("Morning Doji", x));
-    ObjectDelete(GetName("Piercing Line", x));
-    ObjectDelete(GetName("Bull Engulfing", x));
-    ObjectDelete(GetName("Bull Harami", x));
-    ObjectDelete(GetName("Inverted Hammer", x));
-    ObjectDelete(GetName("3 Outside Up", x));
-    ObjectDelete(GetName("3 Inside Up", x));
-    ObjectDelete(GetName("3 White Soldiers", x));
-
-    ObjectDelete(GetName("Bear Quad", x));
-    ObjectDelete(GetName("Bull Quad", x));
-}
-
-// SR GRAPHICS
-
-void SR_InitGraphics(int x, int up) {
-    int CurrentPeriod = Period2Int(_Period);
-    if (!GraphicMode) return;
-    if (CurrentPeriod > x) return;
-    if (up) {
-        ObjectCreate("FractalResistanceLine" + "," + PeriodName[x], OBJ_TREND, 0, 0, 0);
-        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
-        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_STYLE, Style[x]);
-        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_WIDTH, Width[x]);
-        ObjectSetInteger(0, "FractalResistanceLine" + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-
-        ObjectCreate("FractalResistanceText" + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0, 0);
-        ObjectSet("FractalResistanceText" + "," + PeriodName[x], OBJPROP_CORNER, 1);
-        ObjectSetText("FractalResistanceText" + "," + PeriodName[x], PeriodName[x], 8, "Tahoma", ResistanceColor);
-        ObjectSetInteger(0, "FractalResistanceText" + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-
-    } else {
-        ObjectCreate("FractalSupportText" + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0, 0);
-        ObjectSet("FractalSupportText" + "," + PeriodName[x], OBJPROP_CORNER, 1);
-        ObjectSetText("FractalSupportText" + "," + PeriodName[x], PeriodName[x], 8, "Tahoma", SupportColor);
-        ObjectSetInteger(0, "FractalSupportText" + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-
-        ObjectCreate("FractalSupportLine" + "," + PeriodName[x], OBJ_TREND, 0, 0, 0);
-        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
-        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_STYLE, Style[x]);
-        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_WIDTH, Width[x]);
-        ObjectSetInteger(0, "FractalSupportLine" + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-    }
-    return;
-}
-
-void SR_DrawGraphics(int x, int up) {
-    int CurrentPeriod = Period2Int(_Period);
-    if (!GraphicMode) return;
-
-    if (CurrentPeriod > x) return;
-    if (up) {
-        datetime rtime1 = ReturnBestTime(CurrentPeriod, x, MODE_UPPER, 1);
-        datetime rtime0 = ReturnBestTime(CurrentPeriod, x, MODE_UPPER, 0);
-        double rprice1 = iHigh(NULL, PeriodIndex[x], Last2UpFractals[1][x]);
-        double rprice0 = iHigh(NULL, PeriodIndex[x], Last2UpFractals[0][x]);
-
-        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_PRICE1, rprice1);
-        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_TIME1, rtime1);
-        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_PRICE2, rprice0);
-        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_TIME2, rtime0);
-    } else {
-        datetime stime1 = ReturnBestTime(CurrentPeriod, x, MODE_LOWER, 1);
-        datetime stime0 = ReturnBestTime(CurrentPeriod, x, MODE_LOWER, 0);
-        double sprice1 = iLow(NULL, PeriodIndex[x], Last2DownFractals[1][x]);
-        double sprice0 = iLow(NULL, PeriodIndex[x], Last2DownFractals[0][x]);
-
-        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_PRICE1, sprice1);
-        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_TIME1, stime1);
-        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_PRICE2, sprice0);
-        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_TIME2, stime0);
-
-        ObjectSet("FractalResistanceText" + "," + PeriodName[x], OBJPROP_PRICE1, ResistanceLevel(x, 0));
-        ObjectSet("FractalResistanceText" + "," + PeriodName[x], OBJPROP_TIME1, iTime(NULL, PeriodIndex[CurrentPeriod], 0));
-        ObjectSet("FractalSupportText" + "," + PeriodName[x], OBJPROP_PRICE1, SupportLevel(x, 0));
-        ObjectSet("FractalSupportText" + "," + PeriodName[x], OBJPROP_TIME1, iTime(NULL, PeriodIndex[CurrentPeriod], 0));
-    }
-}
-
-void SR_DeleteGraphics(int x, int up) {
-    if (up) {
-        ObjectDelete("FractalResistanceText" + "," + PeriodName[x]);
-        ObjectDelete("FractalResistanceLine" + "," + PeriodName[x]);
-    } else {
-        ObjectDelete("FractalSupportText" + "," + PeriodName[x]);
-        ObjectDelete("FractalSupportLine" + "," + PeriodName[x]);
-    }
-    return;
-}
-
-void FractalsTarget_InitGraphics(int x, int up) {
-    int CurrentPeriod = Period2Int(_Period);
-    if (!GraphicMode) return;
-
-    //	if (CurrentPeriod > x) return;
-    if (up) {
-        ObjectCreate("UpFractalTarget," + PeriodName[x] + " " + x, OBJ_ARROW, 0, 0, 0);
-        ObjectSet("UpFractalTarget," + PeriodName[x] + " " + x, OBJPROP_ARROWCODE, SYMBOL_LEFTPRICE);
-        ObjectSet("UpFractalTarget," + PeriodName[x] + " " + x, OBJPROP_COLOR, ResistanceColor);
-    } else {
-        ObjectCreate("DownFractalTarget," + PeriodName[x] + " " + x, OBJ_ARROW, 0, 0, 0);
-        ObjectSet("DownFractalTarget," + PeriodName[x] + " " + x, OBJPROP_ARROWCODE, SYMBOL_LEFTPRICE);
-        ObjectSet("DownFractalTarget," + PeriodName[x] + " " + x, OBJPROP_COLOR, SupportColor);
-    }
-
-}
-
-void FractalsTarget_DrawGraphics(int x, int up) {
-    int CurrentPeriod = Period2Int(_Period);
-    if (!GraphicMode) return;
-
-    //  if (CurrentPeriod > x) return;
-
-    if (up && AndS(UPFRACTAL, S_ABOVE, x) != 0) {
-        ObjectSet("UpFractalTarget," + PeriodName[x] + " " + x, OBJPROP_TIME1, iTime(NULL, PeriodIndex[CurrentPeriod], 0));
-        ObjectSet("UpFractalTarget," + PeriodName[x] + " " + x, OBJPROP_PRICE1, iHigh(NULL, PeriodIndex[x], NextUpFractals[x]));
-    } else
-    if (!up && AndS(DOWNFRACTAL, S_BELOW, x) != 0) {
-        ObjectSet("DownFractalTarget," + PeriodName[x] + " " + x, OBJPROP_TIME1, iTime(NULL, PeriodIndex[CurrentPeriod], 0));
-        ObjectSet("DownFractalTarget," + PeriodName[x] + " " + x, OBJPROP_PRICE1, iLow(NULL, PeriodIndex[x], NextDownFractals[x]));
-    } else {
-        if (up) {
-            ObjectSet("UpFractalTarget," + PeriodName[x] + " " + x, OBJPROP_TIME1, 0);
-            ObjectSet("UpFractalTarget," + PeriodName[x] + " " + x, OBJPROP_PRICE1, 0);
-        } else {
-            ObjectSet("DownFractalTarget," + PeriodName[x] + " " + x, OBJPROP_TIME1, 0);
-            ObjectSet("DownFractalTarget," + PeriodName[x] + " " + x, OBJPROP_PRICE1, 0);
-        }
-    }
-}
-
-void FractalsTarget_DeleteGraphics(int x, int up) {
-    if (up) {
-        ObjectDelete("UpFractalTarget," + PeriodName[x] + " " + x);
-    } else {
-        ObjectDelete("DownFractalTarget," + PeriodName[x] + " " + x);
-    }
-    return;
-}
-
-void Fractals_InitGraphics(int x, int up) {
-    int CurrentPeriod = Period2Int(_Period);
-    if (!GraphicMode) return;
-
-    //if (CurrentPeriod > x) return;
-    int width = 1;
-
-    if (x >= P_D1) width = 3;
-
-    if (up) {
-        ObjectCreate("FractalUpLine" + "," + PeriodName[x], OBJ_HLINE, 0, 0, 0);
-        ObjectSet("FractalUpLine" + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
-        ObjectSet("FractalUpLine" + "," + PeriodName[x], OBJPROP_STYLE, HStyle[x]);
-        ObjectSet("FractalUpLine" + "," + PeriodName[x], OBJPROP_WIDTH, width);
-        ObjectCreate("FractalUpText" + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0, 0);
-        ObjectSetText("FractalUpText" + "," + PeriodName[x], PeriodName[x], 10, "Arial", ResistanceColor);
-        ObjectSetInteger(0, "FractalUpText" + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-
-    } else {
-
-        ObjectCreate("FractalDownLine" + "," + PeriodName[x], OBJ_HLINE, 0, 0, 0);
-        ObjectSet("FractalDownLine" + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
-        ObjectSet("FractalDownLine" + "," + PeriodName[x], OBJPROP_STYLE, HStyle[x]);
-        ObjectSet("FractalDownLine" + "," + PeriodName[x], OBJPROP_WIDTH, width);
-        ObjectCreate("FractalDownText" + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0, 0);
-        ObjectSetText("FractalDownText" + "," + PeriodName[x], PeriodName[x], 10, "Arial", SupportColor);
-        ObjectSetInteger(0, "FractalDownText" + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-
-    }
-    return;
-}
-
-void Fractals_DrawGraphics(int x, int up) {
-    int CurrentPeriod = Period2Int(_Period);
-    if (!GraphicMode) return;
-
-    //  if (CurrentPeriod > x) return;
-    if (up && UpFractals[x] != -1) {
-        ObjectSet("FractalUpLine" + "," + PeriodName[x], OBJPROP_PRICE1, iHigh(NULL, PeriodIndex[x], UpFractals[x]));
-        ObjectSet("FractalUpText" + "," + PeriodName[x], OBJPROP_PRICE1, iHigh(NULL, PeriodIndex[x], UpFractals[x]));
-        ObjectSet("FractalUpText" + "," + PeriodName[x], OBJPROP_TIME1, Time[0] + 360);
-    } else
-    if (!up && DownFractals[x] != -1) {
-        ObjectSet("FractalDownLine" + "," + PeriodName[x], OBJPROP_PRICE1, iLow(NULL, PeriodIndex[x], DownFractals[x]));
-        ObjectSet("FractalDownText" + "," + PeriodName[x], OBJPROP_PRICE1, iLow(NULL, PeriodIndex[x], DownFractals[x]));
-        ObjectSet("FractalDownText" + "," + PeriodName[x], OBJPROP_TIME1, Time[0] + 360);
-    }
-}
-
-void Fractals_DeleteGraphics(int x, int up) {
-    if (up) {
-        ObjectDelete("FractalUpText" + "," + PeriodName[x]);
-        ObjectDelete("FractalUpLine" + "," + PeriodName[x]);
-    } else {
-        ObjectDelete("FractalDownLine" + "," + PeriodName[x]);
-        ObjectDelete("FractalDownText" + "," + PeriodName[x]);
-    }
-    return;
-}
-
-// PIVOTS GRAPHICS
-
-void Pivots_InitGraphics(int x) {
-    int CurrentPeriod = Period2Int(_Period);
-    if (!GraphicMode) return;
-
-    if (CurrentPeriod > x) return;
-    int Nbr = 3;
-
-    int linewidth = 1;
-
-    if (x > P_D1) linewidth = 2;
-
-    //   if (x >= P_D1) Nbr = 3;
-    for (int shift = 1; shift <= Nbr; shift++) {
-        ObjectCreate("PivotHighLine" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotHighLine" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, LimeGreen);
-        ObjectSet("PivotHighLine" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotHighLine" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotHighLine" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotHighLineR" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotHighLineR" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, LimeGreen);
-        ObjectSet("PivotHighLineR" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotHighLineR" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotHighLineR" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotLowLine" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotLowLine" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, LimeGreen);
-        ObjectSet("PivotLowLine" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotLowLine" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotLowLine" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotLowLineR" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotLowLineR" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, LimeGreen);
-        ObjectSet("PivotLowLineR" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotLowLineR" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotLowLineR" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotLine" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotLine" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, Yellow);
-        ObjectSet("PivotLine" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotLine" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotLine" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotLineR" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotLineR" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, Yellow);
-        ObjectSet("PivotLineR" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotLineR" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotLineR" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotResistanceLine" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotResistanceLine" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
-        ObjectSet("PivotResistanceLine" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotResistanceLine" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotResistanceLine" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotResistanceLineR" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotResistanceLineR" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
-        ObjectSet("PivotResistanceLineR" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotResistanceLineR" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotResistanceLineR" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotResistanceLine1" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotResistanceLine1" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
-        ObjectSet("PivotResistanceLine1" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotResistanceLine1" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotResistanceLine1" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
-        ObjectSet("PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotResistanceLine2" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotResistanceLine2" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
-        ObjectSet("PivotResistanceLine2" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotResistanceLine2" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotResistanceLine2" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
-        ObjectSet("PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotSupportLine" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotSupportLine" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
-        ObjectSet("PivotSupportLine" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotSupportLine" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotSupportLine" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotSupportLineR" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotSupportLineR" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
-        ObjectSet("PivotSupportLineR" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotSupportLineR" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotSupportLineR" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotSupportLine1" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotSupportLine1" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
-        ObjectSet("PivotSupportLine1" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotSupportLine1" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotSupportLine1" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotSupportLine1R" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotSupportLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
-        ObjectSet("PivotSupportLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotSupportLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotSupportLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotSupportLine2" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotSupportLine2" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
-        ObjectSet("PivotSupportLine2" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotSupportLine2" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotSupportLine2" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotSupportLine2R" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
-        ObjectSet("PivotSupportLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
-        ObjectSet("PivotSupportLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
-        ObjectSetInteger(0, "PivotSupportLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotSupportLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
-
-        ObjectCreate("PivotTextLow" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
-        ObjectCreate("PivotTextHigh" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
-        ObjectCreate("PivotText" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0);
-        ObjectCreate("PivotTextResistance" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
-        ObjectCreate("PivotTextSupport" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
-        ObjectCreate("PivotTextResistance1" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
-        ObjectCreate("PivotTextSupport1" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
-        ObjectCreate("PivotTextResistance2" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
-        ObjectCreate("PivotTextSupport2" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
-        ObjectSetInteger(0, "PivotTextLow" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotTextHigh" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotText" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotTextResistance" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotTextSupport" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotTextResistance1" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotTextSupport1" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotTextResistance2" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, "PivotTextSupport2" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
-    }
-}
-
-void Pivots_DrawGraphics(int x) {
-    string timeframe_prefix = "";
-    int CurrentPeriod = Period2Int(_Period);
-    if (!GraphicMode) return;
-
-    if (CurrentPeriod > x) return;
-
-    if (x == P_D1) timeframe_prefix = "D1 ";
-    else
-    if (x == P_W1) timeframe_prefix = "W1 ";
-    else
-    if (x == P_MN) timeframe_prefix = "MN ";
-    else
-    if (x == P_H4) timeframe_prefix = "H4 ";
-    else
-    if (x == P_H1) timeframe_prefix = "H1 ";
-    else
-    if (x == P_M30) timeframe_prefix = "M30 ";
-    else
-    if (x == P_M15) timeframe_prefix = "M15 ";
-    else
-    if (x == P_M5) timeframe_prefix = "M5 ";
-    else
-    if (x == P_M1) timeframe_prefix = "M1 ";
-
-    int Nbr = 3;
-    double totime, fromtime;
-
-    if (x >= P_D1) Nbr = 3;
-
-    for (int shift = 1; shift <= Nbr; shift++) {
-        if (shift == 1) {
-            totime = Time[0];
-            fromtime = iTime(NULL, PeriodIndex[x], 0);
-        } else
-        if (shift == 2) {
-            totime = iTime(NULL, PeriodIndex[x], 0) - PeriodIndex[CurrentPeriod];
-            fromtime = iTime(NULL, PeriodIndex[x], 1);
-        } else
-        if (shift == 3) {
-            totime = iTime(NULL, PeriodIndex[x], 1) - PeriodIndex[CurrentPeriod];
-            fromtime = iTime(NULL, PeriodIndex[x], 2);
-        }
-
-        ObjectMove("PivotHighLine" + " " + shift + "," + PeriodName[x], 1, fromtime, LastHigh[shift][x]);
-        ObjectMove("PivotLowLine" + " " + shift + "," + PeriodName[x], 1, fromtime, LastLow[shift][x]);
-        ObjectMove("PivotLine" + " " + shift + "," + PeriodName[x], 1, fromtime, LastPivotPoint[shift][x]);
-        ObjectMove("PivotResistanceLine" + " " + shift + "," + PeriodName[x], 1, fromtime, LastResistance[shift][x]);
-        ObjectMove("PivotSupportLine" + " " + shift + "," + PeriodName[x], 1, fromtime, LastSupport[shift][x]);
-        ObjectMove("PivotResistanceLine1" + " " + shift + "," + PeriodName[x], 1, fromtime, LastResistance1[shift][x]);
-        ObjectMove("PivotSupportLine1" + " " + shift + "," + PeriodName[x], 1, fromtime, LastSupport1[shift][x]);
-        ObjectMove("PivotResistanceLine2" + " " + shift + "," + PeriodName[x], 1, fromtime, LastResistance2[shift][x]);
-        ObjectMove("PivotSupportLine2" + " " + shift + "," + PeriodName[x], 1, fromtime, LastSupport2[shift][x]);
-
-        ObjectMove("PivotHighLine" + " " + shift + "," + PeriodName[x], 0, totime, LastHigh[shift][x]);
-        ObjectMove("PivotLowLine" + " " + shift + "," + PeriodName[x], 0, totime, LastLow[shift][x]);
-        ObjectMove("PivotLine" + " " + shift + "," + PeriodName[x], 0, totime, LastPivotPoint[shift][x]);
-        ObjectMove("PivotResistanceLine" + " " + shift + "," + PeriodName[x], 0, totime, LastResistance[shift][x]);
-        ObjectMove("PivotSupportLine" + " " + shift + "," + PeriodName[x], 0, totime, LastSupport[shift][x]);
-        ObjectMove("PivotResistanceLine1" + " " + shift + "," + PeriodName[x], 0, totime, LastResistance1[shift][x]);
-        ObjectMove("PivotSupportLine1" + " " + shift + "," + PeriodName[x], 0, totime, LastSupport1[shift][x]);
-        ObjectMove("PivotResistanceLine2" + " " + shift + "," + PeriodName[x], 0, totime, LastResistance2[shift][x]);
-        ObjectMove("PivotSupportLine2" + " " + shift + "," + PeriodName[x], 0, totime, LastSupport2[shift][x]);
-        if (shift != 1) {
-
-            ObjectMove("PivotHighLineR" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[CurrentPeriod], LastHigh[shift - 1][x]);
-            ObjectMove("PivotLowLineR" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[CurrentPeriod], LastLow[shift - 1][x]);
-            ObjectMove("PivotLineR" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[CurrentPeriod], LastPivotPoint[shift - 1][x]);
-            ObjectMove("PivotResistanceLineR" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[CurrentPeriod], LastResistance[shift - 1][x]);
-            ObjectMove("PivotSupportLineR" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[CurrentPeriod], LastSupport[shift - 1][x]);
-            ObjectMove("PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[CurrentPeriod], LastResistance1[shift - 1][x]);
-            ObjectMove("PivotSupportLine1R" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[CurrentPeriod], LastSupport1[shift - 1][x]);
-            ObjectMove("PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[CurrentPeriod], LastResistance2[shift - 1][x]);
-            ObjectMove("PivotSupportLine2R" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[CurrentPeriod], LastSupport2[shift - 1][x]);
-
-            ObjectMove("PivotHighLineR" + " " + shift + "," + PeriodName[x], 1, totime, LastHigh[shift][x]);
-            ObjectMove("PivotLowLineR" + " " + shift + "," + PeriodName[x], 1, totime, LastLow[shift][x]);
-            ObjectMove("PivotLineR" + " " + shift + "," + PeriodName[x], 1, totime, LastPivotPoint[shift][x]);
-            ObjectMove("PivotResistanceLineR" + " " + shift + "," + PeriodName[x], 1, totime, LastResistance[shift][x]);
-            ObjectMove("PivotSupportLineR" + " " + shift + "," + PeriodName[x], 1, totime, LastSupport[shift][x]);
-            ObjectMove("PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], 1, totime, LastResistance1[shift][x]);
-            ObjectMove("PivotSupportLine1R" + " " + shift + "," + PeriodName[x], 1, totime, LastSupport1[shift][x]);
-            ObjectMove("PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], 1, totime, LastResistance2[shift][x]);
-            ObjectMove("PivotSupportLine2R" + " " + shift + "," + PeriodName[x], 1, totime, LastSupport2[shift][x]);
-        }
-
-        ObjectMove("PivotTextResistance" + " " + shift + "," + PeriodName[x], 0, fromtime, LastResistance[shift][x]);
-        ObjectMove("PivotTextSupport" + " " + shift + "," + PeriodName[x], 0, fromtime, LastSupport[shift][x]);
-        ObjectMove("PivotTextResistance1" + " " + shift + "," + PeriodName[x], 0, fromtime, LastResistance1[shift][x]);
-        ObjectMove("PivotTextSupport1" + " " + shift + "," + PeriodName[x], 0, fromtime, LastSupport1[shift][x]);
-        ObjectMove("PivotTextResistance2" + " " + shift + "," + PeriodName[x], 0, fromtime, LastResistance2[shift][x]);
-        ObjectMove("PivotTextSupport2" + " " + shift + "," + PeriodName[x], 0, fromtime, LastSupport2[shift][x]);
-        ObjectMove("PivotTextLow" + " " + shift + "," + PeriodName[x], 0, fromtime, LastLow[shift][x]);
-        ObjectMove("PivotTextHigh" + " " + shift + "," + PeriodName[x], 0, fromtime, LastHigh[shift][x]);
-        ObjectMove("PivotText" + " " + shift + "," + PeriodName[x], 0, fromtime, LastPivotPoint[shift][x]);
-
-        ObjectSetText("PivotTextResistance2" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Res3 " + DoubleToString(LastResistance2[shift][x], _Digits) + " (" + DoubleToString((LastResistance2[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", ResistanceColor);
-        ObjectSetText("PivotTextResistance1" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Res2 " + DoubleToString(LastResistance1[shift][x], _Digits) + " (" + DoubleToString((LastResistance1[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", ResistanceColor);
-        ObjectSetText("PivotTextResistance" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Res1 " + DoubleToString(LastResistance[shift][x], _Digits) + " (" + DoubleToString((LastResistance[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", ResistanceColor);
-        ObjectSetText("PivotTextHigh" + " " + shift + "," + PeriodName[x], timeframe_prefix + "High " + DoubleToString(LastHigh[shift][x], _Digits) + " (" + DoubleToString((LastHigh[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", LimeGreen);
-        ObjectSetText("PivotText" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Pivot " + DoubleToString(LastPivotPoint[shift][x], _Digits) + " (" + DoubleToString((LastPivotPoint[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", Yellow);
-        ObjectSetText("PivotTextLow" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Low " + DoubleToString(LastLow[shift][x], _Digits) + " (" + DoubleToString((LastLow[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", LimeGreen);
-        ObjectSetText("PivotTextSupport" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Sup1 " + DoubleToString(LastSupport[shift][x], _Digits) + " (" + DoubleToString((LastSupport[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", SupportColor);
-        ObjectSetText("PivotTextSupport1" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Sup2 " + DoubleToString(LastSupport1[shift][x], _Digits) + " (" + DoubleToString((LastSupport1[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", SupportColor);
-        ObjectSetText("PivotTextSupport2" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Sup3 " + DoubleToString(LastSupport2[shift][x], _Digits) + " (" + DoubleToString((LastSupport2[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", SupportColor);
-    }
-}
-
-void Pivots_DeleteGraphics(int x) {
-    int Nbr = 3;
-
-    if (x >= P_D1) Nbr = 3;
-    for (int shift = 1; shift <= Nbr; shift++) {
-        ObjectDelete("PivotHighLine" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotLowLine" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotLine" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotResistanceLine" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotSupportLine" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotResistanceLine1" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotSupportLine1" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotResistanceLine2" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotSupportLine2" + " " + shift + "," + PeriodName[x]);
-
-        ObjectDelete("PivotHighLineR" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotLowLineR" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotLineR" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotResistanceLineR" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotSupportLineR" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotResistanceLine1R" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotSupportLine1R" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotResistanceLine2R" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotSupportLine2R" + " " + shift + "," + PeriodName[x]);
-
-        ObjectDelete("PivotTextLow" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotTextHigh" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotText" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotTextResistance" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotTextSupport" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotTextResistance1" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotTextSupport1" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotTextResistance2" + " " + shift + "," + PeriodName[x]);
-        ObjectDelete("PivotTextSupport2" + " " + shift + "," + PeriodName[x]);
-    }
-    return;
-}
-// END PIVOTS_GRAPHICS
-
-// FIBO GRAPHICS
-
-void Fibo_InitGraphics(int x) {
-
-}
-
-void Fibo_DrawGraphics(int x) {
-    int CurrentPeriod = Period2Int(_Period);
-    if (!GraphicMode) return;
-
-    if (CurrentPeriod > x) return;
-
-    double FiboLevel = SValue(FIBOLEVEL, S_CURRENT, x);
-    double FiboStopLossLevel = SValue(FIBOSTOPLOSSLEVEL, S_CURRENT, x);
-
-    color c;
-    string s;
-
-    if (AndS(FIBOLEVEL, S_BEAR, x)) {
-        c = Pink;
-        s = " Sell Level " + PeriodName[x];
-    } else {
-        c = PaleGreen;
-        s = " Buy Level " + PeriodName[x];
-    }
-
-    if (ObjectFind("fl" + x) != 0) {
-        ObjectCreate("fl" + x, OBJ_TEXT, 0, Time[0] - _Period * 1700, FiboLevel);
-        ObjectSetText("fl" + x, s, 7, "Arial", c);
-        ObjectSetInteger(0, "fl" + x, OBJPROP_SELECTABLE, false);
-
-    } else {
-        ObjectSet("fl" + x, OBJPROP_TIME1, Time[0] - _Period * 1700);
-        ObjectSet("fl" + x, OBJPROP_PRICE1, FiboLevel);
-        ObjectSet("fl" + x, OBJPROP_COLOR, c);
-        ObjectSetText("fl" + x, s, 7, "Arial", c);
-    }
-    //----
-    if (ObjectFind("fl Line" + x) != 0) {
-        ObjectCreate("fl Line" + x, OBJ_TREND, 0, Time[0], FiboLevel, Time[1], FiboLevel);
-        ObjectSet("fl Line" + x, OBJPROP_STYLE, STYLE_DASHDOT);
-        ObjectSet("fl Line" + x, OBJPROP_COLOR, c);
-        ObjectSetInteger(0, "fl Line" + x, OBJPROP_SELECTABLE, false);
-
-    } else {
-        ObjectMove("fl Line" + x, 0, Time[0], FiboLevel);
-        ObjectMove("fl Line" + x, 1, Time[1], FiboLevel);
-        ObjectSet("fl Line" + x, OBJPROP_COLOR, c);
-    }
-
-    if (ObjectFind("fsl" + x) != 0) {
-        ObjectCreate("fsl" + x, OBJ_TEXT, 0, Time[0] - _Period * 1700, FiboStopLossLevel);
-        ObjectSetText("fsl" + x, " StopLoss Level " + PeriodName[x], 7, "Arial", c);
-        ObjectSetInteger(0, "fsl" + x, OBJPROP_SELECTABLE, false);
-
-    } else {
-        ObjectSet("fsl" + x, OBJPROP_TIME1, Time[0] - _Period * 1700);
-        ObjectSet("fsl" + x, OBJPROP_PRICE1, FiboStopLossLevel);
-        ObjectSet("fsl" + x, OBJPROP_COLOR, c);
-    }
-
-    if (ObjectFind("fsl Line" + x) != 0) {
-        ObjectCreate("fsl Line" + x, OBJ_TREND, 0, Time[0], FiboStopLossLevel, Time[1], FiboStopLossLevel);
-        ObjectSet("fsl Line" + x, OBJPROP_STYLE, STYLE_DASHDOT);
-        ObjectSet("fsl Line" + x, OBJPROP_COLOR, c);
-        ObjectSetInteger(0, "fsl Line" + x, OBJPROP_SELECTABLE, false);
-
-    } else {
-        ObjectMove("fsl Line" + x, 0, Time[0], FiboStopLossLevel);
-        ObjectMove("fsl Line" + x, 1, Time[1], FiboStopLossLevel);
-        ObjectSet("fsl Line" + x, OBJPROP_COLOR, c);
-    }
-
-    /*
-      if (ObjectFind("tp1") != 0)
-      {
-         ObjectCreate("tp1", OBJ_TEXT, 0, Time[0], FiboTakeProfit1);
-         ObjectSet("tp1", OBJPROP_COLOR, c);
-         ObjectSetText("tp1", " PROFIT TARGET 1", 8, "Arial");
-		 ObjectSetInteger(0,"tp1" ,OBJPROP_SELECTABLE,false);
-
-      }
-      else
-      {
-         ObjectSet("tp1",    OBJPROP_TIME1,   Time[0]);
-         ObjectSet("tp1",    OBJPROP_PRICE1,  FiboTakeProfit1);
-         ObjectSet("tp1", OBJPROP_COLOR, c);
-      }
-         //---
-      if (ObjectFind("tp1 Line") != 0)
-      {
-         ObjectCreate("tp1 Line", OBJ_HLINE, 0, Time[0],FiboTakeProfit1);
-         ObjectSet("tp1 Line", OBJPROP_STYLE, STYLE_DASHDOTDOT);
-         ObjectSet("tp1 Line", OBJPROP_COLOR, c );
-		 ObjectSetInteger(0,"tp1 Line" ,OBJPROP_SELECTABLE,false);
-
-      }
-      else
-      {
-         ObjectMove("tp1 Line",0, Time[0],FiboTakeProfit1 );
-         ObjectSet("tp1 Line", OBJPROP_COLOR, c);
-      }
-         //----
-      if(ObjectFind("tp2") != 0)
-      {
-         ObjectCreate("tp2", OBJ_TEXT, 0, Time[0], FiboTakeProfit2);
-         ObjectSet("tp2", OBJPROP_COLOR, c);
-         ObjectSetText("tp2", " PROFIT TARGET 2", 8, "Arial");
-		 ObjectSetInteger(0,"tp2" ,OBJPROP_SELECTABLE,false);
-
-      }
-      else
-      {
-         ObjectSet("tp2",    OBJPROP_TIME1,   Time[0]);
-         ObjectSet("tp2",    OBJPROP_PRICE1,  FiboTakeProfit2);
-         ObjectSet("tp2", OBJPROP_COLOR, c);
-
-      }
-      if (ObjectFind("tp2 Line") != 0)
-      {
-         ObjectCreate("tp2 Line", OBJ_HLINE, 0, Time[0],FiboTakeProfit2);
-         ObjectSet("tp2 Line", OBJPROP_STYLE, STYLE_DASHDOTDOT);
-         ObjectSet("tp2 Line", OBJPROP_COLOR, c );
-		 ObjectSetInteger(0,"tp2 Line" ,OBJPROP_SELECTABLE,false);
-
-      }
-      else
-      {
-          ObjectMove("tp2 Line",0, Time[0],FiboTakeProfit2);
-          ObjectSet("tp2 Line", OBJPROP_COLOR, c);
-      }
-         //----
-      if (ObjectFind("tp3") != 0)
-      {
-         ObjectCreate("tp3", OBJ_TEXT, 0, Time[0], FiboTakeProfit3);
-         ObjectSet("tp3", OBJPROP_COLOR, c);
-         ObjectSetText("tp3", " PROFIT TARGET 3", 8, "Arial");
-		 ObjectSetInteger(0,"tp3" ,OBJPROP_SELECTABLE,false);
-
-      }
-      else
-      {
-         ObjectSet("tp3",    OBJPROP_TIME1,   Time[0]);
-         ObjectSet("tp3",    OBJPROP_PRICE1,  FiboTakeProfit3);
-         ObjectSet("tp3", OBJPROP_COLOR, c);    
-      }
-         //----
-      if (ObjectFind("tp3 Line") != 0)
-      {
-         ObjectCreate("tp3 Line", OBJ_HLINE, 0, Time[0],FiboTakeProfit3);
-         ObjectSet("tp3 Line", OBJPROP_STYLE, STYLE_DASHDOTDOT);
-         ObjectSet("tp3 Line", OBJPROP_COLOR, c );
-		 ObjectSetInteger(0,""tp3 Line" ,OBJPROP_SELECTABLE,false);
-      }
-      else
-      {
-         ObjectMove("tp3 Line",0, Time[0],FiboTakeProfit3);
-         ObjectSet("tp3 Line", OBJPROP_COLOR, c);
-      }
-   */
-}
-
-void Fibo_DeleteGraphics(int x) {
-    ObjectDelete("fl" + x);
-    ObjectDelete("fl Line" + x);
-    ObjectDelete("fsl" + x);
-    ObjectDelete("fsl Line" + x);
-    /*   ObjectDelete("tp3");
-       ObjectDelete("tp3 Line");
-       ObjectDelete("tp2");
-       ObjectDelete("tp2 Line");
-       ObjectDelete("tp1");
-       ObjectDelete("tp1 Line");
-       ObjectDelete("fb");
-       ObjectDelete("fb Line");
-    */
-}
-
-
-
-
-
-//-------------------------------------------------------------END PANEL DRAWING------------------------------------------------------------------------
-
-string FormatDateTime(int nYear, int nMonth, int nDay, int nHour, int nMin, int nSec) {
-    string sMonth, sDay, sHour, sMin, sSec;
-    //----
-    sMonth = 100 + nMonth;
-    sMonth = StringSubstr(sMonth, 1);
-    sDay = 100 + nDay;
-    sDay = StringSubstr(sDay, 1);
-    sHour = 100 + nHour;
-    sHour = StringSubstr(sHour, 1);
-    sMin = 100 + nMin;
-    sMin = StringSubstr(sMin, 1);
-    sSec = 100 + nSec;
-    sSec = StringSubstr(sSec, 1);
-    //----
-    return (StringConcatenate(nYear, ".", sMonth, ".", sDay, " ", sHour, ":", sMin, ":", sSec));
-}
-//+------------------------------------------------------------------+
-
-datetime GetTimeLocal() {
-    int TimeArray[4];
-    int nYear, nMonth, nDay, nHour, nMin, nSec;
-
-    GetLocalTime(TimeArray);
-
-    nYear = TimeArray[0] & 0x0000FFFF;
-    nMonth = TimeArray[0] >> 16;
-    nDay = TimeArray[1] >> 16;
-    nHour = TimeArray[2] & 0x0000FFFF;
-    nMin = TimeArray[2] >> 16;
-    nSec = TimeArray[3] & 0x0000FFFF;
-
-    string st = FormatDateTime(nYear, nMonth, nDay, nHour, nMin, nSec);
-    datetime d = StrToTime(st);
-    return (d);
-}
-datetime GetTimeGMT() {
-    int TimeArray[4];
-    int nYear, nMonth, nDay, nHour, nMin, nSec;
-    int TZInfoArray[43];
-    /*
-       
-       GetLocalTime(TimeArray);
-
-       nYear=TimeArray[0]&0x0000FFFF;
-       nMonth=TimeArray[0]>>16;
-       nDay=TimeArray[1]>>16;
-       nHour=TimeArray[2]&0x0000FFFF;
-       nMin=TimeArray[2]>>16;
-       nSec=TimeArray[3]&0x0000FFFF;
-       
-       string st = FormatDateTime(nYear,nMonth,nDay,nHour,nMin,nSec);
-       datetime d = StrToTime(st);
-    */
-
-    int gmt_shift = 0;
-    int ret = GetTimeZoneInformation(TZInfoArray);
-    if (ret != 0) gmt_shift = TZInfoArray[0];
-    if (ret == 2) gmt_shift += TZInfoArray[42];
-    return (CurrentTime + gmt_shift * 60);
-}
-
-datetime ToDate(string stDate, string stTime) {
-    string syear = StringSubstr(stDate, 6, 4);
-
-    string smonth;
-
-    string SMonth = StringSubstr(stDate, 0, 2);
-    smonth= SMonth;
-
-    if (SMonth == "01") smonth = "1";
-    if (SMonth == "02") smonth = "2";
-    if (SMonth == "03") smonth = "3";
-    if (SMonth == "04") smonth = "4";
-    if (SMonth == "05") smonth = "5";
-    if (SMonth == "06") smonth = "6";
-    if (SMonth == "07") smonth = "7";
-    if (SMonth == "08") smonth = "8";
-    if (SMonth == "09") smonth = "9";
-
-    string sday = StringSubstr(stDate, 3, 2);
-    string stime = syear + "." + smonth + "." + sday + " " + stTime;
-    return (StrToTime(stime));
-}
-
-
-string ReturnElapsedTime(datetime time) {
-    string s = "";
-
-    int day = time / (24 * 60 * 60);
-    int remain = time % (24 * 60 * 60);
-    int hour = remain / (60 * 60);
-    int minute = remain % (60 * 60) / 60;
-
-    s = "     Elapsed  : " + day + " Day(s), " + hour + " Hour(s), and " + minute + " Minutes (s).";
-    return (s);
-}
-
-datetime ReturnStartDate() {
-    datetime starttime = TimeCurrent();
-    datetime objecttime;
-
-    int total = OrdersHistoryTotal();
-
-    for (int cnt = 0; cnt < total; cnt++) {
-        if (OrderType() != OP_BUY && OrderType() != OP_SELL) continue;
-        OrderSelect(cnt, SELECT_BY_POS, MODE_HISTORY);
-        objecttime = OrderOpenTime();
-        if (starttime > objecttime) starttime = objecttime;
-    }
-    return (starttime);
-}
-
-string ReturnTextMonth(int m) {
-    string r;
-    switch (m) {
-    case 1:
-        r = "January";
-        break;
-    case 2:
-        r = "February";
-        break;
-    case 3:
-        r = "March";
-        break;
-    case 4:
-        r = "April";
-        break;
-    case 5:
-        r = "May";
-        break;
-    case 6:
-        r = "June";
-        break;
-    case 7:
-        r = "July";
-        break;
-    case 8:
-        r = "August";
-        break;
-    case 9:
-        r = "September";
-        break;
-    case 10:
-        r = "October";
-        break;
-    case 11:
-        r = "November";
-        break;
-    case 12:
-        r = "December";
-        break;
-    default:
-        r = "---";
-    }
-    return (r);
-}
-
-datetime ReturnStartMonth(datetime dt, int shift = 0) {
-    int i, y, m;
-
-    if (dt == 0) dt = TimeCurrent();
-
-    y = TimeYear(dt);
-    m = TimeMonth(dt);
-
-    while (shift != 0) {
-        if (shift > 0) {
-            shift--;
-            m++;
-            if (m > 12) {
-                m = 1;
-                y++;
-            }
-        }
-        if (shift < 0) {
-            shift++;
-            m--;
-            if (m < 1) {
-                m = 12;
-                y--;
-            }
-        }
-    }
-
-    dt = StrToTime(y + "." + m + ".1");
-
-    return (dt);
-}
-
-datetime ReturnStartWeek(datetime dt, int shift = 0) {
-    datetime r;
-
-    r = dt + shift * PERIOD_W1 * 60;
-
-    r = r / (PERIOD_D1 * 60);
-    r = r * (PERIOD_D1 * 60); // - çäåñü ïîëó÷èëè âðåìÿ íà÷àëà äíÿ
-
-    switch (TimeDayOfWeek(r)) {
-    case 1:
-        break;
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-        r = r - (PERIOD_D1 * 60) * (TimeDayOfWeek(r) - 1);
-        break;
-    case 0:
-        r = r - (PERIOD_D1 * 60) * 6;
-        break;
-    }
-    return (r);
-}
-
-int ReturnWeekOfMonth() {
-
-    datetime StartMonthDate = StrToTime(Year() + "." + Month() + ".1");
-    int WeekDay = TimeDayOfWeek(StartMonthDate);
-
-    int AddOn = 8 - WeekDay;
-    int Week1 = AddOn;
-    int Week2 = Week1 + 7;
-    int Week3 = Week2 + 7;
-    int Week4 = Week3 + 7;
-    int Week5 = Week4 + 7;
-    int Week6 = Week5 + 7;
-
-    int CurrentDay = Day();
-
-    if (CurrentDay < Week1) return (1);
-    if (CurrentDay < Week2) return (2);
-    if (CurrentDay < Week3) return (3);
-    if (CurrentDay < Week4) return (4);
-    if (CurrentDay < Week5) return (5);
-    else return (6);
-
-    return (-1);
-
-}
-
-int ReturnDayOccurenceInMonth() {
-
-    int day = Day();
-
-    int oday = 1;
-
-    while (day - 7 > 0) {
-        oday++;
-        day -= 7;
-    }
-    return (oday);
-}
 
 //----------------------------------------------------------------------------MONEY MANAGEMENT----------------------------------------------------------------------------------
 void ReloadMM() {
@@ -16299,6 +14622,7 @@ int LoadNews() {
     double incr = 0.0005;
     double y;
     string font;
+    int corner;
 
     if (TestMode)
         return;
@@ -16493,7 +14817,7 @@ void ReloadPanel() {
 
 int LoadPanel() {
     O_NbrVObject = 0;
-    ResetSignalFilters();
+    ResetSignalFilters(O_NbrObject);
 
     DownloadFile("PG_Panel.csv", "PG_Panel_" + SYS_SYMBOL);
 
@@ -16561,12 +14885,12 @@ int LoadPanel() {
             int id = StrToInteger(FileReadString(file));
             if (id == 0) {
                 string sobject = FileReadString(file);
-                int ind = Object2Index(sobject);
+                int ind = Object2Index(O_NbrObject, sobject);
                 if (ind != -1) {
                     P_ObjOrder[z] = ind;
                     string pname = FileReadString(file);
                     P_ObjName[ind] = pname;
-                    SetSignalFilter(1, Object2Id(sobject), -1, -1, 0);
+                    SetSignalFilter(O_NbrObject, 1, Object2Id(O_NbrObject, sobject), -1, -1, 0);
                     z++;
                 }
                 else
@@ -16583,7 +14907,7 @@ int LoadPanel() {
             sobject = FileReadString(file);
             if (sobject != "") {
                 //Print (sobject);
-                ind = SysObject2Index(sobject);
+                ind = SysObject2Index(O_NbrSysObject, sobject);
 
                 //Print (ind);
                 if (ind != lastind) {
@@ -16631,7 +14955,7 @@ int LoadAlerts() {
 
         // objects  
         string SObject = FileReadString(file);
-        int Object = Object2Id(SObject);
+        int Object = Object2Id(O_NbrObject, SObject);
         if (Object == -1) {
             PG_Print("Unknow Object name : " + SObject, NO_SEND);
             i = 0;
@@ -16815,7 +15139,7 @@ int LoadFilters() {
     }
     while (!FileIsEnding(file)) {
         string sobject = FileReadString(file);
-        int ObjectId = Object2Id(sobject);
+        int ObjectId = Object2Id(O_NbrObject, sobject);
         SetSignalFilter(1, ObjectId, -1, -1, 0);
     }
     FileClose(file);
@@ -16910,3 +15234,1275 @@ void SetSystemObjects (int x)
 {
 
 }
+
+
+//////////////////////////////////////////////////////////////// GRAPHICS  /////////////////////////////////////////////////////////////////
+
+//-------------------------------------------------------------BEGIN PANEL DRAWING------------------------------------------------------------------------
+
+int InitGraphics() {
+    MainPanel_InitGraphics(right_up_corner);
+    Panel_InitGraphics();
+    return (0);
+}
+
+void DeleteGraphics() {
+    MainPanel_DeleteGraphics();
+    News_DeleteGraphics(100);
+    Panel_DeleteGraphics();
+
+}
+//PATTERNS
+
+
+
+void SObjectCreate(string Name, datetime time, double price, color Color, int x) {
+    int size = 8;
+    if (x >= P_D1) size = 10;
+
+    ObjectCreate(Name, OBJ_TEXT, 0, time, price);
+    ObjectSet(Name, OBJPROP_PRICE1, price);
+    ObjectSet(Name, OBJPROP_TIME1, time);
+    ObjectSetText(Name, Name, size, "Times New Roman", Color);
+    ObjectSetInteger(0, Name, OBJPROP_SELECTABLE, false);
+
+}
+
+string GetName(string aName, int period) {
+    return (PeriodName[period] + " " + aName);
+}
+
+void Draw_Patterns(int x, int & CumOffset) {
+    int Pointer_Offset = 0; // The offset value for the arrow to be located off the candle high or low point.
+    int High_Offset = 0; // The offset value added to the high arrow pointer for correct plotting of the pattern label.
+    //  int  CumOffset = 0;              // The counter value to be added to as more candle types are met.
+    int IncOffset = 0; // The offset value that is added to a cummaltive offset value for each pass through the routine so any 
+
+    switch (PeriodIndex[x]) {
+    case 1:
+        Pointer_Offset = 20;
+        High_Offset = 15;
+        IncOffset = 16;
+        break;
+    case 5:
+        Pointer_Offset = 40;
+        High_Offset = 15;
+        IncOffset = 16;
+        break;
+    case 15:
+        Pointer_Offset = 60;
+        High_Offset = 15;
+        IncOffset = 16;
+        break;
+    case 30:
+        Pointer_Offset = 80;
+        High_Offset = 15;
+        IncOffset = 16;
+        break;
+    case 60:
+        Pointer_Offset = 100;
+        High_Offset = 20;
+        IncOffset = 16;
+        break;
+    case 240:
+        Pointer_Offset = 120;
+        High_Offset = 40;
+        IncOffset = 16;
+        break;
+    case 1440:
+        Pointer_Offset = 140;
+        High_Offset = 80;
+        IncOffset = 16;
+        break;
+    case 10080:
+        Pointer_Offset = 160;
+        High_Offset = 35;
+        IncOffset = 16;
+        break;
+    case 43200:
+        Pointer_Offset = 180;
+        High_Offset = 45;
+        IncOffset = 16;
+        break;
+    }
+
+    int shift1 = 1;
+    //    CumOffset = 0;
+    Pointer_Offset = 20;
+
+    if (AndPS(BAR, S_DOJI, x) && Display_Doji == true) {
+        SObjectCreate(GetName("Doji", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Doji", x));
+
+    // Bearish Patterns  
+
+    if (AndPS(BAR, S_BEAR_QUAD, x) && Display_Bear_Quad == true) {
+        SObjectCreate(GetName("Bear Quad", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Bear Quad", x));
+
+    if (AndPS(BAR, S_BEAR_SHOOTING_STAR, x) && Display_ShootStar_2 == true) {
+        SObjectCreate(GetName("Shooting Star", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Shooting Star", x));
+
+    if (AndPS(BAR, S_BEAR_SHOOTING_STAR1, x) && Display_ShootStar_3 == true) {
+        SObjectCreate(GetName("Shooting Star 1", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Shooting Star 1", x));
+
+    if (AndPS(BAR, S_BEAR_SHOOTING_STAR2, x) && Display_ShootStar_4 == true) {
+        SObjectCreate(GetName("Shooting Star 2", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Shooting Star 2", x));
+
+    if (AndPS(BAR, S_BEAR_EVENING_STAR, x) && Display_Stars == true) {
+        SObjectCreate(GetName("Evening Star", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Evening Star", x));
+
+    if (AndPS(BAR, S_BEAR_EVENING_DOJI_STAR, x) && Display_Doji == true) {
+        SObjectCreate(GetName("Evening Doji Star", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Evening Doji Star", x));
+
+    if (AndPS(BAR, S_BEAR_DARK_CLOUD_COVER, x) && Display_Dark_Cloud_Cover == true) {
+        SObjectCreate(GetName("Dark Cloud Cover", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Dark Cloud Cover", x));
+
+    if (AndPS(BAR, S_BEAR_ENGULFING, x) && Display_Bearish_Engulfing == true) {
+        SObjectCreate(GetName("Bear Engulfing", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Bear Engulfing", x));
+
+    if (AndPS(BAR, S_BEAR_HARAMI, x) && Display_Harami == true) {
+        SObjectCreate(GetName("Bear Harami", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Bear Harami", x));
+
+    if (AndPS(BAR, S_BEAR_HANGING_MAN2, x) && Display_Hanging_Man_Hammer == true) {
+        SObjectCreate(GetName("Hangin Man", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Hangin Man", x));
+
+    if (AndPS(BAR, S_BEAR_THREE_INSIDE_DOWN, x) && Display_Three_Inside_Down == true) {
+        SObjectCreate(GetName("3 Inside Down", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("3 Inside Down", x));
+
+    if (AndPS(BAR, S_BEAR_THREE_OUTSIDE_DOWN, x) && Display_Three_Outside_Down == true) {
+        SObjectCreate(GetName("3 Outside Down", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("3 Outside Down", x));
+
+    if (AndPS(BAR, S_BEAR_THREE_BLACK_CROWS, x) && Display_Three_Black_Crows == true) {
+        SObjectCreate(GetName("3 Black Crows", x), Time[shift1], High[shift1] + (Pointer_Offset + CumOffset) * SYS_POINT, Red, x);
+        CumOffset = CumOffset + IncOffset;
+        downArrow[shift1] = High[shift1] + (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("3 Black Crows", x));
+
+    // End of Bearish Patterns
+
+    // Bullish Patterns
+    if (AndPS(BAR, S_BULL_QUAD, x) && Display_Bull_Quad == true) {
+        SObjectCreate(GetName("Bull Quad", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Bull Quad", x));
+
+    if (AndPS(BAR, S_BULL_HAMMER, x) && Display_Hammer_2 == true) {
+        SObjectCreate(GetName("Hammer", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Hammer", x));
+
+    if (AndPS(BAR, S_BULL_HAMMER1, x) && Display_Hammer_3 == true) {
+        SObjectCreate(GetName("Hammer 1", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Hammer 1", x));
+
+    if (AndPS(BAR, S_BULL_HAMMER2, x) && Display_Hammer_4 == true) {
+        SObjectCreate(GetName("Hammer 2", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Hammer 2", x));
+
+    if (AndPS(BAR, S_BULL_MORNING_STAR, x) && Display_Stars == true) {
+        SObjectCreate(GetName("Morning Star", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Morning Star", x));
+
+    if (AndPS(BAR, S_BULL_MORNING_DOJI_STAR, x) && Display_Doji == true) {
+        SObjectCreate(GetName("Morning Doji", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Morning Doji", x));
+
+    if (AndPS(BAR, S_BULL_PIERCING_LINE, x) && Display_Piercing_Line == true) {
+        SObjectCreate(GetName("Piercing Line", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Piercing Line", x));
+
+    if (AndPS(BAR, S_BULL_ENGULFING, x) && Display_Bullish_Engulfing) {
+        SObjectCreate(GetName("Bull Engulfing", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Bull Engulfing", x));
+
+    if (AndPS(BAR, S_BULL_INVERTED_HAMMER, x) && Display_I_Hammer_S_Star) {
+        SObjectCreate(GetName("Inverted Hammer", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Inverted Hammer", x));
+
+    if (AndPS(BAR, S_BULL_THREE_OUTSIDE_UP, x) && Display_Three_Outside_Up == true) {
+        SObjectCreate(GetName("3 Outside Up", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("3 Outside Up", x));
+
+    if (AndPS(BAR, S_BULL_HARAMI, x) && Display_Harami == true) {
+        SObjectCreate(GetName("Bull Harami", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("Bull Harami", x));
+
+    if (AndPS(BAR, S_BULL_THREE_INSIDE_UP, x) && Display_Three_Inside_Up == true) {
+        SObjectCreate(GetName("3 Inside Up", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("3 Inside Up", x));
+
+    if (AndPS(BAR, S_BULL_THREE_WHITE_SOLDIERS, x) && Display_Three_White_Soldiers == true) {
+        SObjectCreate(GetName("3 White Soldiers", x), Time[shift1], Low[shift1] - (Pointer_Offset + CumOffset) * SYS_POINT, Turquoise, x);
+        CumOffset = CumOffset + IncOffset;
+        upArrow[shift1] = Low[shift1] - (Pointer_Offset * SYS_POINT);
+    } else
+        ObjectDelete(GetName("3 White Soldiers", x));
+
+    return (0);
+}
+
+void Patterns_DrawGraphics(int x) {
+    int CurrentPeriod = Period2Int(_Period);
+    if (!GraphicMode) return;
+
+    //   if (CurrentPeriod > x) return;
+    int CumOffset = 0;
+    Draw_Patterns(x, CumOffset);
+}
+
+void Patterns_DeleteGraphics(int x) {
+    int CumOffset = 0;
+    ObjectDelete(GetName("Doji", x));
+
+    ObjectDelete(GetName("Shooting Star 1", x));
+    ObjectDelete(GetName("Shooting Star 2", x));
+    ObjectDelete(GetName("Shooting Star", x));
+    ObjectDelete(GetName("Evening Star", x));
+    ObjectDelete(GetName("Evening Doji Star", x));
+    ObjectDelete(GetName("Dark Cloud Cover", x));
+    ObjectDelete(GetName("Bear Engulfing", x));
+    ObjectDelete(GetName("Bear Harami", x));
+    ObjectDelete(GetName("Hangin Man", x));
+    ObjectDelete(GetName("3 Inside Down", x));
+    ObjectDelete(GetName("3 Outside Down", x));
+    ObjectDelete(GetName("3 Black Crows", x));
+
+    ObjectDelete(GetName("Hammer", x));
+    ObjectDelete(GetName("Hammer 1", x));
+    ObjectDelete(GetName("Hammer 2", x));
+    ObjectDelete(GetName("Morning Star", x));
+    ObjectDelete(GetName("Morning Doji", x));
+    ObjectDelete(GetName("Piercing Line", x));
+    ObjectDelete(GetName("Bull Engulfing", x));
+    ObjectDelete(GetName("Bull Harami", x));
+    ObjectDelete(GetName("Inverted Hammer", x));
+    ObjectDelete(GetName("3 Outside Up", x));
+    ObjectDelete(GetName("3 Inside Up", x));
+    ObjectDelete(GetName("3 White Soldiers", x));
+
+    ObjectDelete(GetName("Bear Quad", x));
+    ObjectDelete(GetName("Bull Quad", x));
+}
+
+// SR GRAPHICS
+
+void SR_InitGraphics(int x, int up) {
+    int currentperiod = Period2Int(_Period);
+    if (!GraphicMode) return;
+    if (currentperiod > x) return;
+    if (up) {
+        ObjectCreate("FractalResistanceLine" + "," + PeriodName[x], OBJ_TREND, 0, 0, 0);
+        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
+        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_STYLE, Style[x]);
+        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_WIDTH, Width[x]);
+        ObjectSetInteger(0, "FractalResistanceLine" + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+
+        ObjectCreate("FractalResistanceText" + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0, 0);
+        ObjectSet("FractalResistanceText" + "," + PeriodName[x], OBJPROP_CORNER, 1);
+        ObjectSetText("FractalResistanceText" + "," + PeriodName[x], PeriodName[x], 8, "Tahoma", ResistanceColor);
+        ObjectSetInteger(0, "FractalResistanceText" + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+
+    } else {
+        ObjectCreate("FractalSupportText" + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0, 0);
+        ObjectSet("FractalSupportText" + "," + PeriodName[x], OBJPROP_CORNER, 1);
+        ObjectSetText("FractalSupportText" + "," + PeriodName[x], PeriodName[x], 8, "Tahoma", SupportColor);
+        ObjectSetInteger(0, "FractalSupportText" + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+
+        ObjectCreate("FractalSupportLine" + "," + PeriodName[x], OBJ_TREND, 0, 0, 0);
+        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
+        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_STYLE, Style[x]);
+        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_WIDTH, Width[x]);
+        ObjectSetInteger(0, "FractalSupportLine" + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+    }
+    return;
+}
+
+void SR_DrawGraphics(int x, int up) {
+    int currentperiod = Period2Int(_Period);
+    if (!GraphicMode) return;
+
+    if (currentperiod > x) return;
+    if (up) {
+        datetime rtime1 = ReturnBestTime(currentperiod, x, MODE_UPPER, 1);
+        datetime rtime0 = ReturnBestTime(currentperiod, x, MODE_UPPER, 0);
+        double rprice1 = iHigh(NULL, PeriodIndex[x], Last2UpFractals[1][x]);
+        double rprice0 = iHigh(NULL, PeriodIndex[x], Last2UpFractals[0][x]);
+
+        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_PRICE1, rprice1);
+        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_TIME1, rtime1);
+        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_PRICE2, rprice0);
+        ObjectSet("FractalResistanceLine" + "," + PeriodName[x], OBJPROP_TIME2, rtime0);
+    } else {
+        datetime stime1 = ReturnBestTime(currentperiod, x, MODE_LOWER, 1);
+        datetime stime0 = ReturnBestTime(currentperiod, x, MODE_LOWER, 0);
+        double sprice1 = iLow(NULL, PeriodIndex[x], Last2DownFractals[1][x]);
+        double sprice0 = iLow(NULL, PeriodIndex[x], Last2DownFractals[0][x]);
+
+        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_PRICE1, sprice1);
+        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_TIME1, stime1);
+        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_PRICE2, sprice0);
+        ObjectSet("FractalSupportLine" + "," + PeriodName[x], OBJPROP_TIME2, stime0);
+
+        ObjectSet("FractalResistanceText" + "," + PeriodName[x], OBJPROP_PRICE1, ResistanceLevel(x, 0));
+        ObjectSet("FractalResistanceText" + "," + PeriodName[x], OBJPROP_TIME1, iTime(NULL, PeriodIndex[currentperiod], 0));
+        ObjectSet("FractalSupportText" + "," + PeriodName[x], OBJPROP_PRICE1, SupportLevel(x, 0));
+        ObjectSet("FractalSupportText" + "," + PeriodName[x], OBJPROP_TIME1, iTime(NULL, PeriodIndex[currentperiod], 0));
+    }
+}
+
+void SR_DeleteGraphics(int x, int up) {
+    if (up) {
+        ObjectDelete("FractalResistanceText" + "," + PeriodName[x]);
+        ObjectDelete("FractalResistanceLine" + "," + PeriodName[x]);
+    } else {
+        ObjectDelete("FractalSupportText" + "," + PeriodName[x]);
+        ObjectDelete("FractalSupportLine" + "," + PeriodName[x]);
+    }
+    return;
+}
+
+void FractalsTarget_InitGraphics(int x, int up) {
+    int currentperiod = Period2Int(_Period);
+    if (!GraphicMode) return;
+
+    //	if (currentperiod > x) return;
+    if (up) {
+        ObjectCreate("UpFractalTarget," + PeriodName[x] + " " + x, OBJ_ARROW, 0, 0, 0);
+        ObjectSet("UpFractalTarget," + PeriodName[x] + " " + x, OBJPROP_ARROWCODE, SYMBOL_LEFTPRICE);
+        ObjectSet("UpFractalTarget," + PeriodName[x] + " " + x, OBJPROP_COLOR, ResistanceColor);
+    } else {
+        ObjectCreate("DownFractalTarget," + PeriodName[x] + " " + x, OBJ_ARROW, 0, 0, 0);
+        ObjectSet("DownFractalTarget," + PeriodName[x] + " " + x, OBJPROP_ARROWCODE, SYMBOL_LEFTPRICE);
+        ObjectSet("DownFractalTarget," + PeriodName[x] + " " + x, OBJPROP_COLOR, SupportColor);
+    }
+
+}
+
+void FractalsTarget_DrawGraphics(int x, int up) {
+    int currentperiod = Period2Int(_Period);
+    if (!GraphicMode) return;
+
+    //  if (currentperiod > x) return;
+
+    if (up && AndS(UPFRACTAL, S_ABOVE, x) != 0) {
+        ObjectSet("UpFractalTarget," + PeriodName[x] + " " + x, OBJPROP_TIME1, iTime(NULL, PeriodIndex[currentperiod], 0));
+        ObjectSet("UpFractalTarget," + PeriodName[x] + " " + x, OBJPROP_PRICE1, iHigh(NULL, PeriodIndex[x], NextUpFractals[x]));
+    } else
+    if (!up && AndS(DOWNFRACTAL, S_BELOW, x) != 0) {
+        ObjectSet("DownFractalTarget," + PeriodName[x] + " " + x, OBJPROP_TIME1, iTime(NULL, PeriodIndex[currentperiod], 0));
+        ObjectSet("DownFractalTarget," + PeriodName[x] + " " + x, OBJPROP_PRICE1, iLow(NULL, PeriodIndex[x], NextDownFractals[x]));
+    } else {
+        if (up) {
+            ObjectSet("UpFractalTarget," + PeriodName[x] + " " + x, OBJPROP_TIME1, 0);
+            ObjectSet("UpFractalTarget," + PeriodName[x] + " " + x, OBJPROP_PRICE1, 0);
+        } else {
+            ObjectSet("DownFractalTarget," + PeriodName[x] + " " + x, OBJPROP_TIME1, 0);
+            ObjectSet("DownFractalTarget," + PeriodName[x] + " " + x, OBJPROP_PRICE1, 0);
+        }
+    }
+}
+
+void FractalsTarget_DeleteGraphics(int x, int up) {
+    if (up) {
+        ObjectDelete("UpFractalTarget," + PeriodName[x] + " " + x);
+    } else {
+        ObjectDelete("DownFractalTarget," + PeriodName[x] + " " + x);
+    }
+    return;
+}
+
+void Fractals_InitGraphics(int x, int up) {
+    int currentperiod = Period2Int(_Period);
+    if (!GraphicMode) return;
+
+    //if (currentperiod > x) return;
+    int width = 1;
+
+    if (x >= P_D1) width = 3;
+
+    if (up) {
+        ObjectCreate("FractalUpLine" + "," + PeriodName[x], OBJ_HLINE, 0, 0, 0);
+        ObjectSet("FractalUpLine" + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
+        ObjectSet("FractalUpLine" + "," + PeriodName[x], OBJPROP_STYLE, HStyle[x]);
+        ObjectSet("FractalUpLine" + "," + PeriodName[x], OBJPROP_WIDTH, width);
+        ObjectCreate("FractalUpText" + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0, 0);
+        ObjectSetText("FractalUpText" + "," + PeriodName[x], PeriodName[x], 10, "Arial", ResistanceColor);
+        ObjectSetInteger(0, "FractalUpText" + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+
+    } else {
+
+        ObjectCreate("FractalDownLine" + "," + PeriodName[x], OBJ_HLINE, 0, 0, 0);
+        ObjectSet("FractalDownLine" + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
+        ObjectSet("FractalDownLine" + "," + PeriodName[x], OBJPROP_STYLE, HStyle[x]);
+        ObjectSet("FractalDownLine" + "," + PeriodName[x], OBJPROP_WIDTH, width);
+        ObjectCreate("FractalDownText" + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0, 0);
+        ObjectSetText("FractalDownText" + "," + PeriodName[x], PeriodName[x], 10, "Arial", SupportColor);
+        ObjectSetInteger(0, "FractalDownText" + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+
+    }
+    return;
+}
+
+void Fractals_DrawGraphics(int x, int up) {
+    int currentperiod = Period2Int(_Period);
+    if (!GraphicMode) return;
+
+    //  if (currentperiod > x) return;
+    if (up && UpFractals[x] != -1) {
+        ObjectSet("FractalUpLine" + "," + PeriodName[x], OBJPROP_PRICE1, iHigh(NULL, PeriodIndex[x], UpFractals[x]));
+        ObjectSet("FractalUpText" + "," + PeriodName[x], OBJPROP_PRICE1, iHigh(NULL, PeriodIndex[x], UpFractals[x]));
+        ObjectSet("FractalUpText" + "," + PeriodName[x], OBJPROP_TIME1, Time[0] + 360);
+    } else
+    if (!up && DownFractals[x] != -1) {
+        ObjectSet("FractalDownLine" + "," + PeriodName[x], OBJPROP_PRICE1, iLow(NULL, PeriodIndex[x], DownFractals[x]));
+        ObjectSet("FractalDownText" + "," + PeriodName[x], OBJPROP_PRICE1, iLow(NULL, PeriodIndex[x], DownFractals[x]));
+        ObjectSet("FractalDownText" + "," + PeriodName[x], OBJPROP_TIME1, Time[0] + 360);
+    }
+}
+
+void Fractals_DeleteGraphics(int x, int up) {
+    if (up) {
+        ObjectDelete("FractalUpText" + "," + PeriodName[x]);
+        ObjectDelete("FractalUpLine" + "," + PeriodName[x]);
+    } else {
+        ObjectDelete("FractalDownLine" + "," + PeriodName[x]);
+        ObjectDelete("FractalDownText" + "," + PeriodName[x]);
+    }
+    return;
+}
+
+// PIVOTS GRAPHICS
+
+void Pivots_InitGraphics(int x) {
+    int currentperiod = Period2Int(_Period);
+    if (!GraphicMode) return;
+
+    if (currentperiod > x) return;
+    int Nbr = 3;
+
+    int linewidth = 1;
+
+    if (x > P_D1) linewidth = 2;
+
+    //   if (x >= P_D1) Nbr = 3;
+    for (int shift = 1; shift <= Nbr; shift++) {
+        ObjectCreate("PivotHighLine" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotHighLine" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, LimeGreen);
+        ObjectSet("PivotHighLine" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotHighLine" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotHighLine" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotHighLineR" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotHighLineR" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, LimeGreen);
+        ObjectSet("PivotHighLineR" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotHighLineR" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotHighLineR" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotLowLine" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotLowLine" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, LimeGreen);
+        ObjectSet("PivotLowLine" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotLowLine" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotLowLine" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotLowLineR" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotLowLineR" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, LimeGreen);
+        ObjectSet("PivotLowLineR" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotLowLineR" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotLowLineR" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotLine" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotLine" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, Yellow);
+        ObjectSet("PivotLine" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotLine" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotLine" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotLineR" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotLineR" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, Yellow);
+        ObjectSet("PivotLineR" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotLineR" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotLineR" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotResistanceLine" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotResistanceLine" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
+        ObjectSet("PivotResistanceLine" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotResistanceLine" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotResistanceLine" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotResistanceLineR" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotResistanceLineR" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
+        ObjectSet("PivotResistanceLineR" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotResistanceLineR" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotResistanceLineR" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotResistanceLine1" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotResistanceLine1" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
+        ObjectSet("PivotResistanceLine1" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotResistanceLine1" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotResistanceLine1" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
+        ObjectSet("PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotResistanceLine2" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotResistanceLine2" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
+        ObjectSet("PivotResistanceLine2" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotResistanceLine2" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotResistanceLine2" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, ResistanceColor);
+        ObjectSet("PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotSupportLine" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotSupportLine" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
+        ObjectSet("PivotSupportLine" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotSupportLine" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotSupportLine" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotSupportLineR" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotSupportLineR" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
+        ObjectSet("PivotSupportLineR" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotSupportLineR" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotSupportLineR" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotSupportLine1" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotSupportLine1" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
+        ObjectSet("PivotSupportLine1" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotSupportLine1" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotSupportLine1" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotSupportLine1R" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotSupportLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
+        ObjectSet("PivotSupportLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotSupportLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotSupportLine1R" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotSupportLine2" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotSupportLine2" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
+        ObjectSet("PivotSupportLine2" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotSupportLine2" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotSupportLine2" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotSupportLine2R" + " " + shift + "," + PeriodName[x], OBJ_TREND, 0, 0, 0, 0, 0);
+        ObjectSet("PivotSupportLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_COLOR, SupportColor);
+        ObjectSet("PivotSupportLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_WIDTH, linewidth);
+        ObjectSetInteger(0, "PivotSupportLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotSupportLine2R" + " " + shift + "," + PeriodName[x], OBJPROP_RAY_RIGHT, false);
+
+        ObjectCreate("PivotTextLow" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
+        ObjectCreate("PivotTextHigh" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
+        ObjectCreate("PivotText" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0);
+        ObjectCreate("PivotTextResistance" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
+        ObjectCreate("PivotTextSupport" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
+        ObjectCreate("PivotTextResistance1" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
+        ObjectCreate("PivotTextSupport1" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
+        ObjectCreate("PivotTextResistance2" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
+        ObjectCreate("PivotTextSupport2" + " " + shift + "," + PeriodName[x], OBJ_TEXT, 0, 0, 0, 0);
+        ObjectSetInteger(0, "PivotTextLow" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotTextHigh" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotText" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotTextResistance" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotTextSupport" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotTextResistance1" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotTextSupport1" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotTextResistance2" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+        ObjectSetInteger(0, "PivotTextSupport2" + " " + shift + "," + PeriodName[x], OBJPROP_SELECTABLE, false);
+    }
+}
+
+void Pivots_DrawGraphics(int x) {
+    string timeframe_prefix = "";
+    int currentperiod = Period2Int(_Period);
+    if (!GraphicMode) return;
+
+    if (currentperiod > x) return;
+
+    if (x == P_D1) timeframe_prefix = "D1 ";
+    else
+    if (x == P_W1) timeframe_prefix = "W1 ";
+    else
+    if (x == P_MN) timeframe_prefix = "MN ";
+    else
+    if (x == P_H4) timeframe_prefix = "H4 ";
+    else
+    if (x == P_H1) timeframe_prefix = "H1 ";
+    else
+    if (x == P_M30) timeframe_prefix = "M30 ";
+    else
+    if (x == P_M15) timeframe_prefix = "M15 ";
+    else
+    if (x == P_M5) timeframe_prefix = "M5 ";
+    else
+    if (x == P_M1) timeframe_prefix = "M1 ";
+
+    int Nbr = 3;
+    double totime, fromtime;
+
+    if (x >= P_D1) Nbr = 3;
+
+    for (int shift = 1; shift <= Nbr; shift++) {
+        if (shift == 1) {
+            totime = Time[0];
+            fromtime = iTime(NULL, PeriodIndex[x], 0);
+        } else
+        if (shift == 2) {
+            totime = iTime(NULL, PeriodIndex[x], 0) - PeriodIndex[currentperiod];
+            fromtime = iTime(NULL, PeriodIndex[x], 1);
+        } else
+        if (shift == 3) {
+            totime = iTime(NULL, PeriodIndex[x], 1) - PeriodIndex[currentperiod];
+            fromtime = iTime(NULL, PeriodIndex[x], 2);
+        }
+
+        ObjectMove("PivotHighLine" + " " + shift + "," + PeriodName[x], 1, fromtime, LastHigh[shift][x]);
+        ObjectMove("PivotLowLine" + " " + shift + "," + PeriodName[x], 1, fromtime, LastLow[shift][x]);
+        ObjectMove("PivotLine" + " " + shift + "," + PeriodName[x], 1, fromtime, LastPivotPoint[shift][x]);
+        ObjectMove("PivotResistanceLine" + " " + shift + "," + PeriodName[x], 1, fromtime, LastResistance[shift][x]);
+        ObjectMove("PivotSupportLine" + " " + shift + "," + PeriodName[x], 1, fromtime, LastSupport[shift][x]);
+        ObjectMove("PivotResistanceLine1" + " " + shift + "," + PeriodName[x], 1, fromtime, LastResistance1[shift][x]);
+        ObjectMove("PivotSupportLine1" + " " + shift + "," + PeriodName[x], 1, fromtime, LastSupport1[shift][x]);
+        ObjectMove("PivotResistanceLine2" + " " + shift + "," + PeriodName[x], 1, fromtime, LastResistance2[shift][x]);
+        ObjectMove("PivotSupportLine2" + " " + shift + "," + PeriodName[x], 1, fromtime, LastSupport2[shift][x]);
+
+        ObjectMove("PivotHighLine" + " " + shift + "," + PeriodName[x], 0, totime, LastHigh[shift][x]);
+        ObjectMove("PivotLowLine" + " " + shift + "," + PeriodName[x], 0, totime, LastLow[shift][x]);
+        ObjectMove("PivotLine" + " " + shift + "," + PeriodName[x], 0, totime, LastPivotPoint[shift][x]);
+        ObjectMove("PivotResistanceLine" + " " + shift + "," + PeriodName[x], 0, totime, LastResistance[shift][x]);
+        ObjectMove("PivotSupportLine" + " " + shift + "," + PeriodName[x], 0, totime, LastSupport[shift][x]);
+        ObjectMove("PivotResistanceLine1" + " " + shift + "," + PeriodName[x], 0, totime, LastResistance1[shift][x]);
+        ObjectMove("PivotSupportLine1" + " " + shift + "," + PeriodName[x], 0, totime, LastSupport1[shift][x]);
+        ObjectMove("PivotResistanceLine2" + " " + shift + "," + PeriodName[x], 0, totime, LastResistance2[shift][x]);
+        ObjectMove("PivotSupportLine2" + " " + shift + "," + PeriodName[x], 0, totime, LastSupport2[shift][x]);
+        if (shift != 1) {
+
+            ObjectMove("PivotHighLineR" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[currentperiod], LastHigh[shift - 1][x]);
+            ObjectMove("PivotLowLineR" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[currentperiod], LastLow[shift - 1][x]);
+            ObjectMove("PivotLineR" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[currentperiod], LastPivotPoint[shift - 1][x]);
+            ObjectMove("PivotResistanceLineR" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[currentperiod], LastResistance[shift - 1][x]);
+            ObjectMove("PivotSupportLineR" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[currentperiod], LastSupport[shift - 1][x]);
+            ObjectMove("PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[currentperiod], LastResistance1[shift - 1][x]);
+            ObjectMove("PivotSupportLine1R" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[currentperiod], LastSupport1[shift - 1][x]);
+            ObjectMove("PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[currentperiod], LastResistance2[shift - 1][x]);
+            ObjectMove("PivotSupportLine2R" + " " + shift + "," + PeriodName[x], 0, totime + PeriodIndex[currentperiod], LastSupport2[shift - 1][x]);
+
+            ObjectMove("PivotHighLineR" + " " + shift + "," + PeriodName[x], 1, totime, LastHigh[shift][x]);
+            ObjectMove("PivotLowLineR" + " " + shift + "," + PeriodName[x], 1, totime, LastLow[shift][x]);
+            ObjectMove("PivotLineR" + " " + shift + "," + PeriodName[x], 1, totime, LastPivotPoint[shift][x]);
+            ObjectMove("PivotResistanceLineR" + " " + shift + "," + PeriodName[x], 1, totime, LastResistance[shift][x]);
+            ObjectMove("PivotSupportLineR" + " " + shift + "," + PeriodName[x], 1, totime, LastSupport[shift][x]);
+            ObjectMove("PivotResistanceLine1R" + " " + shift + "," + PeriodName[x], 1, totime, LastResistance1[shift][x]);
+            ObjectMove("PivotSupportLine1R" + " " + shift + "," + PeriodName[x], 1, totime, LastSupport1[shift][x]);
+            ObjectMove("PivotResistanceLine2R" + " " + shift + "," + PeriodName[x], 1, totime, LastResistance2[shift][x]);
+            ObjectMove("PivotSupportLine2R" + " " + shift + "," + PeriodName[x], 1, totime, LastSupport2[shift][x]);
+        }
+
+        ObjectMove("PivotTextResistance" + " " + shift + "," + PeriodName[x], 0, fromtime, LastResistance[shift][x]);
+        ObjectMove("PivotTextSupport" + " " + shift + "," + PeriodName[x], 0, fromtime, LastSupport[shift][x]);
+        ObjectMove("PivotTextResistance1" + " " + shift + "," + PeriodName[x], 0, fromtime, LastResistance1[shift][x]);
+        ObjectMove("PivotTextSupport1" + " " + shift + "," + PeriodName[x], 0, fromtime, LastSupport1[shift][x]);
+        ObjectMove("PivotTextResistance2" + " " + shift + "," + PeriodName[x], 0, fromtime, LastResistance2[shift][x]);
+        ObjectMove("PivotTextSupport2" + " " + shift + "," + PeriodName[x], 0, fromtime, LastSupport2[shift][x]);
+        ObjectMove("PivotTextLow" + " " + shift + "," + PeriodName[x], 0, fromtime, LastLow[shift][x]);
+        ObjectMove("PivotTextHigh" + " " + shift + "," + PeriodName[x], 0, fromtime, LastHigh[shift][x]);
+        ObjectMove("PivotText" + " " + shift + "," + PeriodName[x], 0, fromtime, LastPivotPoint[shift][x]);
+
+        ObjectSetText("PivotTextResistance2" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Res3 " + DoubleToString(LastResistance2[shift][x], _Digits) + " (" + DoubleToString((LastResistance2[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", ResistanceColor);
+        ObjectSetText("PivotTextResistance1" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Res2 " + DoubleToString(LastResistance1[shift][x], _Digits) + " (" + DoubleToString((LastResistance1[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", ResistanceColor);
+        ObjectSetText("PivotTextResistance" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Res1 " + DoubleToString(LastResistance[shift][x], _Digits) + " (" + DoubleToString((LastResistance[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", ResistanceColor);
+        ObjectSetText("PivotTextHigh" + " " + shift + "," + PeriodName[x], timeframe_prefix + "High " + DoubleToString(LastHigh[shift][x], _Digits) + " (" + DoubleToString((LastHigh[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", LimeGreen);
+        ObjectSetText("PivotText" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Pivot " + DoubleToString(LastPivotPoint[shift][x], _Digits) + " (" + DoubleToString((LastPivotPoint[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", Yellow);
+        ObjectSetText("PivotTextLow" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Low " + DoubleToString(LastLow[shift][x], _Digits) + " (" + DoubleToString((LastLow[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", LimeGreen);
+        ObjectSetText("PivotTextSupport" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Sup1 " + DoubleToString(LastSupport[shift][x], _Digits) + " (" + DoubleToString((LastSupport[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", SupportColor);
+        ObjectSetText("PivotTextSupport1" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Sup2 " + DoubleToString(LastSupport1[shift][x], _Digits) + " (" + DoubleToString((LastSupport1[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", SupportColor);
+        ObjectSetText("PivotTextSupport2" + " " + shift + "," + PeriodName[x], timeframe_prefix + "Sup3 " + DoubleToString(LastSupport2[shift][x], _Digits) + " (" + DoubleToString((LastSupport2[shift][x] - Close[0]) / SYS_POINT, 1) + " pts)", 7, "Arial", SupportColor);
+    }
+}
+
+void Pivots_DeleteGraphics(int x) {
+    int Nbr = 3;
+
+    if (x >= P_D1) Nbr = 3;
+    for (int shift = 1; shift <= Nbr; shift++) {
+        ObjectDelete("PivotHighLine" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotLowLine" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotLine" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotResistanceLine" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotSupportLine" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotResistanceLine1" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotSupportLine1" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotResistanceLine2" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotSupportLine2" + " " + shift + "," + PeriodName[x]);
+
+        ObjectDelete("PivotHighLineR" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotLowLineR" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotLineR" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotResistanceLineR" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotSupportLineR" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotResistanceLine1R" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotSupportLine1R" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotResistanceLine2R" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotSupportLine2R" + " " + shift + "," + PeriodName[x]);
+
+        ObjectDelete("PivotTextLow" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotTextHigh" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotText" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotTextResistance" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotTextSupport" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotTextResistance1" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotTextSupport1" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotTextResistance2" + " " + shift + "," + PeriodName[x]);
+        ObjectDelete("PivotTextSupport2" + " " + shift + "," + PeriodName[x]);
+    }
+    return;
+}
+// END PIVOTS_GRAPHICS
+
+// FIBO GRAPHICS
+
+void Fibo_InitGraphics(int x) {
+
+}
+
+void Fibo_DrawGraphics(int x) {
+    int currentperiod = Period2Int(_Period);
+    if (!GraphicMode) return;
+
+    if (currentperiod > x) return;
+
+    double FiboLevel = SValue(FIBOLEVEL, S_CURRENT, x);
+    double FiboStopLossLevel = SValue(FIBOSTOPLOSSLEVEL, S_CURRENT, x);
+
+    color c;
+    string s;
+
+    if (AndS(FIBOLEVEL, S_BEAR, x)) {
+        c = Pink;
+        s = " Sell Level " + PeriodName[x];
+    } else {
+        c = PaleGreen;
+        s = " Buy Level " + PeriodName[x];
+    }
+
+    if (ObjectFind("fl" + x) != 0) {
+        ObjectCreate("fl" + x, OBJ_TEXT, 0, Time[0] - _Period * 1700, FiboLevel);
+        ObjectSetText("fl" + x, s, 7, "Arial", c);
+        ObjectSetInteger(0, "fl" + x, OBJPROP_SELECTABLE, false);
+
+    } else {
+        ObjectSet("fl" + x, OBJPROP_TIME1, Time[0] - _Period * 1700);
+        ObjectSet("fl" + x, OBJPROP_PRICE1, FiboLevel);
+        ObjectSet("fl" + x, OBJPROP_COLOR, c);
+        ObjectSetText("fl" + x, s, 7, "Arial", c);
+    }
+    //----
+    if (ObjectFind("fl Line" + x) != 0) {
+        ObjectCreate("fl Line" + x, OBJ_TREND, 0, Time[0], FiboLevel, Time[1], FiboLevel);
+        ObjectSet("fl Line" + x, OBJPROP_STYLE, STYLE_DASHDOT);
+        ObjectSet("fl Line" + x, OBJPROP_COLOR, c);
+        ObjectSetInteger(0, "fl Line" + x, OBJPROP_SELECTABLE, false);
+
+    } else {
+        ObjectMove("fl Line" + x, 0, Time[0], FiboLevel);
+        ObjectMove("fl Line" + x, 1, Time[1], FiboLevel);
+        ObjectSet("fl Line" + x, OBJPROP_COLOR, c);
+    }
+
+    if (ObjectFind("fsl" + x) != 0) {
+        ObjectCreate("fsl" + x, OBJ_TEXT, 0, Time[0] - _Period * 1700, FiboStopLossLevel);
+        ObjectSetText("fsl" + x, " StopLoss Level " + PeriodName[x], 7, "Arial", c);
+        ObjectSetInteger(0, "fsl" + x, OBJPROP_SELECTABLE, false);
+
+    } else {
+        ObjectSet("fsl" + x, OBJPROP_TIME1, Time[0] - _Period * 1700);
+        ObjectSet("fsl" + x, OBJPROP_PRICE1, FiboStopLossLevel);
+        ObjectSet("fsl" + x, OBJPROP_COLOR, c);
+    }
+
+    if (ObjectFind("fsl Line" + x) != 0) {
+        ObjectCreate("fsl Line" + x, OBJ_TREND, 0, Time[0], FiboStopLossLevel, Time[1], FiboStopLossLevel);
+        ObjectSet("fsl Line" + x, OBJPROP_STYLE, STYLE_DASHDOT);
+        ObjectSet("fsl Line" + x, OBJPROP_COLOR, c);
+        ObjectSetInteger(0, "fsl Line" + x, OBJPROP_SELECTABLE, false);
+
+    } else {
+        ObjectMove("fsl Line" + x, 0, Time[0], FiboStopLossLevel);
+        ObjectMove("fsl Line" + x, 1, Time[1], FiboStopLossLevel);
+        ObjectSet("fsl Line" + x, OBJPROP_COLOR, c);
+    }
+
+    /*
+      if (ObjectFind("tp1") != 0)
+      {
+         ObjectCreate("tp1", OBJ_TEXT, 0, Time[0], FiboTakeProfit1);
+         ObjectSet("tp1", OBJPROP_COLOR, c);
+         ObjectSetText("tp1", " PROFIT TARGET 1", 8, "Arial");
+		 ObjectSetInteger(0,"tp1" ,OBJPROP_SELECTABLE,false);
+
+      }
+      else
+      {
+         ObjectSet("tp1",    OBJPROP_TIME1,   Time[0]);
+         ObjectSet("tp1",    OBJPROP_PRICE1,  FiboTakeProfit1);
+         ObjectSet("tp1", OBJPROP_COLOR, c);
+      }
+         //---
+      if (ObjectFind("tp1 Line") != 0)
+      {
+         ObjectCreate("tp1 Line", OBJ_HLINE, 0, Time[0],FiboTakeProfit1);
+         ObjectSet("tp1 Line", OBJPROP_STYLE, STYLE_DASHDOTDOT);
+         ObjectSet("tp1 Line", OBJPROP_COLOR, c );
+		 ObjectSetInteger(0,"tp1 Line" ,OBJPROP_SELECTABLE,false);
+
+      }
+      else
+      {
+         ObjectMove("tp1 Line",0, Time[0],FiboTakeProfit1 );
+         ObjectSet("tp1 Line", OBJPROP_COLOR, c);
+      }
+         //----
+      if(ObjectFind("tp2") != 0)
+      {
+         ObjectCreate("tp2", OBJ_TEXT, 0, Time[0], FiboTakeProfit2);
+         ObjectSet("tp2", OBJPROP_COLOR, c);
+         ObjectSetText("tp2", " PROFIT TARGET 2", 8, "Arial");
+		 ObjectSetInteger(0,"tp2" ,OBJPROP_SELECTABLE,false);
+
+      }
+      else
+      {
+         ObjectSet("tp2",    OBJPROP_TIME1,   Time[0]);
+         ObjectSet("tp2",    OBJPROP_PRICE1,  FiboTakeProfit2);
+         ObjectSet("tp2", OBJPROP_COLOR, c);
+
+      }
+      if (ObjectFind("tp2 Line") != 0)
+      {
+         ObjectCreate("tp2 Line", OBJ_HLINE, 0, Time[0],FiboTakeProfit2);
+         ObjectSet("tp2 Line", OBJPROP_STYLE, STYLE_DASHDOTDOT);
+         ObjectSet("tp2 Line", OBJPROP_COLOR, c );
+		 ObjectSetInteger(0,"tp2 Line" ,OBJPROP_SELECTABLE,false);
+
+      }
+      else
+      {
+          ObjectMove("tp2 Line",0, Time[0],FiboTakeProfit2);
+          ObjectSet("tp2 Line", OBJPROP_COLOR, c);
+      }
+         //----
+      if (ObjectFind("tp3") != 0)
+      {
+         ObjectCreate("tp3", OBJ_TEXT, 0, Time[0], FiboTakeProfit3);
+         ObjectSet("tp3", OBJPROP_COLOR, c);
+         ObjectSetText("tp3", " PROFIT TARGET 3", 8, "Arial");
+		 ObjectSetInteger(0,"tp3" ,OBJPROP_SELECTABLE,false);
+
+      }
+      else
+      {
+         ObjectSet("tp3",    OBJPROP_TIME1,   Time[0]);
+         ObjectSet("tp3",    OBJPROP_PRICE1,  FiboTakeProfit3);
+         ObjectSet("tp3", OBJPROP_COLOR, c);    
+      }
+         //----
+      if (ObjectFind("tp3 Line") != 0)
+      {
+         ObjectCreate("tp3 Line", OBJ_HLINE, 0, Time[0],FiboTakeProfit3);
+         ObjectSet("tp3 Line", OBJPROP_STYLE, STYLE_DASHDOTDOT);
+         ObjectSet("tp3 Line", OBJPROP_COLOR, c );
+		 ObjectSetInteger(0,""tp3 Line" ,OBJPROP_SELECTABLE,false);
+      }
+      else
+      {
+         ObjectMove("tp3 Line",0, Time[0],FiboTakeProfit3);
+         ObjectSet("tp3 Line", OBJPROP_COLOR, c);
+      }
+   */
+}
+
+void Fibo_DeleteGraphics(int x) {
+    ObjectDelete("fl" + x);
+    ObjectDelete("fl Line" + x);
+    ObjectDelete("fsl" + x);
+    ObjectDelete("fsl Line" + x);
+    /*   ObjectDelete("tp3");
+       ObjectDelete("tp3 Line");
+       ObjectDelete("tp2");
+       ObjectDelete("tp2 Line");
+       ObjectDelete("tp1");
+       ObjectDelete("tp1 Line");
+       ObjectDelete("fb");
+       ObjectDelete("fb Line");
+    */
+}
+
+void ResetGraphics() {
+
+    if (GraphicMainPanel == true)
+        MainPanel_InitGraphics(right_up_corner);
+    else
+        MainPanel_DeleteGraphics();
+
+    if (GlobalComment == false)
+        Comment("");
+
+    if (MarketOpening)
+        MarketOpening_InitGraphics();
+    else
+        MarketOpening_DeleteGraphics();
+
+    for (int k = 0; k < NBR_PERIODS; k++) {
+        Pivots_DeleteGraphics(k);
+        Fibo_DeleteGraphics(k);
+        Fractals_DeleteGraphics(k, 1);
+        Fractals_DeleteGraphics(k, 0);
+        SR_DeleteGraphics(k, 1);
+        SR_DeleteGraphics(k, 0);
+        FractalsTarget_DeleteGraphics(k, 1);
+        FractalsTarget_DeleteGraphics(k, 0);
+        Patterns_DeleteGraphics(k);
+
+        if (Panel_Graphic[P_PIVOT] & (1 << k))
+            Pivots_InitGraphics(k);
+        if (Panel_Graphic[P_FIBO] & (1 << k))
+            Fibo_InitGraphics(k);
+        if (Panel_Graphic[P_UPFRACTAL] & (1 << k))
+            Fractals_InitGraphics(k, 1);
+        if (Panel_Graphic[P_DOWNFRACTAL] & (1 << k))
+            Fractals_InitGraphics(k, 0);
+        if (Panel_Graphic[P_SUPPORT] & (1 << k))
+            SR_InitGraphics(k, 0);
+        if (Panel_Graphic[P_RESISTANCE] & (1 << k))
+            SR_InitGraphics(k, 1);
+        if (Panel_Graphic[P_UPFRACTAL_TARGET] & (1 << k))
+            FractalsTarget_InitGraphics(k, 1);
+        if (Panel_Graphic[P_DOWNFRACTAL_TARGET] & (1 << k))
+            FractalsTarget_InitGraphics(k, 0);
+        if (Panel_Graphic[P_PATTERN] & (1 << k))
+            Patterns_InitGraphics(k);
+    }
+}
+
+void DrawGraphics() {
+    if (MarketOpening)
+        MarketOpening_DrawGraphics();
+    for (int k = 0; k < NBR_PERIODS; k++) {
+        if (Panel_Graphic[P_PIVOT] & (1 << k))
+            Pivots_DrawGraphics(k);
+        if (Panel_Graphic[P_FIBO] & (1 << k))
+            Fibo_DrawGraphics(k);
+        if (Panel_Graphic[P_UPFRACTAL] & (1 << k))
+            Fractals_DrawGraphics(k, 1);
+        if (Panel_Graphic[P_DOWNFRACTAL] & (1 << k))
+            Fractals_DrawGraphics(k, 0);
+        if (Panel_Graphic[P_SUPPORT] & (1 << k))
+            SR_DrawGraphics(k, 0);
+        if (Panel_Graphic[P_RESISTANCE] & (1 << k))
+            SR_DrawGraphics(k, 1);
+        if (Panel_Graphic[P_UPFRACTAL_TARGET] & (1 << k))
+            FractalsTarget_DrawGraphics(k, 1);
+        if (Panel_Graphic[P_DOWNFRACTAL_TARGET] & (1 << k))
+            FractalsTarget_DrawGraphics(k, 0);
+        if (Panel_Graphic[P_PATTERN] & (1 << k))
+            Patterns_DrawGraphics(k);
+    }
+}
+
+
+
+void B_InitGraphics(int session) {
+    ObjectCreate("box" + session, OBJ_RECTANGLE, 0, B_StartDate[session], B_Max[session], Time[0], B_Min[session]);
+    ObjectSet("box" + session, OBJPROP_SCALE, 1.0);
+    ObjectSet("box" + session, OBJPROP_BACK, true);
+    ObjectSet("box" + session, OBJPROP_COLOR, C'35,35,35');
+
+    ObjectCreate("borderbox" + session, OBJ_RECTANGLE, 0, B_StartDate[session], B_Max[session], Time[0], B_Min[session]);
+    ObjectSet("borderbox" + session, OBJPROP_SCALE, 1.0);
+    ObjectSet("borderbox" + session, OBJPROP_COLOR, Turquoise);
+    ObjectSet("borderbox" + session, OBJPROP_BACK, false);
+
+    ObjectCreate("smartline" + session, OBJ_TREND, 0, B_StartDate[session], 0);
+    ObjectSet("smartline" + session, OBJPROP_COLOR, Pink);
+    ObjectSet("smartline" + session, OBJPROP_WIDTH, 1);
+    ObjectSet("smartline" + session, OBJPROP_RAY, false);
+
+    ObjectCreate("sellaverageline" + session, OBJ_TREND, 0, B_StartDate[session], 0, Time[0], 0);
+    ObjectSet("sellaverageline" + session, OBJPROP_COLOR, Tomato);
+    ObjectSet("sellaverageline" + session, OBJPROP_WIDTH, 1);
+    ObjectSet("sellaverageline" + session, OBJPROP_RAY, false);
+    ObjectCreate("sellaveragelinetext" + session, OBJ_TEXT, 0, 0, 0, 0, 0);
+
+    ObjectCreate("buyaverageline" + session, OBJ_TREND, 0, B_StartDate[session], 0, Time[0], 0);
+    ObjectSet("buyaverageline" + session, OBJPROP_COLOR, DeepSkyBlue);
+    ObjectSet("buyaverageline" + session, OBJPROP_WIDTH, 1);
+    ObjectSet("buyaverageline" + session, OBJPROP_RAY, false);
+
+    ObjectCreate("buyaveragelinetext" + session, OBJ_TEXT, 0, 0, 0, 0, 0);
+    ObjectSet("buyaveragelinetext" + session, OBJPROP_BACK, false);
+
+    ObjectCreate("hedgeline" + session, OBJ_TREND, 0, B_StartDate[session], 0);
+    ObjectSet("hedgeline" + session, OBJPROP_COLOR, Red);
+    ObjectSet("hedgeline" + session, OBJPROP_WIDTH, 2);
+    ObjectSet("hedgeline" + session, OBJPROP_RAY, false);
+
+    ObjectCreate("hedgelinetext" + session, OBJ_TEXT, 0, 0, 0, 0, 0);
+}
+
+int B_DrawGraphics(int session) {
+    if (!GraphicMode) return 0;
+
+    if (B_Operation[session] == OP_BUY)
+        ObjectSet("borderbox" + session, OBJPROP_COLOR, Turquoise);
+    else
+    if (B_Operation[session] == OP_SELL)
+        ObjectSet("borderbox" + session, OBJPROP_COLOR, Pink);
+    else
+    if (B_OrderType[session] == OT_HEDGE)
+        ObjectSet("borderbox" + session, OBJPROP_COLOR, Gold);
+    else
+        ObjectSet("borderbox" + session, OBJPROP_COLOR, Lime);
+
+    if (B_Hedged[session] == true) {
+        ObjectSet("hedgeline" + session, OBJPROP_PRICE1, B_HedgeLine[session]);
+        ObjectSet("hedgeline" + session, OBJPROP_TIME1, B_StartDate[session]);
+        ObjectSet("hedgeline" + session, OBJPROP_PRICE2, B_HedgeLine[session]);
+        ObjectSet("hedgeline" + session, OBJPROP_TIME2, Time[0]);
+
+        ObjectSet("hedgelinetext" + session, OBJPROP_PRICE1, B_HedgeLine[session]);
+        ObjectSet("hedgelinetext" + session, OBJPROP_TIME1, Time[25]);
+        ObjectSetText("hedgelinetext" + session, "(" + DoubleToString(B_HedgeLine[session], _Digits) + ")", 7, "Arial", Red);
+    } else {
+        ObjectSet("hedgeline" + session, OBJPROP_PRICE2, 0);
+        ObjectSet("hedgeline" + session, OBJPROP_PRICE1, 0);
+        ObjectSet("hedgeline" + session, OBJPROP_TIME2, 0);
+        ObjectSet("hedgelinetext" + session, OBJPROP_PRICE1, 0);
+        ObjectSet("hedgelinetext" + session, OBJPROP_TIME1, 0);
+    }
+
+    ObjectSet("box" + session, OBJPROP_TIME2, Time[0]);
+    ObjectSet("box" + session, OBJPROP_TIME1, B_StartDate[session]);
+    ObjectSet("box" + session, OBJPROP_PRICE2, B_Min[session]);
+    ObjectSet("box" + session, OBJPROP_PRICE1, B_Max[session]);
+    ObjectSet("borderbox" + session, OBJPROP_TIME2, Time[0]);
+    ObjectSet("borderbox" + session, OBJPROP_TIME1, B_StartDate[session]);
+    ObjectSet("borderbox" + session, OBJPROP_PRICE2, B_Min[session]);
+    ObjectSet("borderbox" + session, OBJPROP_PRICE1, B_Max[session]);
+
+    if (B_KeepBuySell[session] == true)
+        ObjectSet("box" + session, OBJPROP_WIDTH, 4);
+    else
+        ObjectSet("box" + session, OBJPROP_WIDTH, 1);
+
+    if (!B_BuySellAutomatic[session]) {
+        //        ObjectSet("box" + session, OBJPROP_COLOR, Red);
+    }
+    double lots;
+    double distance = 0;
+
+    if (B_SellProfit[session] < 0) {
+        distance = -10 * SYS_POINT;
+        lots = ((B_SellAveragePoint[session] - _Bid - distance) * B_SellNbrLots[session]) / distance;
+    }
+
+    ObjectSet("sellaverageline" + session, OBJPROP_PRICE2, B_SellAveragePoint[session]);
+    ObjectSet("sellaverageline" + session, OBJPROP_PRICE1, B_SellAveragePoint[session]);
+    ObjectSet("sellaverageline" + session, OBJPROP_TIME2, Time[0]);
+    ObjectSet("sellaverageline" + session, OBJPROP_TIME1, B_StartDate[session]);
+
+    ObjectSet("sellaveragelinetext" + session, OBJPROP_PRICE1, B_SellAveragePoint[session]);
+    ObjectSet("sellaveragelinetext" + session, OBJPROP_TIME1, B_StartDate[session] + (Time[0] - B_StartDate[session]) / 2);
+    ObjectSetText("sellaveragelinetext" + session, RuleName[B_StartOnRule[session]] + " - " + OperationName[B_Operation[session]] + " (" + DoubleToString(B_SellAveragePoint[session], _Digits) + " -- " + DoubleToString(lots, 2) + ")", 7, "Arial", LightGray);
+
+    if (B_BuyProfit[session] < 0) {
+        distance = 10 * SYS_POINT;
+        lots = ((B_BuyAveragePoint[session] - _Ask - distance) * B_BuyNbrLots[session]) / distance;
+
+    }
+
+    ObjectSet("buyaverageline" + session, OBJPROP_PRICE2, B_BuyAveragePoint[session]);
+    ObjectSet("buyaverageline" + session, OBJPROP_PRICE1, B_BuyAveragePoint[session]);
+    ObjectSet("buyaverageline" + session, OBJPROP_TIME2, Time[0]);
+    ObjectSet("buyaverageline" + session, OBJPROP_TIME1, B_StartDate[session]);
+
+    ObjectSet("buyaveragelinetext" + session, OBJPROP_PRICE1, B_BuyAveragePoint[session]);
+    ObjectSet("buyaveragelinetext" + session, OBJPROP_TIME1, B_StartDate[session] + (Time[0] - B_StartDate[session]) / 2);
+    ObjectSetText("buyaveragelinetext" + session, RuleName[B_StartOnRule[session]] + " - " + OperationName[B_Operation[session]] + " (" + DoubleToString(B_BuyAveragePoint[session], _Digits) + " -- " + DoubleToString(lots, 2) + ")", 7, "Arial", LightGray);
+    return 1;
+}
+//////////////////////////////////////////////////////////////// MARKET MOVEMENT  TIPS  /////////////////////////////////////////////////////////////////
+
+
+void MarketResistance(int start_period, int period1, int exit_period) {
+    bool Bull = false;
+    bool Bear = false;
+
+    RS_Buy = 0;
+    RS_Sell = 0;
+
+    if ((AndS(RESISTANCE, S_ABOVE, start_period) != 0 &&
+            AndS(RESISTANCE, S_ABOVE, period1) != 0 &&
+            AndS(RESISTANCE, S_ABOVE, exit_period) != 0) ||
+        (AndS(RESISTANCE, S_ABOVE, start_period) != 0 &&
+            AndS(RESISTANCE, S_ABOVE, exit_period) != 0)) {
+        Bull = true;
+    }
+    if ((AndS(SUPPORT, S_BELOW, start_period) != 0 &&
+            AndS(SUPPORT, S_BELOW, period1) != 0 &&
+            AndS(SUPPORT, S_BELOW, exit_period) != 0) ||
+        (AndS(SUPPORT, S_BELOW, start_period) != 0 &&
+            AndS(SUPPORT, S_BELOW, exit_period) != 0))
+
+    {
+        Bear = true;
+    }
+
+    if (Bull == true && Bear == true) {
+        return;
+    }
+
+    if (Bull == true)
+        RS_Buy = 1;
+    else
+        RS_Buy = 0;
+
+    if (Bear == true)
+        RS_Sell = 1;
+    else
+        RS_Sell = 0;
+}
+
+/////////////////////////////////////////////////////////  SOUND ////////////////////////////////////////////
+
+int TreatSoundFlag(int sound) {
+    if ((sound & (1 << NEWSSOUND)) != 0)
+        NewsSound = 1;
+    else
+        NewsSound = 0;
+
+    if ((sound & (1 << ALERTSOUND)) != 0)
+        AlertsSound = 1;
+    else
+        AlertsSound = 0;
+
+    if ((sound & (1 << OPERATIONSOUND)) != 0)
+        OperationSound = 1;
+    else
+        OperationSound = 0;
+
+    if ((sound & (1 << SYSTEMSOUND)) != 0)
+        SystemSound = 1;
+    else
+        SystemSound = 0;
+
+    return (sound);
+}
+
+int GetSoundValue() {
+    int sound = 0;
+
+    if (NewsSound == true)
+        sound |= (1 << NEWSSOUND);
+
+    if (AlertsSound == true)
+        sound |= (1 << ALERTSOUND);
+
+    if (OperationSound == true)
+        sound |= (1 << OPERATIONSOUND);
+
+    if (SystemSound == true)
+        sound |= (1 << SYSTEMSOUND);
+
+    return (sound);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////END SOUND

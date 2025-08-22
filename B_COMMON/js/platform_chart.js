@@ -5,7 +5,7 @@ const Bar_Ohlc            = 'ohlc';
 const Bar_PointFigure     = 'point&figure';
 const Bar_Renko           = 'renko';
 const Bar_Kagi            = 'kagi';
-const CANDLES_TOLOAD      = 200; 
+const CANDLES_TOLOAD      = 400; 
 const Indicator_Height    = 65;
 
 
@@ -126,14 +126,15 @@ var onloadmore_chartcanvas = function (start, end) {
     var cw = width / (symbol.plotData.length - 1) * widthRatio;
     var candleWidth = Math.round(cw);    
 
-    var min_nbrbars = Math.abs(start)/candleWidth;
+    var min_nbrbars = Math.ceil(Math.abs(start)/candleWidth);
     var nb_bars     = Math.max (min_nbrbars, CANDLES_TOLOAD);
     //console.log ('width' + start + ' nbrbars = ' + nb_bars);
 
 
     if (solution.get('ui').currentplatform_pname == TRADEDESK_PLATFORM_PNAME) {
+        let from = symbol.chartData[symbolcanvas.CurrentPeriod].length;
         if (!symbol.WaitHistory[symbolcanvas.CurrentPeriod]) {
-            OnGetHistory(solution.CurrentTerminal, symbol, symbolcanvas.CurrentPeriod, symbol.NbrCandles[symbolcanvas.CurrentPeriod], symbol.NbrCandles[symbolcanvas.CurrentPeriod] + nb_bars, true);
+            OnGetHistory(solution.CurrentTerminal, symbol, symbolcanvas.CurrentPeriod, from , from + nb_bars, true);
             symbol.WaitHistory[symbolcanvas.CurrentPeriod] = true;
         }
     }
@@ -535,7 +536,7 @@ function ondblclick_chartcanvas(event, itempos, yValue, mouseXY, fullData, state
 
     
     if (symbolcanvas.Indicators.length == 0) {
-        DisplayInfo('Add an indicator to track signals')        
+        TreatInfo('Add an indicator to track signals')        
         return;
     }
 
@@ -1109,11 +1110,11 @@ function Chart_Draw (terminal) {
         Chart_XExtents(terminal, symbol, period, startdate, enddate); 
     }
 
-    if (symbolcanvas.Shift && symbol.plotData  && (length - (symbol.plotData.length - 1) >= 0)) {
+    if (symbolcanvas.Shift && symbol.plotData && symbol.plotData.length > 0  && (length - (symbol.plotData.length - 1) >= 0)) {
         startdate   = data[length - (symbol.plotData.length - 1)].date;
         enddate     =  data[length].date;
         Chart_XExtents(terminal, symbol, period, startdate, enddate); 
-        symbolcanvas.Shift = false;
+   //     symbolcanvas.Shift = false;
     }
 
     let margin      = {left: 60, right: 60, top: 20, bottom: 25};   

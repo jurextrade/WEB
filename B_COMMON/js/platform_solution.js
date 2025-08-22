@@ -30,19 +30,19 @@ function onclick_right_sidebarpin(elt, event) {
 }
 
 function onclick_right_sidebarsave(elt, event) {
-        let cuser = solution.get('user')
+    let cuser = solution.get('user')
 
-        if (!cuser.is_registered()) {
-            TreatInfo(register_needed_label, 'operationpanel', 'red');             
-            return ;
-        }
-        let ui = solution.get('ui');
-        solution.configuration.theme = ui.sb.theme;
-        cuser.send ({Name: 'savefile', Values: ['../' + cuser.path + '/configuration.json', JSON.stringify(solution.configuration, null, 2)]}, true, 
-                    function (content, values) {
-                        DisplayInfo("Configutation Saved ", true, 'operationpanel',  'var(--theme-platform-color)');
-                    }, 
-                    ['configuration.json']);     
+    if (!cuser.is_registered()) {
+        TreatInfo(register_needed_label, 'red');             
+        return ;
+    }
+    let result = solution.save_configurationfile();
+    if (result == -1) {
+        TreatInfo("Problem in saving Configuration", 'red');
+    } else {
+        TreatInfo("Configuration Saved");
+    }
+
 }
 
 function solution_configurationpanel_init () {
@@ -231,7 +231,7 @@ function solution_module_load (pname, callback) {
 
     if (platform.length == 0) {
         LoaderDisplay(true);    
-        DisplayInfo("Loading Module " + pname + " Please wait", true, 'operationpanel');             
+        TreatInfo("Loading Module " + pname + " Please wait");             
         let timerd = setInterval((pname) => {
             
             clearInterval(timerd);

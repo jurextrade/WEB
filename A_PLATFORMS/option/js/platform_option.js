@@ -45,7 +45,7 @@ function option_select (name) {
     if (!solution.CurrentOptionTerminal) {
         sidebarmenu_select ('sidebar_optionterminals', true);      
 
-        DisplayInfo("Select a Platform", true, 'operationpanel', 'var(--bg-optionterminal)');
+        TreatInfo("Select a Platform");
         AnimationDisplay ('option', 'Welcome to Option Tracker', 'option_toppanel');         
         AnimationDisplay ('option', 'Sorry YAHOO API not more supported', 'option_toppanel', true);              
     }       
@@ -217,7 +217,7 @@ function option_selectterminal(terminal, force) {
     if (!terminal.Loaded) {  //just copy objects
         LoaderDisplay(true);        
         
-        DisplayInfo("Loading Terminal ... Please wait", true, 'operationpanel', 'var(--bg-optionterminal)');        
+        TreatInfo("Loading Terminal ... Please wait", true, 'operationpanel', 'var(--bg-optionterminal)');        
         Interval_optionloadterminal = setInterval(option_loadedterminal, 300, terminal); //5 minutes 300000     
         terminal.Load();
     } else {
@@ -225,7 +225,7 @@ function option_selectterminal(terminal, force) {
 //        UpdateSymbols(terminal);
       //  UpdateOrders(terminal);
 
-        DisplayInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-optionterminal)');  
+        TreatInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-optionterminal)');  
        // terminal.Com.Send(solution.get('user').id + '*START*' + terminal.Type + '*' + terminal.Name + '*1');                  
         option_drawterminal (terminal, true);  
         Interval_getoptionquotes     = setInterval(OnGetContracts,    60000, terminal);   // every 6 seconds      
@@ -263,7 +263,7 @@ function option_loadedterminal (terminal) {
         clearInterval(Interval_optionloadterminal);
         LoaderDisplay(false);      
 
-        DisplayInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');
+        TreatInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');
 //        terminal.Com.Send(solution.get('user').id + '*START*' + terminal.Type + '*' + terminal.Name + '*1');    
         option_drawterminal (terminal, true);  
         Interval_getoptionquotes     = setInterval(OnGetContracts,    60000, terminal);   // every 6 seconds        
@@ -677,7 +677,7 @@ function OptionTreatComputation (responseText, parameters) {
         } else {
             e = objError.message;
         }            
-        DisplayInfo(e, true, 'operationpanel', 'tomato');        
+        TreatInfo(e, true, 'operationpanel', 'tomato');        
         LoaderDisplay(false);
         return;
     }    
@@ -1983,7 +1983,7 @@ function OptionTreatHistory (terminal, symbol, period, values) {
             } else {
                 e = objError.message;
             }            
-            DisplayInfo(e, true, 'operationpanel', 'tomato');        
+            TreatInfo(e);        
             LoaderChartHistory (false);    
             return;
         }    

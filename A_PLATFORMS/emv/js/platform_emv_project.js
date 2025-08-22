@@ -49,7 +49,7 @@ class emvproject {
        
         user.send ({Name: 'savefile', Values: [rootproject + 'emv.ini', content]}, true, 
                     function (content, values) {
-                        DisplayInfo("Project Succesfully Renamed", true, 'operationpanel');                             
+                        TreatInfo("Project Succesfully Renamed");                             
                     }, 
                     [this]);  
     }
@@ -82,7 +82,7 @@ class emvproject {
 
         cuser.send ({Name: 'savefile', Values: [url, content]}, true, 
                     function (content, values) {
-                        DisplayInfo("Project Saved", true, 'operationpanel');                             
+                        TreatInfo("Project Saved");                             
                     }, 
                     ['emvsolution.json']);  
     }
@@ -346,7 +346,7 @@ function emv_project_newproject (name) {
                     }]);
    
     sb.select_additem ('project_projectselect', project.Name);
-    UpdateProjectEngines (project);
+
     solution.UpdateIndicators(project);         
 
     project_drawproject(project, true);

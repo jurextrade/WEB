@@ -85,9 +85,6 @@ function emv_tester_transactionselect_Update (transactions) {
 
 function onchange_emv_tester_transactionselect (elt, event) {
     let transactionfile = $("#emv_tester_transactionselect option:selected").val();
-    
- 
-
     Tester.Reader.load_transaction(transactionfile);
 }
 
@@ -114,13 +111,23 @@ function  onclick_emv_tester_commandgroup (elt, event) {
             
         break;
         case 'emv_tester_start_button'  :
+            
             Tester.Reader.firststep ();       
+            
             $('#emv_tester_play_button ' + 'i').attr('class', icon_play);
-            $('#emv_tester_play_button ' + 'i').attr('title', 'Run');               
+            $('#emv_tester_play_button ' + 'i').attr('title', 'Run');         
+            $('#emv_tester_recordbar #emv_tester_play_button').removeAttr('disabled');      
+            $('#emv_tester_recordbar #emv_tester_forward_button').removeAttr('disabled');       
+            $('#emv_tester_recordbar #emv_tester_start_button').attr('disabled', true);                      
+
+
+
         break;
         case 'emv_tester_forward_button' :
+
             let silentmode = false;
             Tester.Reader.nextstep(silentmode)
+            
         break;
         case 'emv_tester_stop_button':
         break;
@@ -166,15 +173,6 @@ function  onclick_emv_tester_commandgroup (elt, event) {
                         
                         let menu = this.par;
                         Tester.Reader.load_transaction(menu[elt.id].text)
-                    //    cuser.send ({Name: 'readfile', Values: [cuser.fileexplorer.Root + '/' + file_path + '/Transactions/' + menu[elt.id].text]}, false, 
-                    //                function (content, values) {
-                    //                    let message = JSON.parse (content);
-                    //                    Tester.Reader.RecordBuffer = message.Values[0].Content
-                    //                    Tester.Reader.save_record();
-                    //                    Tester.Reader.firststep();
-                    //                    $('#emv_tester_play_button ' + 'i').attr('class', icon_play); 
-                    //                }, 
-                    //                []);                          
                     },
                     html: sb.menu (menu)
                 })}, 
@@ -650,14 +648,29 @@ class CardReader {
             TreatInfo(register_needed_label, 'operationpanel', 'red');               
             return;
         }
-        
+
         let path        = cuser.path + '/EMV/' + solution.emv_CurrentProject.Folder
 
-        cuser.send({Name: 'makedir',  Values: [path, 'Transactions']}, false, function (content, values) {}, [this])
-        let transactionfile     = cuser.fileexplorer.Root +  path + "/Transactions/"  + name + '.trs';
+        cuser.send({Name: 'makedir',  Values: [path, 'Transactions']}, false, function (content, values) {
+
+            let message = JSON.parse (content);   
+            if (message.Error) {
+                console.log (message.Name  + values[0]  + message.Values[0]);
+            }   
+                                             
+        }, ['Transactions'])
+        
+        let transactionfile     = '../' +  path + "/Transactions/"  + name + '.trs';
+        
         cuser.send ({Name: 'savefile', Values: [transactionfile,  this.RecordBuffer]}, true, 
             function (content, values) {
-                DisplayInfo("Transaction " + values[0] + " Saved", true, 'operationpanel');                             
+                let message = JSON.parse (content);   
+                if (message.Error) {
+                    console.log (message.Name + ' ' + message.Values[0]);
+                    return;
+                }   
+                TreatInfo("Transaction " + values[0] + " Saved");                             
+                          
             }, 
         [name + '.trs']);  
     }
@@ -667,15 +680,28 @@ class CardReader {
         let file_path        = cuser.path + '/EMV/' + solution.emv_CurrentProject.Folder
         $("#emv_tester_transactionselect option[value='--Select Transaction--']").remove();       
         $('#emv_tester_transactionselect option[value="' + filename + '"]').prop('selected', true);        
-        cuser.send ({Name: 'readfile', Values: [cuser.fileexplorer.Root + '/' + file_path + '/Transactions/' + filename]}, false, 
+        
+        let path        = cuser.path + '/EMV/' + solution.emv_CurrentProject.Folder
+
+        cuser.send ({Name: 'readfile', Values: ['./../' + file_path + '/Transactions/' + filename]}, false, 
                     function (content, values) {
                         
                         let message = JSON.parse (content);
+                        if (message.Error) {
+                            console.log (message.Name + ' ' + message.Values[0]);
+                            return;
+                        }    
+
                         Tester.Reader.RecordBuffer = message.Values[0].Content
                         Tester.Reader.save_record();
                         Tester.Reader.firststep();
                         $('#emv_tester_play_button ' + 'i').attr('class', icon_play); 
                         $('#emv_tester_play_button ' + 'i').attr('title', 'Run');   
+                        
+                        $('#emv_tester_recordbar #emv_tester_play_button').removeAttr('disabled');      
+                        $('#emv_tester_recordbar #emv_tester_forward_button').removeAttr('disabled');       
+                        $('#emv_tester_recordbar #emv_tester_start_button').attr('disabled', true);                           
+                                                
                     }, 
         []);      
     }

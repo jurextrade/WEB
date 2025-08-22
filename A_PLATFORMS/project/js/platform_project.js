@@ -56,7 +56,7 @@ function project_select (name) {
             AnimationDisplay ('project', 'Select or Create a Project to Start', 'project_toppanel');      
         } else {
         }
-        DisplayInfo("Select a project or create one", true, 'operationpanel');
+        TreatInfo("Select a project or create one");
     }
 }
 
@@ -323,7 +323,7 @@ function project_home_open  (event) {
 function project_loadedproject (project) {
     if (project.Loaded) {
         clearInterval(Interval_loadproject);
-        DisplayInfo("Project " + project.Name + " loaded", true, 'operationpanel');            
+        TreatInfo("Project " + project.Name + " loaded");            
         LoaderDisplay(false);         
         project_drawproject(project, true);        
     }
@@ -348,19 +348,19 @@ function project_selectproject(project, forcedisplay) {
 
     if (!project.Loaded) {
         LoaderDisplay(true);        
-        DisplayInfo("Loading Project " + project.Name + "  ... Please wait", true, 'operationpanel',  'var(--bg-strategycreator)');
+        TreatInfo("Loading Project " + project.Name + "  ... Please wait");
 
         Interval_loadproject = setInterval(project_loadedproject, 300, project); //5 minutes 300000     
         project.Load();
     }
     else {
-        UpdateProjectEngines (project);
+        project_updateengines (project);
         solution.UpdateIndicators(project);
         solution.UpdateSchedules (project);        
-        UpdateProjectExperts(project);
-        UpdateProjectConditions(project);   
+        project_updateexperts(project);
+        project_updateconditions(project);   
 
-        DisplayInfo("Project " + project.Name + " loaded", true, 'operationpanel');            
+        TreatInfo("Project " + project.Name + " loaded");            
         project_drawproject(project, true);        
     }
     return project;
@@ -467,13 +467,13 @@ function onchange_project_projectselect (elt, event) {
 function project_saveproject(project) {
     if (!project) return;
     if (solution.get('user').id == "0") {
-        DisplayInfo("Project can not be saved, You are not registered", true, 'operationpanel', "coral");
+        TreatInfo("Project can not be saved, You are not registered");
         return;
     }
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
     TraceErrorEditor("> START SAVING " + project.Name, 1);
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    DisplayInfo("Saving Project " + project.Name + "", true, 'operationpanel');            
+    TreatInfo("Saving Project " + project.Name );            
 
     project_savestrategy (project.CurrentStrategy)
     project.Save();
@@ -482,7 +482,7 @@ function project_saveproject(project) {
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
     TraceErrorEditor("> FINISH SAVING " + project.Name, 1);
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    DisplayInfo("Project " + project.Name + " Saved ", true, 'operationpanel');            
+    TreatInfo("Project " + project.Name + " Saved ");            
 }
 
 //------------------------------------------------------------ PROJECT STRATEGY ----------------------------------------------------------
@@ -658,7 +658,7 @@ function onclick_project_strategycompile(elt, event) {
 
 function onclick_project_projectdistribute () {
     sidebarmenu_select('sidebar_deploy', 1);
-    DisplayInfo("Select Terminal you want to deploy the project", true, 'project_operation', "coral");       
+    TreatInfo("Select Terminal you want to deploy the project");       
 }
 
 function onclick_project_projectcompile(elt) {
@@ -725,7 +725,7 @@ function NewProject (name) {
                     }]);
    
     sb.select_additem ('project_projectselect', project.Name);
-    UpdateProjectEngines (project);
+    project_updateengines (project);
     solution.UpdateIndicators(project);         
 
     project_drawproject(project, true);
@@ -1499,18 +1499,9 @@ function onclick_clean_comment_button (elt, event) {
 
 //---------------------------------------------------- SELECT PROJECT ---------------------------------------------- 
 
-
-
-function RefreshProjectName(project) {
-    if (!project) {
-        $('#projectname').val ('');        
-    } else {
-        $('#projectname').val (project.Name);        
-    }
-}
-
-function UpdateProjectEngines (project, open) {
-    var PG = project.PG;     
+function project_updateengines (pararray) {
+    let project = pararray[0];
+    let PG = project.PG;     
     
     Menu_Strategies = [];
     for (var j = 0; j < PG.Engines.length; j++) {
@@ -1523,11 +1514,9 @@ function UpdateProjectEngines (project, open) {
             attributes:{selector: 'project_selectstrategy', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'}, 
             events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}
         });
-//        sb.select_additem ('projectstrategyselect', engine.Name);           
     }
 
     sb.tree_additems ('project_tree_strategies', Menu_Strategies);
-
     ProjectSelectStrategyPanel_Update (PG.Engines);
 /*
     Sortable.create(project_tree_strategies, { 
@@ -1541,7 +1530,64 @@ function UpdateProjectEngines (project, open) {
 */
 }
 
-function UpdateProjectExperts (project) {
+
+function project_updateconditions (pararray) {
+    let project = pararray[0];
+    let PG = project.PG;     
+    
+    
+    let GConditionMenu = [];
+
+    Menu_Conditions = [{id: 0, text: '-----'}];
+
+    for (var i = 0; i < PG.Conditions.length; i++) {
+        var node_root = TreeFromSS(solution.PL, CurrentContainer.GSE, PG.Conditions[i].Section);
+        
+        PG.Conditions[i].SCContent = SSFromNode(PG, "", node_root, node_root, 0, false);
+        
+        Menu_Conditions.push({id: i + 1, text: PG.Conditions[i].Name});
+
+        GConditionMenu.push({id:'condition_' + PG.Conditions[i].Name, type: 'link', item: PG.Conditions[i].Name, icon: icon_condition,
+            attributes:{selector: 'selectcondition', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'},
+            events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}    
+        });
+    }
+    
+    var TabToAdd = [];                    
+    for (var i = 0; i < PG.Conditions.length; i++) {
+        var recid = i + 1;
+        elt = {recid: recid, condition:  PG.Conditions[i].Name, not: false,   description: PG.Conditions[i].SCContent}
+        TabToAdd.push(elt);
+    }
+    
+    sb.tree_additems ('project_tree_conditions', GConditionMenu);   
+    $("#project_tree_conditions").addClass('show');    
+
+
+
+    /*        tradedesk_MT4Com.
+    Sortable.create(project_tree_conditions, { 
+        onEnd: function (evt) {
+    		var itemEl = evt.item; 
+            var PG    = solution.GetPGFromTerminal ();
+            movearray (PG.Conditions, evt.oldIndex, evt.newIndex);    		
+	    }        
+    });   
+    */
+}
+
+
+function RefreshProjectName(project) {
+    if (!project) {
+        $('#projectname').val ('');        
+    } else {
+        $('#projectname').val (project.Name);        
+    }
+}
+
+
+
+function project_updateexperts (project) {
     var PG = project.PG;    
     
     let items = [];
@@ -1578,46 +1624,6 @@ function UpdateProjectExperts (project) {
 
 }    
 
-function UpdateProjectConditions (project) {
-    var PG = project.PG;     
-    
-    
-   var GConditionMenu = [];
-
-    Menu_Conditions = [{id: 0, text: '-----'}];
-
-    for (var i = 0; i < PG.Conditions.length; i++) {
-        var node_root = TreeFromSS(solution.PL, CurrentContainer.GSE, PG.Conditions[i].Section);
-        
-        PG.Conditions[i].SCContent = SSFromNode(PG, "", node_root, node_root, 0, false);
-        
-        Menu_Conditions.push({id: i + 1, text: PG.Conditions[i].Name});
-
-        GConditionMenu.push({id:'condition_' + PG.Conditions[i].Name, type: 'link', item: PG.Conditions[i].Name, icon: icon_condition,
-            attributes:{selector: 'selectcondition', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'},
-            events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}    
-        });
-    }
-    
-    var TabToAdd = [];                    
-    for (var i = 0; i < PG.Conditions.length; i++) {
-        var recid = i + 1;
-        elt = {recid: recid, condition:  PG.Conditions[i].Name, not: false,   description: PG.Conditions[i].SCContent}
-        TabToAdd.push(elt);
-    }
-    
-    sb.tree_additems ('project_tree_conditions', GConditionMenu);   
-    $("#project_tree_conditions").addClass('show');    
-/*        tradedesk_MT4Com.
-    Sortable.create(project_tree_conditions, { 
-        onEnd: function (evt) {
-    		var itemEl = evt.item; 
-            var PG    = solution.GetPGFromTerminal ();
-            movearray (PG.Conditions, evt.oldIndex, evt.newIndex);    		
-	    }        
-    });   
-    */
-}
 
 
 function OnReloadProject(terminal, terminalname, terminaltype) {
@@ -1915,7 +1921,7 @@ function SelectSaveStrategy() {
 function OnSaveStrategy(event) {
 
     if (solution.get('user').id == "0") {
-        DisplayInfo("Strategy can not be saved, You are not registered", true, 'operationpanel', "coral");
+        TreatInfo("Strategy can not be saved, You are not registered");
         return;
     }
 
@@ -1924,7 +1930,7 @@ function OnSaveStrategy(event) {
         var new_strategyname = document.getElementById('strategyname').value;
 
         if (new_strategyname == "") {
-            DisplayInfo("Strategy Name can not be empty " + new_strategyname, true, 'operationpanel', 'var(--bg-strategycreator)');    
+            TreatInfo("Strategy Name can not be empty " + new_strategyname);    
             $('#strategyname').focus();
             return;
         }
@@ -1933,7 +1939,7 @@ function OnSaveStrategy(event) {
 
             var strategy = solution.CurrentProject.PG.GetStrategyFromName(new_strategyname, CurrentStrategy);
             if (strategy) {
-                DisplayInfo("Strategy Name already exists " + new_strategyname, true, 'operationpanel', 'var(--bg-strategycreator)');    
+                TreatInfo("Strategy Name already exists " + new_strategyname);    
                 $('#strategyname').focus();
                 return;
             }
@@ -1957,13 +1963,13 @@ function OnSaveStrategy(event) {
                 CurrentStrategy.Name = new_strategyname;        
             }
         }
-        DisplayInfo("Saving Strategy " + new_strategyname, true, 'operationpanel', 'var(--bg-strategycreator)');    
+        TreatInfo("Saving Strategy " + new_strategyname, true, 'operationpanel', 'var(--bg-strategycreator)');    
     
         w2ui['strategyschedules'].save();
         w2ui['strategyproperty'].save();
         w2ui['strategyactions'].save();
     } else {
-         DisplayInfo("Saving Project " + solution.CurrentProject.Name, true, 'operationpanel', 'var(--bg-strategycreator)');    
+         TreatInfo("Saving Project " + solution.CurrentProject.Name);    
     }        
     setTimeout(project_savestrategy, 300, CurrentStrategy);        
 
@@ -2062,7 +2068,7 @@ function DrawStrategy(strategy, open) {
 
         sb.tree_selectitem ('project_tree_strategies', strategy.Name);                              
       
-      //  DisplayInfo("Strategy : " + strategy.Name , true, 'operationpanel', 'var(--bg-strategycreator)');          
+      //  TreatInfo("Strategy : " + strategy.Name );          
       
         AssistantGoToStep ('strategy_assistant_panel', Math.max ($("#strategy_assistant_panel").steps("getCurrentIndex"),STEP_STRATEGYNAME));
 
@@ -2074,7 +2080,7 @@ function DrawStrategy(strategy, open) {
         $('#project_tester_stop_button').attr('disabled',true);    
         $('#project_tester_play_button').attr('disabled',true);           
 
-        DisplayInfo("" , true, 'operationpanel'); 
+        TreatInfo("" ); 
 
         StrategyAssistantFillStrategies(solution.CurrentProject);
         AssistantGoToStep ('strategy_assistant_panel', STEP_PROJECTSELECTION);
@@ -2137,7 +2143,8 @@ function ProjectSelectPeriod (terminal, Symbol, Period, async) {
     GChartPanel_UpdatePeriod (symbolcanvas, symbolcanvas.CurrentPeriod);
     
 
-    if (!Symbol.WaitHistory[Period] && Symbol.chartData[Period].length == 0) {
+    if (!Symbol.WaitHistory[Period] && 
+        Symbol.chartData[Period].length == 0) {
         OnGetHistory(terminal, Symbol, Period, Symbol.NbrCandles[Period], Symbol.NbrCandles[Period] + CANDLES_TOLOAD, async);
     } else {
         if (TestMode) {

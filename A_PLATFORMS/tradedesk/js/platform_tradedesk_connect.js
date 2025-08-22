@@ -22,7 +22,7 @@ function tradedesk_currency_updatesymbolrow (terminal, symbolname, connect) {
         return;
     }
 
-    var symbol = terminal.PG.GetSymbolFromName(symbolname);
+    let symbol = terminal.PG.GetSymbolFromName(symbolname);
     if (!symbol) {
 
         console.log ('new symbol has been added on expert')
@@ -33,7 +33,7 @@ function tradedesk_currency_updatesymbolrow (terminal, symbolname, connect) {
 
     sb.table_setcellcontent (tradedeskcurrenciestable, rowid, 'Connected', (connect ? 'On' : 'Off'));
     sb.table_setcellcolor (tradedeskcurrenciestable, rowid, 'Connected', (connect ? theme_bull : theme_bear));
-
+    sb.table_setcellcontent (tradedeskcurrenciestable,  rowid, 'Period', PeriodName[symbol.Period]);
     if (!connect) {
         sb.table_setcellcontent (tradedeskcurrenciestable, rowid, 'Bid', '---');
         sb.table_setcellcontent (tradedeskcurrenciestable, rowid, 'Ask', '---');
@@ -55,36 +55,31 @@ function tradedesk_highlightserver(origin, terminal, connect, color) {
         case MT4SERVER:
             $('#tradedesk_terminals_headerpanel #button_server').css ('background', connect ? color : ''); 
             $('#tradedesk_terminals_headerpanel #button_server').css ('color', connect ? '#000000' : '');            
-            solution.Terminals.forEach ((terminal, index, terminals) => {if (terminal.Type == 'Terminal' || terminal.Type == 'Tester') {terminal.InitDone = false; terminal.Running  = false;}}); 
 
             if (!connect) {
-                //$('#button_card').css ('background', ''); 
-                //$('#button_terminal').css ('background', ''); 
-                //$('#button_card').css ('color',  '');            
-                //$('#button_terminal').css ('color',  '');  
+
+            solution.Terminals.forEach ((terminal, index, terminals) => {if (terminal.Type == 'Terminal' || terminal.Type == 'Tester') {terminal.InitDone = false; terminal.Running  = false;}}); 
+            solution.Terminals.forEach ((terminal, index, terminals) => {(terminal.Type == 'Terminal' || terminal.Type == 'Tester') &&  tradedesk_highlightserver(MT4TERMINAL, terminal, connect, color) }); 
             }
 
         break;      
         case MT4TERMINAL:
             if (connect) {
-                sb.tree_setitemcolor ('tradedesk_tree_terminals', terminal.Name,  connect ? color : ''); 
-                $('#tradedesk_terminalselect option[value="' + terminal.Name + '"]').css('color', color);
-                if (terminal.Type == 'Tester' && terminal.Running == true) {
-                     $('#radio_terminaltype label').css (color, color)
-                }
                 
-                if (terminal.Type == 'Terminal' && terminal.Running == true) {
-                       $('#radio_testertype label').css (color, color)
-                }
+                $('#tradedesk_tree_terminals_ref ' + '[id="terminal_' + terminal.Name + '"] i').css('color' , connect ? color : '');                 
+                
+                $('#tradedesk_terminalselect option[value="' + terminal.Name + '"]').css('color', color);
+                
+                
 
             }  else {
                 if ((terminal.Type == 'Tester' && solution.GetTerminalFromNameType(terminal.Name, 'Terminal').Running == false) ||
                     (terminal.Type == 'Terminal' && solution.GetTerminalFromNameType(terminal.Name, 'Tester').Running == false)) {
-                       sb.tree_setitemcolor ('tradedesk_tree_terminals', terminal.Name, ''); 
-                       $('#tradedesk_terminalselect option[value="' + terminal.Name + '"]').css('color', '');
-                       $('#radio_terminaltype label').css (color, '')
-                       $('#radio_testertype label').css (color, '')
-
+                        $('#tradedesk_tree_terminals_ref ' + '[id="terminal_' + terminal.Name + '"] i').css('color' , connect ? color : ''); 
+                      //  sb.tree_setitemcolor ('tradedesk_tree_terminals', terminal.Name, ''); 
+                                            
+                        $('#tradedesk_terminalselect option[value="' + terminal.Name + '"]').css('color', '');
+                
 
                 }  
         }
@@ -107,8 +102,8 @@ function tradedesk_ask_tostart(com, terminal) {
 function tradedesk_ask_history(com, symbol, period, from, to) {
     let userid = solution.get('user').id;
     if (userid == 0) userid = 1;
-
-   com.Send(userid  + '*' + symbol.Name + '*GET_HISTORY ' + symbol.Name + ' = [' + period + ' '  + from + ' ' + to + '] '); 
+    console.log ('Asked History for symbol : ' + symbol.Name + '  period : ' + period + ' from : ' + from + ' to : ' + to + ' nbr bars : ' + (to - from));
+    com.Send(userid  + '*' + symbol.Name + '*GET_HISTORY ' + symbol.Name + ' = [' + period + ' '  + from + ' ' + to + '] '); 
 }
 
 
@@ -296,14 +291,35 @@ function TreatConnect(values) {
     let terminaltype    = values[3];
     let symbolname      = values[4];
     let responsestate   = values[5];     
-    
+    let connection      = (responsestate == "OK");   
+   
+   
     let terminal = solution.GetTerminalFromNameType(terminalname, terminaltype);
+   
     if (!terminal) {
         console.log ('strange CONNECT for treat connect terminalname : ' + terminalname + ' terminaltype : ' + terminaltype);
         return;
     }
-    terminal.Running = (responsestate == "OK");       
-    tradedesk_currency_updatesymbolrow  (terminal, symbolname, terminal.Running)
+    terminal.Running = connection;   
+    
+    tradedesk_highlightserver(MT4TERMINAL, terminal, connection,  theme_on)   
+    
+    if (terminal == solution.CurrentTerminal) {
+        let symbol = terminal.PG.GetSymbolFromName(symbolname);
+        if (!symbol) {
+            if (connection) {
+                tradedesk_ask_tostart (tradedesk_MT4Com, terminal) 
+                console.log ('new symbol for current terminal ')
+            }
+        }
+        else {
+            if (connection) {
+                tradedesk_ask_tostart (tradedesk_MT4Com, terminal)             
+            } else {
+                tradedesk_currency_updatesymbolrow  (terminal, symbolname, terminal.Running)
+            }
+        }
+    }
 }
 
 
@@ -361,11 +377,10 @@ function TreatInit(values) {
     var symbol = terminal.PG.GetSymbolFromName(name);
     if (!symbol) {
         symbol = new pgsymbol(name);
-        symbol.Set(name, pname, minlot, maxlot, lotstep, spread, stoplevel, point, digits, lotsize, tester, period);
-
         terminal.PG.AddSymbol(symbol);
-        symbol.Connected = true;
     }
+    symbol.Set(name, pname, minlot, maxlot, lotstep, spread, stoplevel, point, digits, lotsize, tester, period);
+    symbol.Connected = true;
     symbol.Period = period;
     DisplayTerminal(terminal, symbol);
 }
@@ -848,47 +863,52 @@ function TreatHistory(terminal, values) {
 
     // PROBLEM WITH MULTI CLIENTS ASKING SIZE DIFFERENT !!!!
     if (!Symbol.WaitHistory[period]) return;
-    if (from != Symbol.NbrCandles[period] || nbrbars != CANDLES_TOLOAD) {
-        console.log ('could not read all from :  asked  from ' + Symbol.NbrCandles[period] + ' to ' + (+Symbol.NbrCandles[period] + CANDLES_TOLOAD));
-    } 
 
+    console.log ('Receive History for symbol : ' + Symbol.Name + '  period : ' + period + ' from : ' + from + ' nbr bars : ' + nbrbars);
+// stream comes in order : date-1 date date+ 1
+// nbrcandles in symbol is 5 : means data goes from 0 to 4
 
     var data = [];
+    
+    let symboldatalength = Symbol.chartData[period].length;
+    let symboldatafrom   = symboldatalength - from;  // 0 i concatenate if < 0 error if > 0 i should concatenatereplace from 0 to this -k
+    let nbrtoadd         = nbrbars - symboldatafrom;
+    let nbrtoreplace     = nbrtoadd < 0 ?  nbrbars : symboldatafrom;
+
     var terminaltype = terminal.Type;
     i = 5;
-    var k = 0;
+    let k = 0;    //nbr  to treat
+    let j = 0;    //nbr to replace
     while (values[i]) {
-        k++;
+
         var mydate = new Date();
         var sdate = mydate.toString();
         var terminaldate = new Date(+values[i] * 1000);
         var tdate = terminaldate.toString();
         mydate.setTime(ToTerminalTime (+values[i]));
-
-        data.push({
-            date: mydate,
-            open: +values[i + 1],
-            high: +values[i + 2],
-            low: +values[i + 3],
-            close: +values[i + 4],
-            volume: +values[i + 5]
-        });
+        if (k < nbrtoadd) {
+            data.push({date: mydate, open: +values[i + 1], high: +values[i + 2], low: +values[i + 3], close: +values[i + 4], volume: +values[i + 5]});
+        } else {
+            Symbol.chartData[period][from + j] = {date: mydate, open: +values[i + 1], high: +values[i + 2], low: +values[i + 3], close: +values[i + 4], volume: +values[i + 5]};
+            j++;
+        }        
+        k++;            
         i = i + 6;
     }
 
     Symbol.NbrCandles[period] += k;
-    Symbol.WaitHistory[period] = false;
-    Symbol.chartData[period] = data.concat(Symbol.chartData[period]);
 
+    Symbol.chartData[period] = data.concat(Symbol.chartData[period]);
+    Symbol.WaitHistory[period] = false;
     LoaderChartHistory (false);    
 
     var symbolcanvas = solution.GetCanvasFromTerminal(terminal);
     if (!symbolcanvas) return;    
 
-    if (symbolcanvas.CurrentPeriod == period) {
-        symbolcanvas.Shift = true;    
+//    if (symbolcanvas.CurrentSymbol == Symbol && symbolcanvas.CurrentPeriod == period) {
+     //   symbolcanvas.Shift = true;    
         Chart_Draw(terminal)   
-    }
+  //  }
 }
 
 function TreatHistoryFile (terminal, values) {
@@ -914,54 +934,56 @@ function ondragstart_statementtable (event) {
 }
 
 function TreatProfit(terminal, values) {
-    var Symbol = terminal.PG.GetSymbolFromName(values[1]);
-    if (!Symbol) return;
+
 
     var manualhistory = terminal.PG.ManualHistory;
-
-    var enginerule = +values[2];
-    if (enginerule == -1) return;
-
-
-    enginerule = RuleName[enginerule];
-    var engineoperation = OperationName[+values[3]];
-    var date = ToTerminalTime(+values[4]);
-    var edate = ToTerminalTime(+values[5]);
-    var bnbrlot = +values[6];
-    var snbrlot = +values[7];
-    var bnbrtrade = +values[8];
-    var snbrtrade = +values[9];
-    var bprofit = +values[10];
-    var sprofit = +values[11];
-    var profit = +values[12];
-    var style = (profit >= 0) ? 'background:var(--theme-TP);' : 'background:var(--theme-SL)';
+    let symbolname = values[1];
+    let enginerule = +values[2];
     
-    var elapsed = ReturnElapsedTime(edate - date);
-    var engine = solution.CurrentTerminal.PG.GetEngineFromRuleOperation(enginerule, engineoperation);
+    if (enginerule == -1) return;
+    enginerule = RuleName[enginerule];
+    
+    let date = ToTerminalTime(+values[4]);
+    let edate = ToTerminalTime(+values[5]);
+    let bnbrlot = +values[6];
+    let snbrlot = +values[7];
+    let bnbrtrade = +values[8];
+    let snbrtrade = +values[9];
+    let bprofit = +values[10];
+    let sprofit = +values[11];
+    let profit = +values[12];
+
+    let engineoperation = OperationName[+values[3]];
+
+    let style = (profit >= 0) ? 'background:var(--theme-TP);' : 'background:var(--theme-SL)';
+    
+    let elapsed = ReturnElapsedTime(edate - date);
+    let engine = solution.CurrentTerminal.PG.GetEngineFromRuleOperation(enginerule, engineoperation);
     if (!engine) {
         enginename = "Manual";
     } else {
-        enginename = engine.Name;
-        var engineindex = solution.CurrentTerminal.PG.GetEngineIdxFromNameOperation(enginename, engineoperation);
-        Symbol.profitData[engineindex].push({
-            name: enginename,
-            symbol: Symbol.Name,
-            startdate: date,
-            enddate: edate,
-            bnbrlot: bnbrlot,
-            snbrlot: snbrlot,
-            bnbrtrade: bnbrtrade,
-            snbrtrade: snbrtrade,
-            bprofit: bprofit,
-            sprofit: sprofit,
-            profit: profit
-        });
+         enginename = engine.Name;
+         let symbol = terminal.PG.GetSymbolFromName(symbolname);
+         if (symbol) {
+            let engineindex = solution.CurrentTerminal.PG.GetEngineIdxFromNameOperation(enginename, engineoperation);
+            Symbol.profitData[engineindex].push({
+                name: enginename,
+                symbol: symbolname,
+                startdate: date,
+                enddate: edate,
+                bnbrlot: bnbrlot,
+                snbrlot: snbrlot,
+                bnbrtrade: bnbrtrade,
+                snbrtrade: snbrtrade,
+                bprofit: bprofit,
+                sprofit: sprofit,
+                profit: profit
+            });
+        }
     }
-    var rowindex = sb.table_addrow (historytable,  [enginename, Symbol.Name,new Date(date).format('MM-DD-YYYY HH:mm'),new Date(edate).format('MM-DD-YYYY HH:mm'),
+    var rowindex = sb.table_addrow (historytable,  [enginename, symbolname,new Date(date).format('MM-DD-YYYY HH:mm'),new Date(edate).format('MM-DD-YYYY HH:mm'),
                     elapsed, profit, bprofit, sprofit, bnbrlot, snbrlot, bnbrtrade, snbrtrade, engineoperation, enginerule]);
     sb.table_setrowattr(historytable, rowindex, 'style', style);                       
-
-
 
     var recs = sb.table_find (statementtable, 'Strategy', enginename);
 
@@ -1325,8 +1347,8 @@ function TreatAlert(terminal, values) {
     var objsignal = terminal.PG.GetSignalFromName(alertsi.Signal);
     var color = (objsignal ? objsignal.Color : 'gray');
     
-
-   // DisplayInfo(Symbol.Name + " : " + alertsi.Object + " " + alertsi.Signal + " " + periods, solution.CurrentTerminal.PG.AlertsSound, 'alertnotificationpanel', color);
+    let currencypair = GetCurrencyPair(Symbol.Name);
+    TreatInfo(currencypair[0].Description + "against " + currencypair[1].Description + ": " + alertsi.Object + " " + alertsi.Signal + " " + periods);
 
     $('#alertnotificationpanel').val(Symbol.Name + " : " + alertsi.Object + " " + alertsi.Signal + " " + periods);
     $('#alertnotificationpanel').css ('color', color);
@@ -2111,13 +2133,21 @@ function OnPendingOrder(terminal, type, svolume, stoploss, stakeprofit) {
 }
 
 
-function OnGetProfit(terminal, startdate, enddate) {
+function OnGetProfit(terminal, profittype, startdate, enddate) {
 
     var PG = terminal.PG;
     var UserId = solution.get('user').id;
+
     if (UserId == 0) UserId = 1;
-    for (var i = 0; i < PG.Symbols.length; i++) {
-        var sorder = "*GET_PROFIT " + "-1 = [" + startdate + " " + enddate + "] ";
+    
+    let symbollength =  PG.Symbols.length;
+
+    if (profittype == -1 ) {   // select only one symbol to get all history
+        symbollength = 1;
+    }
+
+    for (var i = 0; i < symbollength; i++) {
+        var sorder = "*GET_PROFIT " + "-1 = [" + profittype + " " + startdate + " " + enddate + "] ";
         tradedesk_MT4Com.Send(UserId + '*' + PG.Symbols[i].Name + sorder);
     }
 }

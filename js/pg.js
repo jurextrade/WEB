@@ -4,6 +4,8 @@ var CODE_CPP            = 1;
 
 
 
+
+
 function pg_solution () {
     let  site           = solution.get('site');
     let  user           = solution.get('user')
@@ -163,7 +165,7 @@ function pg_solution () {
         xhttp.open("GET", url, async);
         xhttp.send();
     }
-
+    
     solution.LoadSignals = function (url, async, interfacecallback, par) {
         if (!async) async = false;
         
@@ -230,7 +232,8 @@ function pg_solution () {
     }
 
  // project    
-    solution.UpdateIndicators = function (terminal) {
+    solution.UpdateIndicators = function (pararray) {
+        let terminal = pararray[0];
         let pname    = terminal.pname;
         let PG       = terminal.PG;     
         
@@ -544,7 +547,14 @@ function pgsymbol(name, pname, minlot, maxlot, lotstep, spread, stoplevel, point
         this.SelectedContracts = [];    
         this.NbrContracts = 0;
         this.NbrContractRead = 0;
-        this.Order = new pgtradeorders(this); // BUY OR SELL                
+        this.Order = new pgtradeorders(this); // BUY OR SELL      
+        for (var i = 0; i < PeriodName.length; i++) {
+            this.chartData[i] = [];
+            this.WaitHistory[i] = false;
+            this.NbrCandles[i] = 0;
+            this.periodSeperatorData[i] = [];
+            this.xextents[i] = null;
+        };                  
 
     }
     
@@ -578,13 +588,7 @@ function pgsymbol(name, pname, minlot, maxlot, lotstep, spread, stoplevel, point
     this.SellSL = 0;
     this.BuyVolume = 0;
     this.SellVolume = 0;
-
-
     this.RightType = TRADE_STOCK;  // can be also put or call
-  
-
-
-
     this.BuyNbrLots = 0;
     this.SellNbrLots = 0;
     this.BuyProfit = 0;
@@ -607,13 +611,7 @@ function pgsymbol(name, pname, minlot, maxlot, lotstep, spread, stoplevel, point
     this.Expiries = [];
     this.SelectedContracts = [];    
 
-    for (var i = 0; i < PeriodName.length; i++) {
-        this.chartData[i] = [];
-        this.WaitHistory[i] = false;
-        this.NbrCandles[i] = 0;
-        this.periodSeperatorData[i] = [];
-        this.xextents[i] = null;
-    };
+
     this.AddContract = function (recid) {
         for (var i = 0; i < this.SelectedContracts.length; i++)
             if (this.SelectedContracts[i].Recid == recid) return false;
@@ -714,12 +712,13 @@ function pgproject (pname, name, path) {
 
         var rootproject = user.path + '/Projects/' + this.Folder + "/MQL4/Files/";
         
-        this.PG.LoadObjects(solution,   site.address + rootproject, ASYNCHRONE,        solution.UpdateIndicators, this);
-        this.PG.LoadEngines(site.address + rootproject, ASYNCHRONE,  UpdateProjectEngines, this);
-        this.PG.LoadConditions(site.address + rootproject + "input/ss/",   ASYNCHRONE,       UpdateProjectConditions, this);
-        this.PG.LoadAlerts(site.address + rootproject,  ASYNCHRONE);
-        this.PG.LoadExperts(solution,  site.address + "/php/read_experts.php",this.Folder,       ASYNCHRONE, UpdateProjectExperts, this);
-        this.PG.LoadMarkers(site.address + rootproject,  ASYNCHRONE);        
+        this.PG.G_Load(rootproject + 'PG_Objects.csv', ASYNCHRONE,  this.PG.LoadObjects, [this], solution.UpdateIndicators, [this]);
+        this.PG.G_Load(rootproject + 'PG_Engines.csv', ASYNCHRONE,  this.PG.LoadEngines, [this, rootproject] , project_updateengines, [this]);
+        this.PG.G_Load(rootproject + 'input/ss/' + 'PG_Logicals.ss', ASYNCHRONE, this.PG.LoadConditions, [this], project_updateconditions, [this]);
+        this.PG.G_Load(rootproject + 'PG_Alerts.scv',  ASYNCHRONE, this.PG.LoadAlerts, [this]);
+        this.PG.G_Load(rootproject + 'PG_Markers.sc',  ASYNCHRONE, this.PG.LoadMarkers, [this]);        
+        this.PG.LoadExperts(solution,  site.address + "/php/read_experts.php",this.Folder,       ASYNCHRONE, project_updateexperts, this);
+
     }
 
     this.Distribute = function (terminalfolder, terminaltype) {
@@ -1012,35 +1011,36 @@ function pgterminal (pname, type, main) {
         let  user           = solution.get('user')              
          if (this.Type == 'Terminal' || this.Type == 'Tester') {
 
-            var rootterminal = this.Type == 'Terminal' ? user.path + "/Terminal/" + this.Folder + "/MQL4/Files/" : user.path + "/Terminal/" + this.Folder + "/tester/files/";
-            
-            this.PG.LoadObjects(solution,   site.address + rootterminal,   ASYNCHRONE,   solution.UpdateIndicators, this);
-            this.PG.LoadEngines(site.address + rootterminal,  ASYNCHRONE,   UpdateEngines, this);                
-            this.PG.LoadConditions(site.address + rootterminal + "input/ss/",   ASYNCHRONE);
-            this.PG.LoadAlerts(site.address + rootterminal,   ASYNCHRONE,   Tradedesk_UpdateAlerts,   this);
-            this.PG.LoadPanel(site.address + rootterminal,    ASYNCHRONE,   UpdatePanel,    this);
-       //     this.PG.LoadProfile(site.address + rootterminal,  ASYNCHRONE,   UpdateProfile,  this);
-            this.PG.LoadMarkers(site.address + rootterminal,  ASYNCHRONE);
-            
+            let rootterminal = this.Type == 'Terminal' ? user.path + "/Terminal/" + this.Folder + "/MQL4/Files/" : user.path + "/Terminal/" + this.Folder + "/tester/files/";
+            this.PG.G_Load(rootterminal + 'PG_Objects.csv', ASYNCHRONE,  this.PG.LoadObjects, [this], solution.UpdateIndicators, [this]);        
+            this.PG.G_Load(rootterminal + 'PG_Engines.csv', ASYNCHRONE,  this.PG.LoadEngines, [this, rootterminal] , tradedesk_updateengines, [this]);  
+            this.PG.G_Load(rootterminal + 'input/ss/' + 'PG_Logicals.ss', ASYNCHRONE, this.PG.LoadConditions, [this]);                     
+            this.PG.G_Load(rootterminal + 'PG_Alerts.csv',  ASYNCHRONE, this.PG.LoadAlerts, [this], tradedesk_updatealerts, [this]);
+            this.PG.G_Load(rootterminal + 'PG_Markers.sc',  ASYNCHRONE, this.PG.LoadMarkers, [this]);             
 
-        //    this.PG.LoadSystemObjects(site.address + rootterminal + "input/ss/", true);
+
+            this.PG.LoadPanel(site.address + rootterminal,    ASYNCHRONE,   UpdatePanel,    this);
+
+       //     this.PG.LoadProfile(site.address + rootterminal,  ASYNCHRONE,   UpdateProfile,  this);
+       //     this.PG.LoadSystemObjects(site.address + rootterminal + "input/ss/", true);
 
          }
          else {  // must be yahoo
-            var rootterminal = user.path + "/Terminal/" + this.Folder + "/Files/" ;
-
-            this.PG.LoadObjects (solution, site.address + rootterminal, ASYNCHRONE,   solution.UpdateIndicators, this);
+            let rootterminal = user.path + "/Terminal/" + this.Folder + "/Files/" ;
+            this.PG.G_Load(rootterminal + 'PG_Objects.csv', ASYNCHRONE, this.PG.LoadObjects, [this], solution.UpdateIndicators, [this]);   
             this.PG.LoadSymbols (site.address + rootterminal,     ASYNCHRONE, UpdateSymbols, this);
-            this.PG.LoadAlerts(site.address + rootterminal,  ASYNCHRONE, UpdateAlerts, this);
+            this.PG.G_Load(rootterminal + 'PG_Alerts.csv',  ASYNCHRONE, this.PG.LoadAlerts, [this], UpdateAlerts, [this]);            
+
             this.PG.LoadProfile(site.address + rootterminal, ASYNCHRONE, UpdateProfile,   this);
-            this.PG.LoadMarkers(site.address + rootterminal, ASYNCHRONE);
+            this.PG.G_Load(rootterminal + 'PG_Markers.sc',  ASYNCHRONE, this.PG.LoadMarkers, [this]);      
 
             if (this.Folder != "Main") {
                 this.PG.LoadOrders (site.address + rootterminal,   ASYNCHRONE, UpdateOrders, this);
             }
          }    
     }
-    
+
+
     this.Save = function () {
   
         if (solution.get('user').id == "0") {
@@ -1498,130 +1498,176 @@ function pg (pname) {
         xhttp.send();
     }    
 
+    this.G_Load = function (filename, async, callback, callback_par, updatecallback, updatecallback_par ) {
+         solution.get_file  (filename, async, callback, callback_par, updatecallback, updatecallback_par);
+    }
+
+    this.LoadObjects = function (response, arraypar) {        // no depends
+        let data = response;        
+        let PG = arraypar[0].PG;
+        
+        PG.Objects = solution.PG.Objects.slice(0);
+        
+        let nextid = PG.ReturnNextObjectId ();
    
 
-    this.LoadObjects = function (solution, url, async, interfacecallback, par) {        // no depends
-        if (!async) async = false;
-    
-        var xhttp = new XMLHttpRequest();
-        xhttp.PG = this;
-        xhttp.url = url;
-
-        xhttp.onreadystatechange = function () {
-            var PG = this.PG;
-            PG.Objects = solution.PG.Objects.slice(0);
-            var nextid = PG.ReturnNextObjectId ();
-
-            if (this.readyState == 4 && this.status == 200) {
-                var data = this.responseText;
-
-                var lines = data.split(/\r\n|\n/);
-                var headings = lines[0].split(','); // Splice up the first row to get the headings
-                var pobject = null;
-                for (var j = 1; j < lines.length; j++) {
-                    if (lines[j] == "") continue;
-
-                    var values = lines[j].split(','); // Split up the comma seperated values
-
-                    pobject = PG.GetObjectFromName(values[1]);
-
-                    if (!pobject) {
-                        pobject = new pgobject(nextid, values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], [values[12], values[13], values[14], values[15]]);
-                        PG.Objects.push(pobject);
-                        nextid++;
-                    }
-                    else continue;
-                    
-                    if (pobject.Type == "CUSTOM" || pobject.Type == "PREDEFINED") {
-                        var n = values[4].lastIndexOf(".");
-                        pobject.ProgName = (n > -1 ? values[4] :  values[4] + '.ex4') ;
-                    } else {
-                        if (pobject.Type == "SAR") pobject.Step = values[4];
-                        else pobject.Period = values[4];
-                    }
-                    k = 1;
-                    for (a = 0; a < 5; a++)
-                        for (i = 0; i < NBR_PERIODS; i++) {
-                            pobject.Level[a][i] = values[15 + k] == "--" ? EMPTY_VALUE : +values[15 + k];
-                            k = k + 1;
-                        }
-                }
-                if (interfacecallback)  interfacecallback (par);
-            }
-            if (this.readyState == 4 && this.status == 404) {
-                console.log ('Erreur in Reading Request LoadObjects ' + this.readyState);
-                if (interfacecallback)  interfacecallback (par, '');                 
-            }             
-        };
-        xhttp.open("GET", url + "PG_Objects.csv", async);
-        xhttp.send();
-    }
-    
-    this.LoadEngines = function (url, async, interfacecallback, par) {              //no depends
-        if (!async) async = false;
+        let lines = data.split(/\r\n|\n/);
+        let headings = lines[0].split(','); // Splice up the first row to get the headings
+        let pobject = null;
         
-        var xhttp = new XMLHttpRequest();
-        xhttp.PG = this;
-        xhttp.url = url;
-        xhttp.onreadystatechange = function () {
-            var PG = this.PG;
-            PG.Engines = [];
-            PG.Strategies = [];
-            
-            if (this.readyState == 4 && this.status == 200) {
-                var PG = this.PG;
-                var url = this.url;
-                var data = this.responseText;
+        for (var j = 1; j < lines.length; j++) {
+            if (lines[j] == "") continue;
 
-                var lines = data.split(/\r\n|\n/);
-                for (var j = 1; j < lines.length; j++) {
-                    if (lines[j] == "") continue;
-                    var values = lines[j].split(',');
-                    var engine = new pgengine(PG, values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15], values[16], values[17], values[18], values[19], values[20], values[21], values[22], values[23], values[24], values[25], values[26], values[27], values[28], values[29], values[30], values[31], values[32], values[33], values[34], values[35], values[36], values[37], values[38], values[39], values[40]);
-                    PG.Engines.push(engine);
-                    
-                    
-                    var strategy = PG.GetStrategyFromRule(engine.StartRule);
-                    if (!strategy) {
-                        strategy = new pgstrategy();
-                        strategy.Name = engine.Name;
-                        strategy.Rule = PG.Rule2Int(engine.StartRule);
-                        strategy.Operation = OP_BUYSELL;
-                        PG.Strategies.push(strategy);
-                    }
-                    if (engine.Operation == "BUY" || engine.Operation == "BUYSELL") strategy.pBEngine = engine;
-                    if (engine.Operation == "SELL") {
-                        strategy.pSEngine = engine;
-                        strategy.Operation = OP_BUY;
-                    }
-                }
-                
-                for (var i = 0; i < PG.Strategies.length; i++) {
-                    if (PG.Strategies[i].pBEngine == null) {
-                        PG.Strategies[i].pBEngine = pgengine_s(PG, OP_BUY, PG.Strategies[i].Rule);
-                        PG.Strategies[i].pBEngine.Name = PG.Strategies[i].pSEngine.Name;
-                        PG.Engines.push(PG.Strategies[i].pBEngine);
-                    }
-                    if (PG.Strategies[i].pSEngine == null) {
-                        PG.Strategies[i].pSEngine = pgengine_s(PG, OP_SELL, PG.Strategies[i].Rule);
-                        PG.Strategies[i].pSEngine.Name == PG.Strategies[i].pBEngine.Name;
-                    }
-                    PG.Strategies[i].Load(url, async);
-                }
-                PG.LoadStrategies (url, async, solution.UpdateStrategies, par);
+            var values = lines[j].split(','); // Split up the comma seperated values
 
-                PG.LoadSchedules(url, async, solution.UpdateSchedules, par);              
-                if (interfacecallback) {
-                    interfacecallback (par);
-                }
+            pobject = PG.GetObjectFromName(values[1]);
+
+            if (!pobject) {
+                pobject = new pgobject(nextid, values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], [values[12], values[13], values[14], values[15]]);
+                PG.Objects.push(pobject);
+                nextid++;
             }
-            if (this.readyState == 4 && this.status == 404) {
-                console.log ('Erreur in Reading Request LoadEngines ' + this.readyState);
-                if (interfacecallback)  interfacecallback (par, '');                 
+            else continue;
+            
+            if (pobject.Type == "CUSTOM" || pobject.Type == "PREDEFINED") {
+                var n = values[4].lastIndexOf(".");
+                pobject.ProgName = (n > -1 ? values[4] :  values[4] + '.ex4') ;
+            } else {
+                if (pobject.Type == "SAR") pobject.Step = values[4];
+                else pobject.Period = values[4];
+            }
+            k = 1;
+            for (a = 0; a < 5; a++)
+                for (i = 0; i < NBR_PERIODS; i++) {
+                    pobject.Level[a][i] = values[15 + k] == "--" ? EMPTY_VALUE : +values[15 + k];
+                    k = k + 1;
+                }
+        }
+    }    
+
+    this.LoadEngines = function (response, arraypar) {   
+        let data = response;     
+        let PG  = arraypar[0].PG;
+        let url = arraypar[1];
+
+        PG.Engines = [];
+        PG.Strategies = [];
+
+        let lines = data.split(/\r\n|\n/);
+        for (var j = 1; j < lines.length; j++) {
+            if (lines[j] == "") continue;
+            var values = lines[j].split(',');
+            var engine = new pgengine(PG, values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15], values[16], values[17], values[18], values[19], values[20], values[21], values[22], values[23], values[24], values[25], values[26], values[27], values[28], values[29], values[30], values[31], values[32], values[33], values[34], values[35], values[36], values[37], values[38], values[39], values[40]);
+            PG.Engines.push(engine);
+            
+            
+            var strategy = PG.GetStrategyFromRule(engine.StartRule);
+            if (!strategy) {
+                strategy = new pgstrategy();
+                strategy.Name = engine.Name;
+                strategy.Rule = PG.Rule2Int(engine.StartRule);
+                strategy.Operation = OP_BUYSELL;
+                PG.Strategies.push(strategy);
+            }
+            if (engine.Operation == "BUY" || engine.Operation == "BUYSELL") strategy.pBEngine = engine;
+            if (engine.Operation == "SELL") {
+                strategy.pSEngine = engine;
+                strategy.Operation = OP_BUY;
             }
         }
-        xhttp.open("GET", url + "PG_Engines.csv", async);
-        xhttp.send();
+        for (var i = 0; i < PG.Strategies.length; i++) {
+            if (PG.Strategies[i].pBEngine == null) {
+                PG.Strategies[i].pBEngine = pgengine_s(PG, OP_BUY, PG.Strategies[i].Rule);
+                PG.Strategies[i].pBEngine.Name = PG.Strategies[i].pSEngine.Name;
+                PG.Engines.push(PG.Strategies[i].pBEngine);
+            }
+            if (PG.Strategies[i].pSEngine == null) {
+                PG.Strategies[i].pSEngine = pgengine_s(PG, OP_SELL, PG.Strategies[i].Rule);
+                PG.Strategies[i].pSEngine.Name == PG.Strategies[i].pBEngine.Name;
+            }
+            PG.Strategies[i].Load(url, ASYNCHRONE);
+        }
+        PG.LoadStrategies (url, ASYNCHRONE, solution.UpdateStrategies, arraypar[0]);
+        PG.LoadSchedules(url, ASYNCHRONE, solution.UpdateSchedules, arraypar[0]);              
+    }
+
+
+    this.LoadConditions = function (response, arraypar) {   
+        let data = response;                
+        let PG = arraypar[0].PG;
+
+        PG.Conditions = [];
+
+        let PL       = solution.PL;
+        let no_defun = true;
+
+        PL.Parse(PG, data);
+        
+        for (var i = 0; i < PL.ListSections.length; i++) {
+            let sccontent = PL.SCFromSection(PL.ListSections[i], no_defun); 
+            sccontent = js_beautify(sccontent,  {
+                                    indent_size: 4,
+                                    brace_style: 'collapse',
+                                    max_preserve_newlines: -1
+                                });                     
+            let condition = new pgcondition(PG, PL.ListSections[i].Name, sccontent, PL.ListSections[i]);
+            PG.Conditions.push(condition);
+        }
+    }    
+
+
+    this.LoadAlerts = function (response, arraypar) {   
+        let data = response;                
+        let PG = arraypar[0].PG;
+
+        PG.Alerts = [];
+            
+            
+        var lines = data.split(/\r\n|\n/);
+        for (var j = 0; j < lines.length; j++) {
+            if (lines[j] == "") continue;
+            var values = lines[j].split('#');
+            var Alert = new pgalert(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[15]);
+            PG.Alerts.push(Alert);
+            Alert.OnOff = [values[10], values[11], values[12], values[13]];
+            Alert.Graphic_code = values[14];
+            Alert.Graphic_color = values[15];
+            Alert.Graphic_from = values[16];
+            Alert.Graphic_size = values[17];
+            Alert.Graphic_distance = values[18];
+            Alert.Sound_Text = values[19];
+            Alert.Alert_Text = values[20];
+            Alert.Mail_FromName = values[21];
+            Alert.Mail_FromAdress = values[22];
+            Alert.Mail_ToAdress = values[23];
+            Alert.Mail_CcAdress = values[24];
+            Alert.Mail_Subject = values[25];
+            Alert.Mail_Content = values[26];
+        }
+    }
+
+    this.LoadMarkers = function (response, arraypar) {   
+        let data = response;                
+        let PG = arraypar[0].PG;
+      
+        PG.Markers = [];
+        
+
+        let PL       = solution.PL;
+        let no_defun = true;
+
+        PL.Parse(PG, data);
+
+        for (var i = 0; i < PL.ListSections.length; i++) {
+            let sccontent =  PL.SCFromSection(PL.ListSections[i], no_defun);  
+            sccontent = js_beautify(sccontent,  {
+                                indent_size: 4,
+                                brace_style: 'collapse',
+                                max_preserve_newlines: -1
+                            });
+            let marker = new pgmarker(PG, PL.ListSections[i].Name, sccontent, PL.ListSections[i]);
+            PG.Markers.push(marker);
+        }
     }
 
     this.LoadStrategies = function (url, async, interfacecallback, par) {           //depends engine
@@ -1744,46 +1790,6 @@ function pg (pname) {
         xhttp.send();
     }
 
-    this.LoadConditions = function (url, async, interfacecallback, par) {               //mo depends
-        if (!async) async = false;
-        
-        var xhttp = new XMLHttpRequest();
-        xhttp.PG = this;
-        xhttp.url = url;
-        xhttp.onreadystatechange = function () {
-            var PG = this.PG;
-            var url = this.url;
-            PG.Conditions = [];
-            
-            if (this.readyState == 4 && this.status == 200) {
-                let data     = this.responseText;
-                let PL       = solution.PL;
-                let no_defun = true;
-
-                PL.Parse(PG, data);
-
-                
-                for (var i = 0; i < PL.ListSections.length; i++) {
-                    let sccontent = PL.SCFromSection(PL.ListSections[i], no_defun); 
-                    sccontent = js_beautify(sccontent,  {
-                                            indent_size: 4,
-                                            brace_style: 'collapse',
-                                            max_preserve_newlines: -1
-                                        });                     
-                    let condition = new pgcondition(PG, PL.ListSections[i].Name, sccontent, PL.ListSections[i]);
-                    PG.Conditions.push(condition);
-                }
-                if (interfacecallback) interfacecallback (par);                       
-            }
-            if (this.readyState == 4 && this.status == 404) {
-                console.log ('Erreur in Reading Request LoadConditions ' + this.readyState);
-                if (interfacecallback)  interfacecallback (par, '');                 
-            }                   
-        }
-        xhttp.open("GET", url + "PG_Logicals.ss", async);
-        xhttp.send();
-    }    
-
     this.LoadSystemObjects = function (url, async) {            //depends object
         if (!async) async = false;
         
@@ -1819,52 +1825,6 @@ function pg (pname) {
         xhttp.send();
     }
 
-    this.LoadAlerts = function (url, async, interfacecallback, par) {            //no depends
-        if (!async) async = false;
-        var xhttp = new XMLHttpRequest();
-        xhttp.PG = this;
-        xhttp.url = url;
-        xhttp.onreadystatechange = function () {
-            var PG = this.PG;
-            var url = this.url;
-            PG.Alerts = [];
-            
-            
-            if (this.readyState == 4 && this.status == 200) {
-                var data = this.responseText;
-                var lines = data.split(/\r\n|\n/);
-                for (var j = 0; j < lines.length; j++) {
-                    if (lines[j] == "") continue;
-                    var values = lines[j].split('#');
-                    var Alert = new pgalert(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[15]);
-                    PG.Alerts.push(Alert);
-                    Alert.OnOff = [values[10], values[11], values[12], values[13]];
-                    Alert.Graphic_code = values[14];
-                    Alert.Graphic_color = values[15];
-                    Alert.Graphic_from = values[16];
-                    Alert.Graphic_size = values[17];
-                    Alert.Graphic_distance = values[18];
-                    Alert.Sound_Text = values[19];
-                    Alert.Alert_Text = values[20];
-                    Alert.Mail_FromName = values[21];
-                    Alert.Mail_FromAdress = values[22];
-                    Alert.Mail_ToAdress = values[23];
-                    Alert.Mail_CcAdress = values[24];
-                    Alert.Mail_Subject = values[25];
-                    Alert.Mail_Content = values[26];
-                }
-            if (interfacecallback) interfacecallback (par);
-                
-            }
-            if (this.readyState == 4 && this.status == 404) {
-                console.log ('Erreur in Reading Request LoadAlerts ' + this.readyState);
-                if (interfacecallback)  interfacecallback (par, '');                 
-            }            
-        };
-        xhttp.open("GET", url + "PG_Alerts.csv", async);
-     //   xhttp.setRequestHeader('Cache-Control', 'no-cache');
-        xhttp.send();
-    }
     this.LoadPanel = function (url, async, interfacecallback, par) {            //no depends
         if (!async) async = false;
         
@@ -2220,46 +2180,7 @@ function pg (pname) {
         SubmitProjectRequest('Projects',terminal.Folder, terminaltype ? terminaltype : terminal.Type, line, 'php/save_markers.php', ASYNCHRONE);
         return line;
     }
-    this.LoadMarkers = function (url, async, interfacecallback, par) {               //mo depends
-
-        if (!async) async = false;
-        
-        var xhttp = new XMLHttpRequest();
-        xhttp.PG = this;
-        xhttp.url = url;
-        xhttp.onreadystatechange = function () {
-            var PG = this.PG;
-            var url = this.url;
-            PG.Markers = [];
-            
-            if (this.readyState == 4 && this.status == 200) {
-                let data     = this.responseText;
-                let PL       = solution.PL;
-                let no_defun = true;
-
-                PL.Parse(PG, data);
-
-                for (var i = 0; i < PL.ListSections.length; i++) {
-                    let sccontent =  PL.SCFromSection(PL.ListSections[i], no_defun);  
-                    sccontent = js_beautify(sccontent,  {
-                                        indent_size: 4,
-                                        brace_style: 'collapse',
-                                        max_preserve_newlines: -1
-                                    });
-                    let marker = new pgmarker(PG, PL.ListSections[i].Name, sccontent, PL.ListSections[i]);
-                    PG.Markers.push(marker);
-                }
-                if (interfacecallback) interfacecallback (par);                       
-            }
-           
-            if (this.readyState == 4 && this.status == 404) {
-                console.log ('Erreur in Reading Request LoadMarkers ' + this.readyState);
-                if (interfacecallback)  interfacecallback (par, '');                 
-            }                   
-        }
-        xhttp.open("GET", url + "PG_Markers.sc", async);
-        xhttp.send();
-    }  
+      
     this.SaveEngineInString = function (engine) {
         var line = '';
             line += engine.Name + ',';

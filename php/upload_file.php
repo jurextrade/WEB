@@ -10,7 +10,7 @@ $fp = fopen($filename, 'w');
 if ($fp) {
     fwrite($fp, $content);
     fclose($fp);
-    echo $filename;
+    echo "ok " . $filename;
 } else {
     echo "Error: Could not open file '{$filename}'.";
 }

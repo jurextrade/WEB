@@ -4,7 +4,16 @@ header('Content-Type: application/json charset=UTF-8');
 
 $request = isset($_REQUEST['message']) ? $_REQUEST['message'] : "message not set";  
 
-$message = json_decode($request , false);
+
+if ($request == "message not set") {
+    echo "invalid url";
+    exit;   
+}
+$message = json_decode($request);
+
+if ($message == null) {
+    exit;
+}
 
 $messagename   = $message->Name;
 $messagevalues = $message->Values;
@@ -155,9 +164,11 @@ switch ($messagename) {
 
     case 'savefile':
 
+     
+
         $filename      = $messagevalues[0];  
         $content       = $messagevalues[1]; 
-//        if (file_exists($filename)) {  
+
 
         $fp = fopen($filename, 'w');
         if ($fp) {
@@ -172,7 +183,8 @@ switch ($messagename) {
     break;
 
     case 'readfile':
-        
+  
+
         $filename      = $messagevalues[0];  
 
         $content = "";
@@ -201,6 +213,8 @@ switch ($messagename) {
     break;
 
     case 'deleteFile':
+  
+
         $filename      = $messagevalues[0];  
         $status = unlink($filename);    
 

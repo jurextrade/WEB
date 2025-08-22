@@ -315,8 +315,14 @@ function loadgen($userid = '0', $appli) {
             let error              = "<?php echo  $error; ?>"; 
 
             solution = new SOLUTION(userid, username, usermail, userfirstname, userlastname, userdname, userphoto, action, key, login, error, dynamic);
-            document.getElementsByClassName("sb_load_page")[0].remove()          
-            CookieBanner_init();              
+            if (solution.error == -1) {
+                 let elt = document.getElementById("startloader");
+                 elt.className = "solution_error";
+                 elt.innerHTML = 'Error loading site';
+            } else {
+                document.getElementsByClassName("sb_load_page")[0].remove()          
+                CookieBanner_init();              
+            }
         }
         setTimeout(call, 5);
     </script>

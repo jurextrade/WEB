@@ -68,18 +68,17 @@ function netprog_filemanager_update () {
     }
     if (!cuser.fileexplorer) {
         cuser.send({Name: 'scandir_r',Values: cuser.is_admin () ? ['.', ''] : [c.user.path  + '/NetProg', '.']}, false,  function (content, values) {
-            let dirstruct = JSON.parse (content);
-            values[0].fileexplorer = dirstruct.Values[0]}, [cuser])
-      
+            try {
+                let dirstruct = JSON.parse (content);
+                values[0].fileexplorer = dirstruct.Values[0]  
+                solution.Files = []
+                sb.tree_removechildren(netprog_filemanager.id)
+                netprog_filemanager_treefromexplorer (netprog_filemanager,  cuser.fileexplorer, [0])                                
+            } catch (e) {
+                return console.error(e); // error in the above string (in this case, yes)!
+            }
+        }, [cuser])
     }
-
-
-//np    
-    solution.Files = []
-
-    sb.tree_removechildren(netprog_filemanager.id)
-
-    netprog_filemanager_treefromexplorer (netprog_filemanager,  cuser.fileexplorer, [0])      
 }
 
 function netprog_filemanager_treenodeitem (cname, name, type, closed, levels) {

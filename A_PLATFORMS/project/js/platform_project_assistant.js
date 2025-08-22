@@ -56,7 +56,7 @@ function onclick_assistantmode (elt) {
 
 
 function project_assistant_select (assistant) {
-    console.log ('projectASSISTANT')
+
     let quilleditor = assistant ? '#assistantquillpanel' : '#strategyquillpanel';    
     
     if (assistant)  {
@@ -304,11 +304,11 @@ function project_assistant_init() {
             switch (currentIndex) {
                 case STEP_PROJECTSELECTION :
                     if (!solution.CurrentProject) {               
-                        DisplayInfo("Please Select a Project or Create one", true, 'operationpanel', 'var(--theme-error-color)');
+                        TreatInfo("Please Select a Project or Create one");
                         return null;
                     } else
                     if (!CurrentStrategy) {                
-                        DisplayInfo("Please Select a Strategy or Create one", true, 'operationpanel', 'var(--theme-error-color)');
+                        TreatInfo("Please Select a Strategy or Create one");
                         return null;
                     } else
                      return true;

@@ -400,8 +400,8 @@ class SB {
                                                                                 //DRAG  HTML ADDED                   
         $( ".dragbar_v" ).draggable(dragbar_v_defaultoptions);   
         $( ".dragbar_h" ).draggable(dragbar_h_defaultoptions);    
-        $( ".sb_tab" ).sortable();   
-        $( ".sb_tab" ).disableSelection()
+   //     $( ".sb_tab" ).sortable();   
+   //     $( ".sb_tab" ).disableSelection()
 
      }
 
@@ -1881,7 +1881,24 @@ class SB {
                         (defined(item.icon) ?      ' <i class="' + item.icon + '"></i>' : '') + 
                         (defined(item.iconfile) ?  ' <img class="sb_iconfile" src="' + item.iconfile + '" ></img>' : '') +                     
                         (defined(item.item) ?      ' <label class="sb_label">' + item.item +'</label>' : '') +
-                        '<input id="' + item.id + '"   type="time" class="sb_range"' +
+                        '<input id="' + item.id + '"   type="time" class="form-control sb_range"' +
+                        attributes +                
+                        events +                
+                        (defined(item.style) ?    ' style= "' + item.style + '"' : '')  +                         
+                        (defined(item.value) ?    ' value="' +  item.value   + '"' : '') +  
+                        (defined(item.disabled) && item.disabled == true ? ' disabled' : '') + 
+                        '>' +
+                    '</span>';                        
+                break;
+                case 'date':      //  
+                    content +=                
+                    '<span class="sb_link ' + itemclass + '"' + 
+
+                        (defined(item.title) ?     ' title= "' + item.title + '"' : '') + '>'  + 
+                        (defined(item.icon) ?      ' <i class="' + item.icon + '"></i>' : '') + 
+                        (defined(item.iconfile) ?  ' <img class="sb_iconfile" src="' + item.iconfile + '" ></img>' : '') +                     
+                        (defined(item.item) ?      ' <label class="sb_label">' + item.item +'</label>' : '') +
+                        '<input id="' + item.id + '"   type="date" class="form-control sb_range"' +
                         attributes +                
                         events +                
                         (defined(item.style) ?    ' style= "' + item.style + '"' : '')  +                         
@@ -2351,6 +2368,7 @@ class SB {
             case 'radio':     
             case 'select' :    
             case 'time' :      //  
+            case 'date' :      //  
             case 'int' : 
             case 'float' :
             case 'text' :

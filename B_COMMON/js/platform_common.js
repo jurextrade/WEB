@@ -20,15 +20,17 @@ function AlertNotificationPanel() {
 //------------------------------------------------------------ COMMENT PANEL ----------------------------------------------------------
 
 var Interval_messageblink       = 0;        // display
-var OpCount                     = 0;
+
+
+
 
 
 function BlinkOperation(elt, line, bgcolor, opcount) {
-    var blinkcolor = 'var(--theme-color)';
+    var blinkcolor = 'var(--theme-platform-color)'
     var blinkbg = bgcolor;
     elt.children().html(line);
   
-    if (OpCount % 2) {
+    if ( elt.OpCount % 2) {
         elt.css ('color', '');
         elt.css ('background', '');
       
@@ -37,24 +39,23 @@ function BlinkOperation(elt, line, bgcolor, opcount) {
         elt.css ('background', blinkbg);
         elt.children().html (line);
     }
-    if (OpCount == opcount) {
+    if (elt.OpCount >= opcount) {
         clearInterval(Interval_messageblink);
         elt.remove();
     }
-    OpCount++;
+     elt.OpCount++;
  }
 
-function TreatInfo(line, id, color) {
-    sound = true;
-    DisplayInfo(line, sound, id, color);
+function TreatInfo(line, bgcolor) {
+    DisplayInfo(line, true, bgcolor);
 }
 
-function DisplayInfo(line, withsound, id, bgcolor, opcount) {
+function DisplayInfo(line, withsound, bgcolor, opcount) {
     let operationpanel = {
         id: 'operationpanel',
         position: '',    
         type: 'group',    
-        class: 'sb_overlay',
+        class: '',
         items:
             [
                 {id: '',    type: 'link',  attributes: {readonly:''}}  
@@ -65,20 +66,22 @@ function DisplayInfo(line, withsound, id, bgcolor, opcount) {
 
     if (elt.length == 0) {
         $('body').append(sb.render(operationpanel));
-        elt = $('#' + id)        
+        elt = $('#' + id)  
+    
     }
-    OpCount = 0;
+   
+    elt.OpCount = 0;  
+   
     if (!bgcolor) {
         bgcolor = 'var(--theme-platform-color)'
     }
     
-    opcount = 5;
     clearInterval(Interval_messageblink);
     if (line.startsWith("Check Account")) bgcolor = theme_bear;
 
-    BlinkOperation(elt, line, bgcolor);
+    BlinkOperation(elt, line, bgcolor, opcount ? opcount : 5);
 
-    Interval_messageblink = setInterval(BlinkOperation, 500, elt, line, bgcolor, opcount);
+    Interval_messageblink = setInterval(BlinkOperation, 500, elt, line, bgcolor, opcount ? opcount : 5);
 
     if (withsound) {
         let gsound          = solution.get('sound')     
@@ -103,7 +106,7 @@ function DisplayInfo(line, withsound, id, bgcolor, opcount) {
 function AnimationInit(pname, pageid) {
     let iAnimation = document.createElement('div');
     iAnimation.id               = pname + '_animation';
-    iAnimation.style.position   = "relative";
+    iAnimation.style.position   = "absolute";
    // iAnimation.style.visibility = 'hidden';
      let root;
     
@@ -112,13 +115,14 @@ function AnimationInit(pname, pageid) {
     } else {
         root = document.body;
     }
-  
 
     root.prepend(iAnimation);
     let animationid = '#' + pname + '_animation';    
     $(animationid).css ('width',  $(pageid).width());
     $(animationid).css ('height', $(pageid).height());  
-    $(animationid).css ('top',    '50%');    
+    $(animationid).css ('top',    '50%');  
+    $(animationid).css ('margin-left',  '25%');
+   // $(animationid).css ('margin-right',  '10%');
     iAnimation.innerHTML = AnimationPanel ('');
     
 }

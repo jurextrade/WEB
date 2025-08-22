@@ -41,7 +41,7 @@ function emv_select (name) {
 
     if (!solution.emv_CurrentProject) {
       //  sidebarmenu_select ('sidebar_emvprojectmanager', true);    
-        DisplayInfo("Select a project or create one", true, 'operationpanel', 'var(--theme-platform-color)');
+        TreatInfo("Select a project or create one");
     }    
 }
 
@@ -128,7 +128,7 @@ function emv_timer () {
         $('#emv_tester_recordbar #emv_tester_forward_button').attr('disabled',true);
         $('#emv_tester_recordbar #emv_tester_start_button').attr('disabled',true);   
         if (Tester.Reader.Records.length == 0) {
-            $('#emv_tester_recordbar #emv_tester_play_button').attr('disabled',true);         
+      //      $('#emv_tester_recordbar #emv_tester_play_button').attr('disabled',true);         
         }
     } else {
         if (Tester.Reader.RecordIndex ==  Tester.Reader.Records.length) {
@@ -139,11 +139,11 @@ function emv_timer () {
             $('#emv_tester_recordbar #emv_tester_play_button').removeAttr('disabled');                                     
         } else 
         if (Tester.Reader.RecordIndex == 0) {
-            $('#emv_tester_recordbar #emv_tester_start_button').attr('disabled',true);
+//            $('#emv_tester_recordbar #emv_tester_start_button').attr('disabled',true);
             $('#emv_tester_recordbar #emv_tester_forward_button').removeAttr('disabled');   
             $('#emv_tester_recordbar #emv_tester_play_button').removeAttr('disabled');              
         } else {
-            $('#emv_tester_recordbar #emv_tester_play_button').removeAttr('disabled');  
+   //         $('#emv_tester_recordbar #emv_tester_play_button').removeAttr('disabled');  
             $('#emv_tester_recordbar #emv_tester_forward_button').removeAttr('disabled');
             $('#emv_tester_recordbar #emv_tester_start_button').removeAttr('disabled');
         }
@@ -186,7 +186,7 @@ function emv_home_open (event) {
 function emv_loadedproject (project) {
     if (project.Loaded) {
         clearInterval(Interval_emv_loadproject);
-        DisplayInfo("Project " + project.Name + " loaded", true, 'operationpanel');            
+        TreatInfo("Project " + project.Name + " loaded");            
         LoaderDisplay(false);      
        // emv_project_updateterminal(project)           
         emv_drawproject(project, true);        
@@ -210,14 +210,14 @@ function emv_selectproject(project, forcedisplay) {
 
     if (!project.Loaded) {
         LoaderDisplay(true);        
-        DisplayInfo("Loading Project " + project.Name + "  ... Please wait", true, 'operationpanel',  'var(--theme-platform-color)');
+        TreatInfo("Loading Project " + project.Name + "  ... Please wait");
 
         Interval_emv_loadproject = setInterval(emv_loadedproject, 300, project); //5 minutes 300000     
         project.Load();
    
     }
     else {
-        DisplayInfo("Project " + project.Name + " loaded", true, 'operationpanel');      
+        TreatInfo("Project " + project.Name + " loaded");      
       //  emv_project_updateterminal(project)              
         emv_drawproject(project, true);        
     }    

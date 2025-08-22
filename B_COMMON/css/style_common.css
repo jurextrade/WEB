@@ -2186,17 +2186,17 @@ ul, #myUL {
 /*----------------------------------------------------------------- OPERATION----------------------------------------------------*/
 
 #operationpanel  {
-    width: 300px;
+    min-width: 580px;
     position: absolute;
-    z-index: 984;
-    border: 1px solid var(--theme-border-color);
-    inset: 0px 0px auto auto;
+    z-index: 1001;
+    inset: auto auto -1px 0px;
     margin: 0px;
-    transform: translate(-155px, 9px);
     height: 30px;
     text-align: center;
     display: flex;
-    background: var(--theme-bg-color);
+    border-radius: 1px;
+    color: var(--theme-button-color);
+
 }
 
 #operationpanel .sb_link {

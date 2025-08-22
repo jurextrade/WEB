@@ -330,7 +330,7 @@ function market_time() {
     let novembre    = 10;
     let december    = 11;
 
-    var sound = true;
+
     var s = "Closed";
 
     let CloseMarketColor = theme_sell;
@@ -430,7 +430,7 @@ Sydney Stock Exchange (only on CFD) - opens at 23:00 GMT and closes at 05:00 GMT
             s = szTime;
             BColor = 'black';
             Color = CloseMarketColor;
-            if (minutes == 55 && seconds == 0) DisplayInfo("Sydney Close in 5 minutes", sound);
+            if (minutes == 55 && seconds == 0) TreatInfo("Sydney Close in 5 minutes");
         } else {
             s = "Opened";
             BColor = MarketBkColor;
@@ -443,7 +443,7 @@ Sydney Stock Exchange (only on CFD) - opens at 23:00 GMT and closes at 05:00 GMT
             s = szTime;
             BColor = 'black';
             Color = theme_buy;
-            if (minutes == 55 && seconds == 0) DisplayInfo("Sydney Open in 5 minutes", sound);
+            if (minutes == 55 && seconds == 0) TreatInfo("Sydney Open in 5 minutes");
         } else {
             s = "Closed";
             BColor = MarketBkColor;
@@ -456,7 +456,7 @@ Sydney Stock Exchange (only on CFD) - opens at 23:00 GMT and closes at 05:00 GMT
             s = szTime;
             BColor = 'black';
             Color = CloseMarketColor;
-            if (minutes == 55 && seconds == 0) DisplayInfo("Tokyo Close in 5 minutes", sound);
+            if (minutes == 55 && seconds == 0) TreatInfo("Tokyo Close in 5 minutes");
         } else {
             s = "Opened";
             BColor = MarketBkColor;
@@ -469,7 +469,7 @@ Sydney Stock Exchange (only on CFD) - opens at 23:00 GMT and closes at 05:00 GMT
             s = szTime;
             BColor = 'black';
             Color = theme_buy;
-            if (minutes == 55 && seconds == 0) DisplayInfo("Tokyo Open in 5 minutes", sound);
+            if (minutes == 55 && seconds == 0) TreatInfo("Tokyo Open in 5 minutes");
         } else {
             s = "Closed";
             BColor = MarketBkColor;
@@ -482,7 +482,7 @@ Sydney Stock Exchange (only on CFD) - opens at 23:00 GMT and closes at 05:00 GMT
             s = szTime;
             BColor = 'black';
             Color = CloseMarketColor;
-            if (minutes == 55 && seconds == 0) DisplayInfo("London Close in 5 minutes", sound);
+            if (minutes == 55 && seconds == 0) TreatInfo("London Close in 5 minutes");
         } else {
             s = "Opened";
             BColor = MarketBkColor;
@@ -495,7 +495,7 @@ Sydney Stock Exchange (only on CFD) - opens at 23:00 GMT and closes at 05:00 GMT
             s = szTime;
             BColor = 'black';
             Color = theme_buy;
-            if (minutes == 55 && seconds == 0) DisplayInfo("London Open in 5 minutes", sound);
+            if (minutes == 55 && seconds == 0) TreatInfo("London Open in 5 minutes");
         } else {
             s = "Closed";
             BColor = MarketBkColor;
@@ -508,7 +508,7 @@ Sydney Stock Exchange (only on CFD) - opens at 23:00 GMT and closes at 05:00 GMT
             s = szTime;
             BColor = 'black';
             Color = CloseMarketColor;
-            if (minutes == 55 && seconds == 0) DisplayInfo("New York close in 5 minutes", sound);
+            if (minutes == 55 && seconds == 0) TreatInfo("New York close in 5 minutes");
         } else {
             s = "Opened";
             BColor = MarketBkColor;
@@ -521,7 +521,7 @@ Sydney Stock Exchange (only on CFD) - opens at 23:00 GMT and closes at 05:00 GMT
             s = szTime;
             BColor = 'black';
             Color = theme_buy;
-            if (minutes == 55 && seconds == 0) DisplayInfo("New York Open in 5 minutes", sound);
+            if (minutes == 55 && seconds == 0) TreatInfo("New York Open in 5 minutes");
         } else {
             s = "Closed";
             BColor = MarketBkColor;

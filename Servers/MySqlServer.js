@@ -1,11 +1,36 @@
-let mysql = require('mysql');
+function Require (module) {
+    try {
+        const myModule = require(module); 
+        return myModule;
+
+    } catch (error) {
+        if (error.code === 'MODULE_NOT_FOUND') {
+            console.error('Module ' + module + ' not found at the specified path. Launching npm... please wait');
+            try {
+                require('child_process').execSync('npm install ' + module);       
+                const myModule = require(module); 
+                
+                return myModule;                     
+
+            } catch (error) {
+                console.error(`Error executing command: ${error.message}`);
+            }            
+        } else {
+            console.error('An error occurred during module loading: ' + module, error);
+        }
+    }
+    return null;
+}
+
+let mysql = Require('mysql');
+
 
 
 let connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'mt4_progress_co'
+    host: 'jurextrade.com',
+    user: 'uk4ibca5_jurextrade',
+    password: 'sqljurex123',
+    database: 'uk4ibca5_jurexdb'
 });
 
 

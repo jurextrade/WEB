@@ -62,7 +62,7 @@ bool          GlobalComment      = true;
 
 
 
-datetime      TimeOpenBar[NBR_PERIODS];
+
 
 //=============================================OBJECTS========================================
 
@@ -144,17 +144,10 @@ int           SymbolRunning;
 								             								
 int           SignalVisible[NBR_SIGNALS];
          								
-string        PeriodName[]       = {"M1","M5","M15","M30","H1","H4","D1","W1","MN"};
-int           PeriodIndex[]           = {PERIOD_M1,PERIOD_M5,PERIOD_M15,PERIOD_M30,PERIOD_H1,PERIOD_H4,PERIOD_D1,PERIOD_W1,PERIOD_MN1};
-
-string        DirectionName[]      = {"BACKWARD", "FORWARD", "ANY"};
-string        DirectionTypeName[]  = {"MINMAX", "LEVEL"};
-string        ExitModeName[]       = {"EXITBUYFIRST", "EXITSELLFIRST", "EXITANY"};
-string        OrderTypeName[]      = {"MONO", "HEDGE"};
 
 //================================================= SYSTEMS ==========================================
 
-string        RecoveryModeName[] = {"F", "D", "H", "S", "I", "M", "N", "J", "C", "O", "P", "Q", "A", "L", "K"};
+
 
 //=============================================ALERTS==========================================
 
@@ -183,17 +176,6 @@ string        RecoveryModeName[] = {"F", "D", "H", "S", "I", "M", "N", "J", "C",
 #define       TYPE_TICK			  2	
 
 //=============================================RULES==========================================
-
-string  	  OpName[]   = {"BUY", "SELL", "BUYLIMIT", "SELLLIMIT", "BUYSTOP","SELLSTOP"};
-string        RuleName[]      = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O","P", "Q", "R", "S", "T", "U", "V", "W","X", "Y", "Z"};
-string  	  OperationName[]   = {"BUY", "SELL", "BUYSELL",  "EXIT_BUY", "EXIT_SELL", "EXIT", "HEDGE_BUY", "HEDGE_SELL", "CLOSE_HEDGE_BUY", "CLOSE_HEDGE_SELL","CLOSE_HEDGE", "CLOSE_BUY", "CLOSE_SELL", "CLOSE", "WAIT", "HOLD", "SUSPEND"};
-string        FieldName[]      = {"OPERATION","START","STATUS","RULE","KEEPBUYSELL","SUSPEND","MINPROFIT","EXITMODE","PIPSTEP","TIMESTEP","ORDERTYPE","DIRECTION","RECOVERYMODE"
-,"RECOVERYVALUE","ILOT","BUYLOT","SELLLOT","MAXLOT","MAXLOSS","MAXTIME","MAXCOUNT", "HEDGEMAGNITUDE", "ONEORDERPERBAR","BUYLOTSL","BUYLOTTP","BUYLOTTS"
-,"SELLLOTSL","SELLLOTTP","SELLLOTTS","SL","TP","TS","BUYSL","BUYTP","BUYTS","SELLSL","SELLTP","SELLTS","HMAX","HMIN","MAX","MIN","EXITBUY","EXITSELL","CLOSEBUY","CLOSESELL","PROFITBUY"
-,"PROFITSELL","PROFIT","LASTLOT","LASTBUYLOT","LASTSELLLOT","STARTTRADE","NEUTRALPOINT","BUYAVERAGEPOINT","SELLAVERAGEPOINT","HEDGELLINE","HEDGENBRLOTS","BUYHEDGENBRLOTS","SELLHEDGENBRLOTS","HEDGETYPE"
-,"HEDGED","HASBEENHEDGED","HEDGEPROFIT","HEDGEBUYPROFIT","HEDGESELLPROFIT","BUYNBRTRADE","SELLNBRTRADE","BUYNBRLOTS","SELLNBRLOTS"
-,"LASTORDEROPENTIME","LASTORDERCLOSETIME","LASTORDEROPENPRICE", "LASTORDERCLOSEPRICE", "LASTORDERCLOSEPROFIT","T_LASTORDERCLOSETYPE"
-,"FIRSTODEROPENTIME", "FIRSTODERCLOSETIME", "FIRSTORDEROPENPRICE", "FIRSTORDERCLOSEPRICE", "LEVELPOINT", "LASTORDERTYPE"};
 
 
 //=============================================SESSIONS==========================================
@@ -463,9 +445,9 @@ double _Bid;
 //=============================================RESET ALL ========================================
 
 void ResetAll(int first = -1) {
-    ResetSignals(first);
+    ResetSignals(O_NbrObject, first);
     ResetRules(first);
-    ResetSignalFilters();
+    ResetSignalFilters(O_NbrObject);
     ResetEngines(first);
     ResetSchedules();
 }
@@ -514,49 +496,6 @@ double PipValue (double pips) {
 	return (pips * SYS_POINT);
 }
 	
-int GetMonth (datetime TimeCurrent) {
-	return TimeMonth (TimeCurrent);
-}
-
-int GetWeek (datetime TimeCurrent) {
-
-    int day = TimeDay (TimeCurrent);
-
-    int oday = 1;
-
-    while (day - 7 > 0) {
-        oday++;
-        day -= 7;
-    }
-    return (oday);
-
-}
-
-int GetDay (datetime TimeCurrent) {
-   
-	return TimeDay (TimeCurrent);
-}
-
-int GetHours (datetime TimeCurrent) {
-   
-	return TimeHour (TimeCurrent);
-}
-
-int GetMinutes (datetime TimeCurrent) {
-   
-	return TimeMinute (TimeCurrent);;
-}
-
-datetime ReturnTime (string sTime) {
-    return 0;
-}
-
-
-datetime ReturnDate (string sDate) {
-    return 0;
-}
-
-
 
 void InitEngines() {
 
@@ -773,7 +712,7 @@ int start() {
     CurrentTime = TimeCurrent();
 
 
-    ResetSignals();
+    ResetSignals(O_NbrObject);
     ResetRules(1);
 
 //    AlertNews();
@@ -847,114 +786,6 @@ void ReadSessions() {
         B_LoadSession(B_IMagicNumber, i);
 }
 //=============================================LOGICAL  ========================================
-
-int And(int a, int b = -1, int c = -1, int d = -1, int e = -1, int f = -1, int g = -1) {
-    int result = 0;
-    result |= (1 << a);
-    if (b != -1) result |= (1 << b);
-    if (c != -1) result |= (1 << c);
-    if (d != -1) result |= (1 << d);
-    if (e != -1) result |= (1 << e);
-    if (f != -1) result |= (1 << f);
-    if (g != -1) result |= (1 << g);
-    return (result);
-}
-
-int Period2Int(int TmPeriod) {
-    for (int i = 0; i < ArraySize(PeriodIndex); i++)
-        if (PeriodIndex[i] == TmPeriod) return (i);
-    return (0);
-}
-
-int SysObject2Index(string sobject) {
-    for (int i = 0; i < O_NbrSysObject; i++)
-        if (SysObjName[i] == StringTrimRight(sobject)) return (i);
-    return (-1);
-}
-
-int IdObject2Index(int ObjectId) {
-    for (int i = 0; i < O_NbrObject; i++)
-        if (ObjId[i] == ObjectId) return (i);
-    return (-1);
-}
-
-int Object2Id(string sobject) {
-    for (int i = 0; i < O_NbrObject; i++)
-        if (ObjName[i] == StringTrimRight(sobject)) return (ObjId[i]);
-    return (-1);
-}
-
-int Object2Index(string sobject) {
-    for (int i = 0; i < O_NbrObject; i++)
-        if (ObjName[i] == StringTrimRight(sobject)) return (i);
-    return (-1);
-}
-
-int ObjType2Int(string sobjtype) {
-    for (int i = 0; i < ArraySize(ObjTypeName); i++)
-        if (StringFind(ObjTypeName[i], StringTrimRight(sobjtype)) != -1) return (i);
-    return (-1);
-}
-
-string ObjectId2Name(int objid) {
-    for (int i = 0; i < O_NbrObject; i++)
-        if (ObjId[i] == objid) return (ObjName[i]);
-    return ("");
-}
-
-int Signal2Int(string ssignal) {
-    for (int i = 0; i < ArraySize(SignalName); i++)
-        if (StringFind(SignalName[i], StringTrimRight(ssignal)) != -1) return (i);
-    return (-1);
-}
-
-int Mode2Int(string smode) {
-    for (int i = 0; i < ArraySize(RecoveryModeName); i++)
-        if (RecoveryModeName[i] == StringTrimRight(smode)) return (i);
-    return (-1);
-}
-
-int Rule2Int(string srule) {
-    for (int i = 0; i < ArraySize(RuleName); i++)
-        if (RuleName[i] == StringTrimRight(srule)) return (i);
-    return (-1);
-}
-
-int Direction2Int(string sdirection) {
-    for (int i = 0; i < ArraySize(DirectionName); i++)
-        if (DirectionName[i] == StringTrimRight(sdirection)) return (i);
-    return (-1);
-}
-int DirectionType2Int(string sdirection) {
-    for (int i = 0; i < ArraySize(DirectionTypeName); i++)
-        if (DirectionTypeName[i] == StringTrimRight(sdirection)) return (i);
-    return (-1);
-}
-
-int ExitMode2Int(string sexit) {
-    for (int i = 0; i < ArraySize(ExitModeName); i++)
-        if (ExitModeName[i] == StringTrimRight(sexit)) return (i);
-    return (-1);
-}
-
-int Operation2Int(string soperation) {
-    for (int i = 0; i < ArraySize(OperationName); i++)
-        if (OperationName[i] == StringTrimRight(soperation)) return (i);
-    return (-1);
-}
-
-int Op2Int(string soperation) {
-    for (int i = 0; i < ArraySize(OpName); i++)
-        if (OpName[i] == StringTrimRight(soperation)) return (i);
-    return (-1);
-}
-
-int OrderType2Int(string stype) {
-    for (int i = 0; i < ArraySize(OrderTypeName); i++)
-        if (OrderTypeName[i] == StringTrimRight(stype)) return (i);
-    return (-1);
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////END SOUND
 
@@ -1073,7 +904,7 @@ void MarketMovement(int x, int shift = 0) {
 
         if (ObjCross[i] == "") continue;
 
-        int CObjId = Object2Id(ObjCross[i]);
+        int CObjId = Object2Id(O_NbrObject, ObjCross[i]);
         if (CObjId == -1) continue;
         if (shift == 0) {
             if (SValue(ObjId[i], S_PREVIOUS, x) < SValue(CObjId, S_PREVIOUS, x) &&
@@ -3259,7 +3090,7 @@ bool ModifyOrder(int OrderId, double StopLoss = -1, double TakeProfit = -1) {
 
 
 int CloseOrders(int MagicNumber = -1, int Operation = -1, double NbrLots = -1, double FromPrice = -1, int Mode = -1, int Pending = -1) {
-    int cnt, total;
+    int cnt, total, xcnt;
     double nbrlots;
     int ordertype;
 
@@ -3272,6 +3103,7 @@ int CloseOrders(int MagicNumber = -1, int Operation = -1, double NbrLots = -1, d
             if (MagicNumber != -1 && OrderMagicNumber() != MagicNumber) continue;
 
             if (OrderSymbol() != _Symbol) continue;
+            ordertype = OrderType();
 
             if (Pending == -1 && ordertype > OP_SELL) continue;
 
@@ -3423,7 +3255,7 @@ double EValue(int Engine, int attribute) {
 
 
 void ReloadFilters() {
-    ResetSignalFilters();
+    ResetSignalFilters(O_NbrObject);
     int result = LoadFilters();
     if (result == -1)
         Send_Operation("Filters can not be reloaded");
@@ -3502,7 +3334,7 @@ int LoadUsedObjects() {
     i = 0;
     while (!FileIsEnding(file)) {
         string sobject = FileReadString(file);
-        int ind = Object2Index(sobject);
+        int ind = Object2Index(O_NbrObject, sobject);
         ObjUsed[ind] = true;
     }
 
@@ -7974,119 +7806,9 @@ void FindPatterns(int x, int shift) {
 
 }
 
-string FormatDateTime(int nYear, int nMonth, int nDay, int nHour, int nMin, int nSec) {
-    string sMonth, sDay, sHour, sMin, sSec;
-    //----
-    sMonth = 100 + nMonth;
-    sMonth = StringSubstr(sMonth, 1);
-    sDay = 100 + nDay;
-    sDay = StringSubstr(sDay, 1);
-    sHour = 100 + nHour;
-    sHour = StringSubstr(sHour, 1);
-    sMin = 100 + nMin;
-    sMin = StringSubstr(sMin, 1);
-    sSec = 100 + nSec;
-    sSec = StringSubstr(sSec, 1);
-    //----
-    return (StringConcatenate(nYear, ".", sMonth, ".", sDay, " ", sHour, ":", sMin, ":", sSec));
-}
 //+------------------------------------------------------------------+
 
 
-datetime ToDate(string stDate, string stTime) {
-    string syear = StringSubstr(stDate, 6, 4);
-
-    string smonth;
-
-    string SMonth = StringSubstr(stDate, 0, 2);
-    smonth= SMonth;
-
-    if (SMonth == "01") smonth = "1";
-    if (SMonth == "02") smonth = "2";
-    if (SMonth == "03") smonth = "3";
-    if (SMonth == "04") smonth = "4";
-    if (SMonth == "05") smonth = "5";
-    if (SMonth == "06") smonth = "6";
-    if (SMonth == "07") smonth = "7";
-    if (SMonth == "08") smonth = "8";
-    if (SMonth == "09") smonth = "9";
-
-    string sday = StringSubstr(stDate, 3, 2);
-    string stime = syear + "." + smonth + "." + sday + " " + stTime;
-    return (StrToTime(stime));
-}
-
-
-string ReturnElapsedTime(datetime time) {
-    string s = "";
-
-    int day = time / (24 * 60 * 60);
-    int remain = time % (24 * 60 * 60);
-    int hour = remain / (60 * 60);
-    int minute = remain % (60 * 60) / 60;
-
-    s = "     Elapsed  : " + day + " Day(s), " + hour + " Hour(s), and " + minute + " Minutes (s).";
-    return (s);
-}
-
-datetime ReturnStartDate() {
-    datetime starttime = TimeCurrent();
-    datetime objecttime;
-
-    int total = OrdersHistoryTotal();
-
-    for (int cnt = 0; cnt < total; cnt++) {
-        if (OrderType() != OP_BUY && OrderType() != OP_SELL) continue;
-        OrderSelect(cnt, SELECT_BY_POS, MODE_HISTORY);
-        objecttime = OrderOpenTime();
-        if (starttime > objecttime) starttime = objecttime;
-    }
-    return (starttime);
-}
-
-
-
-
-
-
-int ReturnWeekOfMonth() {
-
-    datetime StartMonthDate = StrToTime(Year() + "." + Month() + ".1");
-    int WeekDay = TimeDayOfWeek(StartMonthDate);
-
-    int AddOn = 8 - WeekDay;
-    int Week1 = AddOn;
-    int Week2 = Week1 + 7;
-    int Week3 = Week2 + 7;
-    int Week4 = Week3 + 7;
-    int Week5 = Week4 + 7;
-    int Week6 = Week5 + 7;
-
-    int CurrentDay = Day();
-
-    if (CurrentDay < Week1) return (1);
-    if (CurrentDay < Week2) return (2);
-    if (CurrentDay < Week3) return (3);
-    if (CurrentDay < Week4) return (4);
-    if (CurrentDay < Week5) return (5);
-    else return (6);
-
-    return (-1);
-
-}
-
-int ReturnDayOccurenceInMonth() {
-
-    int day = Day();
-
-    int oday = 1;
-
-    while (day - 7 > 0) {
-        oday++;
-        day -= 7;
-    }
-    return (oday);
-}
 
 //----------------------------------------------------------------------------MONEY MANAGEMENT----------------------------------------------------------------------------------
 void ReloadMM() {
@@ -8572,7 +8294,7 @@ int LoadFilters() {
     }
     while (!FileIsEnding(file)) {
         string sobject = FileReadString(file);
-        int ObjectId = Object2Id(sobject);
+        int ObjectId = Object2Id(O_NbrObject, sobject);
         SetSignalFilter(1, ObjectId, -1, -1, 0);
     }
     FileClose(file);

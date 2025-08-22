@@ -95,6 +95,7 @@ class SOLUTION {
     Init (c_solution) {
 
         let prop = c_solution.properties;
+        c_solution.error        = 0;
         c_solution.LocalGMTOffset = (new Date()).getTimezoneOffset() / 60;
         c_solution.DifferenceHoursTime = c_solution.LocalGMTOffset * 60 * 60 * 1000;
 
@@ -104,7 +105,12 @@ class SOLUTION {
         
         c_solution.user.set (prop.userid, prop.username, prop.usermail, prop.userfirstname, prop.userlastname, prop.userdname, prop.userphoto);        
         
-        this.load_configurationfile(document.location.protocol + '//' + document.location.host + c_solution.user.path + '/configuration.json')
+        this.load_configurationfile()  // synchrone
+        if (!this.configuration) {
+            console.log ('error reading configuration file should exit ');
+            c_solution.error = -1;
+            return -1;
+        }
         
         if (prop.dynamic) {
             this.add_configuration_scripts(this.Init)
@@ -113,9 +119,6 @@ class SOLUTION {
         c_solution.machine      = new machine();
         c_solution.ui           = new ui(this.configuration.theme);        
         c_solution.get_languages();    
-        
-
-
 
       /*  this.user.send({Name: 'scandir_r',Values: this.user.is_admin () ? ['.', ''] : [this.user.path  + '/NetProg', '.']}, false,  function (content, values) {
             let dirstruct = JSON.parse (content);
@@ -147,6 +150,7 @@ class SOLUTION {
         solution.evaluate_interface ();                  //launch init on each module
      
         solution_update();                               // panel solution update
+        return 0;
 
     }
 
@@ -180,11 +184,32 @@ class SOLUTION {
 
     //---------------------------------------------------------------- LOAD SCRIPT FILE DYNAMICALLY ---------------------------------------------------------
 
-    load_configurationfile (urlfile) {
+    load_configurationfile () {
+
+        let urlfile = this.site.address + this.user.path + '/configuration.json';
         this.configuration = JSON.parse (this.get_file(urlfile));    
     }
 
-    save_configuration () {
+    save_configurationfile () {
+        let urlfile = this.user.path + '/configuration.json';
+        let result = this.put_file (urlfile,  JSON.stringify(this.configuration, null, 4)); //, async, callback, values, aftercallback, aftervalues) { // relative path to web root
+        if (result.startsWith("ok")) {
+            return 0;
+        } else {
+            return -1;
+        }
+/*        
+        let ui = solution.get('ui');
+        let cuser = solution.get('user')        
+        
+        this.configuration.theme = ui.sb.theme;
+
+        cuser.send ({Name: 'savefile', Values: ['../' + cuser.path + '/configuration.json',  JSON.stringify(this.configuration, null, 4)]}, true, 
+                    function (content, values) {
+                        TreatInfo("Configuration Saved");
+                    }, 
+                    ['configuration.json']);           
+*/                    
     }
 
     check_configuration () {                   //check if rightsidebar panel and menu are initialized with settings
@@ -260,7 +285,6 @@ class SOLUTION {
                 }
             }
         }   
-
     }
 
     //-------------------------------------------------- Uploading or Deleting scripts ------------------------------------------------------------------------------
@@ -863,16 +887,16 @@ class SOLUTION {
 
     get_file  (urlfile, async, callback, values, aftercallback, aftervalues)  {           //depends engine
         
-        var callbackreturn = null;    //case synchrone
+        let callbackreturn = null;    //case synchrone
         if (!async) async = false;
         
-        var xhttp = new XMLHttpRequest();
+        let xhttp = new XMLHttpRequest();
     
         xhttp.open('GET', urlfile, async);
        
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                if (callback)       { 
+                if (callback)  { 
                     callbackreturn = callback (this.responseText, values);
                 }
                 else {
@@ -883,7 +907,7 @@ class SOLUTION {
                 }
             }
             if (this.readyState == 4 && this.status == 404) {
-                console.log ('Erreur in Reading Request');
+                console.log ('Erreur in Reading File ' + urlfile);
             }            
         };
         try {
@@ -891,6 +915,41 @@ class SOLUTION {
         } catch (error) {
             console.log (error)
         }
+        return callbackreturn;    
+    }  
+
+    put_file (urlfile, content, async, callback, values, aftercallback, aftervalues) { // relative path to web root
+        
+        let callbackreturn = null;    //case synchrone
+        if (!async) async = false;
+
+        let url = this.site.address + '/' + 'php/upload_file.php';       
+
+        let params = 'file=' + urlfile +  '&content=' + encodeURIComponent(content);
+ 
+        let http = new XMLHttpRequest();
+        
+        http.open('POST', url, async);
+        
+        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        
+        http.onreadystatechange = function () { //Call a function when the state changes.
+            if (http.readyState == 4 && http.status == 200) {
+                if (callback)   { 
+                    callbackreturn = callback (this.responseText, values);
+                }
+                else {
+                    callbackreturn = this.responseText;
+                }                    
+                if (aftercallback)  {
+                    aftercallback (aftervalues);                      
+                }
+            }
+            if (this.readyState == 4 && this.status == 404) {
+                console.log ('Erreur in Sending File ' + urlfile);
+            }
+        }              
+        http.send(params);        
         return callbackreturn;    
     }    
 
@@ -1597,6 +1656,8 @@ class user {
 
         let smessage = JSON.stringify(message);
         url_submit ('POST', document.location.protocol + '//' + document.location.host + '/php/solution_dialog.php', {message: smessage} , async, onrecvcallback != undefined ? onrecvcallback : this.onrecv, values)
+
+        //url_post_json ( document.location.protocol + '//' + document.location.host + '/php/solution_dialog.php', {message: message} , async, onrecvcallback != undefined ? onrecvcallback : this.onrecv, values)
 
     }    
 }

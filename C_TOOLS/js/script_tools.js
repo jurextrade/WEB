@@ -126,6 +126,44 @@ function url_stringifypar (type, parstruct){
     return content;
 }
 
+
+
+function url_post_json (url, par /*object {}*/, async, callback, values /* can be array []*/, aftercallback, aftervalues) {           //depends engine
+    var callbackreturn = null;    //case synchrone
+    if (!async) async = false;
+    
+    var xhttp = new XMLHttpRequest();
+    var params = (par != null ?  JSON.stringify(par) : '');
+
+
+    xhttp.open('POST', url, async);
+    xhttp.setRequestHeader('Content-type', 'application/json;charset=UTF-8');        
+
+   
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            if (callback) { 
+                callbackreturn = callback (this.responseText, values);
+            } else {
+                callbackreturn = this.responseText;
+            }
+            if (aftercallback)  aftercallback (aftervalues);    
+                  
+        }
+        if (this.readyState == 4 && this.status == 404) {
+            console.log ('Erreur in Reading Request');
+        }            
+    };
+    try {
+        xhttp.send( params);
+    } catch (error) {
+        console.log (error)
+    }
+    return callbackreturn;    
+} 
+
+
+
 function url_submit (type, url, par /*object {}*/, async, callback, values /* can be array []*/, aftercallback, aftervalues)  {           //depends engine
     var callbackreturn = null;    //case synchrone
     if (!async) async = false;

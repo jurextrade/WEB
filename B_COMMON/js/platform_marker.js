@@ -463,7 +463,7 @@ function onclick_markereditor_group (elt, event) {
           let markername = $('#' + editorelt[0].id + ' #name_marker').val();      
           if (markername == '') {
             $('#' + editorelt[0].id + ' #name_marker').focus();
-            DisplayInfo("Give a name to this marker", true, 'operationpanel');       
+            TreatInfo("Give a name to this marker");       
             markername = 'markername';
             return;
           }        

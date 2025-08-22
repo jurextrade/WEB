@@ -41,7 +41,7 @@ function netprog_select (name) {
     ui.platform_expand(name, true);
 
     if (!solution.netprog_CurrentProject) {
-        DisplayInfo("Select a project or create one", true, 'operationpanel');        
+        TreatInfo("Select a project or create one", true, 'operationpanel');        
    //     sidebarmenu_select ('sidebar_netprogsiteview', true);    
     }
 }
@@ -78,7 +78,7 @@ class npproject {
     
     Save = function () {
         if (solution.get('user').id == "0") {
-            DisplayInfo ("Saving not for possible.. Should register", true, 'operationpanel', 'var(--bg-optionterminal)')           
+            TreatInfo ("Saving not for possible.. Should register", true, 'operationpanel', 'var(--bg-optionterminal)')           
             return;
         }
         let  user           = solution.get('user')   
@@ -284,7 +284,7 @@ function netprog_update (manager) {
 function netprog_loadedproject (project) {
     if (project.Loaded) {
         clearInterval(Interval_netprog_loadproject);
-        DisplayInfo("Project " + project.Name + " loaded", true, 'operationpanel');            
+        TreatInfo("Project " + project.Name + " loaded", true, 'operationpanel');            
         LoaderDisplay(false);         
         netprog_drawproject(project, true);        
     }
@@ -308,13 +308,13 @@ function netprog_selectproject(project, forcedisplay) {
 
     if (!project.Loaded) {
         LoaderDisplay(true);        
-        DisplayInfo("Loading Project " + project.Name + "  ... Please wait", true, 'operationpanel',  'var(--theme-platform-color)');
+        TreatInfo("Loading Project " + project.Name + "  ... Please wait");
 
         Interval_netprog_loadproject = setInterval(netprog_loadedproject, 300, project); //5 minutes 300000     
         project.Load();
     }
     else {
-        DisplayInfo("Project " + project.Name + " loaded", true, 'operationpanel');            
+        TreatInfo("Project " + project.Name + " loaded");            
         netprog_drawproject(project, true);        
     }
     return project;

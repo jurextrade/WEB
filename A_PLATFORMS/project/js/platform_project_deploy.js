@@ -83,7 +83,7 @@ function onclick_distributeproject (elt) {
         if (strategytesterchecked)  project_projectdistribute(solution.CurrentProject, terminal,  'Tester'); 
     }
     if (!deploy) {
-        DisplayInfo("Select Terminal you want to deploy the project", true, 'project_operation', "coral");                  
+        TreatInfo("Select Terminal you want to deploy the project");                  
     }
 }
 
@@ -100,7 +100,7 @@ function project_projectdistribute (project, terminal, terminaltype) {
     }
 
     if (!project_DeployCom || project_DeployCom.Socket.connected == false) { 
-        DisplayInfo("Deploy Server is not connected  check Deploy Server", true, 'operationpanel',  'var(--bg-strategycreator)'); 
+        TreatInfo("Deploy Server is not connected  check Deploy Server"); 
         sidebarmenu_select ('sidebar_deploy', 1);
         modalserverpanel_select();                   
         return;
@@ -111,7 +111,7 @@ function project_projectdistribute (project, terminal, terminaltype) {
     TraceErrorEditor("> START DISTRIBUTION " + project.Name + " ON " + terminal.Name + " " +  terminaltype, 1);
     TraceErrorEditor("-----------------------------------------------------------", 1);
     
-    DisplayInfo("Start Distribution " + project.Name + " ON " + terminal.Name + ' ' + terminaltype, true, 'operationpanel',  'var(--bg-strategycreator)');
+    TreatInfo("Start Distribution " + project.Name + " ON " + terminal.Name + ' ' + terminaltype, true, 'operationpanel',  'var(--bg-strategycreator)');
     
     
     project.Distribute(terminal.Folder, terminaltype);   // Synchrone
@@ -121,7 +121,7 @@ function project_projectdistribute (project, terminal, terminaltype) {
     TraceErrorEditor("> FINISH DISTRIBUTION " + project.Name + (returnvalue.length != 0 ? " with Error " : " OK ") +  " ON " + terminal.Name + ' ' + terminaltype, 1);
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
     
-    DisplayInfo("Finish Distribution" + project.Name + " ON " + terminal.Name + ' ' + terminaltype, true, 'operationpanel', 'var(--bg-strategycreator)');
+    TreatInfo("Finish Distribution" + project.Name + " ON " + terminal.Name + ' ' + terminaltype);
     
     if (returnvalue.length != 0)
         return;
@@ -131,7 +131,7 @@ function project_projectdistribute (project, terminal, terminaltype) {
     TraceErrorEditor("> START RELOADING PROJECT " + project.Name + " ON " + terminal.Name + ' ' + terminaltype, 1);
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
     
-    DisplayInfo("Reloading Project " + project.Name + " on " + terminal.Name + ' ' + terminaltype, true, 'operationpanel',  'var(--bg-strategycreator)');
+    TreatInfo("Reloading Project " + project.Name + " on " + terminal.Name + ' ' + terminaltype);
     
     OnReloadProject(terminal, terminal.Name, terminaltype);
     
@@ -140,7 +140,7 @@ function project_projectdistribute (project, terminal, terminaltype) {
     TraceErrorEditor("> FINISH RELOADING PROJECT " + project.Name + " ON " + terminal.Name + ' ' + terminaltype + " OK -----------------", 1);
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
     
-    DisplayInfo("Finish Reloading Project " + project.Name + " on " + terminal.Name + ' ' + terminaltype , true, 'operationpanel',  'var(--bg-strategycreator)');
+    TreatInfo("Finish Reloading Project " + project.Name + " on " + terminal.Name + ' ' + terminaltype );
     
     
     
@@ -191,7 +191,7 @@ function onclick_refresh_experts (elt,event) {
 function RefreshExperts () {
     sb.tree_removechildren ('project_tree_experts');
     let  site           = solution.get('site');     
-    solution.CurrentProject.PG.LoadExperts(solution,  site.address + "/php/read_experts.php", solution.CurrentProject.Folder,  SYNCHRONE, UpdateProjectExperts, solution.CurrentProject);    
+    solution.CurrentProject.PG.LoadExperts(solution,  site.address + "/php/read_experts.php", solution.CurrentProject.Folder,  SYNCHRONE, project_updateexperts, solution.CurrentProject);    
 }
 
 function onclick_distributeexpert (elt) {
@@ -203,7 +203,7 @@ function onclick_distributeexpert (elt) {
 
     let expertnode = $('#project_tree_expertspanel .active label');
     if (expertnode.length == 0) {
-        DisplayInfo("Select expert file you want to deploy", true, 'project_operation', "coral");   
+        TreatInfo("Select expert file you want to deploy");   
         return;
     }  
     let strategyfile = expertnode.html();
@@ -211,7 +211,7 @@ function onclick_distributeexpert (elt) {
     let strategy = solution.CurrentProject.PG.GetStrategyFromName (strategyname);
     
     if (!strategy) {
-        DisplayInfo("Unknow strategy " + strategyname, true, 'project_operation', "coral");   
+        TreatInfo("Unknow strategy " + strategyname);   
     }
 
     for (var i = 0; i < distributetable.rows.length; i++) {
@@ -227,7 +227,7 @@ function onclick_distributeexpert (elt) {
     }
 
     if (!deploy) {
-            DisplayInfo("Select a Terminal on which you want to deploy", true, 'project_operation', "coral");      
+            TreatInfo("Select a Terminal on which you want to deploy");      
     }        
 }
 
@@ -243,7 +243,7 @@ function project_strategydistribute (project, strategyfile, terminal) {
     }
 
     if (!project_DeployCom || project_DeployCom.Socket.connected == false) { 
-        DisplayInfo("Deploy Server is not connected  check Deploy Server", true, 'operationpanel',  'var(--bg-strategycreator)'); 
+        TreatInfo("Deploy Server is not connected  check Deploy Server"); 
         sidebarmenu_select ('sidebar_deploy', 1);
         modalserverpanel_select();                   
         return;
@@ -256,7 +256,7 @@ function project_strategydistribute (project, strategyfile, terminal) {
     TraceErrorEditor("> START DISTRIBUTION " + strategyfile + " ON " + terminal.Name, 1);
     TraceErrorEditor("-----------------------------------------------------------", 1);
     
-    DisplayInfo("Start Distribution " + strategyfile + " ON " + terminal.Name , true, 'operationpanel',  'var(--bg-strategycreator)');
+    TreatInfo("Start Distribution " + strategyfile + " ON " + terminal.Name);
 }
 
 function OnDistributeStrategy (project, strategyfile, langtype, terminalpath) {
@@ -294,7 +294,7 @@ function CompileProject(project, langtype, terminaltype) {
     }
     
     if (!project_DeployCom || project_DeployCom.Socket.connected == false) { 
-        DisplayInfo("Deploy Server is not connected  check Deploy Server", true, 'operationpanel',  'var(--bg-strategycreator)'); 
+        TreatInfo("Deploy Server is not connected  check Deploy Server"); 
         sidebarmenu_select ('sidebar_deploy', 1);
         modalserverpanel_select();                   
         return;
@@ -317,7 +317,7 @@ function CompileProject(project, langtype, terminaltype) {
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
     TraceErrorEditor("> START COMPILATION OF PROJECT " + project.Name + " in " + langtype + " for " + terminaltype + "", 1);
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
-    DisplayInfo("Compiling " + project.Name  + ' Please Wait', project.PG.OperationSound, 'operationpanel',  'var(--bg-strategycreator)');
+    TreatInfo("Compiling " + project.Name  + ' Please Wait');
 }
 
 function OnCompileProject(project, filename, content, langtype, terminaltype) {
@@ -366,7 +366,7 @@ function CompileStrategy(project, strategy, langtype) {
     }
 
     if (!project_DeployCom || project_DeployCom.Socket.connected == false) { 
-        DisplayInfo("Deploy Server is not connected  check Deploy Server", true, 'operationpanel',  'var(--bg-strategycreator)');      
+        TreatInfo("Deploy Server is not connected  check Deploy Server");      
         sidebarmenu_select ('sidebar_deploy', 1)  
         modalserverpanel_select();
         return;
@@ -415,7 +415,7 @@ function CompileStrategy(project, strategy, langtype) {
     TraceErrorEditor("> START COMPILATION OF THE STRATEGY " + strategy.Name + " in " + langtype, 1);
     TraceErrorEditor("----------------------------------------------------------------------------", 1);
 
-    DisplayInfo("Compiling " + strategy.Name + ' Please Wait', true, 'operationpanel', 'var(--bg-strategycreator)');
+    TreatInfo("Compiling " + strategy.Name + ' Please Wait');
 
 
 }

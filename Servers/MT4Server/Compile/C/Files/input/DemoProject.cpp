@@ -1611,11 +1611,11 @@ void R_RULE (F)
 
 if (AndS(BAR, S_BULL, P_H4, P_D1, P_W1, P_MN))
 
-{ Set_Rule(OP_BUYSELL, T_START, R_F, P_SIGNAL);Set_Rule(OP_SELL, T_STATUS, R_F, P_SIGNAL);}
+{ Set_Rule(OP_BUYSELL, T_START, R_F, P_SIGNAL);Set_Rule(OP_BUY, T_STATUS, R_F, P_SIGNAL);}
 
 if (AndS(BAR, S_BEAR, P_H4, P_D1, P_W1, P_MN))
 
-{ Set_Rule(OP_BUYSELL, T_START, R_F, P_SIGNAL);Set_Rule(OP_BUY, T_STATUS, R_F, P_SIGNAL);}
+{ Set_Rule(OP_BUYSELL, T_START, R_F, P_SIGNAL);Set_Rule(OP_SELL, T_STATUS, R_F, P_SIGNAL);}
 
 if (AndS(BAR, S_BEAR, P_D1))
 

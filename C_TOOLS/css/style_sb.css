@@ -2153,6 +2153,7 @@ sb_roundbutton.active{
 .sb_widget-icon {
     justify-content: center; 
     padding-bottom: 10px;
+    display:none;
 }
 
 .sb_widget-icon i {

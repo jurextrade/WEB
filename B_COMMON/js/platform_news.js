@@ -12,6 +12,9 @@ const BlinkNewsTime   = 3600000;          //half hour
 var Interval_newsblink          = 0;
 var NewsCount                   = 0;
 
+const ForexString  = ReturnMatchStringFromArray (ForexCurrencies);
+const MarketString = ReturnMatchStringFromArray (MarketCurrencies);
+
 //-------------------------------------------------------CURRENCIES----------------------------------------------------------------------------------------
 
 

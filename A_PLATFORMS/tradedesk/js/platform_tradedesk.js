@@ -57,7 +57,7 @@ function tradedesk_select (name) {
          //   tradedesk_selectterminal(terminal); 
             return;
         }
-        DisplayInfo("Select a Platform", true, 'operationpanel', 'var (--bg-terminal)');            
+        TreatInfo("Select a Terminal");            
         AnimationDisplay ('tradedesk', 'Select MT4 Terminal to Start', 'tradedesk_toppanel');         
     }
 }
@@ -294,19 +294,19 @@ function tradedesk_selectterminal(terminal, force) {
 
     if (!terminal.Loaded) {
         LoaderDisplay(true);
-        DisplayInfo("Loading Terminal ... Please wait", true, 'operationpanel', 'var(--bg-terminal)');
+        TreatInfo("Loading Terminal ... Please wait");
         
         Interval_loadterminal = setInterval(tradedesk_loadedterminal, 300, terminal); //5 minutes 300000     
         terminal.Load();
     }
     else {
-        UpdateEngines (terminal);
+        tradedesk_updateengines (terminal);
         solution.UpdateStrategies (terminal);
         solution.UpdateSchedules (terminal);
         UpdatePanel (terminal);
-        Tradedesk_UpdateAlerts(terminal);
+        tradedesk_updatealerts(terminal);
         
-        DisplayInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');        
+        TreatInfo("Terminal loaded");        
         
         tradedesk_ask_tostart  (tradedesk_MT4Com, terminal);
 
@@ -370,8 +370,8 @@ function tradedesk_inittradedesk () {
     sb.table_clear(alertstable);
     
     sb.tab_clear (tradedesk_maintabs, 'tradedesk_home_tab');
-    sb.tab_clear (tradedesksignalstab);
-    sb.tab_clear (tradedeskordertab);
+    sb.tab_clear (tradedesk_signalstabs);
+    sb.tab_clear (tradedesk_ordertabs);
 
     AccountPanels_Reset();
 
@@ -384,7 +384,7 @@ function tradedesk_loadedterminal (terminal) {
         clearInterval(Interval_loadterminal);
         LoaderDisplay(false);      
 
-        DisplayInfo("Terminal loaded", true, 'operationpanel', 'var(--bg-terminal)');
+        TreatInfo("Terminal loaded");
 
         tradedesk_ask_tostart  (tradedesk_MT4Com, terminal);
         tradedesk_drawterminal (terminal, true);    // relatef to interface and terminal        
@@ -488,7 +488,7 @@ function tradedesk_displayterminal(terminal, Symbol) {
 
     for (var i = fromperiod; i < PeriodName.length; i++) {
         if (!Symbol.WaitHistory[i]) {
-            OnGetHistory(terminal, Symbol, i, Symbol.NbrCandles[i], Symbol.NbrCandles[i] + CANDLES_TOLOAD, true);
+            OnGetHistory(terminal, Symbol, i, 0, CANDLES_TOLOAD, true);
             Symbol.WaitHistory[i] = true;            
         }
     }
@@ -1162,8 +1162,9 @@ function SessionSchedulePanel (classnames) {
     Init_strategyscheduletable(sessionscheduletable, sessionschedulepropertytable);
 
     var content =
-        sb.table (sessionscheduletable) +
-        sb.table (sessionschedulepropertytable);
+        sb.table (sessionschedulepropertytable) +    
+        sb.table (sessionscheduletable); 
+
     return content;
 }
 
@@ -1176,24 +1177,6 @@ function EngineLookHeaderPanel () {
     
     '   <a href="/Documentation/_build/html/" title="link to documentation" target="_blank" class="sb_sidebarheaderinfo"><i aria-hidden="true" class="fas fa-book"></i></a>' +
     '</div>';         
-    return content;
-}
-
-//------------------------------------------------------------------ SIDEBAR HISTORY PANEL ------------------------------------------------------------
-
-
-
-function HistoryOrderPanel(id, classnames) {
-    var content = 
-'    <div class="sb_formgroup sb_bodygroup">' + 
-'        <label>Start Date</label>' + 
-'        <input id ="historystartdate" class="form-control" type="date" value="2013-01-08" />' + 
-'        <label class="right-inline">End Date</label>' + 
-'        <input id ="historyenddate" class="form-control" type="date" value="2013-01-08"/>' + 
-'    </div>' + 
-'    <div class="sb_buttongroup">' +
-'        <button id="historyselect" class="sb_button"  type="button" disabled onclick="onclick_historyselect(this)">Get History</button>' +
-'    </div>'; 
     return content;
 }
 
@@ -1828,13 +1811,14 @@ function onclick_historyselect (elt) {
     sb.table_clear(historytable);    
     sb.table_clear(statementtable); 
                        
+    let profittype = -1;   //- 1 all symbols, 0 current symbol
 
     for (var i = 0; i < solution.CurrentTerminal.PG.Engines.length; i++) {
         solution.CurrentTerminal.PG.Engines[i].History = new pgenginehistory();
     }
     solution.CurrentTerminal.PG.ManualHistory = new pgenginehistory();
     //2021.09.15
-    OnGetProfit(solution.CurrentTerminal, sdate.format ('YYYY.MM.DD'), edate.format ('YYYY.MM.DD'));
+    OnGetProfit(solution.CurrentTerminal, profittype, sdate.format ('YYYY.MM.DD'), edate.format ('YYYY.MM.DD'));
 }
 
 //---------------------------------------------------- ORDER PANEL  -------------------------------------------------------- 
@@ -3325,8 +3309,22 @@ function TargetSettingsPanel_Reset() {
     tb.remove.apply(tb, tabs);
 }
 
-function UpdateEngines (terminal) {
-    var PG = terminal.PG;     
+
+function tradedesk_updatealerts(pararray) {
+    let terminal = pararray[0];
+    let PG = terminal.PG;
+
+
+    sb.table_clear(alertssettingstable);    
+    AlertPanel_Update (PG, alertssettingstable);
+}
+
+
+function tradedesk_updateengines (pararray) {
+    let terminal = pararray[0];
+    let PG = terminal.PG;
+    
+    
     EngineBuyNbrTab = [];
     EngineSellNbrTab = [];
     EngineBuySellTab = [];
@@ -3387,12 +3385,6 @@ function UpdateEngines (terminal) {
 
 
 
-
-function Tradedesk_UpdateAlerts(terminal) {
-    var PG = terminal.PG;
-    sb.table_clear(alertssettingstable);    
-    AlertPanel_Update (PG, alertssettingstable);
-}
 
 
 function UpdatePanel(terminal) {
@@ -3501,7 +3493,7 @@ function AddSymbol(terminal, Symbol) {
     index += 1;
     
     sb.table_addrow (StrategiesTable, [name, PeriodName[Symbol.Period], 0, 0]);
-    sb.table_addrow (tradedeskcurrenciestable, [name, '---', '---', 'Off', PeriodName[Symbol.Period], '---', '---', '---', '---']);
+    sb.table_addrow (tradedeskcurrenciestable, [name, '---', '---', 'Off',  , '---', '---', '---', '---']);
     sb.table_addrow (DailyTargetsTable, [name, '---', '---', '---', '---', '---', '---',])
     sb.table_addrow (WeeklyTargetsTable, [name, '---', '---', '---', '---', '---', '---',])
     sb.table_addrow (tsyssignalstable, [name, '', '', '', '', '', '', '', '', '']);
@@ -3515,9 +3507,9 @@ function AddSymbol(terminal, Symbol) {
     var charttabitem    = {id: name, item: name,  type: 'link', roleid: 'tradedeskcharttabcontent',   items:[chartpanel(TRADEDESK_PLATFORM_PNAME)],   events: {onclick:"onclick_tradedesksymboltab(this)"}}            
     var ordertabitem    = {id: name, item: name,  type: 'link', roleid: 'tradedeskordertabcontent',   items: [orderpanel],               events: {onclick:"onclick_tradedesksymboltab(this)"}}            
     
-    sb.tab_additem (tradedesksignalstab, signalstabitem);
+    sb.tab_additem (tradedesk_signalstabs, signalstabitem);
     sb.tab_additem (tradedesk_maintabs, charttabitem);
-    sb.tab_additem (tradedeskordertab, ordertabitem);
+    sb.tab_additem (tradedesk_ordertabs, ordertabitem);
 
     //$( '#tradedesk_maintabs #' + name ).parent().draggable(drag_tradedesksymboltab_options);
     //$( '#tradedesk_maintabs #' + name ).parent().droppable(drop_tradedesksymboltab_options);    
@@ -3580,9 +3572,9 @@ function SelectSymbol(Symbol) {
         //UpdateOrderPanel ('orderpanel', Symbol);
 
 
-        sb.tab_select (tradedesksignalstab, Symbol.Name);
+        sb.tab_select (tradedesk_signalstabs, Symbol.Name);
         sb.tab_select (tradedesk_maintabs,   Symbol.Name);
-        sb.tab_select (tradedeskordertab,   Symbol.Name);
+        sb.tab_select (tradedesk_ordertabs,   Symbol.Name);
 
         TSignalsPanel_Refresh(Symbol);    
         

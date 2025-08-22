@@ -193,7 +193,7 @@ var strategyfilepanel = {
 var strategypropertiespanel = {
     id: 'strategypropertiespanel',
     type: 'html',
-    class: 'strategypropertiespanel sb_column',
+    class: 'strategypropertiespanel sb_column'  ,
     content: 'StrategyPropertiesPanel()',
 }   
 

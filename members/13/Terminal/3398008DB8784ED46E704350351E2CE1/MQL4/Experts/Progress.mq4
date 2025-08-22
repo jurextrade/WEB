@@ -9707,7 +9707,7 @@ void ReloadAlerts() {
         Send_Operation("Alerts can not be reloaded");
     else {
         A_NbrAlert = result;
-        Send_Operation("Alerts Filter is set");
+        Send_Operation("Alerts Filter is set for symbol : " + _Symbol);
     }
 }
 

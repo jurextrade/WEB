@@ -505,8 +505,8 @@ var boxaccountpanel  = {
 }
 
 //--------------------------
-var tradedeskordertab = {
-    id:'tradedeskordertab', 
+var tradedesk_ordertabs = {
+    id:'tradedesk_ordertabs', 
     type: 'tabs',
     label: '',    
     items: []
@@ -516,7 +516,7 @@ var boxorderpanel  = {
     type: 'box',
     closed: true, 
     header: {item: 'Order', control: {slide: true, onclick_slide: 'onclick_slidehideotherbox (this)', closed : true, orientation: sb.R_CONTROL} },  
-    items: [tradedeskordertab]    
+    items: [tradedesk_ordertabs]    
 }
 
 //--------------------------
@@ -807,8 +807,8 @@ var tsignalstable = {
     rows : [] 
 }  
 
-var tradedesksignalstab = {
-    id:  'tradedesksignalstab',     
+var tradedesk_signalstabs = {
+    id:  'tradedesk_signalstabs',     
     type: 'tabs',  
     label : '',
     items : []
@@ -819,7 +819,7 @@ var boxsignalsspanel  = {
     type: 'box',
     closed: false, 
     header: {item: 'MT4 Panel', items:[tsignalsbar], control: {slide: true, onclick_slide: 'onclick_slidehideotherbox (this)', closed : false, orientation: sb.R_CONTROL} },  
-    items: [tradedesksignalstab]    
+    items: [tradedesk_signalstabs]    
 }
 
 //--------------------------
@@ -920,14 +920,14 @@ var sessionfilepanel = {
 var sessionpropertiespanel = {
     id: 'sessionpropertiespanel',
     type: 'html',
-    class: 'strategypropertiespanel sb_panel sb_column',
+    class: 'strategypropertiespanel  sb_column',
     content: 'SessionPropertiesPanel()',
 }   
 
 var sessionschedulepanel = {
     id: 'sessionschedulepanel',
     type: 'html',
-    class: 'strategychedulepanel sb_panel',
+    class: 'strategychedulepanel ',
     content: 'SessionSchedulePanel()',
 }   
 
@@ -946,8 +946,8 @@ var sessiontabs = {
     items :
         [ 
             {id: 'tab_sessionfile',         type: 'link',    item: 'File',           items : [sessionfilepanel],       title: ''},           
-            {id: 'tab_sessionproperties',   type: 'link',    item: 'Properties',     items : [sessionpropertiespanel],  title: ''},           
-            {id: 'tab_sessionschedule',     type: 'link',    item: 'Schedule',       items : [sessionschedulepanel],     title: ''},
+            {id: 'tab_sessionproperties',   type: 'link',    item: 'Properties',     items : [sessionpropertiespanel, sessionschedulepanel],  title: ''},           
+       //     {id: 'tab_sessionschedule',     type: 'link',    item: 'Schedule',       items : [sessionschedulepanel],     title: ''},
             {id: 'tab_sessiondescription',  type: 'link',    item: 'Description',    items : [sessiondescriptionpanel],   title: ''},            
         ]
 } 
@@ -1022,9 +1022,9 @@ var tradedesk_enginelook_sidepanel = {
 var historybar = {
     id : 'historybar', 
     type: 'bar',
-    header : {title : 'History'},
     items:
     [
+        {id: '',                type: 'label',    item: 'HISTORY',  class: '', title : 'History'},           
         { 
             id:'',             
             type: 'group',                
@@ -1049,9 +1049,9 @@ var historytable = {
 var statementbar = {
     id : 'statementbar',  
     type: 'bar',
-    header : {title : 'Statement'},
     items:
     [
+        {id: '',                type: 'label',    item: 'STATEMENT',  class: '', title : 'Statement'},           
         { 
             id:'',     
             type: 'group',                              
@@ -1072,14 +1072,34 @@ var statementtable = {
                     'Nbr BuyTrade', 'Nbr SellTrade'],
     rows : [] 
 } 
-
+var tradedesk_historycommandgroup = {
+    id: 'tradedesk_historycommandgroup',
+    type: 'group',         
+    form: true,
+    class: 'sb_buttongroup',
+    items :
+        [        
+            {id: 'historyselect', item: 'Get History', type: 'button',  disabled: true,  class: 'sb_button',  events: {onclick: "onclick_historyselect(this)"}}, 
+        ]
+}
 
 var historyorderpanel = {
     id: 'historyorderpanel',
-    type: 'html',    
-    class : 'sb_column',
-    content: 'HistoryOrderPanel()',
+    type: 'panel',
+    class: 'sb_formcontainer',
+    items: [
+        {id: '', type: 'group',  form: true, class: "sb_bodygroup",
+         items: [
+            {id: '', type: 'label', item: 'Start Date', style: "min-width:unset"},
+            {id: 'historystartdate', type: 'date', value: "2013-01-08",  title: 'Start Date of search'},
+            {id: '', type: 'label', item: 'End Date', style: "min-width:unset"},
+            {id: 'historyenddate', type: 'date', value: "2013-01-08",  title: 'End Date of search'},
+         ] 
+        },
+        tradedesk_historycommandgroup,
+    ]
 }
+
 
 
 var historypanel = {
@@ -1184,35 +1204,35 @@ var tradedesk_formgroup = {
     items: [
         {id: '', type: 'group',  form: true, 
          items: [
-            {id: 'price', type: 'label', class:'sb_boxheadertitle', item: 'Price'},
+            {id: 'tradeentry_label', type: 'label', class:'sb_boxheadertitle', item: 'Price'},
             {id: 'tradeentry_type',  type: 'select', menu: TRADE_ENTRY_MENU, value:  TRADE_ENTRY_MENU[ENTRY_SPOT].text, events: {onchange: "onchange_tradeentry_type(this, event)" }},
-            {id: 'tradeentry_value', type: 'text', min: '0', step: 'Symbol.Point', value: 'entrevalue', disabled: true, events: {onchange: "onchange_tradeentry_value (this, event)" }},
+            {id: 'tradeentry_value', type: 'text', min: '0', step: 'Symbol.Point', value: 0, disabled: true, events: {onchange: "onchange_tradeentry_value (this, event)" }},
             {id: 'tradeentry_value_a', type: 'text', style:"visibility:hidden", disabled: true}
         ] 
         },
         {id: '', type: 'group',  form: true, 
          items: [
-            {id: 'Size', type: 'label', class:'sb_boxheadertitle', item: 'Size'},
+            {id: 'tradesize_label', type: 'label', class:'sb_boxheadertitle', item: 'Size'},
             {id: 'tradesize_type',  type: 'select', menu: TRADE_VOLUME_MENU, value:  TRADE_VOLUME_MENU[VOLUME_PIPS].text, events: {onchange: "onchange_tradesize_type(this, event)" }},
-            {id: 'tradesize_value', type: 'text', min: '0.01', step: '0.01', value: 'tradesize_value', events: {onchange: "onchange_tradesize_value(this, event)" }},
+            {id: 'tradesize_value', type: 'text', min: '0.01', step: '0.01', value: 0, events: {onchange: "onchange_tradesize_value(this, event)" }},
             {id: 'tradesize_value_a', type: 'text', title: 'value in pips', style:"visibility:hidden", disabled: true,  value: '', events: {onchange: "onchange_tradesize_value_a(this, event)" }},
 
          ] 
         },
         {id: '', type: 'group',  form: true, 
          items: [
-            {id: 'tpsluplabel', type: 'label', class:'sb_boxheadertitle', item: 'Stop Loss'},
+            {id: 'stoploss_label', type: 'label', class:'sb_boxheadertitle', item: 'Stop Loss'},
             {id: 'stoploss_type', type: 'select',  menu: TRADE_SLTP_MENU, value:  TRADE_SLTP_MENU[SLTP_PIPS].text, events: {onchange: onchange="onchange_stoploss_type(this, event)"}},
-            {id: 'stoploss_value', type: 'text', min: '0', step: '0.5', value: 'stoploss_value', events: {onchange: "onchange_stoploss_value(this, event)" }},
+            {id: 'stoploss_value', type: 'text', min: '0', step: '0.5', value: 0, events: {onchange: "onchange_stoploss_value(this, event)" }},
             {id: 'stoploss_value_a', type: 'text', title: 'value in pips', style:"visibility:hidden", disabled: true, value: '', events: {onchange: "onchange_stoploss_value_a(this, event)" }},
 
         ] 
         },
         {id: '', type: 'group',  form: true, 
          items: [
-            {id: 'tpsldownlabel', type: 'label', class:'sb_boxheadertitle', item: 'Take Profit'},
+            {id: 'takeprofit_label', type: 'label', class:'sb_boxheadertitle', item: 'Take Profit'},
             {id: 'takeprofit_type', type: 'select',  menu: TRADE_SLTP_MENU, value: TRADE_SLTP_MENU[SLTP_PIPS].text, events: {onchange: onchange="onchange_takeprofit_type(this, event)"}},
-            {id: 'takeprofit_value', type: 'text', min: '0', step: '0.5', value: 'takeprofit_value', events: {onchange: "onchange_takeprofit_value(this, event)" }},
+            {id: 'takeprofit_value', type: 'text', min: '0', step: '0.5', value: 0, events: {onchange: "onchange_takeprofit_value(this, event)" }},
             {id: 'takeprofit_value_a', type: 'text', title: 'value in pips', style:"visibility:hidden", disabled: true, value: '', events: {onchange: "onchange_takeprofit_value_a(this, event)" }},
 
         ] 
