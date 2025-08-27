@@ -1,7 +1,0 @@
-{
-    "javascript.preferences.renameMatchingJsxTags": false,
-    "javascript.preferences.useAliasesForRenames": false,
-    "typescript.preferences.renameMatchingJsxTags": false,
-    "typescript.preferences.useAliasesForRenames": false,
-    "editor.columnSelection": false
-}

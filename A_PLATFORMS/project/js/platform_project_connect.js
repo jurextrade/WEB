@@ -1,9 +1,7 @@
 //----------------------------------------------------SERVERS PANEL------------------------------------------------ 
 
-
 const DEPLOYSERVER           = "DEPLOYSERVER";
 var project_DeployCom          = null;
-
 
 function project_highlightserver (origin, project, connect, color) {
     let elt = '';

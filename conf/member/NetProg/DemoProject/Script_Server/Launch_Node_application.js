@@ -1,6 +1,6 @@
 function Application_Launch (name){       
-    let netprogappli  = MXGetEntity ('netprog_manager', 'Applications', 'Name', name);
-    let servermachine = MXGetEntity ('netprog_manager', 'Machines',     'Name', netprogappli.Machine);       
+    let netprogappli  = interface_GetEntity ('netprog_manager', 'Applications', 'Name', name);
+    let servermachine = interface_GetEntity ('netprog_manager', 'Machines',     'Name', netprogappli.Machine);       
     let port          = netprogappli.Ports[0];
     let address       = servermachine.IPAddress;
     let server        = solution.GetServerFromMachine(netprogappli.Machine);

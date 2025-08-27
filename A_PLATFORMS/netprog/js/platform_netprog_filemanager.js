@@ -186,7 +186,7 @@ function netprog_file_save () {
 
     cuser.send ({Name: 'savefile', Values: [file.CName, file.Content]}, true, 
                 function (content, values) {
-                    console.log (values[0] + ' saved : ' + content)
+                    TreatInfo (values[0].Name + ' saved')
                 }, 
                 [file]);  
 }
