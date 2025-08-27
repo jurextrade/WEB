@@ -203,7 +203,7 @@ function onclick_default_slide (elt, event) {
     $(elt).toggleClass('rotate-180').closest('.sb_box').find('.sb_boxbody').slideToggle();
 }
 
-function onclick_default_tab (elt, event) {
+function onmousedown_default_tab (elt, event) {
     event.stopPropagation();
     $('#' + CSS.escape(elt.id)).tab('show');
 }
@@ -803,12 +803,12 @@ class SB {
         for (var i = 0; i < tabs.items.length; i++) {
             var item    = tabs.items[i];
             let events  = defined(item.events) ? Object.assign({}, item.events) : {};            
-            if (defined(events.onclick) ? events.onclick = 'onclick_default_tab(this,event); ' + events.onclick :  events.onclick = 'onclick_default_tab(this,event)'); 
+            if (defined(events.onmousedown) ? events.onmousedown = 'onmousedown_default_tab(this,event); ' + events.onmousedown :  events.onmousedown = 'onmousedown_default_tab(this,event)'); 
 
             if (!defined(item.cname)) item.cname = item.id;   
             if (!defined(item.roleid)) item.roleid = 'role_' + item.id;        
             scontent +=     
-            '<li class="nav-item">' +
+            '<li class="nav-item">' +   
                 '<a id="' + item.id + '" class="sb_row nav-link'  + (i == 0 ? ' active' : '') + 
                 (defined(item.class) ? ' ' + item.class : '') + 
                 '" data-bs-toggle="sb_tab" data-bs-target="#' + item.roleid + '"' + 
@@ -871,7 +871,7 @@ class SB {
 
     tab_additem = function (tab, item, position) {
         let events      = defined(item.events)     ?  Object.assign({}, item.events) : {};            
-        if (defined(events.onclick) ? events.onclick += '; onclick_default_tab(this,event)' :  events.onclick = 'onclick_default_tab(this,event)'); 
+        if (defined(events.onmousedown) ? events.onmousedown = 'onmousedown_default_tab(this,event); ' + events.onmousedown :  events.onmousedown = 'onmousedown_default_tab(this,event)'); 
 
         if (!defined(item.roleid)) item.roleid = 'role_' + item.id;
         if (!defined(item.cname))  item.cname  = item.id;  

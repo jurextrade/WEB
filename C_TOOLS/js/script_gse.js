@@ -1,47 +1,14 @@
-/*
-    --remix-bg-darker:#222336; 
-    --remix-bg:    #2a2c3f;
-
-    --remix-text:  #a2a3bd; 
-    --remix-text1:  #959bad;
-    
-	--remix-text-dark: #babbcc;
-    --remix-text-danger: #ff5858;
-    --remix-text-success: #32ba89;
-    --remix-text-warning: #ffb684;
-    --remix-bg-warning:  #433337;
-    --remix-border-warning: #5e4037;
-
-    --remix-btn-bg : #007aa6;
-    --remix-btn-border: #3f4455;
-    --remix-border:  #3f4455;
 
 
-    color: #ff8a8a;
-    background: #402938;
-    border: 1px solid #572c38;
-
-
-
-	*/
-
-var gse_font_family 		    = "nunito sans,-apple-system,BlinkMacSystemFont,segoe ui,Roboto,helvetica neue,Arial,noto sans,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol,noto color emoji";
-var gse_font_size 			    = '12px'
-var gse_node_background   		= '#2a2c3f';
-var gse_node_textcolor	  		= '#a2a3bd';
-var gse_node_bordercolor  		= '#595c76'; //#3f4455';
-var gse_node_borderwidth  		= 1;
-var gse_link_color 		  		= '#007aa6';
-var gse_link_width		  		= 1.5;
-var gse_invertcolor				= '#adff2f';
 var gse_node_close_background 	= '#433337';
 var gse_node_close_textcolor  	= '#ffb684'; 
 var gse_node_close_bordercolor	= '#5e4037';
 var gse_node_close_borderwidth	= 1;
-var gse_node_select_background	= '#2a2c3f';
-var gse_node_select_textcolor  	= '#a2a3bd'; 
-var gse_node_select_bordercolor	= '#ff5858';
-var gse_node_select_borderwidth	= 1;
+
+var DISTANCE_X = 10;
+var DISTANCE_Y = 30;
+
+
 
 
 CanvasRenderingContext2D.prototype.roundRect = function (x, y, width, height, radius) {
@@ -88,10 +55,11 @@ class space {
 		this.Name = name;
 		this.Font = 0;
 
-		this.Color       = gse_node_textcolor;    // text 
-		this.Background  = gse_node_background;
-		this.BorderWidth = gse_node_borderwidth;
-		this.BorderColor = gse_node_bordercolor;
+		this.Color       = null;  // text 
+		this.Background  = null;
+		this.BorderWidth = null;
+		this.BorderColor = null;
+		this.TextColor   = null;
 
 		this.Resource = 0;
 		this.Code = 0;
@@ -112,8 +80,8 @@ class linktype {
 		this.ToSpaces = [];
 		this.Style;
 
-		this.Color   = gse_link_color;		
-		this.Width   = gse_link_width;		
+		this.Color   = null;		
+		this.Width   = null;		
 	}
 }
 
@@ -142,7 +110,7 @@ class node {
 		this.Background  = space.Background; 	
 		this.BorderWidth = space.BorderWidth;					
 		this.BorderColor = space.BorderColor;			
-
+		this.TextColor   = space.TextColor;
 		this.Marker = null;
 		
 		this.SetTreeNodesMark = function(flag) {
@@ -728,7 +696,7 @@ const gsecontainer_default_options = {
 class gsecontainer {
 	constructor (gse, options) {
 
-		this.options        = defined(options) ? options : gsecontainer_default_options;
+		this.options        =  { ...gsecontainer_default_options, ...options }; 
 		this.CanvasId = 0;
 		this.Canvas;
 
@@ -1012,7 +980,7 @@ class gsecontainer {
 			}
 			else {
 				if (node == this.InvertObject) {
-					cx.fillStyle = gse_invertcolor;
+					cx.fillStyle = theme_hover_bg_color;
 
 				}
 				else 
@@ -1080,9 +1048,9 @@ class gsecontainer {
 	//		cx.shadowColor = node.Color;
 
 	
-			cx.fillStyle 	= node.Background; 
-			cx.strokeStyle  = node.BorderColor;				        
-			cx.lineWidth 	= node.BorderWidth;
+			cx.fillStyle 	= node.Background  ? node.Background : theme_bar_bg_color; 
+			cx.strokeStyle  = node.BorderColor ? node.Background : theme_button_border_color; 			        
+			cx.lineWidth 	= node.BorderWidth ? node.BorderWidth : 1; 			        
 			cx.textAlign 	= "center"; 
 
 			if (node.Close) {
@@ -1092,21 +1060,25 @@ class gsecontainer {
 			}
 
 			if (node.Select) {
-				if (!node.Close) cx.fillStyle 	= gse_node_select_background; 
-				cx.strokeStyle  = gse_node_select_bordercolor;
-				cx.lineWidth 	= gse_node_select_borderwidth;
+				if (!node.Close) {
+					cx.fillStyle 	= theme_select_bg_color; 
+				}
+				cx.strokeStyle  = theme_button_border_color;
+				cx.lineWidth 	= 1.5;
+			} else {
+				if (node == this.InvertObject) {
+					cx.fillStyle 	= theme_hover_bg_color;
+					cx.strokeStyle 	= theme_border_color;
+				}
 			}
 
 			if (node.Marker) {    
-				cx.fillStyle   = node.Background;          
-				cx.strokeStyle =  node.Marker; 
+				cx.fillStyle   = node.Background ? node.Background : theme_bar_bg_color;          
+				cx.strokeStyle = node.BorderColor ? node.Background : theme_button_border_color; 		
 				cx.lineWidth = 2;  
 			}
 
-			if (node == this.InvertObject) {
-				cx.fillStyle = gse_invertcolor;
-			}
-	
+
 	
 			if (this.NodeMode == this.GSE.GSEROUND) {
 				cx.roundRect(lx, ty, rx - lx, by - ty, 20);
@@ -1122,15 +1094,20 @@ class gsecontainer {
 				cx.fillRect(lx, ty, rx - lx, by - ty);
 				cx.strokeRect(lx-0.5, ty-0.5, rx - lx + 1, by - ty + 1);
 			}
+//text style
+			cx.fillStyle   = node.Color ? node.Color : theme_color; ; 			
 
-			cx.fillStyle   = node.Color; 			
+			if (node == this.InvertObject) {
+				cx.fillStyle = theme_hover_color;
+			}
+	
 
 			if (node.Close) {
 				cx.fillStyle 	= gse_node_close_textcolor; 
 
 		 	}
 			if (node.Select) {
-				if (!node.Close) cx.fillStyle 	= gse_node_select_textcolor; 
+				if (!node.Close) cx.fillStyle 	= theme_color; 
 			}
 		
 			if (node.Name.length == 1) {
@@ -1145,8 +1122,8 @@ class gsecontainer {
 
 
 		}
-		this.DrawLink = function(link, cx) {
-				let from_object = link.FromNode;
+		this.DrawLink = function(link, minwidth, cx) {
+			let from_object = link.FromNode;
 			let to_object = link.ToNode;
 			let f_w = from_object.Width;
 			let t_w = to_object.Width;
@@ -1157,12 +1134,12 @@ class gsecontainer {
 			let last_x  = 0;
 			let last_y  = 0;
 
-			cx.strokeStyle = link.Color;	
-			cx.lineWidth   = link.Width;
+			cx.strokeStyle = link.Color ? link.Color : theme_button_border_color;	
+			cx.lineWidth   = link.Width ? link.Width : 1;
 
 			if (from_object.Visible && to_object.Visible)
 				switch (this.Mode) {
-				case this.GSE.GSEHORIZONTAL:
+				case this.GSE.GSEVERTICAL:
 					if (this.LineMode == this.GSE.GSEDIRECTLINK) {
 						first_x = this.view_x(from_object.X);
 						first_y = this.view_y(from_object.Y);
@@ -1173,21 +1150,25 @@ class gsecontainer {
 						cx.lineTo(last_x, last_y);
 						cx.stroke();
 					} else if (this.LineMode == this.GSE.GSENETLINK) {
+						
 						first_x = this.view_x(from_object.X + f_w);
 						first_y = this.view_y(from_object.Y);
-						last_x = this.view_x(to_object.X - t_w);
+						
+						last_x  = this.view_x(to_object.X - minwidth);
 						last_y = this.view_y(to_object.Y);
+						if (link == link.FromNode.Inherit[0])  {
+							cx.beginPath();
+							cx.moveTo(first_x, first_y);
+							cx.lineTo(first_x + (last_x - first_x) / 2, first_y);
+							cx.stroke();
+						}	
 						cx.beginPath();
-						cx.moveTo(first_x, first_y);
-						cx.lineTo(first_x + 5, first_y);
-						cx.stroke();
-						cx.beginPath();
-						cx.moveTo(first_x + 5, last_y);
+						cx.moveTo(first_x + (last_x - first_x) / 2, last_y);
 						cx.lineTo(last_x, last_y);
 						cx.stroke();
 					}
 					break;
-				case this.GSE.GSEVERTICAL:
+				case this.GSE.GSEHORIZONTAL:
 					if (this.LineMode == this.GSE.GSEDIRECTLINK) {
 						first_x = this.view_x(from_object.X);
 						first_y = this.view_y(from_object.Y);
@@ -1202,10 +1183,12 @@ class gsecontainer {
 						first_y = this.view_y(from_object.Y + f_h);
 						last_x = this.view_x(to_object.X);
 						last_y = this.view_y(to_object.Y - t_h);
-						cx.beginPath();
-						cx.moveTo(first_x, first_y);
-						cx.lineTo(first_x, first_y + (last_y - first_y) / 2);
-						cx.stroke();
+						if (link == link.FromNode.Inherit[0])  {
+							cx.beginPath();
+							cx.moveTo(first_x, first_y);
+							cx.lineTo(first_x, first_y + (last_y - first_y) / 2);
+							cx.stroke();
+						}
 						cx.beginPath();
 						cx.moveTo(last_x, first_y + (last_y - first_y) / 2);
 						cx.lineTo(last_x, last_y);
@@ -1225,26 +1208,32 @@ class gsecontainer {
 				}
 
 		}
-		this.DrawTreeLinks = function(node, cx) {
+		this.DrawTreeLinks = function(link, node, cx) {
 			if (!node.Mark) {
 
 				var first_object = null;
-				var last_object  = null;;
+				var last_object  = null;
 				node.Mark = true;
+				
+				let objectswidth = node.Inherit.map(link => link.ToNode.Width); 
+				let minwidth = Math.min(...objectswidth);
 
 				for (var i = 0; i < node.Inherit.length; i++) {
 					
-					var l = node.Inherit[i];
-					var to_object = l.ToNode;
+					var link = node.Inherit[i];
+					var to_object = link.ToNode;
 
 					if (i == 0)  first_object = to_object;
 					last_object = to_object;
 
 					
 					if (node.Close == 0) {
+
+
+
 					//	to_object.Visible = true;
-						this.DrawLink(l, cx);
-						this.DrawTreeLinks(to_object, cx);
+						this.DrawLink(link, minwidth, cx);
+						this.DrawTreeLinks(link, to_object, cx);
 					}
 					//to_object.Visible = false;
 				}
@@ -1258,28 +1247,28 @@ class gsecontainer {
 					var first_x, first_y, last_x, last_y;
 					if (!(first_object == last_object) && node.Close == 0)
 						switch (this.Mode) {
-							case this.GSE.GSEHORIZONTAL: 
+							case this.GSE.GSEVERTICAL: 
 								first_x = this.view_x(node.X + node.Width);
 								first_y = this.view_y(first_object.Y);
-								last_x  = this.view_x(last_object.X - last_object.Width);
+								last_x  = this.view_x(last_object.X - minwidth);
 								last_y  = this.view_y(last_object.Y);
 								cx.beginPath();
-								cx.moveTo(first_x + 5, first_y);
-								cx.lineTo(first_x + 5, last_y);
-								cx.strokeStyle = gse_link_color;  
-								cx.lineWidth   = gse_link_width;								  						
+								cx.moveTo(first_x + (last_x - first_x) / 2, first_y);
+								cx.lineTo(first_x + (last_x - first_x) / 2, last_y);
+								cx.strokeStyle = link.Color ? link.Color : theme_button_border_color;	
+								cx.lineWidth   = link.Width ? link.Width : 1;										  						
 								cx.stroke();
 							break;
-							case this.GSE.GSEVERTICAL: 
+							case this.GSE.GSEHORIZONTAL: 
 								first_x = this.view_x(first_object.X);
 								first_y = this.view_y(node.Y + node.Height);
 								last_x = this.view_x(last_object.X);
 								last_y = this.view_y(last_object.Y - last_object.Height);
 								cx.beginPath();
-								cx.moveTo(first_x, first_y + 5);
-								cx.lineTo(last_x, first_y + 5);
-								cx.strokeStyle = gse_link_color;    
-								cx.lineWidth   = gse_link_width;						
+								cx.moveTo(first_x, first_y + (last_y - first_y) / 2);
+								cx.lineTo(last_x, first_y + (last_y - first_y) / 2);
+								cx.strokeStyle = link.Color ? link.Color : theme_button_border_color;	
+								cx.lineWidth   = link.Width ? link.Width : 1;					
 								cx.stroke();
 							break;
 					}
@@ -1316,7 +1305,7 @@ class gsecontainer {
 				case this.GSE.GSEVERTICAL:
 					if (this.RootNode != null) {
 
-						this.DrawTreeLinks(this.RootNode, cx);
+						this.DrawTreeLinks(null, this.RootNode, cx);
 						this.RootNode.SetTreeNodesMark(false);
 					}
 					break;
@@ -1324,7 +1313,7 @@ class gsecontainer {
 					for (var i = 0; i < this.GSE.Applications.length; i++) {
 						let appli = this.GSE.Applications[i];
 						for (var j = 0; j < appli.Links.length; j++) {
-							this.DrawLink (appli.Links[j], cx);
+							this.DrawLink (appli.Links[j], 0, cx);
 						}
 					}
 					break;
@@ -1384,52 +1373,42 @@ class gsecontainer {
 		}		
 
 		this.ondragover 	= function (event) {
-            this.options.ondragover = defined(options) && defined(options.ondragover) ? options.ondragover  : gsecontainer_default_options.ondragover;
-			this.options.ondragover(event, event.target.container);
+			defined(this.options.ondragover) && this.options.ondragover(event, event.target.container);
 		};
 		this.ondragenter 	= function (event) {
-            this.options.ondragenter = defined(options) && defined(options.ondragenter) ? options.ondragenter  : gsecontainer_default_options.ondragenter;
-			this.options.ondragenter(event, event.target.container);
+			defined(this.options.ondragenter) && this.options.ondragenter(event, event.target.container);
 
 		};
 		this.ondrop 		= function (event) {
-            this.options.ondrop = defined(options) && defined(options.ondrop) ? options.ondrop  : gsecontainer_default_options.ondrop;
-			this.options.ondrop(event, event.target.container);
+			 defined(this.options.ondrop) && this.options.ondrop(event, event.target.container);
 
 		};
 		this.onmousemove 	= function (event) {
-            this.options.ondragover = defined(options) && defined(options.onmousemove) ? options.onmousemove  : gsecontainer_default_options.onmousemove;
-			this.options.onmousemove(event, event.target.container);
+			defined(this.options.onmousemove) && this.options.onmousemove(event, event.target.container);
 
 		};
 		this.ondblclick 	= function (event) {
-            this.options.ondblclick = defined(options) && defined(options.ondblclick) ? options.ondblclick  : gsecontainer_default_options.ondblclick;
-			this.options.ondblclick(event, event.target.container);
+			 defined(this.options.ondblclick) && this.options.ondblclick(event, event.target.container);
 
 		};
 		this.oncontextmenu 	= function (event) {
-            this.options.oncontextmenu = defined(options) && defined(options.oncontextmenu) ? options.ondraoncontextmenugover  : gsecontainer_default_options.oncontextmenu;
-			this.options.oncontextmenu(event, event.target.container);
+			defined(this.options.oncontextmenu) && this.options.oncontextmenu(event, event.target.container);
 
 		};
 		this.onmouseenter 	= function (event) {
-            this.options.onmouseenter = defined(options) && defined(options.onmouseenter) ? options.onmouseenter  : gsecontainer_default_options.onmouseenter;
-			this.options.onmouseenter(event, event.target.container);
+			defined(this.options.onmouseenter) && this.options.onmouseenter(event, event.target.container);
 
 		};
 		this.onmouseleave 	= function (event) {
-            this.options.onmouseleave = defined(options) && defined(options.onmouseleave) ? options.onmouseleave  : gsecontainer_default_options.onmouseleave;
-			this.options.onmouseleave(event, event.target.container);
+			defined(this.options.onmouseleave) && this.options.onmouseleave(event, event.target.container);
 
 		};
 		this.onmousedown 	= function (event) {
-            this.options.onmousedown = defined(options) && defined(options.onmousedown) ? options.onmousedown  : gsecontainer_default_options.onmousedown;
-			this.options.onmousedown(event, event.target.container);
+			 defined(this.options.onmousedown) && this.options.onmousedown(event, event.target.container);
 
 		};
 		this.onmouseup 		= function (event) {
-            this.options.onmouseup = defined(options) && defined(options.onmouseup) ? options.onmouseup  : gsecontainer_default_options.onmouseup;
-			this.options.onmouseup(event, event.target.container);
+			defined(this.options.onmouseup) && this.options.onmouseup(event, event.target.container);
 
 		};
 		
@@ -1480,15 +1459,15 @@ class gsecontainer {
 			
 			this.Context.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 
-			this.Context.font = gse_font_family;
-			this.Context.fontSize  = gse_font_size;
+			this.Context.font = theme_font_family;
+			this.Context.fontSize  = theme_font_size;
 
 			this.ResizeNodes(this.RootNode, this.Context);
 
-			if (this.Mode == this.GSE.GSEHORIZONTAL) {
-				this.GSE.GTTDHG(this.RootNode, this.Root_x, this.Root_y, 10., 10.);
-			} else if (this.Mode == this.GSE.GSEVERTICAL) {
-				this.GSE.GTTDG(this.RootNode, this.Root_x, this.Root_y, 10., 10.);
+			if (this.Mode == this.GSE.GSEVERTICAL) {
+				this.GSE.GTTDHG(this.RootNode, this.Root_x, this.Root_y, DISTANCE_Y, DISTANCE_X);
+			} else if (this.Mode == this.GSE.GSEHORIZONTAL) {
+				this.GSE.GTTDG(this.RootNode, this.Root_x, this.Root_y, DISTANCE_X, DISTANCE_Y);
 			}
 
 			this.ReturnGSize();
@@ -1527,7 +1506,6 @@ class gsecontainer {
 			container.parentNode.scrollWidth = 392;
 	*/
 			this.DragNode(this.Canvas, this.Context, event);		
-
 			this.DrawAllLinks(this.Context);
 			this.DrawAllNodes(this.Context);
 
@@ -1596,25 +1574,7 @@ function onmousedown_gsecontainer (event, container) {
 
     var node = container.FindNode(event.offsetX, event.offsetY);
     
-    if (node) {
-		if  (node != container.SelectNode) {
-        	container.Select (node);
-			if (node.UserField) {           
 
-			}
-		}
-    } else {
-        container.UnSelect();
-    }
-
-    if (event.which == 1) {   // right click
-        if (container.SelectNode != null && container.BeginDrag == null && container.SelectNode != container.RootNode) {
-            container.BeginDrag = node;
-            container.DragPoint_x = container.view_x (event.offsetX);
-    		container.DragPoint_y = container.view_y (event.offsetY);
-        }
-    }
-    container.Refresh (event);   
 }
 
 function onmouseup_gsecontainer (event, container) {

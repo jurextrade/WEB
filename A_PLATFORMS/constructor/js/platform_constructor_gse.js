@@ -68,7 +68,7 @@ function constructor_gse_init (id) {
 ///////////////////////////////     
 
     constructor_gse_editor = new gsecontainer(objgse);
-    constructor_gse_editor.SetDrawMode(objgse.GSEHORIZONTAL, objgse.GSEDIRECTLINK);
+    constructor_gse_editor.SetDrawMode(objgse.GSEVERTICAL, objgse.GSEDIRECTLINK);
     constructor_gse_editor.SetNodeMode(objgse.GSEROUND);
     constructor_gse_editor.setCanvasId(id);
 }

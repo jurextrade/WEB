@@ -1,14 +1,31 @@
-let net    = require('net');
-let http   = require('http');
-let https  = require('https');
-let socket = require('socket.io');
-let fs     = require('fs');
+const childprocess = require('child_process'); 
+const net    = Require('net');
+const http   = Require('http');
+const https  = Require('https');
+const socket = Require('socket.io');
+const fs     = Require('fs');
+const xmlhttprequest = Require("xmlhttprequest")
+const axios        = Require('axios');
+const formdata     = Require('form-data');
+const promiseftp   = Require('promise-ftp');
+const moment 	   = Require("moment");
 
-var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+function Require (module) {
+	try {
+		let result = childprocess.execSync('npm list ' + module + ' || npm install ' + module);       
+		if (result.indexOf("'UNMET DEPENDENCY'") != -1) {
+			console.log ('module do not exist : ' + module + ' Installation done');
+		}
 
-var moment      = require('moment');
+		let myModule = require(module); 
+		return myModule;
+	} catch (error) {
+		console.error(`Error executing command: ${error.message}`);
+		process.exit(1);
+	}            
+}
 
-
+const XMLHttpRequest = xmlhttprequest.XMLHttpRequest;
 
 
 var ServerName          = "jurextrade.com"; 
@@ -499,8 +516,7 @@ function SendFileExpert (userid, fromfile, tofile, filetype, projectfolder, sock
  
     console.log (userid + '*' + tofile + '*' + projectfolder + '*' + emplacement)
 
-    var FormData = require('form-data');
-    var formdata = new FormData();
+    let fdata = new formadata();
     formdata.append('user_id', userid);
     formdata.append('filename', tofile);
     formdata.append('projectfolder', projectfolder);
@@ -508,9 +524,9 @@ function SendFileExpert (userid, fromfile, tofile, filetype, projectfolder, sock
     formdata.append('content', content);
 
 
-    const axios = require('axios');
 
-    axios.post(url, formdata, {
+
+    axios.post(url, fdata, {
         headers: {
             'Content-Type': 'application/octet-stream', // Or the specific MIME type
         },
@@ -535,11 +551,8 @@ function SendFileExpert (userid, fromfile, tofile, filetype, projectfolder, sock
 
 
 function PutFileExpert (fromfile, tofile,  filetype, userid, projectfolder, socket, stdout) {
-
-	var PromiseFtp = require('promise-ftp');
-
 	
-	var ftp = new PromiseFtp();    
+	var ftp = new promiseftp();    
         return ftp.connect({
         host:       ServerName,
         user:       FTPUserName,
@@ -582,9 +595,8 @@ function CompileC (userid, terminaltype, projectfolder, filename, socket) {
 	var projectfile = (terminaltype == "Tester") ? "PG_TEntryRules.dll" : "PG_EntryRules.dll";
     Print ("START COMPILING C " + projectfolder + " for PLATFORM : " + terminaltype  + " USERID = " + userid + " Library : " + projectfile);
 
-	const { exec } = require('child_process'); 
 
-	return exec(C_MAKE_COMMAND + ' ' + projectfile, (err, stdout, stderr) => {
+	return childprocess.exec(C_MAKE_COMMAND + ' ' + projectfile, (err, stdout, stderr) => {
 
 		if (err) {
 			Print('Compile error!');
@@ -614,8 +626,8 @@ function CompileMQ4 (userid, terminaltype, projectfolder, filename, socket) {
     var tofile   =  FTPRootPath + userid + '/Projects/' +  projectfolder +  '/MQL4/Experts/' + filename + '.mq4';		
     Print ("START COMPILING MQ4 STRATEGY " + filename + " for PROJECT : " + projectfolder  + " USERID = " + userid + " Experts : " + projectfile);
 
-	const { exec } = require('child_process'); 
-	return exec(MQ4_COMPILE_COMMAND + ' /compile:' +  './Experts/' + projectfile + ' /inc:' + './' + ' /log:' + 'error.log', {"cwd": MQ4_COMPILE_PATH}, (err, stdout, stderr) => {
+	
+	return childprocess.exec(MQ4_COMPILE_COMMAND + ' /compile:' +  './Experts/' + projectfile + ' /inc:' + './' + ' /log:' + 'error.log', {"cwd": MQ4_COMPILE_PATH}, (err, stdout, stderr) => {
 		
 		var myLines = fs.readFileSync(MQ4_COMPILE_PATH + 'error.log', "ascii").toString("ascii").split('\n');			
 				
@@ -714,7 +726,7 @@ async function download_file(socket, servername, filename, tofilename) {
 	let url = 'http://' + servername + '/' + filename;  
 	try {
 	  const downloadLink = url;
-	  const response = await require('axios').get(downloadLink, { responseType: 'arraybuffer' });
+	  const response = await axios.get(downloadLink, { responseType: 'arraybuffer' });
 
 	  const fileData = Buffer.from(response.data, 'binary');
 	  

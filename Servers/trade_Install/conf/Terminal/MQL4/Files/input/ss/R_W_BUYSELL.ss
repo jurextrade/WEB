@@ -1,5 +1,0 @@
-(START)
- (BUY)
-  (SELL)
- (EXIT)
- 

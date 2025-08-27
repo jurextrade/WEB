@@ -1,4 +1,22 @@
-let http = require('http');
+const childprocess = require('child_process'); 
+const http = Require('http');
+
+
+function Require (module) {
+    try {
+        let result = childprocess.execSync('npm list ' + module + ' || npm install ' + module);       
+        if (result.indexOf("'UNMET DEPENDENCY'") != -1) {
+            console.log ('module do not exist : ' + module + ' Installation done');
+        }
+
+        let myModule = require(module); 
+        return myModule;
+    } catch (error) {
+        console.error(`Error executing command: ${error.message}`);
+        process.exit(1);
+    }            
+}
+
 
 
 let server = http.createServer(function (req, res) {   //create web server

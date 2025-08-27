@@ -16,6 +16,11 @@ function netprog_jsoneditor_resize (id) {
 
 
 function netprog_jsoneditor_update (entity) {
+    if (!sb.tab_finditem(netprog_maintabs, 'netprog_json_tab')) { 
+        let filetabitem    =         {id: 'netprog_json_tab',     item: 'JSON',      type:'link', icon:  icon_structure,  items: [netprog_jsoneditor], onclose: 'onclick="onclick_netprog_tab_close(this, event)"',    title: 'Structure', events: {onmousedown:"onmousedown_netprog_tab(this, event)"}};
+        sb.tab_additem(netprog_maintabs, filetabitem);
+    }
+    sb.tab_select(netprog_maintabs, 'netprog_json_tab');      
     if (!entity) {
         console.log (' not found');
     }

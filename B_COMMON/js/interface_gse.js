@@ -4,12 +4,12 @@ var gsemodegroup = {
     id:'modegroup',
     type: 'group',     
     position: 'me-auto',
-    class: 'sb_transform sb_right',    
+    class: 'sb_right',    
     toggle: true,                         
     items:
         [ 
-            {id: 'drawmode_vertical',    icon: 'fas fa-sitemap', type:'link',    title: 'Vertival',    events: {onclick:'onclick_gsemodegroup(this, event)'}},           
-            {id: 'nodemode_horizontal',  icon: 'fas fa-sitemap rotate90',  type:'link',    title: 'Horizontal',  events: {onclick:'onclick_gsemodegroup(this, event)'}},  
+            {id: 'nodemode_horizontal',  icon: 'fas fa-sitemap',            type:'link',    title: 'Horizontal',  events: {onclick:'onclick_gsemodegroup(this, event)'}},  
+            {id: 'nodemode_vertical',    icon: 'fas fa-sitemap rotate90',   class:'checked', type:'link',    title: 'Vertival',    events: {onclick:'onclick_gsemodegroup(this, event)'}},           
             {id: 'linemode_normal',      icon: 'fas fa-code-branch',    type:'link',    title: 'Normal',      events: {onclick:'onclick_gsemodegroup(this, event)'}}                 
         ]    
 }

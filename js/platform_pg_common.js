@@ -2657,7 +2657,7 @@ function CanDrop (pg, rootnode, dragnode, onnode) {
 
 	PL.PG = pg;    
 
-	var FromName = PL.ReturnTrueName (PL.ReturnIsNameFromObject (dragnode.UserField));
+	var FromName = PL.ReturnIsNameFromObject (dragnode.UserField).ReturnTrueName ();
     
     if (onnode == rootnode) {
         return (PL.IsIfStatement (FromName));    
@@ -3241,7 +3241,7 @@ function UpdateRules () {
     let PL = solution.PL;
     let PG = PL.PG;
 
-    if (!CurrentStrategy)
+    if (!solution.CurrentProject.CurrentStrategy)
         return;
     if (!CurrentContainer.RootNode) 
         return;
@@ -4384,7 +4384,7 @@ function StrategyDescriptionPanel_Update (platform, strategy, html) {
         platform.strategyquilleditor = new Quill(quilleditor,  options);
 
         platform.strategyquilleditor.on('text-change', function(delta, oldDelta, source) {
-            CurrentStrategy.Description = platform.strategyquilleditor.root.innerHTML;
+            solution.CurrentProject.CurrentStrategy.Description = platform.strategyquilleditor.root.innerHTML;
             if (platform.strategyquilleditor.options.first) {
                 platform.strategyquilleditor.history.clear();
                 platform.strategyquilleditor.options.first = false;
@@ -4581,7 +4581,7 @@ function UpdateStrategyScheduleField (id, value) {
 }
 
 function Strategy_SetPropertyValue (id, value) {
-    if (!CurrentStrategy) return;
+    if (!solution.CurrentProject.CurrentStrategy) return;
     
     var engine = CurrentEngine;
    
@@ -4631,7 +4631,7 @@ function Strategy_SetPropertyValue (id, value) {
 
 
 function Strategy_SetScheduleValue (id, value) {
-    if (!CurrentStrategy) return;
+    if (!solution.CurrentProject.CurrentStrategy) return;
         
     var schedule = CurrentEngine.Schedules[0];
 
@@ -4806,8 +4806,8 @@ function RefreshStrategyName(strategy) {
     if (!strategy) return;
     var doc = document.getElementById('strategyname');
     if (doc) doc.value = strategy.Name;
-    $("#strategy_assistant_name").val (CurrentStrategy.Name);  
-    $('#strategy_assistant_title span').html(CurrentStrategy.Name)  
+    $("#strategy_assistant_name").val (solution.CurrentProject.CurrentStrategy.Name);  
+    $('#strategy_assistant_title span').html(solution.CurrentProject.CurrentStrategy.Name)  
 }
 
 function RefreshStrategy(strategy) {
@@ -4839,8 +4839,8 @@ function RefreshStrategyAssistantProperties () {
  
     $('#strategy_assistant_addedindicators').html ('');    
 
-    for (var i = 0; i < CurrentStrategy.UsedIndicators.length; i++) {
-        var object = PG.GetObjectFromId(CurrentStrategy.UsedIndicators[i]); 
+    for (var i = 0; i < solution.CurrentProject.CurrentStrategy.UsedIndicators.length; i++) {
+        var object = PG.GetObjectFromId(solution.CurrentProject.CurrentStrategy.UsedIndicators[i]); 
         var objecthtml = GetHTMLFromObject (object);
         $('#strategy_assistant_addedindicators').append (objecthtml);    
     }   
@@ -4896,7 +4896,7 @@ function RefreshStrategyActions(engine) {
         }
     }
     if (OperationType == OP_BUY || OperationType == OP_BUYSELL) {
-        var Tab = CurrentStrategy.BLogicals;
+        var Tab = solution.CurrentProject.CurrentStrategy.BLogicals;
         for (var i = 0; i < NBR_OPERATIONS; i++) {
             for (var j = 0; j < Tab[i].length; j++) {
                 for (k = 0; k < Menu_Conditions.length; k++) {

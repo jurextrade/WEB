@@ -483,8 +483,8 @@ var ScheduleMenu = [
     {id :22, name : 'E_WEEK',    item1:'To Week',   value: '-----' ,    type: 'select',  menu: WeeksMenu,    events: {onchange: 'onchange_strategyschedule (this, event)'}, title :  "End Week of the month from where strategy can be launched"},
     {id :13, name : 'S_DAY',     item1:'From Day',    value: '-----' ,  type: 'select',  menu: DaysMenu,     events: {onchange: 'onchange_strategyschedule (this, event)'}, title :  "Start Day in the week, from where strategy can be launched"},
     {id :23, name : 'E_DAY',     item1:'To Day',    value: '-----' ,    type: 'select',  menu: DaysMenu,     events: {onchange: 'onchange_strategyschedule (this, event)'}, title :  "End Day in the week, from where strategy can be launched"},
-    {id :14, name : 'S_TIME',    item1:'From Time',   value: 0 ,        type: 'time',   format: 'h24',       events: {onchange: 'onchange_strategyschedule (this, event)'}, title :  "Start Time in the day from where strategy can be launched"},  
-    {id :24, name : 'E_TIME',    item1:'To Time',   value: 0 ,          type: 'time',   format: 'h24',       events: {onchange: 'onchange_strategyschedule (this, event)'}, title :  "End Time in the day from where strategy can be launched"},  
+    {id :14, name : 'S_TIME',    item1:'From Time',          type: 'time',   format: 'h24',       events: {onchange: 'onchange_strategyschedule (this, event)'}, title :  "Start Time in the day from where strategy can be launched"},  
+    {id :24, name : 'E_TIME',    item1:'To Time',               type: 'time',   format: 'h24',       events: {onchange: 'onchange_strategyschedule (this, event)'}, title :  "End Time in the day from where strategy can be launched"},  
 ];
 
 var SchedulePropertyMenu = [

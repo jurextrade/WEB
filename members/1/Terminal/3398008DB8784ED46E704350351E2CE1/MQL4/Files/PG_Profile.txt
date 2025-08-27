@@ -1,5 +1,5 @@
-GBPUSD
-4
+
+null
 72
 false
 false

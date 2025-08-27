@@ -1,3 +1,0 @@
-{
-    "modules" : ["net", "http", "https", "socket.io", "axios"]
-}

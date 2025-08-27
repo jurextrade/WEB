@@ -27,6 +27,9 @@ function interface_GetEntity (father, fieldname, attribute, name) {   // father 
         return NULL;
     }
 
+    if (fieldname == "") {
+        return father;
+    }
     var classarray = father[fieldname];
     
     for (var i = 0; i <  classarray.length; i++) {
@@ -136,7 +139,7 @@ function url_post_json (url, par /*object {}*/, async, callback, values /* can b
     var params = (par != null ?  JSON.stringify(par) : '');
 
 
-    xhttp.open('POST', url, async);
+    xhttp.open('POST',   url, async);
     xhttp.setRequestHeader('Content-type', 'application/json;charset=UTF-8');        
 
    
@@ -435,7 +438,7 @@ class connect {   //'http://100.119.36.131:80'
         this.address    = hostname  + ':' + port;
         this.options    = defined(options) ? {...connect_default_options, ...options} : connect_default_options;
         
-        this.Socket     = io.connect(this.address, {reconnection: options.reconnection})//, {'reconnection': false});
+        this.Socket     = io.connect(this.address, {reconnection: options.reconnection,})//, {'reconnection': false});
         this.Socket.com = this;
     
         this.Socket.onconnectfunction        = this.options.onconnectfunction;

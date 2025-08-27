@@ -540,7 +540,7 @@ function selector_select (selector, name, type) {
         case 'project_selectstrategy' :
             var strategyname =name;
             var strategy = solution.CurrentProject.PG.GetStrategyFromName(strategyname);
-            if (strategy == CurrentStrategy) return strategy;
+            if (strategy == solution.CurrentProject.CurrentStrategy) return strategy;
             return project_selectstrategy(strategy);
         break;
         case 'project_selectproject' :
@@ -620,7 +620,7 @@ function Selection_clear () {
 const BOTTOMPANEL_HEIGHT   = 200;
 const BOTTOMPANEL_FLATSIZE = 35;
 
-function BottomPanel_Flat (platform, flat, setflag) {
+function BottomPanel_Flat (platform, flat, setflag) {     //flat 
 
     let dragelth    = $('#' + platform.pname + '_mainpanel_drag');   
     let bottomelt = dragelth[0].nextElementSibling; 

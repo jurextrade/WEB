@@ -236,7 +236,7 @@ var Engine_Run = function(engine) {
         return;        
     }    
 
-    GenerateJSStrategy(CurrentStrategy, engine);
+    GenerateJSStrategy(solution.CurrentProject.CurrentStrategy, engine);
    
     window.eval(GenerateJSObjects(engine) +
                 GenerateVariables(JS_GENERATION, GLOBAL_VARIABLE))

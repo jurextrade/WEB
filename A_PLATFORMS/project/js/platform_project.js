@@ -3,7 +3,7 @@ var Interval_selectstrategy     = 0;
 var Interval_selectchart        = 0;
 
 var CurrentEngine           = null;
-var CurrentStrategy         = null;
+
 
 //---------------------------------------------------------------------MODULE START -----------------------------------------------------------------------------//
 
@@ -262,7 +262,27 @@ function project_timer () {
         $('#project_conditionsbar #conditionCreate').css ('display', '');       
         $("#project_distributebuttons").css ('visibility', '');            
         $("#projectselectstrategypanel").css ('display', '');  
-        $('#project_root #indicatorCreate').css ('display', '');   
+        $('#project_root #indicatorCreate').css ('display', '');  
+
+        if (solution.CurrentProject.CurrentStrategy) {
+            $('#projectstrategyfileaction').css ('display', '');            
+
+            $('#project_strategiesbar #project_strategyrename').css ('display', '');
+            $('#project_strategiesbar #project_strategyremove').css ('display', '');
+        
+            $('#assistantbar *').css ('display', '');
+            $('#project_strategydeploygroup').css ('display', ''); 
+            
+        }    
+        else {
+            $('#projectstrategyfileaction').css ('display', 'none');
+            $('#project_strategiesbar #project_strategyrename').css ('display', 'none');
+            $('#project_strategiesbar #project_strategyremove').css ('display', 'none');    
+            $('#overlay_strategyhelper').remove();        
+
+            $('#assistantbar *').css ('display', 'none'); 
+            $('#project_strategydeploygroup').css ('display', 'none');               
+        }             
     }
     else {
 //project
@@ -284,26 +304,8 @@ function project_timer () {
         $("#projectselectstrategypanel").css ('display', 'none');  
         
         $('#project_root #indicatorCreate').css ('display', 'none');            
+
     }
-    if (CurrentStrategy) {
-        $('#projectstrategyfileaction').css ('display', '');            
-
-        $('#project_strategiesbar #project_strategyrename').css ('display', '');
-        $('#project_strategiesbar #project_strategyremove').css ('display', '');
-    
-        $('#assistantbar *').css ('display', '');
-        $('#project_strategydeploygroup').css ('display', ''); 
-        
-    }    
-    else {
-        $('#projectstrategyfileaction').css ('display', 'none');
-        $('#project_strategiesbar #project_strategyrename').css ('display', 'none');
-        $('#project_strategiesbar #project_strategyremove').css ('display', 'none');    
-        $('#overlay_strategyhelper').remove();        
-
-        $('#assistantbar *').css ('display', 'none'); 
-        $('#project_strategydeploygroup').css ('display', 'none');               
-    }    
 }
 
 
@@ -354,11 +356,11 @@ function project_selectproject(project, forcedisplay) {
         project.Load();
     }
     else {
-        project_updateengines (project);
-        solution.UpdateIndicators(project);
+        project_updateengines ([project]);
+        solution.UpdateIndicators([project]);
         solution.UpdateSchedules (project);        
         project_updateexperts(project);
-        project_updateconditions(project);   
+        project_updateconditions([project]);   
 
         TreatInfo("Project " + project.Name + " loaded");            
         project_drawproject(project, true);        
@@ -373,11 +375,14 @@ function project_closeproject(project) {
     
     if (project.ShouldSave) {
         SaveProjectConfirm(project);
-    } else {
+    } 
+//    else {
   
-        project_closestrategy (); 
-    }
-   
+  //      project_closestrategy (); 
+  //  }
+
+
+    CloseAllStrategies();
     if (project == solution.CurrentProject) {
         project_initproject ();    
         project_drawproject(project, false);
@@ -393,7 +398,7 @@ function project_closeproject(project) {
 function project_initproject () {
 
     solution.CurrentProject.CurrentStrategy = null;
-    CurrentStrategy = null;
+
     CurrentEngine = null;
 
     sb.tree_removechildren ('project_tree_createdindicators');
@@ -516,7 +521,7 @@ function project_savestrategy (strategy) {
 
 function project_selectstrategy(strategy) {
 
-    if (!strategy || strategy == CurrentStrategy) {
+    if (!strategy || strategy == solution.CurrentProject.CurrentStrategy) {
         return;
     }
     
@@ -552,7 +557,7 @@ function project_selectstrategy(strategy) {
     }
     sb.tab_select (strategyfiletab,   strategy.Name);
 
-    project_savestrategy(CurrentStrategy);
+    project_savestrategy(solution.CurrentProject.CurrentStrategy);
     var engine = strategy.pBEngine.Clone();
 
  
@@ -592,7 +597,7 @@ function project_selectstrategy(strategy) {
     }
 
     solution.CurrentProject.CurrentStrategy = strategy;
-    CurrentStrategy = strategy;
+
     CurrentEngine = engine;
 
 
@@ -607,19 +612,17 @@ function project_selectstrategy(strategy) {
 function project_closestrategy(strategy) {
     if (!strategy) return null;
 
-    sb.tab_delete (strategyfiletab, strategy.Name);    
-
     if (strategy == solution.CurrentProject.CurrentStrategy ) {
-        
-        CurrentStrategy = null;
-        solution.CurrentProject.CurrentStrategy = null; 
-        CurrentEngine = null;
-
-        if (TestMode) Engine_Stop(CurrentEngine);
+   
+        if (TestMode) {
+            Engine_Stop(CurrentEngine);
+        }
+        CurrentEngine = null;             
         PausedSimulator = 0;
-        
+        solution.CurrentProject.CurrentStrategy = null; 
         DrawStrategy(null, false);
     }
+    sb.tab_delete (strategyfiletab, strategy.Name);        
 }
 
 //---------------------------------------------------- CLOSE ALL STRATEGIES ------------------------------------------------ 
@@ -652,7 +655,7 @@ function onclick_project_strategycompile(elt, event) {
     let ui       = solution.get('ui') 
     let platform = ui.currentplatform;    
   //  BottomPanel_Flat(platform, false);    
-    SelectCompileStrategy (solution.CurrentProject, CurrentStrategy, 'MQL4')
+    SelectCompileStrategy (solution.CurrentProject, solution.CurrentProject.CurrentStrategy, 'MQL4')
 }
 //---------------------------------------------------- DISTRIBUTE PROJECT ---------------------------------------------- 
 
@@ -725,8 +728,8 @@ function NewProject (name) {
                     }]);
    
     sb.select_additem ('project_projectselect', project.Name);
-    project_updateengines (project);
-    solution.UpdateIndicators(project);         
+    project_updateengines ([project]);
+    solution.UpdateIndicators([project]);         
 
     project_drawproject(project, true);
 }
@@ -890,7 +893,7 @@ function project_editors_init (id){
             sender: 'editor|cli'
         },
         exec: function (env, args, request)  {
-            project_savestrategy(CurrentStrategy);
+            project_savestrategy(solution.CurrentProject.CurrentStrategy);
         }
         });
     SCEditor.addCommand({
@@ -901,9 +904,9 @@ function project_editors_init (id){
             sender: 'editor|cli'
         },
         exec: function (env, args, reques)  {
-            if (solution.CurrentProject && CurrentStrategy) { 
+            if (solution.CurrentProject && solution.CurrentProject.CurrentStrategy) { 
                 let tabs      = strategyfiletab.items;
-                let ctabitem  = sb.tab_finditem(strategyfiletab, CurrentStrategy.Name);
+                let ctabitem  = sb.tab_finditem(strategyfiletab, solution.CurrentProject.CurrentStrategy.Name);
                 let ctabindex = tabs.indexOf(ctabitem);
                 let ntabindex = ctabindex == strategyfiletab.items.length - 1 ? 0 : ctabindex + 1;
                 project_selectstrategy (solution.CurrentProject.PG.GetStrategyFromName(strategyfiletab.items[ntabindex].id))                
@@ -1062,8 +1065,8 @@ function Strategy_SetCode (strategy, content, type) {
 }
 
 function onclick_generatecode (elt, type) {
-    var content = Strategy_GenerateCode (CurrentStrategy, CurrentEngine, type);
-    Strategy_SetCode(CurrentStrategy, content, type);
+    var content = Strategy_GenerateCode (solution.CurrentProject.CurrentStrategy, CurrentEngine, type);
+    Strategy_SetCode(solution.CurrentProject.CurrentStrategy, content, type);
 }
 
 function onclick_projecttabs(elt, event) {
@@ -1365,12 +1368,12 @@ function OnClickActions(elt, event) {
 
 function onchange_project_tester_initialbalance (elt) {
     AccountInitialBalance =    parseInt(elt.value);
-    CurrentStrategy.InitialBalance = elt.value;
+    solution.CurrentProject.CurrentStrategy.InitialBalance = elt.value;
 }
 
 
 function onchange_project_tester_timeframe (elt) {
-    CurrentStrategy.TimeFrame = elt.value;
+    solution.CurrentProject.CurrentStrategy.TimeFrame = elt.value;
   
    
     var symbolcanvas = solution.GetCanvasFromTerminal();
@@ -1925,7 +1928,7 @@ function OnSaveStrategy(event) {
         return;
     }
 
-    if (CurrentStrategy) {
+    if (solution.CurrentProject.CurrentStrategy) {
 
         var new_strategyname = document.getElementById('strategyname').value;
 
@@ -1935,9 +1938,9 @@ function OnSaveStrategy(event) {
             return;
         }
 
-        if (CurrentStrategy.Created) {
+        if (solution.CurrentProject.CurrentStrategy.Created) {
 
-            var strategy = solution.CurrentProject.PG.GetStrategyFromName(new_strategyname, CurrentStrategy);
+            var strategy = solution.CurrentProject.PG.GetStrategyFromName(new_strategyname, solution.CurrentProject.CurrentStrategy);
             if (strategy) {
                 TreatInfo("Strategy Name already exists " + new_strategyname);    
                 $('#strategyname').focus();
@@ -1945,22 +1948,22 @@ function OnSaveStrategy(event) {
             }
 
             CurrentEngine.Name   = new_strategyname;
-            CurrentStrategy.Name = new_strategyname;        
+            solution.CurrentProject.CurrentStrategy.Name = new_strategyname;        
 
-            sb.tree_additems ('project_tree_strategies', [{id:'strategy_' + CurrentStrategy.Name, type: 'link', item: CurrentStrategy.Name, icon: icon_strategy,
+            sb.tree_additems ('project_tree_strategies', [{id:'strategy_' + solution.CurrentProject.CurrentStrategy.Name, type: 'link', item: solution.CurrentProject.CurrentStrategy.Name, icon: icon_strategy,
                         attributes:{selector: 'project_selectstrategy', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'}, 
                         events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}            
                     }]);
-            sb.tree_selectitem ('project_tree_strategies', CurrentStrategy.Name); 
+            sb.tree_selectitem ('project_tree_strategies', solution.CurrentProject.CurrentStrategy.Name); 
             Menu_Strategies.push(item);
 
         }
         else {
-            if (CurrentStrategy.Name != new_strategyname) {
-                sb_tree_renameitem ('project_tree_strategies', CurrentStrategy.Name, new_strategyname);
+            if (solution.CurrentProject.CurrentStrategy.Name != new_strategyname) {
+                sb_tree_renameitem ('project_tree_strategies', solution.CurrentProject.CurrentStrategy.Name, new_strategyname);
 
                 CurrentEngine.Name   = new_strategyname;
-                CurrentStrategy.Name = new_strategyname;        
+                solution.CurrentProject.CurrentStrategy.Name = new_strategyname;        
             }
         }
         TreatInfo("Saving Strategy " + new_strategyname, true, 'operationpanel', 'var(--bg-strategycreator)');    
@@ -1971,7 +1974,7 @@ function OnSaveStrategy(event) {
     } else {
          TreatInfo("Saving Project " + solution.CurrentProject.Name);    
     }        
-    setTimeout(project_savestrategy, 300, CurrentStrategy);        
+    setTimeout(project_savestrategy, 300, solution.CurrentProject.CurrentStrategy);        
 
 }
 
@@ -2036,23 +2039,57 @@ function onclick_StrategyTabItem (elt) {
     project_selectstrategy (strategy);
 }
 
+
+function find_nextactivetab (tab, tabid) {
+    var indexA = -1;
+
+    for (var i = 0; i < tab.items.length; i++) {
+        if (tab.items[i].id == tabid) {
+            indexA = i;
+            break;
+        }
+    }
+
+    if (indexA < 0) 
+        return -1;
+
+    let navlink =  $('#' + tab.id +  ' #' + CSS.escape(tab.items[indexA].id));                
+    let active  = navlink.hasClass ('active')
+
+    if (active) {
+        if (indexA == 0 && tab.items.length == 1) {
+            return - 1;
+        }
+        else 
+        if (indexA == tab.items.length - 1) { // last element so select previous tab
+            return indexA - 1;
+        } else  {
+            return indexA + 1;   //select next tab
+        }
+    }
+    return -1;
+}
+
 function onclick_StrategyCloseTabItem (elt, event) {
     event.stopPropagation ();      
     let strategyname    = $(elt).parent()[0].id;
-    let tabindex = sb.tab_delete (strategyfiletab, strategyname)
+
+    let tabindex = find_nextactivetab (strategyfiletab, strategyname);
 
     if (!solution.CurrentProject) { // project is closed must be home page that is deleted
         return;
     } 
 
-    let strategy        = solution.CurrentProject.PG.GetStrategyFromName (strategyname);
+    let selected_strategy        = solution.CurrentProject.PG.GetStrategyFromName (strategyname);
     
     if (tabindex < 0) {
-        project_closestrategy (strategy);
+        project_closestrategy (selected_strategy);
     } else {
+   
         strategyname = strategyfiletab.items[tabindex].item;
-        strategy = solution.CurrentProject.PG.GetStrategyFromName (strategyname);
+        let strategy = solution.CurrentProject.PG.GetStrategyFromName (strategyname);
         project_selectstrategy(strategy)
+        project_closestrategy (selected_strategy);                
     }
 }
 
@@ -2108,16 +2145,16 @@ function OnCancelStrategy(event) {
 }
 
 function CancelStrategy() {
-    if (!CurrentStrategy)
+    if (!solution.CurrentProject.CurrentStrategy)
         return;
     
-    CurrentEngine = CurrentStrategy.pBEngine.Clone();
+    CurrentEngine = solution.CurrentProject.CurrentStrategy.pBEngine.Clone();
     
     ParseEngine(CurrentEngine);
     
-    CurrentStrategy.CContent = CurrentStrategy.Code[CODE_CPP];
+    solution.CurrentProject.CurrentStrategy.CContent = solution.CurrentProject.CurrentStrategy.Code[CODE_CPP];
 
-    RefreshStrategy(CurrentStrategy);
+    RefreshStrategy(solution.CurrentProject.CurrentStrategy);
 }
 
 

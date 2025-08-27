@@ -1896,8 +1896,8 @@ ul, #myUL {
 }
 
 .ace_editor .ace_selection{
-	background: var(--theme-selection-bg-color) !important;
-    border:1px solid var(--theme-selection-border-color)!important;    
+	background: var(--theme-select-bg-color) !important;
+    border:1px solid var(--theme-select-border-color)!important;    
 }
 
 

@@ -1,3 +1,53 @@
+//----------------------------------------------------SERVERS PANEL------------------------------------------------ 
+
+const NETPROGSERVER           = "NETPROGSERVER";
+var netprog_NetprogCom          = null;
+
+
+function netprog_highlightserver (origin, project, connect, color) {
+    let elt = '';
+
+    switch (origin) {
+        case NETPROGSERVER:
+            $('#netprog_root #button_server').css ('background', connect ? color : ''); 
+            $('#netprog_root #button_server').css ('color', connect ? '#000000' : '');            
+
+        break;      
+    }  
+}    
+
+
+function NetprogConnect(adress, port, reconnection) {
+
+    if (netprog_NetprogCom && netprog_NetprogCom.Socket.connected == true) 
+        return;
+
+    netprog_NetprogCom = new connect (adress, port, 
+        {
+            onconnectfunction:  function (com) {
+
+                netprog_highlightserver (NETPROGSERVER, null, 1,  theme_on)
+
+
+            },
+            onmessagefunction: function (com, data) {
+              //  let project = solution.GetProjectFromCom(com)
+        //        TreatReception (com, data);
+            },    
+            ondisconnectfunction:     function (com, data) {netprog_highlightserver(NETPROGSERVER, null, 0); },
+            onclosefunction:          function (com, data) {netprog_highlightserver(NETPROGSERVER, null, 0); },
+            onerrorfunction:          function (com, data) {netprog_highlightserver(NETPROGSERVER, null, 0); },   
+            onupdatefunction:         function (com, data) {netprog_highlightserver(NETPROGSERVER, null, 0); },
+            onconnect_errorfunction:  function (com, data) {netprog_highlightserver(NETPROGSERVER, null, 0); },
+            onconnect_failedfunction: function (com, data) {this.reconnection = false; netprog_highlightserver(NETPROGSERVER, null, 0); },   
+            reconnection:             reconnection ? reconnection : false  
+
+        }
+    )
+    netprog_NetprogCom.Name = NETPROGSERVER;
+    return netprog_NetprogCom.Socket;
+}
+
 class npserver {
     constructor (entity) {
         this.Entity = entity;
@@ -194,6 +244,7 @@ function netprog_netprogservers_check (manager) {
 }
 
 function onclick_netprog_server_group (elt, event) {
+    let netprog_manager = solution.netprog_CurrentProject.Manager;    
     let servereditor  = $(elt).closest ('.npservereditor');
     let leditorid     = servereditor.attr ('id');
     let serverid      = leditorid.replace ('netprog_server_', '')

@@ -66,6 +66,49 @@ const MXMAKEEXTENSION    = 'mk';
 var   MXCODE              = 14;
 
 
+function netprog_classfromtype (type) {
+    switch (type) {
+        case 'manager':             return 'MXManager';
+        case 'site':                return 'MXSite';
+        case 'machine':             return 'MXMachine';
+        case 'application':         return 'MXApplication';
+        case 'database':            return 'MXDatabase';
+        case 'journal':             return 'MXjournal';
+        case 'queue':               return 'MXQueue';
+        case 'connection':          return 'MXConnection';  
+        case 'capplication':        return 'MXApplicationClass';
+        case 'cdatabase':           return 'MXDatabaseClass';
+        case 'cjournal':            return 'MXjournalClass';
+        case 'cqueue':              return 'MXQueueClass';
+        case 'cconnection':         return 'MXConnectionClass';   
+        case 'cdialog':             return 'MXDialogClass';    
+        case 'cmessageclass':       return 'MXMessageClass';       
+        case 'object':              return 'MXObject'          
+        break;    
+    }
+}
+
+function netprog_typefromclass (classname) {
+    switch (classname) {
+        case 'MXManager':                       return 'manager';    
+        case 'MXSite':                          return 'site';       
+        case 'MXMachine':                       return 'machine';    
+        case 'MXApplication':                   return 'application';
+        case 'MXDatabase':                      return 'database';   
+        case 'MXjournal':                       return 'journal';    
+        case 'MXQueue':                         return 'queue';      
+        case 'MXConnection':                    return 'connection'; 
+        case 'MXApplicationClass':              return 'capplication';
+        case 'MXDatabaseClass':                 return 'cdatabase';  
+        case 'MXjournalClass':                  return 'cjournal';   
+        case 'MXQueueClass':                    return 'cqueue';     
+        case 'MXConnectionClass':               return 'cconnection';
+        case 'MXDialogClass':                   return 'cdialog';        
+        case 'MXMessageClass':                  return 'cmessageclass';    
+        case 'MXObject':                        return 'object';                 
+        break;    
+    }
+}
 
 function MXGetNextCode () {
     return MXCODE++;
@@ -77,7 +120,7 @@ class MXManager {
         this.Code = 0;
         this.Name = name;
         this.Sites = new Array();
-        this.Machines = new Array();
+        this.Machines = new Array();    
         this.Applications = new Array();
         this.Databases = new Array();
         this.Journals = new Array();
@@ -100,10 +143,11 @@ class MXManager {
 /*----------------------------------------------------------------------------*/
 
 class MXSite {
-    constructor() {
+    constructor(name) {
         this.ClassName = "MXSite";        
-        this.Code = MXGetNextCode ();      
-        this.Name= 'Site:' + this.Code;  
+        this.Code = MXGetNextCode ();     
+        name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
+        this.Name = name;           
         this.AddrName= '';               
         this.IPPublic = '';             
         this.Machines = new Array();               
@@ -131,16 +175,18 @@ const MXMachine_System = {
 }
 
 class MXMachine {
-    constructor(name) {
+    constructor(name, site) {
         this.ClassName = "MXMachine";             
         this.Code = MXGetNextCode ();      
+        name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
+        this.Name = name;          
         this.Name = name;  
         this.AddrName ='';                  
         this.IPAddress ='';                 
         this.IPLocal = '';    
         this.Repertory = '.';
         this.System = MXMachine_System.WIN32;                  
-        this.Site = '';     
+        this.Site = site ? site.Name  : '';     
         this.SupportTCP;                 
         this.Applications =[];
         this.Databases =[];
@@ -174,10 +220,11 @@ const MXApplicationClass_NetType = {
 }
 
 class MXApplicationClass {
-    constructor() {
+    constructor(name) {
         this.ClassName = "MXApplicationClass";            
         this.Code = MXGetNextCode ();      
-        this.Name ='ApplicationClass' + this.Code;
+        name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
+        this.Name = name;
         this.NetType = MXApplicationClass_NetType.SERVER;    
         this.Type = MXApplicationClass_Type.INTERNAL;              
         this.Applications=[];
@@ -197,19 +244,20 @@ const MXApplication_Language = {
 }
 
 class MXApplication {
-    constructor(name) {
-        this.ClassName = "MXApplication";               
+    constructor(name, machinename) {
+        this.ClassName = "MXApplication";            
         this.Code = MXGetNextCode ();     
+        name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
         this.Name = name;  
         this.Language = MXApplication_Language.JS;
         this.Ports = [];
-        this.Repertory = this.Name;               // from machine repertory
-        this.ExecRepertory = this.Repertory;      // from appli repertory
+        this.Repertory = name;               // from machine repertory
+        this.ExecRepertory = name;      // from appli repertory
         this.ExecCommand = 'node';
-        this.ExecParameters= this.Name + '.js';
+        this.ExecParameters= name + '.js';
         this.ReceiveRepertory='';
         this.SendRepertory='';
-        this.Machine  = null;   
+        this.Machine  = machinename ? machinename : '';   
         this.Class   = '';                      
         this.Folders=[];
         this.props = [
@@ -241,10 +289,12 @@ const MXDatabaseClass_Type = {
 }
 
 class MXDatabaseClass {
-    constructor() {
+    constructor(name) {
         this.ClassName = "MXDatabaseClass";        
         this.Code = MXGetNextCode ();   
-        this.Name ='DatabaseClass' + this.Code;               
+        name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
+
+        this.Name = name;
         this.Type = MXDatabaseClass_Type.MYSQL;                    
         this.Databases =[];
         this.props = [
@@ -257,10 +307,12 @@ class MXDatabaseClass {
 }
 
 class MXDatabase {
-    constructor() {
+    constructor(name) {
         this.ClassName = "MXDatabase";           
         this.Code = MXGetNextCode ();   
-        this.Name='Database:' + this.Code;           
+
+        name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
+        this.Name= name;
         this.AddrName='';               
         this.Ports = [];    
         this.Machine = null;    
@@ -300,10 +352,12 @@ const MXConnectionClass_Protocol = {
 
 
 class MXConnectionClass {
-    constructor() {
+    constructor(name) {
         this.ClassName = "MXConnectionClass";                   
         this.Code = MXGetNextCode ();   
-        this.Name='ConnectionClass' + this.Code; 
+        name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
+        this.Name= name;
+
         this.FromApplicationClass = '';      
         this.ToEntityClass= '';  
         this.Protocol= MXConnectionClass_Protocol.IPPROTO_HTTP;                 
@@ -329,10 +383,12 @@ class MXConnectionClass {
 }
 
 class MXConnection {
-    constructor() {
+    constructor(name) {
         this.ClassName = "MXConnection";    
         this.Code = MXGetNextCode ();   
-        this.Name='Connection' + this.Code;     
+        
+        name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
+        this.Name= name;
         this.UserName='';
         this.PassWord='';
         this.FileName='';
@@ -366,10 +422,11 @@ class MXConnectionPar {
 }
 
 class MXJournalClass {
-    constructor() {
+    constructor(name) {
         this.ClassName = "MXJournalClass";           
         this.Code = MXGetNextCode ();   
-        this.Name='JournalClass' + this.Code;            
+        name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
+        this.Name= name;
         this.Type;       
         this.props;
         this.Length;
@@ -380,10 +437,11 @@ class MXJournalClass {
 }
 
 class MXJournal {
-    constructor() {
+    constructor(name) {
         this.ClassName = "MXJournal";                  
         this.Code = MXGetNextCode ();   
-        this.Name='Journal' + this.Code;     
+        name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
+        this.Name= name;
         this.Type;                      
         this.Repertory='';              
         this.Class = '';                     
@@ -393,10 +451,11 @@ class MXJournal {
 }
 
 class MXQueueClass {
-    constructor() {
+    constructor(name) {
         this.ClassName = "MXQueueClass";                       
         this.Code = MXGetNextCode ();   
-        this.Name='QueueClass' + this.Code;           
+        name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
+        this.Name= name;
         this.Type;                    
         this.Queues=[];
         this.Machines=[];   
@@ -405,10 +464,11 @@ class MXQueueClass {
 }
 
 class MXQueue {
-    constructor() {
+    constructor(name) {
         this.ClassName = "MXQueue";            
         this.Code = MXGetNextCode ();   
-        this.Name='Queue' + this.Code; 
+        name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
+        this.Name= name;
         this.Type;                      
         this.Class = '';                     
         this.Machine;                   
@@ -419,7 +479,9 @@ class MXDialogClass {
     constructor(code, name) {   
         this.ClassName = "MXDialogClass";                
         this.Code = code;     
-        this.Name = name;
+         name = name ? name : netprog_typefromclass(this.ClassName) + '_' + this.Code; 
+        this.Name= name;
+
         this.MessageClasses = [];    
         this.MX = null;
         this.props = [

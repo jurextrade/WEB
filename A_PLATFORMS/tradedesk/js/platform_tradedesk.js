@@ -300,11 +300,12 @@ function tradedesk_selectterminal(terminal, force) {
         terminal.Load();
     }
     else {
-        tradedesk_updateengines (terminal);
+        tradedesk_updateengines ([terminal]);
+        tradedesk_updatealerts([terminal]);        
         solution.UpdateStrategies (terminal);
         solution.UpdateSchedules (terminal);
         UpdatePanel (terminal);
-        tradedesk_updatealerts(terminal);
+
         
         TreatInfo("Terminal loaded");        
         
@@ -508,7 +509,8 @@ function onchange_tradedesk_terminalselect (elt, event) {
 //--------------------------------------------------------------------------------------------------------------------------------------------
 
 function tradedesk_gse_init () {
-    CurrentTContainer = pg_gse_init('gsecanvas_session');
+    let readonly = true;
+    CurrentTContainer = pg_gse_init('gsecanvas_session', readonly);
 }
 
 function ondrop_tradedesk_main (event) {
@@ -2593,7 +2595,8 @@ function automation_setrows (engines, table) {
   
 function AutomationPanel_Update (engines, table) {
     automation_setrows (engines, table);
-    $('#automationpanel').html(sb.table (table));
+   $('#automationpanel').html(sb.render (table));
+    
 }
 
 //------------------------------------------------------------ SETTINGS PANEL ----------------------------------------------------------

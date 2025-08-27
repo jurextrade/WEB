@@ -12,7 +12,7 @@ function onclick_headerbrand (elt, event) {
     switch (platformpname) {
         case 'netprog' :
             if (!sb.tab_finditem(netprog_maintabs, 'netprog_home_tab')) { 
-                let filetabitem    = {id: 'netprog_home_tab',     item: 'Home',      type:'link', icon:  icon_home,       items: [netprog_home_section], onclose: 'onclick="onclick_netprog_tab_close(this, event)"',    title: 'Home',      events: {onclick:"onclick_netprog_tab(this, event)"}}           
+                let filetabitem    = {id: 'netprog_home_tab',     item: 'Home',      type:'link', icon:  icon_home,       items: [netprog_home_section], onclose: 'onclick="onclick_netprog_tab_close(this, event)"',    title: 'Home',      events: {onmousedown:"onmousedown_netprog_tab(this, event)"}}           
                 sb.tab_additem(netprog_maintabs, filetabitem);
             } 
             sb.tab_select(netprog_maintabs, 'netprog_home_tab');

@@ -26,8 +26,8 @@ var modegroup = {
     toggle: true,                         
     items:
         [ 
-            {id: 'drawmode_vertical',    icon: 'fas fa-sitemap', type:'link',    title: 'Vertival',    events: {onclick:'onclick_modegroup(this, event)'}},           
-            {id: 'nodemode_horizontal',  icon: 'fas fa-sitemap rotate90',  type:'link',    title: 'Horizontal',  events: {onclick:'onclick_modegroup(this, event)'}},  
+            {id: 'nodemode_horizontal',  icon: 'fas fa-sitemap',  type:'link',    title: 'Horizontal',  events: {onclick:'onclick_modegroup(this, event)'}},  
+            {id: 'nodemode_vertical',    icon: 'fas fa-sitemap rotate90', type:'link',    title: 'Vertival',    events: {onclick:'onclick_modegroup(this, event)'}},           
             {id: 'linemode_normal',      icon: 'fas fa-code-branch',    type:'link',    title: 'Normal',      events: {onclick:'onclick_modegroup(this, event)'}}                 
         ]    
 }

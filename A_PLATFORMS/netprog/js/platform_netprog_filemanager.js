@@ -223,7 +223,7 @@ function netprog_file_select (file) {
     
     if (!filetabitem) {
         filetabitem    = {id: 'netprog_maintabs_file_' + solution.NPCODE++,   item: file.Name,  cname: file.CName, type: 'link', icon: icon_file, roleid: 'role_netprog_file',  onclose: 'onclick="onclick_netprog_tab_close(this, event)"', 
-                            items: [netprog_file],  events: {onclick:"onclick_netprog_tab(this, event)"}, attributes: {fullpathname: file.CName, filename: file.Name}}           
+                            items: [netprog_file],  events: {onmousedown:"onmousedown_netprog_tab(this, event)"}, attributes: {fullpathname: file.CName, filename: file.Name}}           
         sb.tab_additem (netprog_maintabs, filetabitem);
     } 
     sb.tab_select(netprog_maintabs, file.CName)

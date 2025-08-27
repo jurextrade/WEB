@@ -10,7 +10,7 @@
             "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js",
             "https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js",
             "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js",
-            "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+            "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"
         ]
     },
     "tools_library": {
@@ -232,8 +232,9 @@
                             "/A_PLATFORMS/emv/js/platform_emv_database.js",
                             "/A_PLATFORMS/emv/js/platform_emv_tester.js",
                             "/A_PLATFORMS/emv/js/interface_emv_tester.js",
-                            "/A_PLATFORMS/emv/js/platform_emv.js",
-                            "/A_PLATFORMS/emv/js/interface_emv.js"
+                            "/A_PLATFORMS/emv/js/interface_emv.js",                            
+                            "/A_PLATFORMS/emv/js/platform_emv.js"
+
                         ]
                     }
                 },
@@ -242,7 +243,7 @@
                     "pname": "netprog",
                     "name": "NetProg",
                     "type": "root",
-                    "active": false,
+                    "active": true,
                     "header": {
                         "title": "NETPROG",
                         "logo": "/A_PLATFORMS/netprog/res/netprog.svg",
@@ -349,7 +350,7 @@
                         "news",
                         "speech"
                     ],
-                    "active": true,
+                    "active": false,
                     "library": {
                         "stylesheet": [
                             "/C_TOOLS/css/quill.snow.css",

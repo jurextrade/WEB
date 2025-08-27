@@ -22,7 +22,7 @@ function DeployConnect(adress, port, reconnection) {
 
     if (project_DeployCom && project_DeployCom.Socket.connected == true) 
         return;
-//    console.log ('deply connect')
+
     project_DeployCom = new connect (adress, port, 
         {
             onconnectfunction:  function (com) {

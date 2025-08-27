@@ -1,4 +1,0 @@
-(start)
-(buy)
-(sell)
-(exit)

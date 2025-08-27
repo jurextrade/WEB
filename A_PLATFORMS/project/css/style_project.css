@@ -77,10 +77,12 @@
 }
 
 
-#strategypropertiestable td,
-#strategyschedulepropertytable td {
-    width:300px;
+#strategypropertiestable td:first-child,
+#strategyschedulepropertytable td:first-child {
+    width: 120px; 
+    font-weight: 500;
 }
+
 
 #strategyotherpanel {
     width: 25%;
@@ -243,6 +245,13 @@
     flex: 1;
     width:56px
 }    
+
+.sb_body[theme='light'] #project_tester_velocity_slider.sb_range {
+    height: auto;
+    flex: 1;
+    width:56px;
+    accent-color:var(--color-cold-gray-500) !important; 
+}   
 
 #project_tester_expertpanel.toggled {
     flex:1;
@@ -413,10 +422,9 @@
 
 #strategy_assistant_panel .form-control:disabled, #strategy_assistant_panel .form-control[readonly] ,
 .strategypropertiespanel .form-control:disabled, .strategypropertiespanel .form-control[readonly] {
-    background-color: var(--theme-button-bg-color);
-    opacity: 0.6;
-    color: var(--theme-button-bg-color);
-    border-color: var(--theme-button-bg-color);
+    border: 0px solid var(--theme-border-color);
+    color: transparent;
+    background-color: var(--theme-button-disabled-bg-color);
 }
 
 #strategy_assistant_panel  .content .body {

@@ -784,24 +784,6 @@ function pl(parser) {
     }	
 
 	
-	this.ReturnTrueName = function (Text) {
-    	if (Text.toUpperCase() ==  "START")             return "START";
-    	if (Text.toUpperCase() ==  "BUY")               return "BUY";
-    	if (Text.toUpperCase() ==  "SELL")              return "SELL";
-    	if (Text.toUpperCase() ==  "EXIT BUY")          return "EXIT_BUY";
-    	if (Text.toUpperCase() ==  "EXIT SELL")         return "EXIT_SELL";
-    	if (Text.toUpperCase() ==  "EXIT")              return "EXIT";
-    	if (Text.toUpperCase() ==  "CLOSE BUY")         return "CLOSE_BUY";
-    	if (Text.toUpperCase() ==  "CLOSE SELL")        return "CLOSE_SELL";
-    	if (Text.toUpperCase() ==  "CLOSE")             return "CLOSE";
-    	if (Text.toUpperCase() ==  "HEDGE BUY")         return "HEDGE_BUY";
-    	if (Text.toUpperCase() ==  "HEDGE SELL")        return "HEDGE_SELL";
-    	if (Text.toUpperCase() ==  "CLOSE HEDGE SELL")  return "CLOSE_HEDGE_SELL";
-    	if (Text.toUpperCase() ==  "CLOSE HEDGE BUY")   return "CLOSE_HEDGE_BUY";
-    	if (Text.toUpperCase() ==  "CLOSE HEDGE")       return  "CLOSE_HEDGE";
-    	if (Text.toUpperCase() ==  "SET")               return  "SET";
-    	return Text;
-    }
 
     this.ReturnValue = function (Value) {
     	var s = "";

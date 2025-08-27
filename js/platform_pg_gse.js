@@ -26,7 +26,7 @@ const pgcontainer_default_options = {
     onmouseup:      onmouseup_GSE
 }
 
-function pg_gse_init (canvas_id) {
+function pg_gse_init (canvas_id, readonly) {
     var objgse = new gse();
     objgse.CreateApplication("RULES");
     objgse.CreateSpace("RULES", "ACTION");
@@ -36,8 +36,8 @@ function pg_gse_init (canvas_id) {
     objgse.DomainLinkType("RULES", "SESSIONLINK", objgse.GSETOSPACE, "ACTION");
     objgse.DomainLinkType("RULES", "SESSIONLINK", objgse.GSETOSPACE, "ATOM");
 
-    var objcontainer = new gsecontainer(objgse, pgcontainer_default_options);
-    objcontainer.SetDrawMode(objgse.GSEHORIZONTAL, objgse.GSEDIRECTLINK);
+    var objcontainer = new gsecontainer(objgse, readonly ? {} : pgcontainer_default_options);
+    objcontainer.SetDrawMode(objgse.GSEVERTICAL, objgse.GSEDIRECTLINK);
     objcontainer.SetNodeMode(objgse.GSEROUND);
     objcontainer.setCanvasId(canvas_id);
     return objcontainer;

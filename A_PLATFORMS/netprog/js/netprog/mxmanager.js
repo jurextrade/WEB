@@ -219,7 +219,7 @@ function MXCreateSite (manager, name) {
 
     if (name == '') return NULL;
 
-    var site =  interface_GetEntity (netprog_manager, 'Sites', 'Name', name);
+    var site =  interface_GetEntity (manager, 'Sites', 'Name', name);
     if (site) {
         console.log('Site already defined');
         return NULL
@@ -259,7 +259,7 @@ function MXAddMachineToSite (manager, MXSite* psite, MXMachine* machine)
 function MXCreateMachine (manager, name, system, ipadress, dname, site) {
 
 
-    var machine = interface_GetEntity (netprog_manager, 'Machines', 'Name', name);
+    var machine = interface_GetEntity (manager, 'Machines', 'Name', name);
     
     if (machine) {
         console.log('Machine already defined');
@@ -305,7 +305,7 @@ function MXFreeMachine (manager, machine) {
 
 function  MXCreateApplication (manager, applicationclass, name, machine) {
 
-    var appli = interface_GetEntity (netprog_manager, 'Applications', 'Name', name);
+    var appli = interface_GetEntity (manager, 'Applications', 'Name', name);
 
     if (!appli) {
         appli = new MXApplication(name);
@@ -313,10 +313,10 @@ function  MXCreateApplication (manager, applicationclass, name, machine) {
     }
     else {
         if (appli.Machine) {
-            var machine = interface_GetEntity (netprog_manager, 'Machines', 'Name', appli.Machine);
+            var machine = interface_GetEntity (manager, 'Machines', 'Name', appli.Machine);
             interface_ArrayRemove (machine.Applications, appli);
         }
-        let appliclass = interface_GetEntity (netprog_manager, 'ApplicationClasses', 'Name', appli.ClassName)        
+        let appliclass = interface_GetEntity (manager, 'ApplicationClasses', 'Name', appli.ClassName)        
         interface_ArrayRemove (appliclass.Applications, appli);
     }
 
@@ -338,7 +338,7 @@ function  MXCreateApplication (manager, applicationclass, name, machine) {
 
 function MXCreateApplicationClass (manager, name, nettype, type) {
 
-    var appliclass = interface_GetEntity (netprog_manager, 'ApplicationClasses', 'Name', name);
+    var appliclass = interface_GetEntity (manager, 'ApplicationClasses', 'Name', name);
 
     if (appliclass) {
         console.log('Application class already defined');
@@ -361,7 +361,7 @@ function MXCreateApplicationClass (manager, name, nettype, type) {
 
 function MXCreateDatabase (manager, databaseclass, name, machine) {
 
-    var database = interface_GetEntity (netprog_manager, 'Databases', 'Name', name);
+    var database = interface_GetEntity (manager, 'Databases', 'Name', name);
     
     if (!database) {
         database = new(MXDatabase);
@@ -371,7 +371,7 @@ function MXCreateDatabase (manager, databaseclass, name, machine) {
         if (database.Machine) {
             interface_ArrayRemove (database.Machine.Databases, database);
         }
-        let dbclass = interface_GetEntity (netprog_manager, 'DatabaseClasses', 'Name', database.Class)               
+        let dbclass = interface_GetEntity (manager, 'DatabaseClasses', 'Name', database.Class)               
         interface_ArrayRemove (dbclass.Databases, database);
     }
 
@@ -394,7 +394,7 @@ function MXCreateDatabase (manager, databaseclass, name, machine) {
 
 function MXCreateDatabaseClass  (manager, name, type) {
 
-    var databaseclass = interface_GetEntity (netprog_manager, 'DatabaseClasses', 'Name', name);
+    var databaseclass = interface_GetEntity (manager, 'DatabaseClasses', 'Name', name);
 
     if (databaseclass) {
         console.log('Database class already defined');
@@ -419,7 +419,7 @@ function MXCreateConnectionClass (manager, name, protocol, fromclassname, toclas
 
     var toentityclass= NULL;
 
-    var fromapplicationclass =  interface_GetEntity (netprog_manager, 'ApplicationClasses', 'Name', fromclassname);
+    var fromapplicationclass =  interface_GetEntity (manager, 'ApplicationClasses', 'Name', fromclassname);
     if (!fromapplicationclass)
         return NULL;
 
@@ -427,13 +427,13 @@ function MXCreateConnectionClass (manager, name, protocol, fromclassname, toclas
         case DBPROTO_ORACLE :
         case DBPROTO_ODBC   :
         case DBPROTO_SQLDS  :
-            toentityclass = interface_GetEntity (netprog_manager, 'DatabaseClasses', 'Name', toclassname);
+            toentityclass = interface_GetEntity (manager, 'DatabaseClasses', 'Name', toclassname);
             if (!toentityclass)
                 return NULL;
         break;
         case IOPROTO_STORE  :
         case IOPROTO_FIOP  :
-            toentityclass = interface_GetEntity (netprog_manager, 'JournalClasses', 'Name', toclassname);
+            toentityclass = interface_GetEntity (manager, 'JournalClasses', 'Name', toclassname);
             if (!toentityclass)
                 return NULL;
         break;
@@ -450,7 +450,7 @@ function MXCreateConnectionClass (manager, name, protocol, fromclassname, toclas
         case IPPROTO_SMTP :
         case IPPROTO_POP  :
         case IPPROTO_BC   :
-            toentityclass = interface_GetEntity (netprog_manager, 'ApplicationClasses', 'Name', toclassname);
+            toentityclass = interface_GetEntity (manager, 'ApplicationClasses', 'Name', toclassname);
             if (!toentityclass)
                 return NULL;
         break;
@@ -459,7 +459,7 @@ function MXCreateConnectionClass (manager, name, protocol, fromclassname, toclas
         break;
     }
 
-    var connectionclass = interface_GetEntity (netprog_manager, 'ConnectionClasses', 'Name', name); 
+    var connectionclass = interface_GetEntity (manager, 'ConnectionClasses', 'Name', name); 
     if (!connectionclass)  {
         connectionclass =  new (MXConnectionClass);
         interface_ArrayInsert(manager.ConnectionClasses, connectionclass);     
@@ -488,7 +488,7 @@ function MXCreateConnection (manager, name, connectionclass, fromappliname, toen
     var toentity = NULL;
    
 
-    var fromapplication = interface_GetEntity (netprog_manager, 'Applications', 'Name', fromappliname);
+    var fromapplication = interface_GetEntity (manager, 'Applications', 'Name', fromappliname);
     if (!fromapplication)
         return NULL;
     
@@ -498,13 +498,13 @@ function MXCreateConnection (manager, name, connectionclass, fromappliname, toen
         case DBPROTO_ORACLE :
         case DBPROTO_ODBC   :
         case DBPROTO_SQLDS  :
-            toentity = interface_GetEntity (netprog_manager, 'Databases', 'Name', toentityname);
+            toentity = interface_GetEntity (manager, 'Databases', 'Name', toentityname);
             if (!toentity)
                 return NULL;
         break;
         case IOPROTO_STORE  :
         case IOPROTO_FIOP  :
-            toentity = interface_GetEntity (netprog_manager, 'Journals', 'Name', toentityname);
+            toentity = interface_GetEntity (manager, 'Journals', 'Name', toentityname);
             if (!toentity)
                 return NULL;
         break;
@@ -521,7 +521,7 @@ function MXCreateConnection (manager, name, connectionclass, fromappliname, toen
         case IPPROTO_SMTP :
         case IPPROTO_POP  :
         case IPPROTO_BC   :
-            toentity = interface_GetEntity (netprog_manager, 'Applications', 'Name', toentityname);
+            toentity = interface_GetEntity (manager, 'Applications', 'Name', toentityname);
             if (!toentity)
                 return NULL;
         break;
@@ -530,7 +530,7 @@ function MXCreateConnection (manager, name, connectionclass, fromappliname, toen
         break;
     }
 
-    var Connection = interface_GetEntity (netprog_manager, 'Connections', 'Name', name);
+    var Connection = interface_GetEntity (manager, 'Connections', 'Name', name);
 
     if (!Connection) {
         Connection = new(MXConnection);

@@ -105,6 +105,6 @@ class clock {
                 $tags.html(content);
             }    
         }
-        setInterval(function(clock) {clock.update()}, 1, this);     
+        setInterval(function(clock) {clock.update()}, 1000, this);     
     }    
 }       

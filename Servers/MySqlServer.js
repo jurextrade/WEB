@@ -1,28 +1,20 @@
+const childprocess = require('child_process'); 
+const mysql = Require('mysql');
+
 function Require (module) {
     try {
-        const myModule = require(module); 
-        return myModule;
-
-    } catch (error) {
-        if (error.code === 'MODULE_NOT_FOUND') {
-            console.error('Module ' + module + ' not found at the specified path. Launching npm... please wait');
-            try {
-                require('child_process').execSync('npm install ' + module);       
-                const myModule = require(module); 
-                
-                return myModule;                     
-
-            } catch (error) {
-                console.error(`Error executing command: ${error.message}`);
-            }            
-        } else {
-            console.error('An error occurred during module loading: ' + module, error);
+        let result = childprocess.execSync('npm list ' + module + ' || npm install ' + module);       
+        if (result.indexOf("'UNMET DEPENDENCY'") != -1) {
+            console.log ('module do not exist : ' + module + ' Installation done');
         }
-    }
-    return null;
-}
 
-let mysql = Require('mysql');
+        let myModule = require(module); 
+        return myModule;
+    } catch (error) {
+        console.error(`Error executing command: ${error.message}`);
+        process.exit(1);
+    }            
+}
 
 
 

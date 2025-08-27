@@ -91,10 +91,10 @@ function ServerPanel_Update (id) {
             reconnection    = solution.DeployServer_Reconnection;                         
        break;
         case 'netprog' :
-            server          = solution.NetProgServer_Address;
-            port            = solution.NetProgServer_Port;
-            protocol        = solution.NetProgServer_Protocol;
-            reconnection    = solution.NetProgServer_Reconnection;             
+            server          = solution.NetprogServer_Address;
+            port            = solution.NetprogServer_Port;
+            protocol        = solution.NetprogServer_Protocol;
+            reconnection    = solution.NetprogServer_Reconnection;             
         break;
         case 'tradedesk' :
             server          = solution.MT4Server_Address;

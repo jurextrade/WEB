@@ -21,7 +21,7 @@ function SwitchStrategyView () {
     }
     
     $('#strategyfiletab .sb_content #classicviewbox').html(StrategyPanel ());
-    RefreshStrategy(CurrentStrategy);
+    RefreshStrategy(solution.CurrentProject.CurrentStrategy);
 }
 
 function StrategyPanel () {
@@ -307,7 +307,7 @@ function project_assistant_init() {
                         TreatInfo("Please Select a Project or Create one");
                         return null;
                     } else
-                    if (!CurrentStrategy) {                
+                    if (!solution.CurrentProject.CurrentStrategy) {                
                         TreatInfo("Please Select a Strategy or Create one");
                         return null;
                     } else
@@ -484,9 +484,7 @@ function StrategyAssistantGuidePanel (step) {
             '       <div class="card-text">' +
             '           <div class="col alert alert-primary alert-dismissible fade show" role="alert">' +            
             '               A Strategy is Created with Default Values<br>' +                 
-            '               Give the name of your Strategy<br><br>' +            
-            '               The Initial Balance is required for local testing. In case you do not precise the size of your orders in the strategy, the lot size is calculated as 2% of your account balance<br>' +                        
-            '               The Time Frame also is required for local testing, At any time during the creation of your strategy, you can see the behaviour of your strategy on the chart<br>' +
+            '               Give a name of your Strategy<br><br>' +            
             '               Testing your strategy is done in the Tester Panel' +
             '               <button class="assistant_button sb_sbutton noactivate" title="Tester" type="button" onclick="onclick_AssistantTester(this, event)">' + 
             '               <i class="' + icon_play + '"></i><label class="sb_label">Tester</label></button><br><br><br><br>' +  
@@ -661,8 +659,8 @@ function OnClickProject (elt) {
 
 function OnClickStrategy (elt) {
 
-    if (CurrentStrategy) {
-        OnCloseStrategy(project_closestrategy, CurrentStrategy);
+    if (solution.CurrentProject.CurrentStrategy) {
+        OnCloseStrategy(project_closestrategy, solution.CurrentProject.CurrentStrategy);
     } else {  
         var strategyname     = $('#newstrategyname').val();    
         if (strategyname == "") {
@@ -823,7 +821,7 @@ function onchange_AssistantStrategyName (elt) {
         $('#assisttantprojectname').focus().val("").val(strategyname);
         return null;
     }   
-    RenameStrategy(CurrentStrategy, strategyname)
+    RenameStrategy(solution.CurrentProject.CurrentStrategy, strategyname)
 }
 
 
@@ -1416,9 +1414,9 @@ function OnDeleteUsedIndicator (elt) {
 
         symbolcanvas.RemoveIndicator(object.Id);
 
-        for (var i = 0; i < CurrentStrategy.UsedIndicators.length; i++) {
-            if (CurrentStrategy.UsedIndicators[i] == object.Id) {
-                CurrentStrategy.UsedIndicators.splice(i, 1);
+        for (var i = 0; i < solution.CurrentProject.CurrentStrategy.UsedIndicators.length; i++) {
+            if (solution.CurrentProject.CurrentStrategy.UsedIndicators[i] == object.Id) {
+                solution.CurrentProject.CurrentStrategy.UsedIndicators.splice(i, 1);
                 break;
             }
         }        
@@ -1472,7 +1470,7 @@ function StrategyAssistantFillIndicators (project) {
 }
 
 function InitStrategyWithRecovery (value) {
-    if (!CurrentStrategy)
+    if (!solution.CurrentProject.CurrentStrategy)
         return;
     var engine = CurrentEngine;
     engine.RecoveryMode = value;

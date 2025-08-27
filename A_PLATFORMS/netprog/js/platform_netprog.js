@@ -1,22 +1,16 @@
-var netprog_manager = null;
 var Interval_netprog_loadproject        = 0;
+
 //---------------------------------------------------------------------MODULE START -----------------------------------------------------------------------------//
 
 function netprog_init () {
 
-// market          
-    let ui  = solution.get('ui')     
-    let marketpanel =  ui.sb.get(main, 'pname', 'market');
-    if (marketpanel.length != 0) {
-        $('#marketpanel').css ('display', 'none')   
-    } 
-
     netprog_solution();
-    //netprog_loadproject ();
     netprog_jsoneditor_init('netprog_jsoneditor');    
     netprog_jseditor_init ('netprog_jseditor_input', 'netprog_jseditor_output');
     netprog_gse_init('gsecanvas_netprog');
     netprog_filemanager_init();
+
+    NetprogConnect(solution.NetprogServer_Address, solution.NetprogServer_Port, solution.NetprogServer_Reconnection);  
 
     sidebarpanel_show(netprogplatform, "sidebarpanel_netprogsiteview");   
 
@@ -24,7 +18,7 @@ function netprog_init () {
 }
 
 function netprog_end () {
-    
+    netprog_NetprogCom.Close ();
 }
 
 //---------------------------------------------------------------------MODULE END -----------------------------------------------------------------------------//
@@ -111,8 +105,8 @@ class npproject {
 // we need to correct the JSON parse structure to have same objects in case of modifying
         MXUpdate (project.Manager);        
         netprog_update(project.Manager);
+        sb.tab_select(netprog_maintabs, 'netprog_siteview_tab'); 
         project.Loaded = 1;    
-        netprog_manager = project.Manager;        
     }
 }
 
@@ -125,15 +119,17 @@ function netprog_solution () {
     solution.netprog_CurrentProject = null;
 
     solution.NetprogServers = [];
-    solution.NetprogServer_Protocol   = site.protocol;            
 
-    if (site.protocol == 'http:') {  //EMV = 5
-        solution.NetprogServer_Address   = site.hostname;    
-        solutionNetprogServer_Port     =  4080;     
+    solution.NetprogServer_Protocol      = site.protocol;    
+    solution.NetprogServer_Reconnection  = netprog_default_server_reconnection;        
+    solution.NetprogServer_Address       = netprog_default_server_name;   
+
+
+    if (site.protocol == 'http:') {                                
+        solution.NetprogServer_Port     =  netprog_default_server_port;     
     }
     else {
-        solution.NetprogServer_Address   =  site.hostname;    
-        solution.NetprogServer_Port     =  4443;    
+        solution.NetprogServer_Port     =  netprog_default_server_sport;    
     }
 
     solution.Files   = [];
@@ -424,7 +420,7 @@ function netprog_update_localmachine (manager) {
 function netprog_loadproject () {
     let site = solution.get('site');
 
-    netprog_manager = MXCreateManager ('netprog_manager') ;
+    let netprog_manager = MXCreateManager ('netprog_manager') ;
     MXAssignDefaultDialogs (netprog_manager, DialogClasses)    
     
     let manager = netprog_manager;
@@ -683,49 +679,7 @@ function netprog_iconfromclass (type) {
     }
 }
 
-function netprog_classfromtype (type) {
-    switch (type) {
-        case 'manager':             return 'MXManager';
-        case 'site':                return 'MXSite';
-        case 'machine':             return 'MXMachine';
-        case 'application':         return 'MXApplication';
-        case 'database':            return 'MXDatabase';
-        case 'journal':             return 'MXjournal';
-        case 'queue':               return 'MXQueue';
-        case 'connection':          return 'MXConnection';  
-        case 'capplication':        return 'MXApplicationClass';
-        case 'cdatabase':           return 'MXDatabaseClass';
-        case 'cjournal':            return 'MXjournalClass';
-        case 'cqueue':              return 'MXQueueClass';
-        case 'cconnection':         return 'MXConnectionClass';   
-        case 'cdialog':             return 'MXDialogClass';    
-        case 'cmessageclass':       return 'MXMessageClass';       
-        case 'object':              return 'MXObject'          
-        break;    
-    }
-}
 
-function netprog_typefromclass (classname) {
-    switch (classname) {
-        case 'MXManager':                       return 'manager';    
-        case 'MXSite':                          return 'site';       
-        case 'MXMachine':                       return 'machine';    
-        case 'MXApplication':                   return 'application';
-        case 'MXDatabase':                      return 'database';   
-        case 'MXjournal':                       return 'journal';    
-        case 'MXQueue':                         return 'queue';      
-        case 'MXConnection':                    return 'connection'; 
-        case 'MXApplicationClass':              return 'capplication';
-        case 'MXDatabaseClass':                 return 'cdatabase';  
-        case 'MXjournalClass':                  return 'cjournal';   
-        case 'MXQueueClass':                    return 'cqueue';     
-        case 'MXConnectionClass':               return 'cconnection';
-        case 'MXDialogClass':                   return 'cdialog';        
-        case 'MXMessageClass':                  return 'cmessageclass';    
-        case 'MXObject':                        return 'object';                 
-        break;    
-    }
-}
 function netprog_entityfatherclass (entity) {
    // return netprog_classfromtype (type) + 's';
     switch (entity) {
@@ -750,6 +704,31 @@ function netprog_entityfatherclass (entity) {
         default:
             return 'MXManager';  
     }
+}
+
+
+function netprog_arraytypeclassfromfield (fieldname) {
+    switch (fieldname) {    
+        case 'Sites':                 return  'MXSite';
+        case 'Machines':              return  'MXMachine';
+        case 'Applications':          return  'MXApplication';
+        case 'Databases':             return  'MXDatabase';
+        case 'journals':              return  'MXjournal';
+        case 'Queues':                return  'MXQueue';
+        case 'Connections':           return  'MXConnection';  
+        case 'ApplicationClasses':    return  'MXApplicationClass';
+        case 'DatabaseClasses':       return  'MXDatabaseClass';
+        case 'JournalClasses':        return  'MXjournalClass';
+        case 'QueueClasses':          return  'MXQueueClass';
+        case 'ConnectionClasses':     return  'MXConnectionClass';   
+        case 'DialogClasses':         return  'MXDialogClass';  
+        case 'MessageClasses':        return  'MXMessageClass';   
+        case 'Objects':               return  'MXObject';
+        break;
+        default:
+            return '';
+    }  
+
 }
 
 function netprog_siteview_push (array, entity) {
@@ -828,6 +807,8 @@ function netprog_closebargroup (elt) {
         let elt = $(spans[i]);
         let nodename = elt.attr('nodename');
         let node  = netprog_entityfromnodename(nodename);
+        
+
 
         let fieldname = node.field;
         let entity    = node.object;
@@ -955,6 +936,10 @@ function onclick_netprog_treenode (elt, event) {
     sb.tree_selectitem ('treenode-manager-0', eltname);   
     
     let node  = netprog_entityfromnodename(nodename);
+    if (node.fathernodetype == "MXManager") {
+        return;
+    }
+
     let fieldname = node.field;
     let entity    = node.object;
     let type      = node.type;
@@ -988,7 +973,7 @@ function onclick_netprog_treenode (elt, event) {
 
 function onclick_netprog_header (elt, event) {
     if (!sb.tab_finditem(netprog_maintabs, 'netprog_siteview_tab')) { 
-        filetabitem    =     {id: 'netprog_siteview_tab', item: 'Site View', type:'link', icon:  icon_siteview,   items: [netprog_siteview_topbarmenu, netprog_gse_main],   onclose: 'onclick="onclick_netprog_tab_close(this, event)"',    title: 'Scenario',  events: {onclick:"onclick_netprog_tab(this, event)"}},           
+        filetabitem    =     {id: 'netprog_siteview_tab', item: 'Site View', type:'link', icon:  icon_siteview,   items: [netprog_siteview_topbarmenu, netprog_gse_main],   onclose: 'onclick="onclick_netprog_tab_close(this, event)"',    title: 'Scenario',  events: {onmousedown:"onmousedown_netprog_tab(this, event)"}},           
         sb.tab_additem(netprog_maintabs, filetabitem);
     } 
     sb.tab_select(netprog_maintabs, 'netprog_siteview_tab');
@@ -1166,6 +1151,11 @@ function oncontextmenu_netprog_treenode (elt, event) {
 
     let nodename        = $(elt).attr("nodename");  
     let node            = netprog_entityfromnodename(nodename);
+
+    if (node.fathernodetype == "MXManager") {
+        return;
+    }
+
     let type            = node.type;   // Object or Field
     let entity          = node.object;
     let nodetype        = node.nodetype;
@@ -1314,6 +1304,20 @@ function onclick_paneldlg_add(nodename) {
     }
 }
 
+function netprog_entity_createdialog (entity) {
+    let header = entity.ClassName.substring(2);
+    sb.modal ({
+        id: 'modal_addentity', 
+        header: header, 
+
+        resizable: true,
+        body:  sb.render(sb.panel_object(entity)),  //sb.panelfyobject(entity), 
+        footer: 
+            '<button class="sb_mbutton" onclick="onclick_paneldlg_add(\'' + header + ':' + entity.Code + '\'); ">Add</button>' +
+            '<button class="sb_mbutton" data-bs-dismiss="modal">Cancel</button>',                      
+    });  
+}
+
 function onclick_treenode_add (elt, event) {
     event.preventDefault();    
     event.stopPropagation();    
@@ -1325,53 +1329,13 @@ function onclick_treenode_add (elt, event) {
     var fieldname   = node.field;
     var entity      = node.object;
     var nodetype    = node.nodetype;   
-  
 
-    var header, entity;
-  
-    switch (nodetype) {
-        case 'Sites' :
-            header = 'Site';
-            entity = new(MXSite);
-        break;
-        case 'Machines' :
-            header = 'Machine';     
-            entity = new(MXMachine);        
-        break;
-        case 'ApplicationClasses' :
-            header = 'Application';  
-            entity = new(MXApplicationClass);    
-        break;
-        case 'DatabaseClasses' :
-            header = 'Database';  
-            entity = new(MXDatabaseClass);    
-        break;
-        case 'QueueClasses' :
-            header = 'Database';  
-            entity = new(MXQueueClass);                
-        break;
-        case 'JournalClasses' :
-            header = 'Journal';  
-            entity = new(MXJournalClass);               
-        break;
-        case 'ConnectionClasses' :
-            header = 'Connection';                    
-            entity = new(MXConnectionClass);    
-        break;
-        default: return;
+    let classnode = netprog_arraytypeclassfromfield(fieldname)
+    if (classnode == '') {
+        return;
     }
 
-    new_entity = entity;
-    sb.modal ({
-        id: 'modal_addentity', 
-        header: header, 
-
-        resizable: true,
-        body: sb.panelfyobject(entity), 
-        footer: 
-            '<button class="sb_mbutton" onclick="onclick_paneldlg_add(\'' + header + ':' + entity.Code + '\'); ">Add</button>' +
-            '<button class="sb_mbutton" data-bs-dismiss="modal">Cancel</button>',                      
-    });  
+    netprog_entity_createdialog (eval ('new ' + classnode + '()'));
 }
 
 function onclick_paneldlg_delete (nodename) {
@@ -1517,7 +1481,7 @@ function onclick_netprog_more (event) {
     });    	
 }    
 
-function onclick_netprog_tab (elt, event) {
+function onmousedown_netprog_tab (elt, event) {
 
     switch (elt.id) {
         case 'netprog_home_tab':
@@ -1584,7 +1548,7 @@ function netprog_idfromnodename (nodename) {
 }
 
 function netprog_entityfromnodename (nodename) {
-
+    let netprog_manager = solution.netprog_CurrentProject.Manager;    
     let values = nodename.split(':');
 
     if (values.length < 1) {
@@ -1601,8 +1565,7 @@ function netprog_entityfromnodename (nodename) {
         console.log ('netprog_entityfromnodename : error in nodename : ' + nodename);
         if (entityname == 'Manager') {                                  // root node
             return {type: 'Object', object: netprog_manager, field: null, nodetype: entityname, fathernodetype: null}
-        }
-        if (entityname == 'Sites') {                                  // root node
+        } else  {  //must be list array for MXManager Sites, Applications, ....
             return {type: 'Object', object: netprog_manager[entityname], field: null, nodetype: entityname, fathernodetype: fatherclassname}
         }
     }
@@ -1819,31 +1782,7 @@ function getUserIP(onNewIP, par) { //  onNewIp - your listener function for new 
     };
   }
 
-function netprog_panelfy (entitytype, name){
 
-    var entity = interface_GetEntity(netprog_manager, entitytype, 'Name', name);         
-    
-    var content = '<div  id="panel_' + entity.Code + '" class="sb_formcontainer">';      
-    var keys = Object.keys(entity);
-    var name = entity.ClassName; //.substring(2);  //get off with MX
-   
-    var i= 0;
-    var item;
-    keys.forEach((key) => {
-        if (key != 'Code') {            
-            content += (i % 2 == 0) ? '<div class="sb_formgroup">' : '';
-            item = {id: name + '_' + key + '_' + entity.Code, item: key, type:'text', value:  entity[key] }
-            content += sb.render (item);
-/*            
-    '           <label>' + key + ' </label>' +
-    '           <input id ="' + name + '_' + key + '" class="form-control" value="' +   entity[key]  + '"/>';
-*/    
-            content += (i % 2 == 0) ? '</div>' : ''; 
-        }    
-    })
-    content += '</div>' ;
-    return content;
-}
 
 var options  = {};   
 
@@ -1894,56 +1833,7 @@ function onclick_netprog_connect (elt, event) {
     Connect(application, hostname, port);
   }
 
-function Vue_netprog_entityPanel (type) {
 
-    var rootentity   = netprog_entityfatherclass(type);
-
-    var content =        
-'   <div class="sb_cardtitle">' +
-'       {{entity.Name}}' +
-'   </div>' +
-'   <div class="sb_cardbody">' +
-'       <i class="' + netprog_iconfromclass(type) + '"></i>' +
-'       <form>' +
-           netprog_panelfy(entity, name) +
-'       </form>' +
-'   </div>' +
-'   <div class="sb_cardfooter">' +
-'       <button @click="saveEntity(\'' + rootentity + '\', entity.Code,' + '\'' + type + '_\' + entity.Code)" class="btn btn-light">' +
-'           Save' +
-'       </button>' +
-'   </div>';
-    return content;
-}  
-
-
-function Vue_netprog_Main (type) {
-   
-   var rootentity   = netprog_entityfatherclass(type);
-
-    var content =    
-'   <div class="wrapper">' +
-'      <div class="sb_cardcontainer">' +
-'        <div v-for="(entity, i) in netprog_vue_manager.' + rootentity + '" :key= "entity.Code" ref="entity.Code" class="sb_card" :id="' + '\'' + type + '_\' +  entity.Code">' +
-'          <div class="sb_cardtitle">' +
-'            {{entity.Name}}' +
-'          </div>' +
-'          <div class="sb_cardbody">' +
-'            <i class="' + netprog_iconfromclass(type) + '"></i>' +
-'            <form>' +
-                '<div v-html="getPanel(\'' + rootentity + '\', entity.Name)"></div>' +
-'            </form>' +
-'          </div>' +
-'          <div class="sb_cardfooter">' +
-'            <button @click="saveEntity(\'' + rootentity + '\', entity.Code,' + '\'' + type + '_\' + entity.Code)" class="btn btn-light">' +
-'              Save' +
-'            </button>' +
-'          </div>' +
-'        </div>' +
-'      </div>' +
-'   </div>';
-    return content;
-}
 
 function ondrop_home_panel(elt, event) {
    var nodename = event.dataTransfer.getData("text");

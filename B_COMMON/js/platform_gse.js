@@ -23,6 +23,7 @@ function onclick_gsestylenodegroup (elt, event) {
     switch (elt.id) {
         case 'nodemode_rectangle':
             container.SetDrawMode(null, null, container.GSE.GSERECT);
+            
         break;      
         case 'nodemode_circle':
             container.SetDrawMode(null, null, container.GSE.GSEROUND);            
@@ -36,7 +37,7 @@ function onclick_gsemodegroup (elt, event) {
     var container = platform_gse_container (canvas[0].id);
 
     switch (elt.id) {    
-        case 'drawmode_vertical':  
+        case 'nodemode_vertical':  
             container.SetDrawMode(container.GSE.GSEVERTICAL);
         break;
         case 'nodemode_horizontal':

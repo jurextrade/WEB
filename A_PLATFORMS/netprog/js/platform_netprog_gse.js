@@ -1,6 +1,5 @@
 /*------------------------------------------------------------------------- GSE ----------------------------------------------------------------------------*/
 var netprog_gse_editor = null;      // project main container
-
 const netprog_gse_default_options = {
     ondragover:     ondragover_netprog_gse_node,
     ondrop:         ondrop_netprog_gse,
@@ -30,12 +29,19 @@ function netprog_gse_init (id) {
         }
     }
     netprog_gse_editor = new gsecontainer(objgse, netprog_gse_default_options);
-    netprog_gse_editor.SetDrawMode(objgse.GSEVERTICAL, objgse.GSEDIRECTLINK);
+    netprog_gse_editor.SetDrawMode(objgse.GSEHORIZONTAL, objgse.GSEDIRECTLINK);
     netprog_gse_editor.SetNodeMode(objgse.GSERECTANGLE);
     netprog_gse_editor.setCanvasId(id);
 }
 
+
+
 function netprog_gse_update (mxmanager) {
+    if (!sb.tab_finditem(netprog_maintabs, 'netprog_siteview_tab')) { 
+        let filetabitem    = {id: 'netprog_siteview_tab', item: 'Site View', type:'link', icon:  icon_siteview,   items: [netprog_siteview_panel],   onclose: 'onclick="onclick_netprog_other_tab_close(this, event)"',    title: 'Scenario',  events: {onmousedown:"onmousedown_netprog_tab(this, event)"}};         
+        sb.tab_additem(netprog_maintabs, filetabitem);
+     }
+
     netprog_gse_editor.GSE.Clear ("NETPROG");    
     let rootgse = netprog_gse_treefromManager(netprog_gse_editor, mxmanager);
     netprog_gse_editor.SetRootNode(rootgse);  
@@ -83,10 +89,11 @@ function netprog_gse_treefromManager  (container, entity) {
 }
 
 function netprog_gse_push (array, entity) {
-    let gse          = netprog_gse_editor.GSE
-    let name         = entity.ClassName; // .substring(2)
-    let spacename    = netprog_typefromclass(name)
-	let node         = gse.MakeNode("NETPROG", spacename, 0, entity.Name);
+    let netprog_manager = solution.netprog_CurrentProject.Manager;
+    let gse             = netprog_gse_editor.GSE
+    let name            = entity.ClassName; // .substring(2)
+    let spacename       = netprog_typefromclass(name)
+	let node            = gse.MakeNode("NETPROG", spacename, 0, entity.Name);
     
     node.UserField = entity;
     switch (name) {
@@ -168,25 +175,27 @@ function onmousedown_netprog_gse (event, container) {
  
 
     var node = container.FindObject("NETPROG", event.offsetX, event.offsetY);
-    
+
+    let classname ='';    
     if (node && (node != container.SelectNode)) {
         container.Select (node);
+
         if (node.UserField) {       
-            let name         = node.UserField.ClassName; // .substring(2)
-		  	let nodename     = name + ':' +  node.UserField.Code;
-            let elt          = $('#treenode-sites-1'); 
+            classname    = node.UserField.ClassName; // .substring(2)
+		  	let nodename = classname + ':' +  node.UserField.Code;
+            let elt      = $('#treenode-sites-1'); 
 
             sb.tree_compress('treenode-sites-1')            
             netprog_closebargroup (elt)
+
+            netprog_update_siteviewbar (classname);
 
             if (nodename == "MXManager:0"){
                 sb.tree_open('treenode-sites-1')  
                 return;
             }   
-
             netprog_showtreepanel(nodename);
             netprog_selecttreepanel(nodename)         
-
         }
     }
    
@@ -194,6 +203,7 @@ function onmousedown_netprog_gse (event, container) {
         container.UnSelect();
         netprog_selecttreepanel();        
     }
+
 
     if (event.which == 1) {   // right click
         if (container.SelectNode != null && container.BeginDrag == null && container.SelectNode != container.RootNode) {
@@ -297,3 +307,74 @@ function oncontextmenu_netprog_gse (event, container) {
     });      
 } 
 
+
+//--------------------------------------------------------------- TOPBAR MENU -------------------------------------------------------------------------------
+
+function onclick_topbarmenu (elt, event) {
+
+
+    let selectednode        = netprog_gse_editor.SelectNode;
+    let selectedclassname   = selectednode.UserField.ClassName; // .substring(2)
+    let nodename            = selectedclassname + ':' +  selectednode.UserField.Code;
+
+    let node        = netprog_entityfromnodename(nodename);
+    let fieldname   = node.field;
+    let f_entity    = node.object;
+    let type        = node.type;
+    let nodetype    = node.nodetype;
+
+
+    let entity, classnode;
+
+    switch (elt.id) {
+        case 'topbar_netprogaddsite' :
+            classnode = 'MXSite';
+            entity = eval ('new ' + classnode + '()');            
+            netprog_entity_createdialog (entity);
+        break;
+        case 'topbar_netprogaddmachine' :
+            classnode = 'MXMachine';
+            entity = eval ('new ' + classnode + '()');                    
+            netprog_entity_createdialog (entity);
+        break;
+        case 'topbar_netprogaddapplication' :
+            classnode = 'MXApplication';
+            entity = eval ('new ' + classnode + '(null,"' + f_entity.Name + '")');                    
+            netprog_entity_createdialog (entity);
+        break;
+    }
+
+}
+
+
+
+function netprog_update_siteviewbar (classname) {
+    
+    switch (classname) {
+        case 'MXManager':
+            $('#topbar_netprogaddsite').removeAttr('disabled');                            
+            $('#topbar_netprogaddmachine').attr('disabled', true);
+            $('#topbar_netprogaddapplication').attr('disabled', true);
+        break;            
+        case 'MXSite':                
+            $('#topbar_netprogaddmachine').removeAttr('disabled');
+            $('#topbar_netprogaddsite').attr('disabled', true);
+            $('#topbar_netprogaddapplication').attr('disabled', true);
+        break;    
+        case 'MXMachine':            
+            $('#topbar_netprogaddapplication').removeAttr('disabled');
+            $('#topbar_netprogaddsite').attr('disabled', true);
+            $('#topbar_netprogaddmachine').attr('disabled', true);
+        break;    
+        case 'MXApplication':
+            $('#topbar_netprogaddsite').attr('disabled', true);
+            $('#topbar_netprogaddapplication').attr('disabled', true);
+            $('#topbar_netprogaddmachine').attr('disabled', true);
+        break;
+        default:
+            $('#topbar_netprogaddsite').attr('disabled', true);
+            $('#topbar_netprogaddapplication').attr('disabled', true);
+            $('#topbar_netprogaddmachine').attr('disabled', true);
+        break;
+    }
+}

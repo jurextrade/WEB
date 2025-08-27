@@ -383,15 +383,19 @@ function oncontextmenu_chartcanvas(event, itempos, yValue, mouseXY, fullData, st
                         RemoveChartIndicator(symbolcanvas, "-1");
                         break;
                     case MENU_CHART_BUYSTOP_ID:
+                        sidebarmenu_select('sidebar_terminals', 1);                               
                         SetOrderType(+(yValue).toFixed(symbol.Digits), OP_BUYSTOP);
                         break;                        
-                    case MENU_CHART_BUYLIMIT_ID:                        
+                    case MENU_CHART_BUYLIMIT_ID:   
+                        sidebarmenu_select('sidebar_terminals', 1);                                         
                         SetOrderType(+(yValue).toFixed(symbol.Digits), OP_BUYLIMIT);
                         break;
-                    case MENU_CHART_SELLSTOP_ID:                            
+                    case MENU_CHART_SELLSTOP_ID:       
+                        sidebarmenu_select('sidebar_terminals', 1);                                                
                         SetOrderType(+(yValue).toFixed(symbol.Digits), OP_SELLSTOP);
                         break;
-                    case MENU_CHART_SELLLIMIT_ID:                           
+                    case MENU_CHART_SELLLIMIT_ID:      
+                        sidebarmenu_select('sidebar_terminals', 1);                                                
                         SetOrderType(+(yValue).toFixed(symbol.Digits), OP_SELLLIMIT);
                         break;
                     case MENU_CHART_INSERTCALL_ID:          
@@ -1855,7 +1859,7 @@ var react_optionmain  = function (objects, xGrid, yGrid, width, height, margin, 
         parameters.push (React.createElement(StraightLine , {yValue: +tradeorder.tradeentry_value[tradeorder.tradeentry_type].value, type: "horizontal",  strokeWidth : 1,      stroke: theme_sell,      label: ""}));   
     }
 
-	parameters.push (React.createElement(OHLCTooltip,    {origin: [0 , -3],  ohlcFormat: d3.format(",." + Symbol.Digits +"f"),  volumeFormat: d3.format("d"), symbolName : Symbol.Name,
+	parameters.push (React.createElement(OHLCTooltip,    {className:'tooltipclass', origin: [0 , -3],  ohlcFormat: d3.format(",." + Symbol.Digits +"f"),  volumeFormat: d3.format("d"), symbolName : Symbol.Name, chartNbr: 100, plotNbr:100, 
         onClick : function onClick(e) {
             OptionSetRightType ({value : "Stock"});    
             return OptionOrderPanel_Show(true);}
@@ -2129,8 +2133,8 @@ var react_chartmain  = function (objects, xGrid, yGrid, width, height, margin, x
     }
 
 
-    parameters.push (React.createElement(OHLCTooltip,       {origin: tooltiporigin,  ohlcFormat: d3.format(",." + Symbol.Digits +"f"),  volumeFormat: d3.format("d"), symbolName : Symbol.Name,  onClick : function onClick(e) {return OrderPanel_Show(true);}}));
-	parameters.push (React.createElement(EdgeIndicator,     {
+    parameters.push (React.createElement(OHLCTooltip, {className:'tooltipclass', origin: tooltiporigin,  ohlcFormat: d3.format(",." + Symbol.Digits +"f"),  volumeFormat: d3.format("d"), symbolName : Symbol.Name,  chartNbr: 100, plotNbr:100, onClick : function onClick(e) {return OrderPanel_Show(true);}}));
+	parameters.push (React.createElement(EdgeIndicator, {
         itemType: "last", 
         orient: "right", 
         edgeAt: "right",    

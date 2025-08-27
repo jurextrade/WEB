@@ -3,6 +3,4 @@
 (defun Max_highmaxweek_openfirstweek () (SETQ a(Max a(-(SValue HIGH S_MAXINWEEK CurrentPeriod)(SValue OPEN S_FIRSTINWEEK CurrentPeriod)))))
 (defun Min_lowmaxweek_openfirstweek () (SETQ a(Min a(-(SValue LOW S_MININWEEK CurrentPeriod)(SValue OPEN S_FIRSTINWEEK CurrentPeriod)))))
 (defun marker_0 () (OrS RSI_2 S_BELOW P_H1))
-(defun essai () (AND (AndS BAR S_BEAR_QUAD CurrentPeriod )
-(< Bid (SValue BAR S_BEAR_QUAD CurrentPeriod ))
-))
+(defun essai () (AND(AndS BAR S_BEAR_QUAD CurrentPeriod)( < Bid(SValue BAR S_BEAR_QUAD CurrentPeriod))))

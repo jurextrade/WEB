@@ -1,30 +1,32 @@
-let net    = require('net');
-let http   = require('http');
-let https  = require('https');
-let socket = require('socket.io');
-let fs     = require('fs');
+const childprocess = require('child_process'); 
 
-let XMLHttpRequest, moment;
+const net    = Require('net');
+const http   = Require('http');
+const https  = Require('https');
+const socket = Require('socket.io');
+const fs     = Require('fs');
+const moment = Require("moment");
+const xmlhttprequest = Require("xmlhttprequest")
 
-try {
-    XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-}
-catch(error) {
-    console.log(error)
-    require('child_process').execSync('npm install xmlhttprequest')
-    XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+function Require (module) {
+    try {
+        let result = childprocess.execSync('npm list ' + module + ' || npm install ' + module);       
+        if (result.indexOf("'UNMET DEPENDENCY'") != -1) {
+            console.log ('module do not exist : ' + module + ' Installation done');
+        }
+
+        let myModule = require(module); 
+        return myModule;
+    } catch (error) {
+        console.error(`Error executing command: ${error.message}`);
+        process.exit(1);
+    }            
 }
 
-try {
-    moment = require("moment");
-}
-catch(error) {
-    console.log(error)
-    require('child_process').execSync('npm install moment')
-    moment = require("moment");    
-}
 
-//var fs = require('fs');
+const XMLHttpRequest = xmlhttprequest.XMLHttpRequest;
+
+
 
 const TERMINAL         = "TERMINAL";
 const CARD             = "CARD";

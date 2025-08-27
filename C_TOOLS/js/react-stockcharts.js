@@ -23353,19 +23353,23 @@ var OHLCTooltip = function (_Component) {
 		value: function renderSVG(moreProps) {
 			var className = this.props.className;
 			var _moreProps$chartConfi = moreProps.chartConfig,
-			    width = _moreProps$chartConfi.width,
-			    height = _moreProps$chartConfi.height;
+			    width 		= _moreProps$chartConfi.width,
+			    height 		= _moreProps$chartConfi.height,
+
+				chartNbr 	= moreProps.fullData.length, 
+				plotNbr 	= moreProps.plotData.length;				
+			
 			var currentItem = moreProps.currentItem;
-			var _props = this.props,
-			    onClick = _props.onClick,
+
+			var _props 		= this.props,
+			    onClick 	= _props.onClick,
 			    xDisplayFormat = _props.xDisplayFormat,
-			    fontFamily = _props.fontFamily,
-			    fontSize = _props.fontSize,
-			    accessor = _props.accessor,
-			    volumeFormat = _props.volumeFormat,
-			    ohlcFormat = _props.ohlcFormat,
-//GABRIEL			    
-                symbolName = _props.symbolName;
+			    fontFamily 	= _props.fontFamily,
+			    fontSize 	= _props.fontSize,
+			    accessor 	= _props.accessor,
+			    volumeFormat= _props.volumeFormat,
+			    ohlcFormat 	= _props.ohlcFormat,
+                symbolName 	= _props.symbolName;
 
 			var displayDate, open, high, low, close, volume, color;
 
@@ -23395,30 +23399,18 @@ var OHLCTooltip = function (_Component) {
 
 			return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 				"g",
-				{ className: "react-stockcharts-toottip-hover " + className,
-					transform: "translate(" + x + ", " + y + ")", onClick: onClick },
+				{ className: "react-stockcharts-toottip-hover " + className, transform: "translate(" + x + ", " + y + ")", onClick: onClick },
+
 				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 					__WEBPACK_IMPORTED_MODULE_5__ToolTipText__["a"],
-					{ x: 0, y: 0,
-						fontFamily: fontFamily, fontSize: fontSize },
+					{ x: 0, y: 0, fontFamily: fontFamily, fontSize: fontSize },
 
-					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-						__WEBPACK_IMPORTED_MODULE_6__ToolTipTSpanLabel__["a"],
-						{ key: "name", x: 0, dy: "5" },
-						""
-					),
+
 					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 						"tspan",
 						{ key: "value", fontSize: '', fill:'var(--theme-main-color)'},
 						symbolName
 					),
-					/*
-					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-						"tspan",
-						{ key: "label" },
-						" D: "
-					),
-					*/
 					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 						"tspan",
 						{ key: "value_D", fill:'var(--theme-main-color)', dx: "10"},
@@ -23473,7 +23465,25 @@ var OHLCTooltip = function (_Component) {
 						"tspan",
 						{ key: "value_Vol",  fill: color },
 						volume
-					)
+					),
+				
+				),
+
+				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+					__WEBPACK_IMPORTED_MODULE_5__ToolTipText__["a"],
+					{ transform: "translate(" + (width -60) + ", " + 0 + ")",  fontFamily: fontFamily, fontSize: fontSize },
+
+					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+						"tspan",
+						{ key: "label_Vol", fill:'var(--theme-main-color)' },
+						" Nbr: "
+					),
+
+					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+						"tspan",
+						{ key: "value_Nbr",  fill: 'var(--theme-main-color)' },
+						"   (" + chartNbr + "," + plotNbr + ")"
+					)					
 				)
 			);
 		}

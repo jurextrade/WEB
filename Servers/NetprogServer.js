@@ -1,32 +1,26 @@
-function Require (module) {
-    try {
-        const myModule = require(module); 
-        return myModule;
-
-    } catch (error) {
-        if (error.code === 'MODULE_NOT_FOUND') {
-            console.error('Module ' + module + ' not found at the specified path. Launching npm... please wait');
-            try {
-                require('child_process').execSync('npm install ' + module);       
-                const myModule = require(module); 
-                return myModule;                     
-
-            } catch (error) {
-                console.error(`Error executing command: ${error.message}`);
-            }            
-        } else {
-            console.error('An error occurred during module loading: ' + module, error);
-        }
-    }
-    return null;
-}
-
+const childprocess = require('child_process'); 
+const fs           = Require('fs');
 const http         = Require('http');
 const https        = Require('https');
 const socket       = Require('socket.io');
-const fs           = Require('fs');
-const childprocess = Require('child_process'); 
 
+const axios        = Require('axios');
+const formdata     = Require('form-data');
+
+function Require (module) {
+    try {
+        let result = childprocess.execSync('npm list ' + module + ' || npm install ' + module);       
+        if (result.indexOf("'UNMET DEPENDENCY'") != -1) {
+            console.log ('module do not exist : ' + module + ' Installation done');
+        }
+
+        let myModule = require(module); 
+        return myModule;
+    } catch (error) {
+        console.error(`Error executing command: ${error.message}`);
+        process.exit(1);
+    }            
+}
 
 
 var HTTPPort            = 4080;
@@ -36,17 +30,18 @@ ListenHTTP(SHTTPPort);
 
 function upload_file (servername, filename, tofilename) {                //http
 
-    let content = Require('fs').readFileSync(filename)    
+    let content = fs.readFileSync(filename)    
     
     let url = 'http://' + servername + '/php/upload_file.php';  
      
-    let FormData = Require('form-data');
-    let formdata = new FormData();
-    formdata.append('file',      tofilename);
-    formdata.append('content',   content);
+    
+    let fdata = new formdata();
+    
+    fdata.append('file',      tofilename);
+    fdata.append('content',   content);
   
 
-    require('axios').post(url, formdata, {
+    axios.post(url, fdata, {
         headers: {
             'Content-Type': 'application/octet-stream', // Or the specific MIME type
         },
@@ -71,11 +66,11 @@ async function download_file(servername, filename, tofilename) {
     let url = 'http://' + servername + '/' + filename;  
     try {
       const downloadLink = url;
-      const response = await require('axios').get(downloadLink, { responseType: 'arraybuffer' });
+      const response = await axios.get(downloadLink, { responseType: 'arraybuffer' });
 
       const fileData = Buffer.from(response.data, 'binary');
       
-      await Require('fs').writeFileSync(tofilename, fileData);
+      await fs.writeFileSync(tofilename, fileData);
       
       var strerror = "DOWNLOAD " +  filename + " to " + tofilename  + " OK successfully downloaded";
       console.log(strerror);
@@ -99,7 +94,7 @@ function send (servername, message, onrecvcallback, values)  {
     let par =  new URLSearchParams({ message: JSON.stringify(message) }).toString();
 
 
-    Require('axios').post(url,  new URLSearchParams({ message: JSON.stringify(message) }), {
+    axios.post(url,  new URLSearchParams({ message: JSON.stringify(message) }), {
         headers: 'application/x-www-form-urlencoded',
              })
         .then(response => {
@@ -149,7 +144,7 @@ function files_explore  (servername, filenode, levels) {
         levels[0]++;
   
         try {
-            Require('fs').mkdirSync( process.cwd() + '/' + file.Name)
+            fs.mkdirSync( process.cwd() + '/' + file.Name)
 
         } catch (err) {
             if (err.code === 'EEXIST') {

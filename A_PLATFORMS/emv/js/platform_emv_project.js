@@ -341,13 +341,12 @@ function emv_project_newproject (name) {
     ui.platform_updatedata('project', solution.CurrentProject)         
     
     sb.tree_additems ('project_tree_projects', [{id:'project_' +project.Name, type: 'link', item: project.Name, icon: icon_project,
-                    attributes:{selector: 'project_selectproject', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'},
+                    attributes:{selector: 'emv_selectproject', draggable: 'true', ondragstart: 'ondragstart_treeitem(this, event)'},
                     events:{onclick: 'onclick_treeitem(this)',  oncontextmenu:'oncontextmenu_treeitem(this, event)'}     
                     }]);
    
     sb.select_additem ('project_projectselect', project.Name);
 
-    solution.UpdateIndicators(project);         
 
     project_drawproject(project, true);
 }

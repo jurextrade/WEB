@@ -67,31 +67,31 @@ const netprog_default_node_events = {
     oncontextmenu:  'oncontextmenu_netprog_treenode(this, event)',
     ondragstart:    'ondragstart_netprog_treenode(this, event)',
 }
+const netprog_tree_sites         = {id: 'treenode-sites-1',        type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Sites',                  arrow: true, icon:  icon_site,       title: 'Sites',                  attributes: {nodename: 'MXManager:0.Sites'},               events: netprog_default_node_events};   
+const netprog_tree_machines      = {id: 'treenode-machines-2',     type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Machines',               arrow: true, icon:  icon_terminal,   title: 'Machines',               attributes: {nodename: 'MXManager:0.Machines'},            events: netprog_default_node_events};
+const netprog_tree_applications  = {id: 'treenode-applications-3', type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Applications',           arrow: true, icon:  icon_application,title: 'Applications',           attributes: {nodename: 'MXManager:0.Applications'},        events: netprog_default_node_events};
+const netprog_tree_databases     = {id: 'treenode-databases-4',    type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Databases',              arrow: true, icon:  icon_database,   title: 'Databases',              attributes: {nodename: 'MXManager:0.Databases'},           events: netprog_default_node_events};
+const netprog_tree_journals      = {id: 'treenode-journals-5',     type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Journals',               arrow: true, icon:  icon_journal,    title: 'Journals',               attributes: {nodename: 'MXManager:0.Journals'},            events: netprog_default_node_events};
+const netprog_tree_queues        = {id: 'treenode-queues-6',       type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Queues',                 arrow: true, icon:  icon_queue,      title: 'Queues',                 attributes: {nodename: 'MXManager:0.Queues'},              events: netprog_default_node_events};
+const netprog_tree_connections   = {id: 'treenode-connections-7',  type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Connections',            arrow: true, icon:  icon_connection, title: 'Connections',            attributes: {nodename: 'MXManager:0.Connections'},         events: netprog_default_node_events};
 
-const netprog_tree_machines      = {id: 'treenode-machines-2',     type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Machines',     arrow: true, icon:  icon_terminal,   title: 'Machines',               attributes: {nodename: 'Machines'},            events: netprog_default_node_events};
-const netprog_tree_applications  = {id: 'treenode-applications-3', type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Applications', arrow: true, icon:  icon_application,title: 'Applications',           attributes: {nodename: 'Applications'},        events: netprog_default_node_events};
-const netprog_tree_databases     = {id: 'treenode-databases-4',    type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Databases',    arrow: true, icon:  icon_database,   title: 'Databases',              attributes: {nodename: 'Databases'},           events: netprog_default_node_events};
-const netprog_tree_journals      = {id: 'treenode-journals-5',     type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Journals',     arrow: true, icon:  icon_journal,    title: 'Journals',               attributes: {nodename: 'Journals'},            events: netprog_default_node_events};
-const netprog_tree_queues        = {id: 'treenode-queues-6',       type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Queues',       arrow: true, icon:  icon_queue,      title: 'Queues',                 attributes: {nodename: 'Queues'},              events: netprog_default_node_events};
-const netprog_tree_connections   = {id: 'treenode-connections-7',  type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Connections',  arrow: true, icon:  icon_connection, title: 'Connections',            attributes: {nodename: 'Connections'},         events: netprog_default_node_events};
+var netprog_tree_capplications = {id: 'treenode-capplications-8',type: 'tree', class: 'treenode', rootitem: netprog_tree_add,   item: 'Applications Classes',   arrow: true, icon:  icon_application,title: 'Applications Classes',   attributes:{nodename: 'MXManager:0.ApplicationClasses'},  events: netprog_default_node_events};
+var netprog_tree_cdatabases    = {id: 'treenode-cdatabases-9',   type: 'tree', class: 'treenode', rootitem: netprog_tree_add,   item: 'Databases Classes',      arrow: true, icon:  icon_database,   title: 'Databases Classes',      attributes:{nodename: 'MXManager:0.DatabaseClasses'},     events: netprog_default_node_events};
+var netprog_tree_cjournals     = {id: 'treenode-cjournals-10',   type: 'tree', class: 'treenode', rootitem: netprog_tree_add,   item: 'Journals Classes',       arrow: true, icon:  icon_journal,    title: 'Journals Classes',       attributes:{nodename: 'MXManager:0.JournalClasses'},     events: netprog_default_node_events};
+var netprog_tree_cqueues       = {id: 'treenode-cqueues-11',     type: 'tree', class: 'treenode', rootitem: netprog_tree_add,   item: 'Queues Classes',         arrow: true, icon:  icon_queue,      title: 'Queues Classes',         attributes:{nodename: 'MXManager:0.QueueClasses'},       events: netprog_default_node_events};
+var netprog_tree_cconnections  = {id: 'treenode-cconnections-12',type: 'tree', class: 'treenode', rootitem: netprog_tree_add,   item: 'Connections Classes',    arrow: true, icon:  icon_connection, title: 'Connections Classes',    attributes:{nodename: 'MXManager:0.ConnectionClasses'},  events: netprog_default_node_events};
+var netprog_tree_cdialogs      = {id: 'treenode-cdialogs-13',    type: 'tree', class: 'treenode', rootitem: netprog_tree_add,   item: 'Dialogs Classes',        arrow: true, icon:  icon_connection, title: 'Dialogs Classes',        attributes:{nodename: 'MXManager:0.DialogClasses'},      events: netprog_default_node_events};
 
 
 var default_control = {slide: true, onclick_slide: 'onclick_slidehideotherbox (this)', closed : true, orientation: sb.R_CONTROL}  
 
-var netprog_tree_capplications = {id: 'treenode-capplications-8',type: 'tree', class: 'treenode', rootitem: netprog_tree_add, style:'display:none', item: 'Applications Classes',    arrow: true, icon:  icon_application,title: 'Applications Classes',   attributes:{nodename: 'ApplicationClasses'},  events: netprog_default_node_events};
-var netprog_tree_cdatabases    = {id: 'treenode-cdatabases-9',   type: 'tree', class: 'treenode', rootitem: netprog_tree_add, style:'display:none', item: 'Databases Classes',       arrow: true, icon:  icon_database,   title: 'Databases Classes',      attributes:{nodename: 'DatabaseClasses'},     events: netprog_default_node_events};
-var netprog_tree_cjournals     = {id: 'treenode-cjournals-10',   type: 'tree', class: 'treenode', rootitem: netprog_tree_add, style:'display:none', item: 'Journals Classes',        arrow: true, icon:  icon_journal,    title: 'Journals Classes',       attributes:{nodename: 'JournalClasses'},     events: netprog_default_node_events};
-var netprog_tree_cqueues       = {id: 'treenode-cqueues-11',     type: 'tree', class: 'treenode', rootitem: netprog_tree_add, style:'display:none', item: 'Queues Classes',          arrow: true, icon:  icon_queue,      title: 'Queues Classes',         attributes:{nodename: 'QueueClasses'},       events: netprog_default_node_events};
-var netprog_tree_cconnections  = {id: 'treenode-cconnections-12',type: 'tree', class: 'treenode', rootitem: netprog_tree_add, style:'display:none', item: 'Connections Classes',     arrow: true, icon:  icon_connection, title: 'Connections Classes',    attributes:{nodename: 'ConnectionClasses'},  events: netprog_default_node_events};
-var netprog_tree_cdialogs      = {id: 'treenode-cdialogs-13',    type: 'tree', class: 'treenode', rootitem: netprog_tree_add, style:'display:none', item: 'Dialogs Classes',         arrow: true, icon:  icon_connection, title: 'Dialogs Classes',        attributes:{nodename: 'DialogClasses'},      events: netprog_default_node_events};
+var netprog_box_sites         = {id: 'box-sites-1',        type: 'box', closed: true, header: {item: 'Sites',       icon:  icon_site,        control: default_control},  items: [netprog_tree_sites]};
+var netprog_box_machines      = {id: 'box-machines-2',     type: 'box', closed: true, header: {item: 'Machines',    icon:  icon_terminal,    control: default_control},  items: [netprog_tree_machines]};
+var netprog_box_applications  = {id: 'box-applications-3', type: 'box', closed: true, header: {item: 'Applications',icon:  icon_application, control: default_control},  items: [netprog_tree_applications]};
+var netprog_box_databases     = {id: 'box-databases-4',    type: 'box', closed: true, header: {item: 'Databases',   icon:  icon_database,    control: default_control},  items: [netprog_tree_databases]};
+var netprog_box_journals      = {id: 'box-journals-5',     type: 'box', closed: true, header: {item: 'Journals',    icon:  icon_journal,     control: default_control},  items: [netprog_tree_journals]};
+var netprog_box_queues        = {id: 'box-queues-6',       type: 'box', closed: true, header: {item: 'Queues',      icon:  icon_queue,       control: default_control},  items: [netprog_tree_queues]};
 
-//var netprog_box_sites         = {id: 'box-sites-1',        type: 'box', closed: true, header: {item: 'Sites',               icon:  icon_site,        control: default_control},  attributes:{nodename: 'Sites:1'},               items: [netprog_tree_sites]};
-//var netprog_box_machines      = {id: 'box-machines-2',     type: 'box', closed: true, header: {item: 'Machines',            icon:  icon_terminal,    control: default_control},  attributes:{nodename: 'Machines:2'},            items: [netprog_tree_machines]};
-//var netprog_box_applications  = {id: 'box-applications-3', type: 'box', closed: true, header: {item: 'Applications',        icon:  icon_application, control: default_control},  attributes:{nodename: 'Applications:3'},        items: [netprog_tree_applications]};
-//var netprog_box_databases     = {id: 'box-databases-4',    type: 'box', closed: true, header: {item: 'Databases',           icon:  icon_database,    control: default_control},  attributes:{nodename: 'Databases:4'},           items: [netprog_tree_databases]};
-//var netprog_box_journals      = {id: 'box-journals-5',     type: 'box', closed: true, header: {item: 'Journals',            icon:  icon_journal,     control: default_control},  attributes:{nodename: 'Journals:5'},            items: [netprog_tree_journals]};
-//var netprog_box_queues        = {id: 'box-queues-6',       type: 'box', closed: true, header: {item: 'Queues',              icon:  icon_queue,       control: default_control},  attributes:{nodename: 'Queues:6'},              items: [netprog_tree_queues]};
-//var netprog_box_connections   = {id: 'box-connections-7',  type: 'box', closed: true, header: {item: 'Connections',         icon:  icon_connection,  control: default_control},  attributes:{nodename: 'Connections:7'},         items: [netprog_tree_connections]};
 var netprog_box_capplications = {id: 'box-capplications-8',type: 'box', closed: true, header: {item: 'Applications',icon:  icon_application, control: default_control},  items: [netprog_tree_capplications]};
 var netprog_box_cdatabases    = {id: 'box-cdatabases-9',   type: 'box', closed: true, header: {item: 'Databases',   icon:  icon_database,    control: default_control},  items: [netprog_tree_cdatabases]};
 var netprog_box_cjournals     = {id: 'box-cjournals-10',   type: 'box', closed: true, header: {item: 'Journals',    icon:  icon_journal,     control: default_control},  items: [netprog_tree_cjournals]};
@@ -104,24 +104,23 @@ var netprog_box_cdialogs      = {id: 'box-cdialogs-13',    type: 'box', closed: 
 var netprog_box_manager = {
     id: 'netprog_box_manager',       
     type: 'panel',      
-    class: 'sb_panel', 
+    class: 'sb_pane', 
     icon: icon_manager,
     items:[
-        netprog_box_capplications,
-        netprog_box_cdatabases,
-        netprog_box_cjournals,
-        netprog_box_cqueues,
-        netprog_box_cconnections ,       
-        netprog_box_cdialogs,               
+        netprog_tree_capplications,
+        netprog_tree_cdatabases,
+        netprog_tree_cjournals,
+        netprog_tree_cqueues,
+        netprog_tree_cconnections ,       
+        netprog_tree_cdialogs,               
 
-//        netprog_box_sites        ,
-//        netprog_box_machines     ,
-
-//        netprog_box_applications ,
-//        netprog_box_databases    ,
-//        netprog_box_journals     ,
-//        netprog_box_queues       ,
-//        netprog_box_connections  ,
+     //   netprog_box_sites        ,
+        netprog_tree_machines     ,
+        netprog_tree_applications ,
+        netprog_tree_databases    ,
+        netprog_tree_journals     ,
+        netprog_tree_queues       ,
+        netprog_tree_connections  ,
     ]
 } 
 
@@ -238,7 +237,7 @@ var netprog_dialogtree = {
     items: [netprog_messagetree]
 }
 
-//------------------------------------------------------------ MAIN PANELS----------------------------------------------------------
+//------------------------------------------------------------ SITE VIEW PANEL GSE- AND TOPBAR----------------------------------------------------------
 
 
 
@@ -249,10 +248,10 @@ var netprog_siteview_topbarmenu = {
     class: 'sb_bottom',      
     items : 
     [
-        {id: 'topbar_netprogaddsite',        type: 'button',  item: 'Add Site',        class: 'sb_button', icon:  icon_site,        events: {onclick: "onclick_topbarmenu(this.id)"},  attributes: {actionname: 'AddSite'},       title: ''},                 
-        {id: 'topbar_netprogaddmachine',     type: 'button',  item: 'Add Machine',     class: 'sb_button', icon:  icon_machine,     events: {onclick: "onclick_topbarmenu(this.id)"},  attributes: {actionname: 'AddMachine'},    title: ''},                 
-        {id: 'topbar_netprogaddapplication', type: 'button',  item: 'Add Application', class: 'sb_button', icon:  icon_application, events: {onclick: "onclick_topbarmenu(this.id)"},  attributes: {actionname: 'AddApplication'},title: ''},                 
-        {id: 'topbar_netprogadddatabase',    type: 'button',  item: 'Add Database',    class: 'sb_button', icon:  icon_database,    events: {onclick: "onclick_topbarmenu(this.id)"},  attributes: {actionname: 'AddDatabase'},   title: ''},                 
+        {id: 'topbar_netprogaddsite',        type: 'button',  item: 'Add Site',        class: 'sb_mbutton', icon:  icon_site,        events: {onclick: "onclick_topbarmenu(this, event)"},  attributes: {actionname: 'AddSite', disabled:true},       title: 'Add Site'},                 
+        {id: 'topbar_netprogaddmachine',     type: 'button',  item: 'Add Machine',     class: 'sb_mbutton', icon:  icon_machine,     events: {onclick: "onclick_topbarmenu(this, event)"},  attributes: {actionname: 'AddMachine', disabled:true},    title: 'Add a  Machine'},                 
+        {id: 'topbar_netprogaddapplication', type: 'button',  item: 'Add Application', class: 'sb_mbutton', icon:  icon_application, events: {onclick: "onclick_topbarmenu(this, event)"},  attributes: {actionname: 'AddApplication', disabled:true},title: 'Add Application'},                 
+    //    {id: 'topbar_netprogadddatabase',    type: 'button',  item: 'Add Database',    class: 'sb_button', icon:  icon_database,    events: {onclick: "onclick_topbarmenu(this, event)"},  attributes: {actionname: 'AddDatabase', disabled:true},   title: 'Add Database'},                 
 
     ]
 }  
@@ -270,7 +269,8 @@ var netprog_siteview_panel = {
     type: 'panel',       
     class: 'sb_panel sb_column',
     items: [
-        netprog_siteview_topbarmenu, gsepanel('netprog')
+        netprog_siteview_topbarmenu,
+        gsepanel('netprog')
     ] 
 }
 
@@ -350,7 +350,7 @@ var netprog_boxprojectspanel = {
 
 //--------------------------
 
-const netprog_tree_sites         = {id: 'treenode-sites-1',        type: 'tree', class: 'treenode', rootitem: netprog_tree_add, item: 'Sites',        arrow: true, icon:  icon_site,       title: 'Sites',                  attributes: {nodename: 'Sites'},               events: netprog_default_node_events};   
+
 
 var netprog_tree_manager = {
     id: 'treenode-manager-0',       
@@ -463,15 +463,21 @@ var netprog_mainbar = {
 
 //----------------------------------------------------------------<<< MAIN >>>-----------------------------------------------------------------------
 
+    //if (!sb.tab_finditem(netprog_maintabs, 'netprog_home_tab')) { 
+    //    let filetabitem    = {id: 'netprog_home_tab',     item: 'Home',      type:'link', icon:  icon_home,       items: [netprog_home_section], onclose: 'onclick="onclick_netprog_tab_close(this, event)"',    title: 'Home',      events: {onmousedown:"onmousedown_netprog_tab(this, event)"}};
+    //    sb.tab_additem(netprog_maintabs, filetabitem);
+    // }
+     
+
 var netprog_maintabs = {
     id:'netprog_maintabs',
     type: 'tabs',    
     class: 'sb_main',
     label : '',    
     items : [
-     //   {id: 'netprog_home_tab',     item: 'Home',      type:'link', icon:  icon_home,       items: [netprog_home_section], onclose: 'onclick="onclick_netprog_other_tab_close(this, event)"',    title: 'Home',      events: {onclick:"onclick_netprog_tab(this, event)"}},           
-        {id: 'netprog_siteview_tab', item: 'Site View', type:'link', icon:  icon_siteview,   items: [netprog_siteview_panel],   onclose: 'onclick="onclick_netprog_other_tab_close(this, event)"',    title: 'Scenario',  events: {onclick:"onclick_netprog_tab(this, event)"}},           
-        {id: 'netprog_json_tab',     item: 'JSON',      type:'link', icon:  icon_structure,  items: [netprog_jsoneditor], onclose: 'onclick="onclick_netprog_tab_close(this, event)"',    title: 'Structure', events: {onclick:"onclick_netprog_tab(this, event)"}},             
+     //   {id: 'netprog_home_tab',     item: 'Home',      type:'link', icon:  icon_home,       items: [netprog_home_section], onclose: 'onclick="onclick_netprog_other_tab_close(this, event)"',    title: 'Home',      events: {onmousedown:"onmousedown_netprog_tab(this, event)"}},           
+        //{id: 'netprog_siteview_tab', item: 'Site View', type:'link', icon:  icon_siteview,   items: [netprog_siteview_panel],   onclose: 'onclick="onclick_netprog_other_tab_close(this, event)"',    title: 'Scenario',  events: {onmousedown:"onmousedown_netprog_tab(this, event)"}},           
+        //{id: 'netprog_json_tab',     item: 'JSON',      type:'link', icon:  icon_structure,  items: [netprog_jsoneditor], onclose: 'onclick="onclick_netprog_tab_close(this, event)"',    title: 'Structure', events: {onmousedown:"onmousedown_netprog_tab(this, event)"}},             
     ],
     groupitems: [
         {

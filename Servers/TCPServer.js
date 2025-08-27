@@ -1,4 +1,22 @@
-let net = require('net');
+const childprocess = require('child_process'); 
+const net = Require('net');
+
+
+function Require (module) {
+    try {
+        let result = childprocess.execSync('npm list ' + module + ' || npm install ' + module);       
+        if (result.indexOf("'UNMET DEPENDENCY'") != -1) {
+            console.log ('module do not exist : ' + module + ' Installation done');
+        }
+
+        let myModule = require(module); 
+        return myModule;
+    } catch (error) {
+        console.error(`Error executing command: ${error.message}`);
+        process.exit(1);
+    }            
+}
+
 
 
 let server = net.createServer(function (socket) {

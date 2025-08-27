@@ -191,6 +191,9 @@ class SOLUTION {
     }
 
     save_configurationfile () {
+        let ui = solution.get('ui');
+
+        this.configuration.theme = ui.sb.theme;        
         let urlfile = this.user.path + '/configuration.json';
         let result = this.put_file (urlfile,  JSON.stringify(this.configuration, null, 4)); //, async, callback, values, aftercallback, aftervalues) { // relative path to web root
         if (result.startsWith("ok")) {
@@ -1504,8 +1507,40 @@ class ui {
         bg_strategycreator          = getComputedStyle(document.documentElement).getPropertyValue('--bg-strategycreator');
         bg_optionterminal           = getComputedStyle(document.documentElement).getPropertyValue('--bg-optionterminal');
     
+
+
+
         theme_main_color            = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-main-color');        
-        theme_color                 = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-color');    
+        theme_color                 = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-color');  
+        theme_font_family           = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-font-family');
+        theme_font_size             = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-font-size');
+        theme_sfont_size            = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-sfont-size');
+        theme_main_bg_color         = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-main-bg-color');
+  
+        theme_footer_bg           = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-footer-bg');
+        theme_footer_color         = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-footer-color');
+        theme_header_bg            = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-header-bg');
+        theme_header_color         = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-header-color');
+        theme_bar_color            = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-bar-color');
+        theme_bar_bg_color         = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-bar-bg-color');
+        theme_bg_color             = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-bg-color');
+        theme_border_color         = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-border-color');
+        
+        theme_button_bg_color       = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-button-bg-color');         
+        theme_button_color          = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-button-color');            
+        theme_button_border_color   = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-button-border-color');     
+        theme_button_disabled_color = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-button-disabled-color'); 
+        theme_button_disabled_bg_color = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-button-disabled-bg-color');
+
+
+        theme_hover_color           = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-hover-color');
+        theme_hover_bg_color        = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-hover-bg-color');
+        theme_select_bg_color       = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-select-bg-color');
+        theme_select_color          = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-select-color');
+
+
+
+
         theme_chart_bullstroke      = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-chart-bullstroke');
         theme_chart_bearstroke      = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-chart-bearstroke');
         theme_chart_bullwickstroke  = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-chart-bullwickstroke');
@@ -1574,6 +1609,32 @@ class ui {
 
         theme_main_color            = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-main-color');           
         theme_color                 = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-color');       
+        theme_font_family           = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-font-family');
+        theme_font_size             = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-font-size');
+        theme_sfont_size            = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-sfont-size');
+        theme_main_bg_color         = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-main-bg-color');
+
+        theme_footer_bg             = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-footer-bg');
+        theme_footer_color          = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-footer-color');
+        theme_header_bg             = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-header-bg');
+        theme_header_color          = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-header-color');
+        theme_bar_color             = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-bar-color');
+        theme_bar_bg_color          = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-bar-bg-color');
+        theme_bg_color              = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-bg-color');
+        theme_border_color          = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-border-color');
+        
+        theme_button_bg_color       = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-button-bg-color');         
+        theme_button_color          = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-button-color');            
+        theme_button_border_color   = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-button-border-color');     
+        theme_button_disabled_color = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-button-disabled-color'); 
+        theme_button_disabled_bg_color = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-button-disabled-bg-color');
+
+        theme_hover_color           = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-hover-color');
+        theme_hover_bg_color        = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-hover-bg-color');
+        theme_select_bg_color       = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-select-bg-color');
+        theme_select_color          = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-select-color');
+
+
         theme_chart_bullstroke      = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-chart-bullstroke');
         theme_chart_bearstroke      = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-chart-bearstroke');
         theme_chart_bullwickstroke  = getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('--theme-chart-bullwickstroke');
@@ -1781,6 +1842,32 @@ class machine {
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 var theme_main_color;
 var theme_color;
+
+var theme_font_family;
+var theme_font_size;
+var theme_sfont_size;
+var theme_main_bg_color;
+var theme_footer_bg;
+var theme_footer_color;
+var theme_header_bg;
+var theme_header_color;
+var theme_bar_color;
+var theme_bar_bg_color;
+var theme_bg_color;
+var theme_border_color;
+
+var theme_button_bg_color;        
+var theme_button_color;           
+var theme_button_border_color;    
+var theme_button_disabled_color;  
+var theme_button_disabled_bg_color;
+
+var theme_hover_color;
+var theme_hover_bg_color;
+var theme_select_color;
+var theme_select_bg_color;
+
+
 var theme_chart_bullstroke;    
 var theme_chart_bearstroke;    
 var theme_chart_bullwickstroke;

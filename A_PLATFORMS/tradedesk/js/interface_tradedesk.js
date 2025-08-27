@@ -324,7 +324,7 @@ var sessionfilebar = {
                 items :
                     [ 
                         {id: 'codeview',    icon: icon_file,     type:'link', title: 'Editor',      class:'checked', events: {onclick: 'onclick_CodeView(this, event)'}},           
-                        {id: 'graphicview', icon: icon_graphic,  type:'link', title: 'Graphic View', events: {onclick: 'onclick_GraphicView(this, event)'}},  
+                        {id: 'graphicview', icon: icon_structure,  type:'link', title: 'Graphic View', events: {onclick: 'onclick_GraphicView(this, event)'}},  
                         {id: 'splitview',   icon: icon_split,    type:'link', title: 'Split View',   events: {onclick: 'onclick_SplitView(this, event)'}}                 
                     ]
             },   
@@ -574,6 +574,7 @@ var boxpercentchangepanel  = {
 
 var automationtable = {
     id: 'automationtable',
+    type: 'table',       
     events: {onclick:"onclick_automationrow(this, event)", ondblclick: "ondblclick_automationrow(this, event)", oncontextmenu: "oncontextmenu_automationrow(this, event)"},
     columns :  ['Strategy', 'Operation'],
     columnstitle : ['Strategy', 'Operation'],
@@ -582,8 +583,8 @@ var automationtable = {
 
 var automationpanel = {
     id: 'automationpanel',
-    type: 'html',
-    content: '',    
+    type: 'panel',
+    items: [automationtable],    
 }
 
 var boxautomationpanel  = {
@@ -941,7 +942,8 @@ var sessiondescriptionpanel = {
 var sessiontabs = {
     id:'sessiontabs',
     type: 'tabs',
-    panelid : 'father',    
+    panelid : 'father',  
+    class: 'sb_main',  
     label : 'sessiontabs',    
     items :
         [ 
