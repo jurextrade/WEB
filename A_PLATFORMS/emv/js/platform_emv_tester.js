@@ -12,7 +12,7 @@ class emvtester {
         this.CardInput = new aceeditor('emv_testercardinput', "ace/theme/nord_dark", "ace/mode/jsx");      
         this.CardInput.setOptions( {
             showPrintMargin: false,        
-            readOnly: true,        
+            readOnly: false,        
             showLineNumbers: false,
             showGutter: false,
             highlightActiveLine: false, 

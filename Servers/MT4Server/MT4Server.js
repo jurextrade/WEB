@@ -25,6 +25,9 @@ function Require (module) {
 	}            
 }
 
+childprocess.execSync('title MT4Server');
+
+
 const XMLHttpRequest = xmlhttprequest.XMLHttpRequest;
 
 

@@ -16,7 +16,7 @@ function Require (module) {
     }            
 }
 
-
+childprocess.execSync('title MySqlServer');
 
 let connection = mysql.createConnection({
     host: 'jurextrade.com',

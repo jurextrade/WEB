@@ -186,6 +186,11 @@ function netprog_file_save () {
 
     cuser.send ({Name: 'savefile', Values: [file.CName, file.Content]}, true, 
                 function (content, values) {
+                    let message = JSON.parse (content);   
+                    if (message.Error) {
+                        console.log (message.Name + ' ' + message.Values[0]);
+                        return;
+                    }                       
                     TreatInfo (values[0].Name + ' saved')
                 }, 
                 [file]);  

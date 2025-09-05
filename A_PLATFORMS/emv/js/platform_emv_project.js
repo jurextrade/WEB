@@ -45,10 +45,15 @@ class emvproject {
    
         let content = JSON.stringify({name: newname, path: this.path}, null, 2)
 
-        let rootproject = user.fileexplorer.Root + user.path + '/EMV/' + this.path + "/config/";        
+        let rootproject = '..' + user.path + '/EMV/' + this.path + "/config/";        
        
         user.send ({Name: 'savefile', Values: [rootproject + 'emv.ini', content]}, true, 
                     function (content, values) {
+                        let message = JSON.parse (content);   
+                        if (message.Error) {
+                            console.log (message.Name + ' ' + message.Values[0]);
+                            return;
+                        }   
                         TreatInfo("Project Succesfully Renamed");                             
                     }, 
                     [this]);  
@@ -75,16 +80,22 @@ class emvproject {
             TreatInfo(register_needed_label, 'operationpanel', 'red');      
             return;
         }
-        let rootproject     = cuser.fileexplorer.Root + cuser.path + '/EMV/' + this.Folder + "/Files/";   
+        let rootproject     = '..' + cuser.path + '/EMV/' + this.Folder + "/Files/";   
 
         let url = rootproject + 'emvsolution.json';
         let content = JSON.stringify(this.Manager, null, 2)
 
         cuser.send ({Name: 'savefile', Values: [url, content]}, true, 
                     function (content, values) {
+                        let message = JSON.parse (content);   
+                        if (message.Error) {
+                            console.log (message.Name + ' ' + message.Values[0]);
+                            return;
+                        }                           
                         TreatInfo("Project Saved");                             
                     }, 
                     ['emvsolution.json']);  
+        emv_OnDistribute(emv_RouterCom, this);                    
     }
 
     Load = function () {  
@@ -95,6 +106,7 @@ class emvproject {
         let rootproject = site.address + user.path + '/EMV/' + this.Folder + "/Files/";
         let url = rootproject + 'emvsolution.json';
         solution.get_file(url, ASYNCHRONE,  this.UpdateEMV, [this]);
+        emv_OnDistribute(emv_RouterCom, this);                    
     }
 
     LoadTransactions = function (user) {

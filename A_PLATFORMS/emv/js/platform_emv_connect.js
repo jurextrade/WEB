@@ -17,8 +17,11 @@ function EMVConnect(adress, port, reconnection) {
 
                 HighlightReader (ROUTER, 1, theme_on)
 
-                let cuser = solution.get('user')
-                com.Send(cuser.id + '*LOGIN*');
+                emv_OnLogin (com)
+                if (solution.emv_CurrentProject) {
+                    emv_OnDistribute (com, solution.emv_CurrentProject);
+                }
+
             },
             onmessagefunction:        function (com, data) {
                 emv_TreatReception (com, data);
@@ -63,19 +66,33 @@ function HighlightReader (origin, connect, color) {
     }    
 }
 
-
-function emv_TreatDialogTrace (title, message) {
-    sb.modal ({
-        id: 'emv_card_modal', 
-        header: title,
-        resizable: true,
-        body:  '<div class="emv_card_message">' + message + '</div>', 
-        footer: '',
-//            '<button class="sb_mbutton" onclick="onclick_exporttransaction_file()">Save</button>' +
-//            '<button class="sb_mbutton" data-bs-dismiss="modal">Cancel</button>',                      
-    });  
-    
+function emv_OnLogin (com) {
+    let sorder = '*LOGIN*';
+    com.Send(solution.get('user').id + sorder);
 }
+
+function emv_OnDistribute (com, project) {
+    var sorder = "*DISTRIBUTE*" + project.Folder;
+    com.Send(solution.get('user').id + sorder);
+}
+
+function emv_TreatLogin(origin, reader, values) {    //http response on sending login ... tell us if card reader with this id is connected
+    let result = values[1];
+    let connect = (result == "OK");
+
+    switch (origin) {
+        case CARD:
+             Tester.card_write (connect ? "Card Reader is Launched and correctly connected to EMV Router\n" :  "Card Reader is not Launched or not Connected to EMV Router\n" )
+            break;
+    }            
+    HighlightReader (origin, connect,  theme_on);
+}
+
+function emv_TreatDistribute(origin, reader, values) {
+}
+
+
+//-------------------------------------------- RECEPTION FROM EMV ROUTER VIA HTTP REQUEST ---------------------------------------------------------------------
 
 // CONNECT FROM SERVER RECEIVED WHEN READER CARD DISCONNECT OR CONNECT
 
@@ -86,6 +103,7 @@ function emv_TreatConnect(origin, reader, values) {
     switch (origin) {
         case CARD:
             if (connect) {
+                Tester.card_write (connect ? "Card Reader is Launched and correctly connected to EMV Router\n" :  "Card Reader is not Launched or not Connected to EMV Router\n" )
                 HighlightReader (origin, connect,  theme_on);
             } else {
                 let cuser = solution.get('user')  
@@ -93,31 +111,26 @@ function emv_TreatConnect(origin, reader, values) {
             }    
         break;
         case TERMINAL:
+            Tester.terminal_write (connect ? "EMV Server is Launched and correctly connected to EMV Router\n" :  "EMV Server is not Launched or not Connected to EMV Router\n" )
             HighlightReader (origin, connect,  theme_on);
         break;
     }    
 }
 
-function emv_TreatLogin(origin, reader, values) {
-    let result = values[1];
-    let connect = (result == "OK");
 
-    switch (origin) {
-        case CARD:
-            break;
-            case TERMINAL:
+//-------------------------------------------- RECEPTION FROM CARD READER VIA EMV ROUTER ---------------------------------------------------------------------
 
-            break;
-    }            
-    HighlightReader (origin, connect,  theme_on);
-}
-
-function emv_TreatInit(origin, reader, values, fromrouter) {
+function emv_TreatStart(origin, reader, values, fromrouter) {
     let result = values[0];
 
     switch (origin) {
         case CARD:
             if (result == 'START') {
+                if (!solution.emv_CurrentProject) {
+                    TreatInfo ("Please Load a project to deploy on EMV Server")
+                    return;
+                }
+
                 Tester.Reader.start (fromrouter);        
             }            
         break;
@@ -136,31 +149,61 @@ function emv_TreatInit(origin, reader, values, fromrouter) {
     }            
 }
 
+// --------------------------------------------------------------- PLUG READER PANEL ----------------------------------------------------------
+
+function timeout_plugpanel () {
+    let cuser = solution.get('user')       
+    emv_RouterCom.Send(cuser.id + '*ABORT*Time Out*');
+    $("#emv_card_modal").modal('hide');       
+
+}
+
+function onclick_plugdone () {
+    let cuser = solution.get('user')       
+    emv_RouterCom.Send(cuser.id + '*PLUG*Done*');
+    $("#emv_card_modal").modal('hide');       
+}
+
 function emv_TreatPlug (origin, reader, values, display, fromrouter) {
     let result;
   //  console.log ('treatplug')
     switch (origin) {
         case CARD:
-         //   console.log(values[2])
             let cuser = solution.get('user')    
-          
             if (!fromrouter) {
                 return;
             }
+            if ( $("#emv_card_modal").length == 0) {
+                sb.modal ({
+                    id: 'emv_card_modal', 
+                    header: 'Card Reader Not Detected',
+                    resizable: true,
+                    static: true,   
+
+                    onopen:  function () {
+                        setTimeout(timeout_plugpanel, 15000);
+                        $("#emv_card_modal .modal-close").css ('display', 'none')
+                    },
+
+                    body:  '<div class="sb_confirmation">' + values[2] + '</div>', 
+
+                    footer:  '<button class="sb_mbutton" onclick="onclick_plugdone()">Done</button>',                      
+                });       
+            }    
             break;
         case TERMINAL:
             break;
         }
 }
 
-var selectTimeout = null;
+// --------------------------------------------------------------- SELECT APPLICATION PANEL ----------------------------------------------------------
 
 function timeout_selectpanel () {
     let cuser = solution.get('user')       
     emv_RouterCom.Send(cuser.id + '*ABORT*Time Out*');
     $("#emv_card_modal").modal('hide');    
-    clearTimeout(selectTimeout);
 }
+
 
 function onclick_selectcancel () {
     let cuser = solution.get('user')       
@@ -203,9 +246,10 @@ function emv_TreatSelect(origin, reader, values, display, fromrouter) {
                 header: 'Select Application',
                 resizable: true,
                 static: true,                
-                onopen:  function () {selectTimeout = setTimeout(timeout_selectpanel, 15000);
-                                      $("#emv_card_modal .modal-close").css ('display', 'none')
-                                    },
+                onopen:  function () {
+                    setTimeout(timeout_selectpanel, 15000);
+                    $("#emv_card_modal .modal-close").css ('display', 'none')
+                },
                 body:  sb.render (bodymodal), 
                 footer:  '<button class="sb_mbutton" onclick="onclick_selectcancel()">Cancel</button>',                      
             });       
@@ -243,10 +287,7 @@ var card_waiting_response = 0;
 
 function emv_TreatTrace(origin, reader, values, silentmode, display) {
     let result;
-    //if (card_waiting_response) {
-    //    $("#emv_card_modal").modal('hide');    
-    //    card_waiting_response = 0;          
-    //}
+
 
     switch (origin) {
         case CARD:
@@ -255,8 +296,6 @@ function emv_TreatTrace(origin, reader, values, silentmode, display) {
                 case "System Problem Remove Card\n" :
                 case "Transaction Completed please Remove Card\n" :
                     TreatInfo(values[2], 'operationpanel');
-//                    emv_TreatDialogTrace('Card', values[1]);
-//                    card_waiting_response = 1;
                     break;   
             }
             if (silentmode) {
@@ -433,9 +472,9 @@ function emv_updatebarname (content, values) {
     }
     obj_response = obj_response.data[0];
     let vendor = obj_response.Vendor;
-    let cardname = obj_response.Name;
+    let cardaid = obj_response.AID;
     let id = values[0];
-    $('#' + id + ' label').html (vendor + '--' + cardname)
+    $('#' + id + ' label').html (vendor + '   -   ' + cardaid)
 }
 
 function emv_TreatTAG(origin, reader, values, silentmode, display) {
@@ -491,7 +530,6 @@ function emv_TreatTAG(origin, reader, values, silentmode, display) {
             }
             if (stag.tag == "9F06") {
                 emv_table_search_aidtable(stag.value, 'AID', emv_updatebarname, ['emv_tester_sidebarheader'])
-                //   console.log ('Application Selected')
             }   
         break;
     }  
@@ -714,7 +752,7 @@ function emv_TreatCommand(origin, reader, Line, values, silentmode, display, rou
         emv_TreatLogin(origin, reader, values);
     } else
     if (values[0] == "START" || values[0] == "END") {
-        emv_TreatInit(origin, reader, values, router);
+        emv_TreatStart(origin, reader, values, router);
     } else
     if (values[0] == "SELECT") {
         emv_TreatSelect(origin, reader, values, display, router);

@@ -197,7 +197,7 @@
                     "pname": "emv",
                     "name": "EMV",
                     "type": "root",
-                    "active": false,
+                    "active": true,
                     "index": 2,
                     "dependency": [
                         "speech"
@@ -232,9 +232,8 @@
                             "/A_PLATFORMS/emv/js/platform_emv_database.js",
                             "/A_PLATFORMS/emv/js/platform_emv_tester.js",
                             "/A_PLATFORMS/emv/js/interface_emv_tester.js",
-                            "/A_PLATFORMS/emv/js/interface_emv.js",                            
+                            "/A_PLATFORMS/emv/js/interface_emv.js",
                             "/A_PLATFORMS/emv/js/platform_emv.js"
-
                         ]
                     }
                 },
@@ -243,7 +242,7 @@
                     "pname": "netprog",
                     "name": "NetProg",
                     "type": "root",
-                    "active": true,
+                    "active": false,
                     "header": {
                         "title": "NETPROG",
                         "logo": "/A_PLATFORMS/netprog/res/netprog.svg",
@@ -460,7 +459,7 @@
                         "news",
                         "speech"
                     ],
-                    "active": true,
+                    "active": false,
                     "library": {
                         "stylesheet": [
                             "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css",

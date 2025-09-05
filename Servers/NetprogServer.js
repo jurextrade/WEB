@@ -22,6 +22,8 @@ function Require (module) {
     }            
 }
 
+childprocess.execSync('title NetprogServer');
+
 
 var HTTPPort            = 4080;
 var SHTTPPort           = 4443;

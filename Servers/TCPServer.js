@@ -27,16 +27,16 @@ let server = net.createServer(function (socket) {
        
         console.log('Bytes read : ' + bread);
         console.log('Bytes written : ' + bwrite);
-        console.log('Data sent to server : ' + data);
+        console.log('Data sent to server : ' + data.toString('utf8'));
       
         //echo data
-        var is_kernel_buffer_full = socket.write('Data ::' + data);
+     //   var is_kernel_buffer_full = socket.write('Data ::' + data);
        
-        if(is_kernel_buffer_full){
-          console.log('Data was flushed successfully from kernel buffer i.e written successfully!');
-        }else{
-          socket.pause();
-        }
+      //  if(is_kernel_buffer_full){
+      //    console.log('Data was flushed successfully from kernel buffer i.e written successfully!');
+      //  }else{
+      //    socket.pause();
+      //  }
         console.log('--------------------------------------------')                   
     });
 

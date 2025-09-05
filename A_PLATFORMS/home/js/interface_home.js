@@ -1,7 +1,4 @@
-
-
 //---------------------------------------------------- GLOBAL NEWS PANEL     ------------------------------------------------   
-
 
 var tradedesk_assistantpanel = {
     id : 'tradedesk_assistantpanel',
@@ -11,13 +8,15 @@ var tradedesk_assistantpanel = {
     content: 'tradedesk_AssistantPanel()'    
 }
 
-var emv_assistantpanel = {
+var emv_assistantpanel = ((id) =>  {return {
     id : 'emv_assistantpanel',
     type : 'html',
     class: 'sb_column home_assistantpanel',
-    content: 'emv_AssistantPanel()'    
-}
+    content: 'emv_AssistantPanel("' + id +'")',
+}})
+
 //------------------------------------------------------------ MAIN PANELS----------------------------------------------------------
+
 var home_projects_group = {
     id: 'home_projects_group',
     type: 'group',         
@@ -40,7 +39,6 @@ var home_mainbar = {
             home_projects_group
         ]
 }    
-
 
 var home_trading_leftsection = {
     id: 'home_trading_leftsection', 
@@ -90,10 +88,9 @@ var home_netprog_leftsection = {
     items: [
    
         {id: 'presentation', type: 'html',  class: 'sectioncontainer sb_column', content: "netprog_PresentationPanel()"},   
-        {id: 'profile',      type: 'html',  class: 'home_widget sb_column',                  content: "ProfilePanel()"     },           
+        {id: 'profile',      type: 'html',  class: 'home_widget sb_column',  content: "ProfilePanel()"     },           
     ]
 }
-
 
 var home_netprog_rightsection = {
     id: 'home_netprog_rightsection', 
@@ -105,6 +102,7 @@ var home_netprog_rightsection = {
 
     ],
 }
+
 var home_netprog_protocols = {
         id: 'home_netprog_protocols',
         type: 'table',            
@@ -138,8 +136,6 @@ var home_section = {
     ] 
 }
 
-
-
 //----------------------------------------------------------------<<< MAIN >>>-----------------------------------------------------------------------
 
 var home_sidebarmenu  = {
@@ -163,8 +159,6 @@ var home_sidebarmenu  = {
             settingsgroup(HOME_PLATFORM_PNAME),
     ]
 }
-
-
 
 var home_main = {
     id: 'home_main', 
@@ -203,6 +197,6 @@ var homeplatform = {
     },        
     select: 'home_select(\'' + HOME_PLATFORM_PNAME + '\')',
     init:     'home_init()',    
-  };
+  }
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------

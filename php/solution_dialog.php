@@ -4,11 +4,12 @@ header('Content-Type: application/json charset=UTF-8');
 
 $request = isset($_REQUEST['message']) ? $_REQUEST['message'] : "message not set";  
 
-
 if ($request == "message not set") {
     echo "invalid url";
     exit;   
 }
+
+
 $message = json_decode($request);
 
 if ($message == null) {

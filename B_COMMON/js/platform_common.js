@@ -121,7 +121,7 @@ function AnimationInit(pname, pageid) {
     $(animationid).css ('width',  $(pageid).width());
     $(animationid).css ('height', $(pageid).height());  
     $(animationid).css ('top',    '50%');  
-    $(animationid).css ('margin-left',  '25%');
+    $(animationid).css ('margin-left',  '15%');
    // $(animationid).css ('margin-right',  '10%');
     iAnimation.innerHTML = AnimationPanel ('');
     

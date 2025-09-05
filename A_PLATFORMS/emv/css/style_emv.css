@@ -197,8 +197,7 @@
   
   /* put left and right dashes */
 
-  .process_diagram li > div {position:relative;margin:0 var(--linewidth);padding: 1em;border-width:var(--linethick); width: auto;background-color: var(--theme-bg-color); border-style:solid; border-color:var(--theme-button-border-color); cursor: pointer;}
-  .process_diagram li > div {position:relative;margin:0 var(--linewidth);padding: 1em;border-width:var(--linethick); width: auto;background-color: var(--theme-bg-color); border-style:solid; border-color:var(--theme-button-border-color); cursor: pointer;}
+  .process_diagram li > div {position:relative;margin:0 var(--linewidth);padding: 1em;border-width:var(--linethick); width: auto;background-color: var(--theme-bg-color); color: var(--theme-color); border-style:solid; border-color:var(--theme-button-border-color); cursor: pointer;}
   .process_diagram li > div:before,
   .process_diagram li > div:after {content:""; top:50%; width:var(--linewidth); position:absolute; border-width:var(--linethick) 0 0; height:50%;}
   .process_diagram li > div:after {right: calc(0em - var(--linewidth)); margin-right: calc(0px - var(--linethick));display: none;}
@@ -255,13 +254,15 @@
 .process_diagram .EMVStep.selected {
     border-color:  var(--theme-emv-select) !important;
     border-radius: 0px;    
-    background: var(--theme-select-bg-color) !important;     
+    background: var(--theme-select-bg-color) !important;    
+    color:var(--theme-main-color) !important; 
 }
 
 .process_diagram .EMVSubStep.selected {
     border-color:  var(--theme-emv-select) !important;
     border-radius: 0px;    
-    background: var(--theme-select-bg-color) !important;        
+    background: var(--theme-select-bg-color) !important;      
+    color:var(--theme-main-color) !important;       
 } 
 
 
@@ -359,6 +360,7 @@
 #emv_presentation_steppanels .related-primary {
     display:flex;
     flex-wrap:wrap;
+    background:transparent;
 }
 
 
@@ -389,12 +391,14 @@
     border-color: var(--theme-emv-select) !important;
     border-radius: 0px;    
     background: var(--theme-select-bg-color) !important;  
-} 
+    color: var(--theme-main-color) !important;    
+}    
 
 .EMVStep.selected>.card-body>.card-text>.alert-primary  {
     border-color: var(--theme-emv-select) !important;
     border-radius: 0px;    
     background: var(--theme-select-bg-color) !important;  
+    color: var(--theme-main-color) !important;    
 }
 /*-------------------------------------------------------------------------- EMV STEPS PANEL --------------------------------------------------------------------*/
 
@@ -404,6 +408,11 @@
 
 #emv_tree_steps_panel .sb_widget-description {
     white-space: break-spaces;
+}
+
+
+#emv_tree_steps_panel .sb_widget-title {
+    color: unset !important;
 }
 
 #emv_tree_steps {

@@ -1116,7 +1116,7 @@ function Application_Launch (name){
 */
 
 function Application_Launch (name){     
-
+    let netprog_manager = solution.netprog_CurrentProject.Manager;  
     console.log ('Launch application')
     let netprogappli  = interface_GetEntity (netprog_manager, 'Applications', 'Name', name);
     let servermachine = interface_GetEntity (netprog_manager, 'Machines',     'Name', netprogappli.Machine);       
@@ -1148,6 +1148,7 @@ const MENU_SITEVIEW_NEWMACHINE_ID = 2;
 
 
 function oncontextmenu_netprog_treenode (elt, event) {
+    let netprog_manager = solution.netprog_CurrentProject.Manager;
 
     let nodename        = $(elt).attr("nodename");  
     let node            = netprog_entityfromnodename(nodename);
@@ -1232,6 +1233,7 @@ function oncontextmenu_netprog_treenode (elt, event) {
                     Application_Launch (entity.Name)
                 break;
                 case MENU_SITEVIEW_NEWMACHINE_ID:
+                    let netprog_manager = solution.netprog_CurrentProject.Manager;                    
                     var machine = MXCreateMachine (netprog_manager, 'newmachine', 'Win32', '', '');
           //          netprog_vue_data.netprog_vue_manager.Machines.push (machine);   
                 break;
@@ -1250,6 +1252,7 @@ function oncontextmenu_netprog_treenode (elt, event) {
 var new_entity = null;
 
 function netprog_add_platform (nodename) {
+    let netprog_manager = solution.netprog_CurrentProject.Manager;    
     var node = netprog_entityfromnodename(nodename);
     var isnewentity = false;
 

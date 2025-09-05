@@ -186,7 +186,7 @@ var emv_transactiontags_table = {
 var emv_transactiontags_tablepanel = {
     id: "emv_transactiontags_tablepanel",
     type: "panel",
-    class: 'sb_panel sb_datatable',
+    class: 'sb_main sb_datatable',
     items: [
         emv_transactiontags_table,
     ]

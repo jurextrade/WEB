@@ -30,28 +30,6 @@ function onclick_home_trading_rightsection_1_0(elt, event) {
     $('#trading_maincarousel').carousel(0);
 }
 
-function onclick_home_trading_rightsection_1_1 (elt, event) { 
-    event.stopPropagation();   
-    event.preventDefault();
-    if ($('#tradedesk_assistantpanel').css('display') != 'none') {
-        sb.toggle ($('#tradedesk_assistantpanel'), sb.toggle ($('#trading_maincarousel'), slideToggleCallback));
-    }
-    $('#trading_maincarousel').carousel(1);   
-}
-
-function onclick_home_trading_rightsection_1_2(elt, event) {
-    event.stopPropagation();   
-    event.preventDefault();    
-
-    if ($('#tradedesk_assistantpanel').css('display') != 'none') {
-        sb.toggle ($('#tradedesk_assistantpanel'), sb.toggle ($('#trading_maincarousel'), slideToggleCallback));
-    }
-    $('#trading_maincarousel').carousel(2);    
-}
-
-
-
-
 function onclick_home_trading_rightsection_1_0_0(elt, event) { 
     event.stopPropagation();
 
@@ -60,6 +38,15 @@ function onclick_home_trading_rightsection_1_0_0(elt, event) {
         let projectname = project_default_projectname;    
         selector_select('project_selectproject', projectname);
     })      
+}
+
+function onclick_home_trading_rightsection_1_1 (elt, event) { 
+    event.stopPropagation();   
+    event.preventDefault();
+    if ($('#tradedesk_assistantpanel').css('display') != 'none') {
+        sb.toggle ($('#tradedesk_assistantpanel'), sb.toggle ($('#trading_maincarousel'), slideToggleCallback));
+    }
+    $('#trading_maincarousel').carousel(1);   
 }
 
 function onclick_home_trading_rightsection_1_1_0(elt, event) { 
@@ -72,7 +59,6 @@ function onclick_home_trading_rightsection_1_1_0(elt, event) {
      sb.toggle ($('#trading_maincarousel'), sb.toggle ($('#tradedesk_assistantpanel'), slideToggleCallback));
 }
 
-
 function onclick_home_trading_rightsection_1_1_1(elt, event) { 
     event.stopPropagation();   
 
@@ -83,6 +69,15 @@ function onclick_home_trading_rightsection_1_1_1(elt, event) {
     })      
 }
 
+function onclick_home_trading_rightsection_1_2(elt, event) {
+    event.stopPropagation();   
+    event.preventDefault();    
+
+    if ($('#tradedesk_assistantpanel').css('display') != 'none') {
+        sb.toggle ($('#tradedesk_assistantpanel'), sb.toggle ($('#trading_maincarousel'), slideToggleCallback));
+    }
+    $('#trading_maincarousel').carousel(2);    
+}
 
 function onclick_home_trading_rightsection_1_2_0(elt, event) { 
     event.stopPropagation();    
@@ -147,7 +142,6 @@ function onclick_home_trading_rightsection_3_1_0 (elt, event) {
     })         
 }
 
-
 function onclick_home_trading_rightsection_3_2 (elt, event) {
     onclick_home_trading_rightsection_1_0(elt, event)
 }
@@ -160,14 +154,12 @@ function onclick_home_trading_rightsection_3_2_0 (elt, event) {
 }
 
 
-
 let widget;
     
     let trading_container = add_sectioncontainer (home_trading_rightsection, 'getstarted', 'Projects Template');
     widget = add_widget (trading_container, 'Algo Trading', icon_strategy);
     add_widgetdescription(widget, {type: 'html',  html: 'Create Trading Strategies'});
     add_widgetbutton (widget, 'see demo project', 'Launch Strategy Creator and load demo project')   
-
 
     widget = add_widget (trading_container, 'MT4 Terminal', icon_terminal);
     add_widgetdescription(widget, {type: 'html',  html:'Connect your MT4 Terminal'});
@@ -185,7 +177,6 @@ let widget;
 
     trading_container = add_sectioncontainer (home_trading_rightsection, 'tools', 'Chart Tools');
     widget = add_widget (trading_container, 'Signals');
- 
 
     widget = add_widget (trading_container, 'Trackers');
     add_widgetdescription(widget, {type: 'html',  html: "Track your signals"});
@@ -197,15 +188,10 @@ let widget;
     add_widgetdescription(widget, {type: 'html',  html: "While Tracking your signals by double clicking on the chart you can mark all the signals"});
     add_widgetbutton (widget, 'Marker Panel', 'See Markers')     
 
-
-
  //---------------------
-
-
 
 function emv_tester_widget_content () {
     content = 'To test your card emv payment you need to load EMV Terminal EMV Client and EMV Router and run them on your machine';
-
     return content;  
 }
 
@@ -222,7 +208,8 @@ function onclick_emvwidget (elt, event) {
         sb.toggle ($('#emv_assistantpanel'), sb.toggle ($('#emv_maincarousel'), slideToggleCallback)); 
     }    
  }
-function onclick_home_emv_rightsection_1_0(elt, event) {
+
+ function onclick_home_emv_rightsection_1_0(elt, event) {
     event.stopPropagation();   
     event.preventDefault();    
     
@@ -242,19 +229,7 @@ function onclick_home_emv_rightsection_1_0_0(elt, event) {
     })         
 }
 
-
-function onclick_home_emv_rightsection_1_1_0(elt, event) {
-    SaveURIInFile('/EMV/Client/Client.zip', '')
-}
-
-function onclick_home_emv_rightsection_1_0_1(elt, event) {
-    var win = window.open("https://github.com/jurextrade/EMV/tree/main/Client", '_blank');
-    win.focus();
-}
-
-
-
-//------------------------------emv server
+//------------------------------emv cards reader
 
 function onclick_home_emv_rightsection_1_1 (elt, event) { 
     event.stopPropagation();   
@@ -268,28 +243,91 @@ function onclick_home_emv_rightsection_1_1 (elt, event) {
 }
 
 function onclick_home_emv_rightsection_1_1_0(elt, event) {
-    SaveURIInFile('/EMV/Client/Client.zip', '')
+    SaveURIInFile('/EMV/Client/EMVClient64.exe', '')
 }
 
 function onclick_home_emv_rightsection_1_1_1(elt, event) {
-    var win = window.open("https://github.com/jurextrade/EMV/tree/main/Server", '_blank');
+    var win = window.open("https://github.com/jurextrade/EMV/tree/main/Client", '_blank');
     win.focus();
 }
 
 function onclick_home_emv_rightsection_1_1_2(elt, event) {
     event.stopPropagation();   
     event.preventDefault();
-    if ($('#emv_assistantpanel').css('display') != 'none') {
+
+    if ($('.emv_assistant_cardreader').length != 0) {
+        if ($('#emv_assistantpanel').css('display') != 'none') {
+            return;
+        } else {
+            sb.toggle ($('#emv_maincarousel'), sb.toggle ($('#emv_assistantpanel'), slideToggleCallback)); 
+        }         
+    } else {
+        $('#emv_assistantpanel').html(emv_AssistantPanel('cardreader'));
+        home_emv_init_assistance();
+        if ($('#emv_assistantpanel').css('display') != 'none') {
+    //        sb.toggle ($('.emv_assistant_emvserver'), sb.toggle ($('#emv_assistantpanel'), slideToggleCallback)); 
+        }    
+        else {
+            sb.toggle ($('#emv_maincarousel'), sb.toggle ($('#emv_assistantpanel'), slideToggleCallback)); 
+        }
+    }
+    if ($('.emv_assistant_cardreader').css('display') != 'none') {
         return;
     }        
     $('#emv_maincarousel').carousel(2);
+    $('#emv_assistantpanel').html(emv_AssistantPanel('cardreader'));
+    home_emv_init_assistance();
+
     sb.toggle ($('#emv_maincarousel'), sb.toggle ($('#emv_assistantpanel'), slideToggleCallback)); 
 }
 
+//------------------------------emv server
+
+function onclick_home_emv_rightsection_1_2 (elt, event) { 
+    event.stopPropagation();   
+    event.preventDefault();    
+    
+    if ($('#emv_assistantpanel').css('display') != 'none') {
+        sb.toggle ($('#emv_assistantpanel'), sb.toggle ($('#emv_maincarousel'), slideToggleCallback)); 
+    }
+
+    $('#emv_maincarousel').carousel(1); 
+}
+
+function onclick_home_emv_rightsection_1_2_0(elt, event) {
+    SaveURIInFile('/EMV/Server/EMVServer64.exe', '')
+}
+
+function onclick_home_emv_rightsection_1_2_1(elt, event) {
+    var win = window.open("https://github.com/jurextrade/EMV/tree/main/Server", '_blank');
+    win.focus();
+}
+
+function onclick_home_emv_rightsection_1_2_2(elt, event) {
+    event.stopPropagation();   
+    event.preventDefault();
+    
+    if ($('.emv_assistant_emvserver').length != 0) {
+        if ($('#emv_assistantpanel').css('display') != 'none') {
+            return;
+        } else {
+            sb.toggle ($('#emv_maincarousel'), sb.toggle ($('#emv_assistantpanel'), slideToggleCallback)); 
+        }         
+    } else {
+        $('#emv_assistantpanel').html(emv_AssistantPanel('emvserver'));
+        home_emv_init_assistance();
+        if ($('#emv_assistantpanel').css('display') != 'none') {
+         //   sb.toggle ($('.emv_assistant_cardreader'), sb.toggle ($('#emv_assistantpanel'), slideToggleCallback)); 
+        }    
+        else {
+            sb.toggle ($('#emv_maincarousel'), sb.toggle ($('#emv_assistantpanel'), slideToggleCallback)); 
+        }
+    }
+}
 
 //------------------------------emv router
 
-function onclick_home_emv_rightsection_1_2 (elt, event) { 
+function onclick_home_emv_rightsection_1_3 (elt, event) { 
     event.stopPropagation();   
     event.preventDefault();    
     
@@ -299,16 +337,16 @@ function onclick_home_emv_rightsection_1_2 (elt, event) {
     $('#emv_maincarousel').carousel(1); 
 }
 
-function onclick_home_emv_rightsection_1_2_0(elt, event) {
+function onclick_home_emv_rightsection_1_3_0(elt, event) {
     SaveURIInFile('/EMV/Servers/EMVRouter.js', '')
 }
 
-function onclick_home_emv_rightsection_1_2_1(elt, event) {
-   // var win = window.open("https://github.com/jurextrade/Servers/blob/main/EMVRouter.js", '_blank');
-   // win.focus();
+function onclick_home_emv_rightsection_1_3_1(elt, event) {
+    var win = window.open("https://github.com/jurextrade/Servers/blob/main/EMVRouter.js", '_blank');
+    win.focus();
 }
 
-function onclick_home_emv_rightsection_1_2_2(elt, event) {
+function onclick_home_emv_rightsection_1_3_2(elt, event) {
     event.stopPropagation();   
     event.preventDefault();
     if ($('#emv_assistantpanel').css('display') != 'none') {
@@ -318,20 +356,15 @@ function onclick_home_emv_rightsection_1_2_2(elt, event) {
      sb.toggle ($('#emv_maincarousel'), sb.toggle ($('#emv_assistantpanel'), slideToggleCallback));
 }
 
-
 function onclick_home_emv_rightsection_1_3 (elt, event) { 
     event.stopPropagation();   
     event.preventDefault();    
-    
-
 }
 
 function onclick_home_emv_rightsection_1_3_1(elt, event) {
     var win = window.open("https://github.com/jurextrade/Servers/blob/main/EMVRouter.js", '_blank');
     win.focus();
 }
-
-
 
 function onclick_home_emv_rightsection_2_0(elt, event) {
     event.stopPropagation();   
@@ -343,7 +376,6 @@ function onclick_home_emv_rightsection_2_0(elt, event) {
     $('#emv_maincarousel').carousel(2);   
 }
 
-
 function onclick_home_emv_rightsection_2_0_0 (elt, event) { 
     event.stopPropagation();    
 
@@ -354,8 +386,6 @@ function onclick_home_emv_rightsection_2_0_0 (elt, event) {
 
         sidebarmenu_select('sidebar_emvtestermanager', 1)        
     })         
-
-
  }
 
 function onclick_home_emv_rightsection_2_1_0 (elt, event) { 
@@ -381,7 +411,6 @@ function onclick_home_emv_rightsection_2_1_0 (elt, event) {
 }
 
 
-
     let emv_container = add_sectioncontainer (home_emv_rightsection, 'projectsection', 'Project Templates');
     
     widget = add_widget (emv_container, 'EMV Platform', icon_card);
@@ -398,6 +427,7 @@ function onclick_home_emv_rightsection_2_1_0 (elt, event) {
     add_widgetdescription(widget, {type: 'html',  html: 'EMV Server'});
     add_widgetbutton (widget, 'download' , '')   
     add_widgetbutton (widget, 'github' , '')      
+    add_widgetbutton (widget, 'how to insall' , '')      
 
     widget = add_widget (emv_container, 'EMV Router', icon_terminal);
     add_widgetdescription(widget, {type: 'html',  html: 'Controls Communication for internet Testing'});
@@ -432,8 +462,6 @@ function onclick_home_netprog_rightsection_1_0_0(elt, event) {
         let projectname = netprog_default_projectname;   
         selector_select('netprog_selectproject', projectname);        
     })         
-
-
 }
 
     let netprog_container = add_sectioncontainer (home_netprog_rightsection, 'projectsection', 'Get Started - Project Templates');
@@ -450,9 +478,7 @@ function onclick_home_netprog_rightsection_1_0_0(elt, event) {
 function home_init () {
 
     home_solution('home');    
-    home_tradedesk_init_assistance();    
-
-   
+    home_tradedesk_init_assistance();     
 }
 
 function home_end () {
@@ -486,9 +512,7 @@ function home_solution (pname) {
 }
 
 function home_timer () {
-
 }
-
 
 //----------------------------------------------------   HOME MAIN BAR     ------------------------------------------------
 
@@ -526,7 +550,6 @@ function onclick_home_mainbar (elt, event) {
                 solution.HomePage = HOME_OTHER;                     
             }            
             break;                                    
-
     }    
 }
 
@@ -604,17 +627,6 @@ function trading_MainCarouselPanel () {
 return content;
 }
 
-//---------------------------------------------------- CONTACT PANEL------------------------------------------------ 
-
-
-
-
-
-
-//----------------------------------------------------   WIDGETS PANEL    ------------------------------------------------   
-
-
-
 
 //----------------------------------------------------ASSISTANT PANEL------------------------------------------------
 
@@ -625,18 +637,15 @@ function MT4AssistantRegister () {
 }
  
 function onclick_checkout (event) {
-
     event.stopPropagation();    
         let pname = HOME_PLATFORM_TRADEDESK;
         solution_module_load (pname, () => {
     })
 }
 
-
 function onclick_tradedesk_assistantclose(elt) {
     sb.toggle ($('#tradedesk_assistantpanel'), sb.toggle ($('#trading_maincarousel'), slideToggleCallback));
 }
-
 
 function tradedesk_AssistantPanel () {
     var content = 
@@ -812,10 +821,9 @@ function home_tradedesk_init_assistance() {
 
 function emv_MainCarouselPanel () {
     var content = 
-        sb.render (emv_assistantpanel) +     
+        sb.render (emv_assistantpanel('cardreader')) +     
 '       <div id="emv_maincarousel" class="featured carousel slide sb_panel" data-bs-ride="carousel">' +
 '           <label class="sb_f_size12">Featured</label>' +
-
 '           <div class="carousel-inner">' +
 '               <div class="carousel-item active">' +
 '                   <div class="sb_row sb_panel">' +
@@ -842,7 +850,7 @@ function emv_MainCarouselPanel () {
 '                               EMV TERMINAL' +
 '                           </div> ' +
 '                           <div class="card-body">' +
-'                               <div class="card-title">CONFIGURE YOUR TERMINAL - Features</div>' +   
+'                               <div class="card-title">EMV SERVER - Configure your terminal</div>' +   
 '                                <div class= "mb-3">' +    
 '                                   <li class="card-text">Add AIDs to your terminal</li>' +
 '                                   <li class="card-text">Configure Terminal Capabilities</li>' +
@@ -876,8 +884,8 @@ function emv_MainCarouselPanel () {
 '               <button  class="sb_roundbutton" type="button" data-bs-target="#emv_maincarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>' +
 '               <button  class="sb_roundbutton" type="button" data-bs-target="#emv_maincarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>' +
 '           </div>' +
-'  </div>';
-return content;
+'   </div>';
+    return content;
 }
 
 //---------------------------------------------------- PRESENTATION PANEL------------------------------------------------ 
@@ -944,15 +952,6 @@ function netprog_PresentationPanel () {
     return content;
 }
 
-
-//----------------------------------------------------   WIDGETS PANEL    ------------------------------------------------   
-
-//------------------------------platform
-
-
-
-
-
 //----------------------------------------------------   TOOLS WIDGETS PANEL    ------------------------------------------------   
 
 
@@ -990,11 +989,10 @@ function onclick_emvcheckout (elt) {
 }
 
 
-function emv_AssistantPanel () {
-    var content = 
-//'    <div id="tradedesk_assistantpanel" class="" style="display:' + (assistant_mode ? 'block' : 'none') + '">' +
-'       <label class="sb_f_size12">Connect to EMV Server</label>' +
-'       <form  id="emvassistantform"  class="assistant_panel">' +
+function emv_AssistantPanel (id) {
+    var content =  (id == 'cardreader') ?
+'       <label class="sb_f_size12">Install Card Reader</label>' +
+'       <form  id="emvassistantform"  class="assistant_panel emv_assistant_' + id + '">' +
 '           <div id="loginclose" onclick="onclick_emv_assistantclose(this)" ><svg class="installcheckmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><path class="checkmark__check" fill="none" d="M16 16 36 36 M36 16 16 36"></path></svg></div>   ' +  
 '           <h3>Login or Register</h3>' + 
 '           <section>' + 
@@ -1005,10 +1003,11 @@ function emv_AssistantPanel () {
 '                       <div class="card-body">' +
 '                           <div class="card-title"></div>' +
 '                           <div class= "mb-3">' +    
+'                               <li> </li>' +
 '                               <li class="card-text">You need to Register to be able to connect the Card Reader to EMV Terminal via the EMV Router.</li>' +
 '                               <li class="card-text">Memorize the name and the password, these will be used as first step in Card Reader Program</li>' +
-'                               <div class="sb_formgroup card-text">' +
-'                                   <button class="assistant_button sb_button noactivate" title="" type="button" onclick="emv_assistant_register()"><i class="icon_mt4expert"></i>Login or Register</button>' +
+'                               <div class="sb_formgroup sb_buttongroup card-text">' +
+'                                   <button class="assistant_button sb_mbutton noactivate" title="" type="button" onclick="emv_assistant_register()"><i class="icon_mt4expert"></i>Login or Register</button>' +
 '                               </div>' +
 '                           </div>' +
 '                       </div>' +
@@ -1024,14 +1023,12 @@ function emv_AssistantPanel () {
 '                       <div class="card-body">' +
 '                           <div class="card-title"></div>' +
 '                           <div class= "mb-3">' +    
-'                               <li class="card-text">Download Card Reader on your local machine' + 
-'                                   <button id="downloadbutton" class="sb_sbutton" onclick="event.preventDefault();SaveURIInFile(\'/EMV/Client/Client.zip\', \'\')">Download</button>' +
+'                               <li> </li>' +
+'                               <li class="card-text">Download Card Reader Program on your local machine (to download source files check github in home page).' + 
+'                                   <button id="downloadbutton" class="sb_mbutton" onclick="event.preventDefault();SaveURIInFile(\'/EMV/Client/EmvClient64.exe\', \'\')">Download</button>' +
 '                               </li>' +
-'                               <li class="card-text">Unzip Card Reader' +
-'                               </li>' +
-'                               <li class="card-text">Open Data Folder Where you unzip the program</li>' +
-'                               <li class="card-text">Go Client Folder</li>' +
-'                               <li class="card-text">Execute Program</li>' +
+'                               <li class="card-text">Create Client Folder on your machine and copy the program you downloaded </li>' +
+'                               <li class="card-text">Execute Program EMVClient64.exe <i>&lt;EMVRouter_address = localhost&gt; &lt;EMVServer_address = localhost&gt; &lt;Login_Server = www.jurextrade.com &gt;</i></li>' +
 '                           </div>' +
 '                       </div>' +
 '                   </div>' +
@@ -1046,10 +1043,81 @@ function emv_AssistantPanel () {
 '                       <div class="card-body">' +
 '                           <div class="card-title"></div>' +
 '                           <div class= "mb-3">' +    
-'                               <li class="card-text">You Should See ...</li>' +
-'                               <li class="card-text">Press Checkout to see ...</li>' +
-'                               <div class="sb_formgroup card-text">' +
-'                                   <button id="checkout" class="assistant_button sb_button noactivate" onclick="onclick_emvcheckout(this)" title="" type="button">Check Out</button>' +
+'                               <li class="card-text">Card Reader will ask you to login to Router Server that you should install on your machine</li>' +
+'                               <li class="card-text">You enter the name and the password that you used to this site</li>' +
+'                               <li class="card-text">Press Checkout you should see the card connected and ready to run ...</li>' +
+'                               <div class="sb_formgroup sb_buttongroup card-text">' +
+'                                   <button id="checkout" class="assistant_button sb_mbutton noactivate" onclick="onclick_emvcheckout(this)" title="" type="button">Check Out</button>' +
+'                               </div>' +
+'                           </div>' +
+'                       </div>' +
+'                   </div>' +
+'               </div>' +
+'           </section>' +
+'       </form>' +
+'       <div id="emvassistantbuttons" class="sb_row assistant_buttons">' +
+'             <a class="prev"         onclick= "onclick_assistant_nextprev(this, event)" role="button" data-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="sr-only">Previous</span></a>' +
+'             <a class="next sb_left" onclick= "onclick_assistant_nextprev(this, event)" role="button" data-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="sr-only">Next</span></a>' +
+'       </div>' :
+
+
+'       <label class="sb_f_size12">Install EMV Server</label>' +
+'       <form  id="emvassistantform"  class="assistant_panel emv_assistant_' + id + '">' +
+'           <div id="loginclose" onclick="onclick_emv_assistantclose(this)" ><svg class="installcheckmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><path class="checkmark__check" fill="none" d="M16 16 36 36 M36 16 16 36"></path></svg></div>   ' +  
+'           <h3>Login or Register</h3>' + 
+'           <section>' + 
+'               <div class="sb_row sb_panel">' +
+'                   <img src="/A_PLATFORMS/emv/res/emv1.jpg" alt=""></img>' +
+'                   <div class="card col9">' +
+'                       <div class="card-header"> <img src="/res/UnderCon_black.png" class="underconstruct" ></div> ' +
+'                       <div class="card-body">' +
+'                           <div class="card-title"></div>' +
+'                           <div class= "mb-3">' +    
+'                               <li> </li>' +
+'                               <li class="card-text">You need to Register to be able to connect the Card Reader to EMV Terminal via the EMV Router.</li>' +
+'                               <li class="card-text">Memorize the name and the password, these will be used as first step in Card Reader Program</li>' +
+'                               <div class="sb_formgroup sb_buttongroup card-text">' +
+'                                   <button class="assistant_button sb_mbutton noactivate" title="" type="button" onclick="emv_assistant_register()"><i class="icon_mt4expert"></i>Login or Register</button>' +
+'                               </div>' +
+'                           </div>' +
+'                       </div>' +
+'                   </div>' +
+'               </div>' +
+'           </section>' + 
+'           <h3>Download EMV Server</h3>' + 
+'           <section>' + 
+'               <div class="sb_row sb_panel">' +
+'                   <img src="/A_PLATFORMS/emv/res/emv2.jpg" alt=""></img>' +
+'                   <div class="card col9">' +
+'                       <div class="card-header"> <img src="/res/UnderCon_black.png" class="underconstruct" ></div> ' +
+'                       <div class="card-body">' +
+'                           <div class="card-title"></div>' +
+'                           <div class= "mb-3">' +    
+'                               <li> </li>' +
+'                               <li class="card-text">Download EMV Server Program on your local machine (to download source files check github in home page)' + 
+'                                   <button id="downloadbutton" class="sb_mbutton" onclick="event.preventDefault();SaveURIInFile(\'/EMV/Server/EmvServer64.exe\', \'\')">Download</button>' +
+'                               </li>' +
+'                               <li class="card-text">Create Server Folder on your machine and copy the program you downloaded </li>' +
+'                               <li class="card-text">Execute Program EMVServer64.exe <i>&lt;EMVRouter_address = localhost&gt; &lt;Login_Server = www.jurextrade.com &gt;</i></li>' +
+'                           </div>' +
+'                       </div>' +
+'                   </div>' +
+'               </div>' +
+'           </section>' + 
+'           <h3>Check Out</h3>' + 
+'           <section>' + 
+'               <div class="sb_row sb_panel">' +
+'                   <img src="/A_PLATFORMS/emv/res/emv3.jpg" alt=""></img>' +
+'                   <div class="card col9">' +
+'                       <div class="card-header"> <img src="/res/UnderCon_black.png" class="underconstruct" ></div> ' +
+'                       <div class="card-body">' +
+'                           <div class="card-title"></div>' +
+'                           <div class= "mb-3">' +    
+'                               <li class="card-text">Card Reader will ask you to login to Router Server that you should install on your machine</li>' +
+'                               <li class="card-text">You enter the name and the password that you used to this site</li>' +
+'                               <li class="card-text">Press Checkout you should see the card connected and ready to run ...</li>' +
+'                               <div class="sb_formgroup sb_buttongroup card-text">' +
+'                                   <button id="checkout" class="assistant_button sb_mbutton noactivate" onclick="onclick_emvcheckout(this)" title="" type="button">Check Out</button>' +
 '                               </div>' +
 '                           </div>' +
 '                       </div>' +
@@ -1061,7 +1129,6 @@ function emv_AssistantPanel () {
 '             <a class="prev"         onclick= "onclick_assistant_nextprev(this, event)" role="button" data-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="sr-only">Previous</span></a>' +
 '             <a class="next sb_left" onclick= "onclick_assistant_nextprev(this, event)" role="button" data-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="sr-only">Next</span></a>' +
 '       </div>';  
-//'   </div>'
     return content;
 }
 

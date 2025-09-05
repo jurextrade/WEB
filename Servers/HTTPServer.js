@@ -17,7 +17,7 @@ function Require (module) {
     }            
 }
 
-
+childprocess.execSync('title HTTPServer');
 
 let server = http.createServer(function (req, res) {   //create web server
     console.log('Request received : ' + req.url);

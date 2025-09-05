@@ -571,7 +571,7 @@ var netprog_sidebarpanel  = {
     items : 
     [
         {id: 'sidebarpanel_netprogsiteview',    class: 'sb_panel sb_main',  type: 'panel',  items: [netprog_projects_headerpanel,  netprog_projects_sidepanel]},      
-        {id: 'sidebarpanel_netprogmanager',     class: 'sb_panel sb_main',   type: 'panel',  items: [netprog_box_manager, netprog_program]},             
+        {id: 'sidebarpanel_netprogmanager',     class: 'sb_panel sb_main',   type: 'panel',  items: [netprog_box_manager]},             
         {id: 'sidebarpanel_netprogfilemanager', class: 'sb_panel sb_main',   type: 'panel',  items: [netprog_file_headerpanel, netprog_filemanager]},             
         {id: 'sidebarpanel_netprogsettings',    class: 'sb_panel sb_pane',   type: 'panel',  items: [settingspanel('netprog')]},             
     ]
